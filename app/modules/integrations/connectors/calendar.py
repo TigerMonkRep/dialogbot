@@ -170,8 +170,20 @@ class MicrosoftCalendarClient:
 
 # --------------------------------------------------------------------------- actions (shared)
 
+PENDING = "afventer"  # output `bekraeftelse` when the time awaits a staff member's confirmation
+
+
 def _summ_book(data: dict, out: dict) -> str:
+    if out.get("bekraeftelse") == PENDING:
+        return f"Noteret {out.get('type', 'tid')} {out.get('tidspunkt', '')} – afventer bekræftelse".strip()
     return f"Booket {out.get('type', 'tid')} {out.get('tidspunkt', '')}".strip()
+
+
+def _pending_text(when: str) -> str:
+    """What the assistant is handed when the connected calendar could not be read: never a final confirmation."""
+    return (f"Tiden {when} er noteret, men den er IKKE endeligt bekræftet: virksomhedens kalender kunne ikke læses "
+            "lige nu. Sig til kunden, at tiden er noteret, og at en medarbejder vender tilbage og bekræfter tiden. "
+            "Lov ikke kunden, at tiden er endeligt på plads.")
 
 
 ACTIONS: tuple[ActionSpec, ...] = (
@@ -193,7 +205,7 @@ ACTIONS: tuple[ActionSpec, ...] = (
                     "note": {"type": "string", "description": "Kort om, hvad kunden har brug for"}},
                    ["start", "navn"]),
                obj({"booking_id": {"type": "string"}, "type": {"type": "string"}, "tidspunkt": {"type": "string"},
-                    "besked": {"type": "string"}}),
+                    "bekraeftelse": {"type": "string", "enum": ["bekraeftet", PENDING]}, "besked": {"type": "string"}}),
                confirm=True, summarize=_summ_book),
     ActionSpec("flyt_tid", "Flyttet tid",
                "Flyt kundens eksisterende aftale til en ny ledig tid (fra ledige_tider). Find først aftalen ud fra "
@@ -202,8 +214,10 @@ ACTIONS: tuple[ActionSpec, ...] = (
                     "booking_id": {"type": "string", "description": "Aftalens id, hvis kendt fra en tidligere handling"},
                     "navn": {"type": "string", "description": "Kundens navn, bruges til at finde aftalen"}},
                    ["ny_start"]),
-               obj({"booking_id": {"type": "string"}, "tidspunkt": {"type": "string"}, "besked": {"type": "string"}}),
-               confirm=True, summarize=lambda d, o: f"Flyttet aftale til {o.get('tidspunkt', '')}"),
+               obj({"booking_id": {"type": "string"}, "tidspunkt": {"type": "string"},
+                    "bekraeftelse": {"type": "string", "enum": ["bekraeftet", PENDING]}, "besked": {"type": "string"}}),
+               confirm=True, summarize=lambda d, o: f"Flyttet aftale til {o.get('tidspunkt', '')}"
+               + (" – afventer bekræftelse" if o.get("bekraeftelse") == PENDING else "")),
     ActionSpec("aflys_tid", "Aflyst tid",
                "Aflys kundens aftale. Find aftalen ud fra telefonnummer eller navn; bekræft hvilken, hvis der er flere.",
                obj({"booking_id": {"type": "string"}, "navn": {"type": "string"}}),
@@ -276,13 +290,16 @@ class CalendarActions:
                     frm = datetime.fromisoformat(str(data["fra_dato"]))
                 except ValueError:
                     frm = None
-            free = self.bookings.slots(self.db, self.ws, bt, tz, limit=60)
+            free, readable = self.bookings.slots_state(self.db, self.ws, bt, tz, limit=60)
             if frm is not None:
                 free = [x for x in free if datetime.fromisoformat(x["start"]).date() >= frm.date()]
             free = free[:MAX_SLOTS]
             tider = [{"start": x["start"], "tekst": x["label"]} for x in free]
             msg = (f"Ledige tider til {bt.name.lower()}: " + "; ".join(f"{x['tekst']} (start {x['start']})" for x in tider)
                    if tider else "Der er ingen ledige tider i den periode. Tilbyd at en medarbejder ringer tilbage.")
+            if tider and not readable:
+                msg += (". Virksomhedens kalender kan ikke læses lige nu: en tid, kunden vælger, bliver noteret og skal "
+                        "bekræftes af en medarbejder – lov ikke en endelig bekræftelse.")
             return ActionResult({"tider": tider, "besked": msg}, simulated=self.simulated)
         if action == "book_tid":
             bt = self._type(data.get("type"))
@@ -298,11 +315,14 @@ class CalendarActions:
                 raise ActionRefused(e.message, code=e.code) from e
             b.provider_call_id = ctx.provider_call_id
             when = self.bookings.label(b.starts_at, tz)
+            if b.confirmation == "pending":  # the calendar's busy time could not be read: no final confirmation
+                return ActionResult({"booking_id": str(b.id), "type": bt.name, "tidspunkt": when, "bekraeftelse": PENDING,
+                                     "besked": _pending_text(when)}, simulated=self.simulated)
             if not self._mirror_create(b):
                 raise ActionError(f"Tiden {when} er noteret hos virksomheden, men kunne ikke skrives i virksomhedens "
                                   f"kalender ({b.calendar_sync_error}). Lov ikke kunden, at tiden er bekræftet – sig at "
                                   "en medarbejder bekræfter tiden.", code="calendar_sync_failed")
-            return ActionResult({"booking_id": str(b.id), "type": bt.name, "tidspunkt": when,
+            return ActionResult({"booking_id": str(b.id), "type": bt.name, "tidspunkt": when, "bekraeftelse": "bekraeftet",
                                  "besked": f"Booket: {bt.name} {when}. Bekræft tiden over for kunden."},
                                 provider_ref=b.calendar_event_id, simulated=self.simulated)
         if action == "flyt_tid":
@@ -316,7 +336,12 @@ class CalendarActions:
                 raise ActionError(f"Den nye tid ({when}) kunne ikke skrives i virksomhedens kalender "
                                   f"({b.calendar_sync_error}). Lov ikke kunden den nye tid – sig at en medarbejder "
                                   "bekræfter tiden.", code="calendar_sync_failed")
-            return ActionResult({"booking_id": str(b.id), "tidspunkt": when, "besked": f"Aftalen er flyttet til {when}."},
+            if b.confirmation == "pending":
+                return ActionResult({"booking_id": str(b.id), "tidspunkt": when, "bekraeftelse": PENDING,
+                                     "besked": _pending_text(when)}, provider_ref=b.calendar_event_id,
+                                    simulated=self.simulated)
+            return ActionResult({"booking_id": str(b.id), "tidspunkt": when, "bekraeftelse": "bekraeftet",
+                                 "besked": f"Aftalen er flyttet til {when}."},
                                 provider_ref=b.calendar_event_id, simulated=self.simulated)
         if action == "aflys_tid":
             b = self._find_booking(data, ctx)
@@ -385,7 +410,10 @@ def _synced(b: Booking, key: str) -> None:
 def mirror_create(db: OrmSession, workspace_id: uuid.UUID, b: Booking, *,
                   client: CalendarClient | None = None, connector: str | None = None) -> bool:
     """Write a new booking to the connected calendar. True when it is there (or no calendar is connected); False when
-    the write failed – then the booking is marked `calendar_sync='failed'`."""
+    the write failed – then the booking is marked `calendar_sync='failed'`. A booking awaiting confirmation is written
+    when a staff member confirms it."""
+    if b.confirmation == "pending":
+        return True
     client, key = _resolve(db, workspace_id, b, client, connector)
     if key is None:
         return True
@@ -404,7 +432,9 @@ def mirror_create(db: OrmSession, workspace_id: uuid.UUID, b: Booking, *,
 
 def mirror_update(db: OrmSession, workspace_id: uuid.UUID, b: Booking, *,
                   client: CalendarClient | None = None, connector: str | None = None) -> bool:
-    """Move the booking's event. A booking whose event was never written gets it created now."""
+    """Move the booking's event. A booking whose event was never written gets it created now (once confirmed)."""
+    if b.confirmation == "pending" and not b.calendar_event_id:
+        return True
     client, key = _resolve(db, workspace_id, b, client, connector)
     if key is None:
         return True
@@ -440,19 +470,82 @@ def mirror_cancel(db: OrmSession, workspace_id: uuid.UUID, b: Booking, *,
     return True
 
 
-def connected_busy(db: OrmSession, workspace_id: uuid.UUID, frm: datetime, to: datetime) -> list[tuple[datetime, datetime]] | None:
-    """Busy time from the connected OAuth calendar, or None when none is connected (then iCal applies).
-    A provider error is recorded on the connection and returns [] so booking still works from opening hours."""
+BUSY_ERROR_PREFIX = "Optaget tid kunne ikke hentes"
+
+
+def connected_busy(db: OrmSession, workspace_id: uuid.UUID, frm: datetime,
+                   to: datetime) -> tuple[list[tuple[datetime, datetime]] | None, bool]:
+    """Busy time from the connected OAuth calendar: (busy, readable).
+
+    (None, True) when no Google/Microsoft calendar is connected (then iCal applies). When the calendar cannot be read
+    (provider error, timeout, revoked access – also a connection already in `error`, which is retried here) the error
+    is recorded on the connection and ([], False) is returned: free times still come from opening hours and
+    Dialogbot's own bookings (fail-open), but a booking made on them must await a staff member's confirmation
+    (decision 2026-11-10, F-EB-05-BK15)."""
     from app.modules.integrations import connectors, credentials
 
-    for key in ("google_calendar", "microsoft_calendar"):
+    for key in CALENDAR_CONNECTORS:
         conn = credentials.connection(db, workspace_id, key)
-        if conn is None or conn.status != "connected":
+        if conn is None:
             continue
         try:
             client = connectors.calendar_client(db, workspace_id, key)
-            return client.busy(frm - timedelta(hours=1), to + timedelta(hours=1))
+            busy = client.busy(frm - timedelta(hours=1), to + timedelta(hours=1))
         except ActionError as e:
-            credentials.mark_error(conn, f"Optaget tid kunne ikke hentes: {e.message}")
-            return []
-    return None
+            _record_status(db, conn, ok=False, message=f"{BUSY_ERROR_PREFIX}: {e.message}")
+            return [], False
+        if conn.status == "error" and (conn.error or "").startswith(BUSY_ERROR_PREFIX):
+            _record_status(db, conn, ok=True)  # the read that failed works again
+        return busy, True
+    return None, True
+
+
+_PENDING_STATUS = "calendar_status_pending"
+
+
+def _record_status(db: OrmSession, conn, *, ok: bool, message: str = "") -> None:
+    """Record the read's outcome on the connection so it sticks even when the caller never commits: slot look-ups are
+    GETs, whose session is rolled back on close – the error was lost and Integrationer kept saying «Forbundet»
+    (F-E2D-13-S03). The values are mirrored on the caller's object at once (the rest of this request sees the same
+    status) and written in their own short transaction once the caller's transaction has ended – commit or rollback,
+    i.e. after its connection went back to the pool. Never while the caller still holds one: a second connection per
+    request is hold-and-wait, and >pool concurrent look-ups during an outage (the widget's GET /booking is public)
+    exhausted the pool and gave every API call 500 (F-E2D-13-S03, reopened)."""
+    from sqlalchemy import event
+
+    # Same values as credentials.mark_ok / mark_error.
+    values = ({"status": "connected", "error": None, "last_ok_at": datetime.now(UTC)} if ok
+              else {"status": "error", "error": message[:300]})
+    pending = db.info.setdefault(_PENDING_STATUS, {})
+    if not pending and not db.info.get(_PENDING_STATUS + "_hooked"):
+        event.listen(db, "after_transaction_end", _write_pending_status)
+        db.info[_PENDING_STATUS + "_hooked"] = True
+    pending[conn.id] = values
+    with db.no_autoflush:
+        for k, v in values.items():
+            setattr(conn, k, v)
+
+
+def _write_pending_status(session: OrmSession, transaction) -> None:
+    """after_transaction_end of the caller's root transaction: its connection is closed (returned to the pool) before
+    this hook runs, so the short side transaction below takes at most the one connection the request gave back."""
+    if transaction.parent is not None:  # savepoint / subtransaction: the request still holds its connection
+        return
+    pending = session.info.pop(_PENDING_STATUS, None)
+    if not pending:
+        return
+    import structlog
+    from sqlalchemy import text, update
+    from sqlalchemy.orm import Session
+
+    from app.models import IntegrationConnection
+
+    for conn_id, values in pending.items():
+        try:
+            with Session(bind=session.get_bind()) as side:
+                side.execute(text("SET LOCAL lock_timeout = '2s'"))
+                side.execute(update(IntegrationConnection).where(IntegrationConnection.id == conn_id).values(**values))
+                side.commit()
+        except Exception:  # noqa: BLE001 - recording the status must never break the look-up (fail-open)
+            structlog.get_logger("dialogbot.calendar").warning("calendar_status_not_recorded",
+                                                               connection_id=str(conn_id))

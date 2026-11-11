@@ -798,7 +798,8 @@
         "startOver": "Recommencer",
         "notLoggedIn": "Connectez-vous pour voir comment s'est passé l'appel.",
         "login": "Se connecter",
-        "statusAria": "État de l'appel"
+        "statusAria": "État de l'appel",
+        "noCallTitle": "Elle n'appelle pas pour le moment"
       }
     }
   }

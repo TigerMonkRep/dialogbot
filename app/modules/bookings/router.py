@@ -39,7 +39,10 @@ def _connected_calendar(db: OrmSession, ws_id) -> dict | None:
     return {"connector": key, "status": conn.status, "error": conn.error, "simulated": bool(conn.simulated),
             "last_ok_at": conn.last_ok_at.isoformat() if conn.last_ok_at else None,
             "sync_failed": db.scalar(select(func.count()).where(Booking.workspace_id == ws_id, Booking.status == "confirmed",
-                                                                Booking.calendar_sync == "failed")) or 0}
+                                                                Booking.calendar_sync == "failed")) or 0,
+            "pending_confirmation": db.scalar(select(func.count()).where(Booking.workspace_id == ws_id,
+                                                                         Booking.status == "confirmed",
+                                                                         Booking.confirmation == "pending")) or 0}
 
 
 def settings_out(db: OrmSession, s: BookingSettings, ws_id) -> dict:
@@ -183,6 +186,32 @@ def manual_booking(body: ManualIn, request: Request, ctx: WorkspaceContext = Dep
     return service.booking_out(b, tz)
 
 
+class ConfirmIn(BaseModel):
+    override_conflict: bool = False
+
+
+@router.post("/{booking_id}/confirm")
+def confirm(booking_id: uuid.UUID, request: Request, body: ConfirmIn | None = None,
+            ctx: WorkspaceContext = Depends(require_capability("bookings.create")), db: OrmSession = Depends(get_db)):
+    """A staff member confirms a booking «afventer bekræftelse» (made while the connected calendar could not be read).
+    It is then written to the calendar through the shared mirror path; a write failure shows as «Ikke i kalenderen»."""
+    b = get_scoped(db, Booking, booking_id, ctx.workspace.id)
+    tz = _tz(db, ctx.workspace.id)
+    was = b.confirmation
+    service.confirm(db, b, actor=ctx.user_id, override_conflict=bool(body and body.override_conflict), tz=tz)
+    if was == "pending":
+        if b.calendar_event_id:
+            calendar.mirror_update(db, ctx.workspace.id, b)
+        else:
+            calendar.mirror_create(db, ctx.workspace.id, b)
+        record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="bookings.confirmed",
+                     object_type="booking", object_id=b.id,
+                     after={"override_conflict": bool(body and body.override_conflict), "calendar_sync": b.calendar_sync},
+                     request_id=request.state.request_id)
+    db.commit()
+    return service.booking_out(b, tz)
+
+
 @router.post("/{booking_id}/cancel")
 def cancel(booking_id: uuid.UUID, request: Request, ctx: WorkspaceContext = Depends(require_capability("bookings.create")),
            db: OrmSession = Depends(get_db)):
@@ -255,4 +284,6 @@ def visitor_book(key: str, conversation_id: uuid.UUID, body: VisitorBookingIn, o
                      conversation=conv)
     calendar.mirror_create(db, ws.id, b)  # the owner sees a failed write on the booking
     db.commit()
-    return {"booked": True, "label": service.label(b.starts_at, tz), "title": b.title}
+    # confirmation 'pending': the connected calendar could not be read – the widget says a staff member confirms
+    return {"booked": True, "label": service.label(b.starts_at, tz), "title": b.title,
+            "confirmation": "pending" if b.confirmation == "pending" else "confirmed"}

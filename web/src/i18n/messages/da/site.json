@@ -798,7 +798,8 @@
         "startOver": "Start forfra",
         "notLoggedIn": "Log ind for at se, hvordan opkaldet gik.",
         "login": "Log ind",
-        "statusAria": "Status for opkaldet"
+        "statusAria": "Status for opkaldet",
+        "noCallTitle": "Hun ringer ikke lige nu"
       }
     }
   }

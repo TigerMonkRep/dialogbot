@@ -305,7 +305,12 @@
       "lead": "Consulta",
       "cancel": "Cancelar",
       "syncFailed": "No está en el calendario",
-      "syncFailedDetail": "La cita no se pudo escribir en el calendario conectado: {error}"
+      "syncFailedDetail": "La cita no se pudo escribir en el calendario conectado: {error}",
+      "pending": "Pendiente de confirmación",
+      "pendingDetail": "No se pudo leer el calendario cuando se reservó la hora. Se informó al cliente de que un empleado confirmará la hora. Revise el calendario y confirme o cancele.",
+      "confirm": "Confirmar",
+      "confirming": "Confirmando…",
+      "confirmAnyway": "Confirmar de todos modos"
     },
     "book": {
       "noSlotsError": "No hay horas libres. Revise el horario y el calendario.",
@@ -318,7 +323,8 @@
       "booked": "Reservado: {label}.",
       "booking": "Reservando…",
       "submit": "Reservar",
-      "note": "El cliente aún no recibe SMS: envíe usted mismo una confirmación. «Primera libre» toma la siguiente hora que permitan el horario y el calendario."
+      "note": "El cliente aún no recibe SMS: envíe usted mismo una confirmación. «Primera libre» toma la siguiente hora que permitan el horario y el calendario.",
+      "pending": "Anotado: {label}. Pendiente de confirmación porque no se pudo leer el calendario."
     },
     "calendar": {
       "reading": "Leyendo…",
@@ -339,7 +345,8 @@
       "provider": {
         "google_calendar": "Google Calendar",
         "microsoft_calendar": "Calendario de Outlook (Microsoft 365)"
-      }
+      },
+      "pendingN": "{n} citas están pendientes de confirmación: no se pudo leer el calendario cuando se reservaron."
     },
     "staffOnly": "Las citas pueden verlas empleados, administradores y propietarios.",
     "eyebrow": "Hoy → Citas",
@@ -556,7 +563,8 @@
       "consent": "¿Dónde y cuándo aceptaron recibir llamadas?",
       "consentHint": "El asistente llama sin una persona al teléfono. Según el artículo 10 de la ley danesa de prácticas de mercado (markedsføringsloven), esto exige que el contacto lo haya solicitado previamente, también cuando es una empresa. No basta con que no figure en la lista Robinson ni tenga protección publicitaria en el registro CVR.",
       "consentPlaceholder": "Registro en la web, marzo de 2026",
-      "importing": "Importando…"
+      "importing": "Importando…",
+      "pauseFirst": "La campaña está en curso. Ponla en pausa para añadir contactos; al reanudarla, confirmas el nuevo número."
     },
     "start": {
       "completed": "La campaña ha finalizado: se ha llamado a todos los contactos.",

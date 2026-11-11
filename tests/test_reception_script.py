@@ -50,3 +50,21 @@ def test_script_roles_versioning_and_prompt(api, client, two_workspaces, fake_ai
     ov = api.get(tok, f"/workspaces/{ws}/reception/overview").json()
     assert ov["script_configured"] is True and ov["channels"]["phone"]["numbers"][0]["e164"] == "+4570123456"
     assert api.get(t["tok_b"], f"/workspaces/{t['ws_b']}/reception/script").json()["version"] == 0
+
+
+def test_first_save_round_trips_the_get_with_empty_optional_fields(api, two_workspaces):
+    """F-E2B-01-O05: GET of a never-saved script returned null for the text fields; the editor sends them back as they
+    are, and the first PUT without an assistant name was a 422. F-E2B-02-O05: the next save uses the PUT's version."""
+    tok, ws = two_workspaces["tok_a"], two_workspaces["ws_a"]
+    base = f"/workspaces/{ws}/reception/script"
+    got = api.get(tok, base).json()
+    assert got["version"] == 0
+    assert {k: got[k] for k in ("persona_name", "greeting", "escalation", "avoid", "closing")} == dict.fromkeys(
+        ("persona_name", "greeting", "escalation", "avoid", "closing"), "")
+    body = {**got, "greeting": "Hej, du har ringet til {virksomhed}.", "expected_version": got["version"]}
+    r = api.c.put(f"/api/v1{base}", json=body, headers=api.h(tok))
+    assert r.status_code == 200, r.text
+    first = r.json()
+    r2 = api.c.put(f"/api/v1{base}", json={**first, "closing": "Tak for opkaldet.", "expected_version": first["version"]},
+                   headers=api.h(tok))
+    assert r2.status_code == 200 and r2.json()["version"] == 2, r2.text

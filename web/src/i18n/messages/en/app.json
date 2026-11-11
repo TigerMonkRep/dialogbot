@@ -305,7 +305,12 @@
       "lead": "Enquiry",
       "cancel": "Cancel",
       "syncFailed": "Not in calendar",
-      "syncFailedDetail": "The appointment could not be written to the connected calendar: {error}"
+      "syncFailedDetail": "The appointment could not be written to the connected calendar: {error}",
+      "pending": "Awaiting confirmation",
+      "pendingDetail": "The calendar could not be read when the time was booked. The customer was told that a staff member will confirm the time. Check the calendar, then confirm or cancel.",
+      "confirm": "Confirm",
+      "confirming": "Confirming…",
+      "confirmAnyway": "Confirm anyway"
     },
     "book": {
       "noSlotsError": "There are no free times. Check opening hours and calendar.",
@@ -318,7 +323,8 @@
       "booked": "Booked {label}.",
       "booking": "Booking…",
       "submit": "Book",
-      "note": "The customer doesn't get a text message yet – send a confirmation yourself. «First available» takes the next time that opening hours and calendar allow."
+      "note": "The customer doesn't get a text message yet – send a confirmation yourself. «First available» takes the next time that opening hours and calendar allow.",
+      "pending": "Noted {label} – awaiting confirmation because the calendar could not be read."
     },
     "calendar": {
       "reading": "Reading…",
@@ -339,7 +345,8 @@
       "provider": {
         "google_calendar": "Google Calendar",
         "microsoft_calendar": "Outlook calendar (Microsoft 365)"
-      }
+      },
+      "pendingN": "{n} appointments are awaiting confirmation – the calendar could not be read when they were booked."
     },
     "staffOnly": "Appointments can be viewed by staff, admins and owners.",
     "eyebrow": "Today → Appointments",
@@ -556,7 +563,8 @@
       "consent": "Where and when did they agree to be called?",
       "consentHint": "The assistant calls without a human on the line. Under section 10 of the Danish Marketing Practices Act, this requires the contact to have asked for it in advance – also when it's a business. It isn't enough that they're not on the Robinson list or marked as advertising-protected in the CVR register.",
       "consentPlaceholder": "Sign-up on the website, March 2026",
-      "importing": "Importing…"
+      "importing": "Importing…",
+      "pauseFirst": "The campaign is running. Pause it to add contacts – when you start again, you confirm the new number."
     },
     "start": {
       "completed": "The campaign is finished: all contacts have been called.",

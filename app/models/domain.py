@@ -460,6 +460,18 @@ class ConversationMessage(Base):
     created_at: Mapped[datetime] = ts_now()
 
 
+def _list_included_minutes(ctx=None) -> int:
+    from app.modules.billing import prices
+
+    return prices.INBOUND_INCLUDED_MINUTES
+
+
+def _list_extra_minute(ctx) -> int:
+    from app.modules.billing import markets
+
+    return markets.erhverv_price(ctx.get_current_parameters().get("currency") or "DKK", "extra_minute")
+
+
 class ReceptionAgreement(Base):
     """Versioned reception price agreement (append-only; the newest version applies).
 
@@ -480,6 +492,10 @@ class ReceptionAgreement(Base):
     tax_basis_points: Mapped[int] = mapped_column(Integer, nullable=False, default=2500)
     # One-off setup fee from an accepted sales offer (specialist setup), billed on the first invoice. 0 = none.
     setup_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
+    # The package, snapshotted like the monthly price (QA F-BQ-011): inbound minutes included per month and the price
+    # per started minute above them. Default = the list price in the agreement's currency when the row is made.
+    inbound_included_minutes: Mapped[int] = mapped_column(Integer, nullable=False, default=_list_included_minutes)
+    inbound_extra_minute_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=_list_extra_minute)
     sales_offer_id: Mapped[uuid.UUID | None] = mapped_column()  # the accepted sales_offers row (no FK: avoids a cycle)
     created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     created_at: Mapped[datetime] = ts_now()
@@ -757,6 +773,7 @@ class Booking(Base):
         CheckConstraint("status in ('confirmed','cancelled')", name="ck_bookings_status"),
         CheckConstraint("ends_at > starts_at", name="ck_bookings_range"),
         CheckConstraint("calendar_sync is null or calendar_sync in ('synced','failed')", name="ck_bookings_calendar_sync"),
+        CheckConstraint("confirmation is null or confirmation in ('pending','confirmed')", name="ck_bookings_confirmation"),
         Index("ix_bookings_workspace_starts", "workspace_id", "starts_at"),
     )
 
@@ -782,6 +799,10 @@ class Booking(Base):
     # 'failed' = the last write to the calendar failed (shown to the owner; the calendar may disagree).
     calendar_sync: Mapped[str | None] = mapped_column(String(16))
     calendar_sync_error: Mapped[str | None] = mapped_column(String(300))
+    # NULL = booked against readable busy time; 'pending' = made while the connected calendar could not be read
+    # («afventer bekræftelse»: the customer was not given a final confirmation, a staff member confirms);
+    # 'confirmed' = confirmed by staff afterwards. A pending booking is written to the calendar when confirmed.
+    confirmation: Mapped[str | None] = mapped_column(String(16))
     created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     created_at: Mapped[datetime] = ts_now()
     cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

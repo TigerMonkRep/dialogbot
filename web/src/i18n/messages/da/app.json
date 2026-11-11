@@ -305,7 +305,12 @@
       "lead": "Henvendelse",
       "cancel": "Aflys",
       "syncFailed": "Ikke i kalenderen",
-      "syncFailedDetail": "Aftalen kunne ikke skrives i den forbundne kalender: {error}"
+      "syncFailedDetail": "Aftalen kunne ikke skrives i den forbundne kalender: {error}",
+      "pending": "Afventer bekræftelse",
+      "pendingDetail": "Kalenderen kunne ikke læses, da tiden blev booket. Kunden har fået at vide, at en medarbejder bekræfter tiden. Tjek kalenderen, og bekræft eller aflys.",
+      "confirm": "Bekræft",
+      "confirming": "Bekræfter…",
+      "confirmAnyway": "Bekræft alligevel"
     },
     "book": {
       "noSlotsError": "Der er ingen ledige tider. Tjek åbningstider og kalender.",
@@ -318,7 +323,8 @@
       "booked": "Booket {label}.",
       "booking": "Booker…",
       "submit": "Book",
-      "note": "Kunden får ingen SMS endnu – send selv en bekræftelse. «Først ledige» tager næste tid, som åbningstider og kalender tillader."
+      "note": "Kunden får ingen SMS endnu – send selv en bekræftelse. «Først ledige» tager næste tid, som åbningstider og kalender tillader.",
+      "pending": "Noteret {label} – afventer bekræftelse, fordi kalenderen ikke kunne læses."
     },
     "calendar": {
       "reading": "Læser…",
@@ -339,7 +345,8 @@
       "provider": {
         "google_calendar": "Google Kalender",
         "microsoft_calendar": "Outlook-kalender (Microsoft 365)"
-      }
+      },
+      "pendingN": "{n} aftaler afventer bekræftelse – kalenderen kunne ikke læses, da de blev booket."
     },
     "staffOnly": "Aftaler kan ses af medarbejdere, administratorer og ejere.",
     "eyebrow": "I dag → Aftaler",
@@ -556,7 +563,8 @@
       "consent": "Hvor og hvornår har de sagt ja til at blive ringet op?",
       "consentHint": "Assistenten ringer uden et menneske i røret. Efter markedsføringsloven § 10 kræver det, at kontakten på forhånd har bedt om det – også når det er en virksomhed. Det er ikke nok, at de ikke står på Robinsonlisten eller er reklamebeskyttet i CVR.",
       "consentPlaceholder": "Tilmelding på hjemmesiden, marts 2026",
-      "importing": "Importerer…"
+      "importing": "Importerer…",
+      "pauseFirst": "Kampagnen kører. Sæt den på pause for at tilføje kontakter – når du starter igen, bekræfter du det nye antal."
     },
     "start": {
       "completed": "Kampagnen er afsluttet: alle kontakter er ringet op.",

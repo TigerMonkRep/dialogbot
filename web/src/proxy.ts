@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { SESSION_COOKIE } from "@/lib/config";
+import { PROTECTED_PATH_HEADER, SESSION_COOKIE } from "@/lib/config";
 import { PREVIEW_COOKIE, cookieValid, gateEnabled } from "@/lib/preview-gate";
 import { safeNext } from "@/lib/safe-next";
 import {
@@ -141,7 +141,11 @@ export async function proxy(req: NextRequest) {
     // Only same-origin paths: "//host" or "/\\host" would leave the site (open redirect).
     return NextResponse.redirect(new URL(safeNext(next), req.url));
   }
-  const res = NextResponse.next();
+  // Pages behind the login learn their own path + query, so a dead session can go to /login?expired=1&next=… (api.server).
+  const fwd = new Headers(req.headers);
+  fwd.delete(PROTECTED_PATH_HEADER);  // never from the client
+  if (protectedPath) fwd.set(PROTECTED_PATH_HEADER, pathname + search);
+  const res = NextResponse.next({ request: { headers: fwd } });
   if (protectedPath) res.headers.set("cache-control", "no-store, private");
   // Dialogbot Privat: public without login (the landing /privat, invites /privat/invitation/*, group links /g/*,
   // short links /i/*), and the app pages show example data until the visitor saves a task, so none of them is

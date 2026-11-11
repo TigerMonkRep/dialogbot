@@ -2,6 +2,9 @@
 export const API_BASE_URL = process.env.API_BASE_URL ?? "http://localhost:8000";
 export const SESSION_COOKIE = "db_session";
 export const WORKSPACE_COOKIE = "db_ws";
+/** Request header set by the proxy on pages behind the login (path + query), so a server component that meets a dead
+ *  session can send the visitor to /login?expired=1 with `next` kept (F-E2A-04-A02). Never trusted for authorisation. */
+export const PROTECTED_PATH_HEADER = "x-dialogbot-protected-path";
 export const CSRF_HEADER = "x-requested-with";
 export const CSRF_VALUE = "dialogbot";
 export const COOKIE_OPTS = {

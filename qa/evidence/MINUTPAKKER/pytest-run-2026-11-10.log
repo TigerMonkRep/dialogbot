@@ -1,0 +1,87 @@
+.F..Fxxx                                                                 [100%]
+=================================== FAILURES ===================================
+_ test_mp_package_terms_are_snapshotted_per_agreement_not_read_from_the_list_price _
+
+api = <tests.conftest.Api object at 0x7f11225a5e50>
+two_workspaces = {'tok_a': 'RyrVeY6QIVueOSqGjoYZspGua_W5cxTLTCaqNIGvlt0', 'ws_a': 'a437d420-81ba-4ff1-80d0-d010d04a0873', 'tok_b': 'h6ZJ0pM0NfFh8u_my1jRC2DnvttvnvAWi4jzFrhAPKg', 'ws_b': 'b543f58a-3f87-4a2a-aa09-10cbe5d91b84'}
+db = <sqlalchemy.orm.session.Session object at 0x7f112258c050>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f112a7f29e0>
+
+    def test_mp_package_terms_are_snapshotted_per_agreement_not_read_from_the_list_price(api, two_workspaces, db, monkeypatch):
+        """F-BQ-011. The agreement snapshots the monthly price but NOT the package (included minutes) or the overage
+        price: statement.py reads prices.INBOUND_INCLUDED_MINUTES and markets.erhverv_price(...,'extra_minute') at the
+        time the statement is made. A list change therefore rewrites every month that is not yet invoiced for every
+        customer on an older agreement. Expected (rule "price change does not alter old orders"): September under the
+        August agreement stays 300 included / 1,50 kr. → 310 min = 10 × 150 = 1.500."""
+        from app.modules.billing import markets, prices
+    
+        ws = uuid.UUID(two_workspaces["ws_a"])
+        tok = two_workspaces["tok_a"]
+        _agreement(db, ws)
+        _inbound(db, ws, datetime(2026, 9, 10, 9, tzinfo=UTC), 310 * 60)
+        db.commit()
+        before = _line(_statement(api, tok, ws, "2026-09"), "inbound_minutes")
+        assert (before["extra_minutes"], before["net_minor"]) == (10, 1_500)
+        # the list changes later (smaller package, dearer overage) – only NEW agreements may get it
+        monkeypatch.setattr(prices, "INBOUND_INCLUDED_MINUTES", 200)
+        monkeypatch.setattr(prices, "INBOUND_EXTRA_MINUTE_NET_MINOR", 300)
+        monkeypatch.setitem(markets.ERHVERV["DKK"], "extra_minute", 300)
+        after = _line(_statement(api, tok, ws, "2026-09"), "inbound_minutes")
+>       assert (after["included_minutes"], after["extra_minutes"], after["net_minor"]) == (300, 10, 1_500), after
+E       AssertionError: {'kind': 'inbound_minutes', 'calls': 1, 'minutes': 310, 'included_minutes': 200, ...}
+E       assert (200, 110, 33000) == (300, 10, 1500)
+E         
+E         At index 0 diff: 200 != 300
+E         Use -v to get more diff
+
+tests/qa/test_qa_billing_minutpakker.py:101: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+___ test_mp_usage_reported_after_the_month_was_invoiced_is_billed_somewhere ____
+
+api = <tests.conftest.Api object at 0x7f1122550050>
+two_workspaces = {'tok_a': 'EVnk3D3qa8s3M7BDyFNScKJ6gpAOmMURj3pczkGPwsY', 'ws_a': '401b9b45-40ac-47d0-9d08-4a3f01a5f7d5', 'tok_b': 'oCsnrrWissN0bYa-BFylwI5SdXLgrEMrvu3ieRQHsFc', 'ws_b': 'a5f94572-e023-4b6e-8fb8-9053825ed023'}
+db = <sqlalchemy.orm.session.Session object at 0x7f112258c5f0>
+fake_stripe = [('POST', '/invoices', {'customer': 'cus_qa_mp', 'collection_method': 'charge_automatically', 'auto_advance': True, 'c... 'in_qa_mp', 'currency': 'dkk', 'amount': 1500, ...}), ('POST', '/invoices/in_qa_mp/finalize', {'auto_advance': True})]
+
+    def test_mp_usage_reported_after_the_month_was_invoiced_is_billed_somewhere(api, two_workspaces, db, fake_stripe):
+        """F-BQ-012. invoice_due invoices last month on the first worker tick after local midnight, without a grace
+        period. A call that starts 31/10 23:58 local (22:58Z, CET) is stored when its end-of-call report arrives – after
+        the invoice. Its minutes belong to October (statement counts by started_at) but October is frozen and November
+        does not pick them up, so they are never billed. Expected: October 310 + 5 = 315 min → 15 extra = 2.250 in total
+        across the October invoice and any adjustment/carry-over."""
+        from app.modules.billing import stripe as stripe_api
+    
+        ws_id = uuid.UUID(two_workspaces["ws_a"])
+        tok = two_workspaces["tok_a"]
+        _agreement(db, ws_id)
+        _inbound(db, ws_id, datetime(2026, 10, 5, 9, tzinfo=UTC), 310 * 60)
+        db.add(BillingAccount(workspace_id=ws_id, stripe_customer_id="cus_qa_mp", payment_method_id="pm_qa_mp"))
+        db.commit()
+        inv = stripe_api.create_invoice(db, db.get(Workspace, ws_id), date(2026, 10, 1), "Europe/Copenhagen")
+        db.commit()
+        invoiced = next(x for x in inv.lines if x["kind"] == "inbound_minutes")["net_minor"]
+        assert invoiced == 1_500
+        # the late end-of-call report: started in October (local), stored after the invoice
+        _inbound(db, ws_id, datetime(2026, 10, 31, 22, 58, tzinfo=UTC), 5 * 60, tag="late")
+        db.commit()
+        octo_now = _line(_statement(api, tok, ws_id, "2026-10"), "inbound_minutes")["net_minor"]
+        assert octo_now == 2_250  # the preview of the (already invoiced) month has silently moved
+        nov = _line(_statement(api, tok, ws_id, "2026-11"), "inbound_minutes")
+        carried = nov["net_minor"] if nov else 0
+        adjustments = [x for x in _statement(api, tok, ws_id, "2026-11")["lines"] if "adjust" in x["kind"]]
+>       assert invoiced + carried + sum(x["net_minor"] for x in adjustments) == 2_250, \
+            f"750 øre (5 min × 1,50 kr.) never billed: invoice {invoiced}, November carries {carried}"
+E       AssertionError: 750 øre (5 min × 1,50 kr.) never billed: invoice 1500, November carries 0
+E       assert ((1500 + 0) + 0) == 2250
+E        +  where 0 = sum(<generator object test_mp_usage_reported_after_the_month_was_invoiced_is_billed_somewhere.<locals>.<genexpr> at 0x7f11225979f0>)
+
+tests/qa/test_qa_billing_minutpakker.py:191: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+=========================== short test summary info ============================
+XFAIL tests/qa/test_qa_billing_minutpakker.py::test_mp_customer_can_read_the_frozen_package_usage_of_an_invoiced_month - B05/minutpakke: invoice API does not expose the frozen period lines
+XFAIL tests/qa/test_qa_billing_minutpakker.py::test_mp_operator_sees_package_usage_per_customer - M04/minutpakke: operator customer view has no package, usage or overage
+XFAIL tests/qa/test_qa_billing_minutpakker.py::test_mp_failed_call_minutes_can_be_disputed_or_credited - B03/B04/minutpakke: no way to dispute/credit a failed inbound call's minutes
+FAILED tests/qa/test_qa_billing_minutpakker.py::test_mp_package_terms_are_snapshotted_per_agreement_not_read_from_the_list_price
+FAILED tests/qa/test_qa_billing_minutpakker.py::test_mp_usage_reported_after_the_month_was_invoiced_is_billed_somewhere

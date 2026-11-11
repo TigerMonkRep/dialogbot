@@ -101,5 +101,12 @@
     "pushOff": "Varsler er slått av på denne enheten.",
     "pushDisable": "Slå av varsler",
     "pushIosHome": "På iPhone virker varsler bare fra appen på hjemskjermen – legg den der først (Download app ovenfor)."
+  },
+  "pageError": {
+    "title": "Siden kunne ikke vises",
+    "text": "Det oppstod en feil hos oss. Prøv igjen – hjelper ikke det, logg inn på nytt.",
+    "retry": "Prøv igjen",
+    "login": "Logg inn igjen",
+    "reference": "Feilkode"
   }
 }

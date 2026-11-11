@@ -14,7 +14,8 @@ export default async function Trin3() {
   const [st, profile, voices, t, webchat] = await Promise.all([
     setupStatus(ws.id, ws.role),
     backend<{ legal_name: string; phone: string | null; cvr: string | null; address_line: string | null; postal_code: string | null; city: string | null; website_url: string | null }>(`/workspaces/${ws.id}/profile`),
-    backend<VoicesData>(`/workspaces/${ws.id}/voices`),
+    // voices.read is staff+: a reader gets 403 – never let that take the page down (F-E2B-04-G01).
+    staff ? backend<VoicesData>(`/workspaces/${ws.id}/voices`).catch(() => null) : Promise.resolve(null),
     staff ? backend<Telephony>(`/workspaces/${ws.id}/telephony`).catch(() => null) : Promise.resolve(null),
     staff ? backend<Webchat>(`/workspaces/${ws.id}/webchat`).catch(() => null) : Promise.resolve(null),
   ]);
@@ -33,7 +34,7 @@ export default async function Trin3() {
         </div>
         <Need items={raw<[string, string, string?][]>("setup.step3Page.need")} title={raw<string>("setup.need.title")} />
       </div>
-      <Step3 wsId={ws.id} canManage={ws.role === "owner" || ws.role === "admin"} goals={st.goals} voices={voices} t={t} webchat={webchat}
+      <Step3 wsId={ws.id} reader={!staff} canManage={ws.role === "owner" || ws.role === "admin"} goals={st.goals} voices={voices} t={t} webchat={webchat}
         company={profile.legal_name} cvr={profile.cvr ?? ""} address={address} phone={profile.phone ?? ""} website={profile.website_url ?? ""} />
     </SetupShell>
   );

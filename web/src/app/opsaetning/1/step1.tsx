@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Part } from "@/components/setup-parts";
 import { Icon, inputCls } from "@/components/ui";
 import { api, type ApiError } from "@/lib/client";
-import { useLocale, useRaw, useT } from "@/i18n/client";
+import { useRaw, useT } from "@/i18n/client";
 import { LOCALES, LOCALE_NAMES, isLocale } from "@/i18n/config";
 import { cardsFromGoals, goalsFromCards, hoursText, originOf, parseHours, parseZones, zonesText, type Cards, type DayVocab, type WeeklyRange } from "@/lib/setup";
 import { MobileActionBar } from "@/components/mobile-action-bar";
@@ -31,7 +31,6 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
   const router = useRouter();
   const t = useT("setup.step1");
   const raw = useRaw();
-  const locale = useLocale();
   const vocab = raw<DayVocab>("setup.hours");
   const kindLabel = (k: string) => (KINDS.has(k) ? t(`kind.${k}`) : k);
   const hoursItem = facts.find((f) => f.kind === "opening_hours");
@@ -40,12 +39,12 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
 
   const [p, setP] = useState(profile);
   const [cards, setCards] = useState<Cards>(cardsFromGoals(goals));
-  // The language Peter speaks to the customers (default_conversation_language). Never chosen before (version 1): the UI language.
+  // The language Peter speaks to the customers (default_conversation_language): always the stored one. The UI language
+  // of whoever opens the page is never used – opening a page must not change data (F-E2B-05-O04); only a tap saves.
   const storedPrimary = languages.default_conversation_language;
-  const initialPrimary = languages.version <= 1 ? locale : storedPrimary;
-  const [primary, setPrimary] = useState<string>(initialPrimary);
+  const [primary, setPrimary] = useState<string>(storedPrimary);
   // Extra languages it also speaks (the chips); the primary is always enabled and sent first.
-  const [langs, setLangs] = useState<string[]>(languages.enabled_conversation_languages.filter((c) => c !== initialPrimary && !(languages.version <= 1 && c === storedPrimary)));
+  const [langs, setLangs] = useState<string[]>(languages.enabled_conversation_languages.filter((c) => c !== storedPrimary));
   const [hours, setHours] = useState(hoursText(pick(hoursItem)?.content.weekly as WeeklyRange[] | undefined, vocab));
   const [zones, setZones] = useState(zonesText(pick(zonesItem)?.content.zones as string[] | undefined));
   const [save, setSave] = useState<Save>("idle");
@@ -222,8 +221,6 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
   const toggle = (k: keyof Cards) => { setCards((c) => ({ ...c, [k]: !c[k] })); later("goals", 400); };
   const toggleLang = (code: string) => { if (code === primary) return; setLangs((cur) => (cur.includes(code) ? cur.filter((c) => c !== code) : [...cur, code])); later("langs", 400); };
   const choosePrimary = (code: string) => { setLangs((cur) => cur.filter((c) => c !== code && c !== primary)); setPrimary(code); later("langs", 400); };
-  // A first visit in another language than the stored default: save the UI language as the customers' language.
-  useEffect(() => { if (canEdit && initialPrimary !== storedPrimary) later("langs", 400); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const ready = p.legal_name.trim() && (p.phone ?? "").trim() && p.description.trim();
   const next = cards.booking ? 2 : 3;
   const [going, setGoing] = useState(false);

@@ -84,6 +84,9 @@ def render(db: OrmSession, ws: Workspace, template: str, ctx: RunContext) -> str
         b = db.scalar(q.order_by(Booking.created_at.desc()))
         if b is None:
             raise ActionRefused("Der er ingen booking i denne samtale at bekræfte", code="no_booking")
+        if b.confirmation == "pending":  # the calendar could not be read: a staff member confirms, not an SMS
+            raise ActionRefused("Tiden afventer bekræftelse fra en medarbejder – send ikke en bekræftelse",
+                                code="booking_pending")
         from app.modules.bookings.service import label
 
         when = label(b.starts_at, ctx.tz) if lang == "da" else texts.when(b.starts_at, ctx.tz, lang)

@@ -130,3 +130,82 @@ def test_inbound_minutes_above_the_included_300_are_charged(api, two_workspaces,
     # a month without inbound calls has no inbound line at all
     oct_lines = api.get(tok, f"/workspaces/{ws}/billing/statement?month=2026-10").json()["lines"]
     assert not [x for x in oct_lines if x["kind"] == "inbound_minutes"]
+
+
+def _freeze(db, ws, month, st):
+    """What stripe.create_invoice stores: the statement's lines frozen on the month's invoice."""
+    from datetime import date
+
+    from app.models import Invoice
+
+    y, m = map(int, month.split("-"))
+    db.add(Invoice(workspace_id=ws, month=date(y, m, 1), status="open", currency="DKK", net_minor=st["totals"]["net_minor"],
+                   tax_minor=st["totals"]["tax_minor"], gross_minor=st["totals"]["gross_minor"], lines=st["lines"]))
+    db.commit()
+
+
+def test_usage_reported_after_the_invoice_is_billed_once_on_the_next_invoice(api, two_workspaces, db):
+    """QA F-BQ-012: minutes that belong to an invoiced month but were reported after its invoice land on the next
+    statement as «Efterregistreret forbrug <måned>» – exactly once, also when more arrive even later."""
+    from app.models import Call
+
+    ws, tok = uuid.UUID(two_workspaces["ws_a"]), two_workspaces["tok_a"]
+    _agreement(db, ws, 1, "A", datetime(2026, 8, 1, tzinfo=UTC))
+    db.add(Call(workspace_id=ws, provider="vapi", provider_call_id="oct_1", started_at=datetime(2026, 10, 5, 9, tzinfo=UTC),
+                duration_seconds=310 * 60))
+    camp = Campaign(workspace_id=ws, name="Efterår", call_net_minor=prices.CAMPAIGN_CALL_NET_MINOR, max_attempts=1,
+                    max_connected_seconds=600)
+    db.add(camp)
+    db.flush()
+    contact = CampaignContact(campaign_id=camp.id, workspace_id=ws, phone="+4520304050", kind="business")
+    db.add(contact)
+    db.flush()
+    cc = CampaignCall(workspace_id=ws, campaign_id=camp.id, contact_id=contact.id, net_minor=prices.CAMPAIGN_CALL_NET_MINOR,
+                      dialled_at=datetime(2026, 10, 31, 22, 55, tzinfo=UTC))  # 23:55 local, report not in yet
+    db.add(cc)
+    db.commit()
+    get = lambda m: api.get(tok, f"/workspaces/{ws}/billing/statement?month={m}").json()  # noqa: E731
+    _freeze(db, ws, "2026-10", get("2026-10"))  # October invoiced: 10 min extra (1.500) + one call (400)
+    # the reports arrive after the invoice: an inbound call started 23:58 and the campaign call's 3 minutes
+    db.add(Call(workspace_id=ws, provider="vapi", provider_call_id="oct_late", started_at=datetime(2026, 10, 31, 22, 58, tzinfo=UTC),
+                duration_seconds=5 * 60))
+    cc.connected_seconds, cc.minutes_net_minor = 170, 3 * prices.CAMPAIGN_MINUTE_NET_MINOR
+    db.commit()
+    nov = get("2026-11")
+    late = sorted((x["usage_kind"], x["period"], x["minutes"], x["net_minor"]) for x in nov["lines"]
+                  if x["kind"] == "late_usage_adjustment")
+    assert late == [("campaign_calls", "2026-10", 3, 600), ("inbound_minutes", "2026-10", 5, 750)]
+    assert any("Efterregistreret forbrug oktober 2026" in x["description"] for x in nov["lines"])
+    assert nov["totals"]["net_minor"] == 249_500 + 600 + 750
+    _freeze(db, ws, "2026-11", nov)
+    # December: nothing billed twice …
+    assert [x for x in get("2026-12")["lines"] if x["kind"] == "late_usage_adjustment"] == []
+    # … but a still later report for October is picked up with only the new minutes
+    db.add(Call(workspace_id=ws, provider="vapi", provider_call_id="oct_later", started_at=datetime(2026, 10, 31, 12, tzinfo=UTC),
+                duration_seconds=2 * 60))
+    db.commit()
+    dec = [(x["period"], x["minutes"], x["net_minor"]) for x in get("2026-12")["lines"] if x["kind"] == "late_usage_adjustment"]
+    assert dec == [("2026-10", 2, 300)]
+
+
+def test_package_terms_come_from_the_agreement_not_the_list(api, two_workspaces, db, monkeypatch):
+    """QA F-BQ-011: an agreement keeps its package (included minutes, overage price) when the list changes; a new
+    agreement gets the new list."""
+    from app.models import Call
+    from app.modules.billing import agreements, markets
+
+    ws, tok = uuid.UUID(two_workspaces["ws_a"]), two_workspaces["tok_a"]
+    _agreement(db, ws, 1, "A", datetime(2026, 8, 1, tzinfo=UTC))
+    db.add(Call(workspace_id=ws, provider="vapi", provider_call_id="sep", started_at=datetime(2026, 9, 10, 9, tzinfo=UTC),
+                duration_seconds=310 * 60))
+    db.commit()
+    monkeypatch.setattr(prices, "INBOUND_INCLUDED_MINUTES", 200)
+    monkeypatch.setitem(markets.ERHVERV["DKK"], "extra_minute", 300)
+    line = [x for x in api.get(tok, f"/workspaces/{ws}/billing/statement?month=2026-09").json()["lines"]
+            if x["kind"] == "inbound_minutes"][0]
+    assert (line["included_minutes"], line["extra_minutes"], line["net_minor"]) == (300, 10, 1_500)
+    a1 = db.query(ReceptionAgreement).filter_by(workspace_id=ws).one()
+    a2 = agreements.create(db, ws, "A", None)
+    assert (a2.inbound_included_minutes, a2.inbound_extra_minute_net_minor) == (200, 300)
+    out = agreements.out(a1)
+    assert out["inbound_included_minutes"] == 300 and out["inbound_extra_minute"]["net_minor"] == 150

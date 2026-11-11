@@ -305,7 +305,12 @@
       "lead": "Richiesta",
       "cancel": "Annulla",
       "syncFailed": "Non nel calendario",
-      "syncFailedDetail": "L'appuntamento non è stato scritto nel calendario collegato: {error}"
+      "syncFailedDetail": "L'appuntamento non è stato scritto nel calendario collegato: {error}",
+      "pending": "In attesa di conferma",
+      "pendingDetail": "Non è stato possibile leggere il calendario al momento della prenotazione. Al cliente è stato detto che un collaboratore confermerà l'orario. Controlli il calendario, poi confermi o annulli.",
+      "confirm": "Conferma",
+      "confirming": "Conferma in corso…",
+      "confirmAnyway": "Conferma comunque"
     },
     "book": {
       "noSlotsError": "Non ci sono orari liberi. Controlli orari di apertura e calendario.",
@@ -318,7 +323,8 @@
       "booked": "Prenotato {label}.",
       "booking": "Prenotazione…",
       "submit": "Prenota",
-      "note": "Il cliente non riceve ancora alcun SMS: invii lei una conferma. «Primo disponibile» prende il prossimo orario consentito da orari di apertura e calendario."
+      "note": "Il cliente non riceve ancora alcun SMS: invii lei una conferma. «Primo disponibile» prende il prossimo orario consentito da orari di apertura e calendario.",
+      "pending": "Annotato {label} – in attesa di conferma, perché non è stato possibile leggere il calendario."
     },
     "calendar": {
       "reading": "Lettura…",
@@ -339,7 +345,8 @@
       "provider": {
         "google_calendar": "Google Calendar",
         "microsoft_calendar": "Calendario Outlook (Microsoft 365)"
-      }
+      },
+      "pendingN": "{n} appuntamenti sono in attesa di conferma: non è stato possibile leggere il calendario al momento della prenotazione."
     },
     "staffOnly": "Gli appuntamenti sono visibili a collaboratori, amministratori e proprietari.",
     "eyebrow": "Oggi → Appuntamenti",
@@ -556,7 +563,8 @@
       "consent": "Dove e quando hanno dato il consenso a essere chiamati?",
       "consentHint": "L'assistente chiama senza una persona in linea. Ai sensi del § 10 della legge danese sulle pratiche commerciali (markedsføringsloven), ciò richiede che il contatto lo abbia chiesto in anticipo, anche se si tratta di un'azienda. Non basta che non sia iscritto alla Robinsonliste o protetto dalla pubblicità nel registro CVR.",
       "consentPlaceholder": "Iscrizione sul sito web, marzo 2026",
-      "importing": "Importazione…"
+      "importing": "Importazione…",
+      "pauseFirst": "La campagna è in corso. Mettila in pausa per aggiungere contatti – quando riparti, confermi il nuovo numero."
     },
     "start": {
       "completed": "La campagna è conclusa: tutti i contatti sono stati chiamati.",

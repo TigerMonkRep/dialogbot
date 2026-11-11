@@ -5,15 +5,16 @@ The /proev page (web/src/app/proev/proev-chat.tsx) talks to POST /api/v1/demo-ca
 sales workspace's approved knowledge) and then POST /api/v1/demo-call, which builds Peter's outbound assistant and
 hands it to campaigns.create_call (Vapi POST /call). Here create_call is the `sales` fixture's in-memory outbox, so
 no call is ever placed. Also covers: no "privat preview"/"invitationskode" wording in Peter's prompts or seed
-knowledge; nothing forbids Peter from mentioning Dialogbot Privat."""
+knowledge; nothing forbids Peter from mentioning Dialogbot Privat.
+
+"Verificeret nummer" is not tested: Fürster decided 2026-11-10 that the number is not verified before Peter rings
+(F-VQ-05-X05, wont-fix, accepted risk)."""
 from __future__ import annotations
 
 import importlib.util
 import json
 import re
 from pathlib import Path
-
-import pytest
 
 from app.models import DemoCall
 from app.modules.ai import service as ai
@@ -117,18 +118,6 @@ def test_x05_chat_then_call_request_rings_with_peter_on_the_entered_number(clien
          "voice": {k: a["voice"][k] for k in ("provider", "voiceId", "model", "language")},
          "maxDurationSeconds": a["maxDurationSeconds"], "artifactPlan": a["artifactPlan"]},
         ensure_ascii=False, indent=1))
-
-
-@pytest.mark.xfail(strict=True, reason="F-VQ-05-X05: needs-decision – number verification before Peter rings is not built")
-def test_x05_the_number_is_verified_before_peter_rings(client, sales, db):  # noqa: F811
-    """X05: "verificeret nummer". Today the public door rings whatever Danish number is typed, as soon as the box is
-    ticked: the person who ticks "Ja tak, Peter ... må ringe mig op på dette nummer" is never shown to own it. Expected:
-    a proof of the number (code by SMS or a missed-call check, as /telephony/verify does for the business number)
-    before Peter's call is placed."""
-    r = client.post("/api/v1/demo-call", json=_proev_body(phone="21 30 40 50", company="Naboens Firma"))
-    placed = len(sales["calls"])
-    assert placed == 0 or r.json().get("status") != "calling", (
-        f"Peter rang +4521304050 immediately ({placed} call placed) without any proof that the visitor owns the number")
 
 
 # --------------------------------------------------------------------------- Peter's prompts and seed knowledge

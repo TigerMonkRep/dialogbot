@@ -80,3 +80,14 @@ Stripe: kun lokale fakes (ingen netværkskald). DB: `qa_bill`. Log: `qa/evidence
 - Stripe beregner moms med `default_tax_rates` pr. linje; vores oversigt runder half-up på totalen. Med to linjer med ,5 øre moms (fx 1 ekstra indgående minut à 150 + en rabatlinje) kan de afvige 1 øre. Koden fanger det (`invoices.note`), men det gemte `gross_minor` er vores, ikke det trukne. Kræver Stripe test mode at bevise.
 - Konto-siden beregner "forrige måned" for "Fakturér nu" i UTC (`new Date().toISOString()`), ikke Europe/Copenhagen: 1. i måneden 00:00–01:00/02:00 lokal tid foreslås den forkerte måned (backend afviser ikke-afsluttede måneder, så intet faktureres forkert).
 - Faste DKK Stripe-pris-id'er (`PRIVAT_STRIPE_PRICE_*`) har intet tjek mod `prices.py`; et forkert katalogbeløb vil blive trukket uden at nogen test opdager det.
+
+## Minutpakke-model (2026-11-10, efter Fürsters beslutning) – `tests/qa/test_qa_billing_minutpakker.py`
+
+| Tilfælde | Forventet | Faktisk | OK | Test |
+|---|---|---|---|---|
+| 250 min indgående | 250 / 300 / 0 ekstra / 0 kr. | samme | ja | mp::one_package_level |
+| + 61 min 1 s (62 påbegyndte) = 312 | 12 × 150 = 1.800; 251.300 / 62.825 / 314.125 | samme | ja | samme |
+| Listen ændres (200 inkl., 3 kr.) efter aftale v1; september 310 min | 300 inkl., 10 ekstra, 1.500 | 200 inkl., 110 ekstra, 33.000 | **nej** F-BQ-011 | mp::package_terms_are_snapshotted |
+| Fakturér oktober 310 min (fake Stripe) | linjer 249.500 + 1.500; 251.000 / 62.750 / 313.750; linjer frosset | samme | ja | mp::overage_reaches_the_stripe_invoice |
+| Sen rapport: opkald 31/10 22:58Z, 5 min, efter fakturaen | 2.250 i alt (faktura + efterregistrering) | 1.500; 750 øre faktureres aldrig | **nej** F-BQ-012 | mp::usage_reported_after_the_month_was_invoiced |
+| Faktureret periodes linjer i app / operatørens forbrugsvisning / tvist pr. opkald | – | ikke bygget | not-implemented | mp::… (xfail strict) |

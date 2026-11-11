@@ -9,21 +9,55 @@
     "skipToContent": "Zum Inhalt springen",
     "home": "Dialogbot – Heute",
     "nav": "Einrichtung",
-    "steps": ["Unternehmen", "Kalender & Systeme", "Testen & einschalten"],
+    "steps": [
+      "Unternehmen",
+      "Kalender & Systeme",
+      "Testen & einschalten"
+    ],
     "stepAria": "Schritt {n}: {label}",
     "skipped": " (übersprungen)",
     "laterNote": " – Sie finden alles wieder unter dem Profilsymbol → Alle Einstellungen."
   },
   "hours": {
-    "days": ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"],
-    "dayNames": ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"],
+    "days": [
+      "Mo",
+      "Di",
+      "Mi",
+      "Do",
+      "Fr",
+      "Sa",
+      "So"
+    ],
+    "dayNames": [
+      "Montag",
+      "Dienstag",
+      "Mittwoch",
+      "Donnerstag",
+      "Freitag",
+      "Samstag",
+      "Sonntag"
+    ],
     "and": "und"
   },
   "step1Page": {
     "eyebrow": "Ihr Dialogbot · Schritt 1 von 3 · ca. 5 Min.",
     "title": "Wer sind Sie – und was soll er tun?",
     "intro": "Ein Schritt. Das meiste holen wir von Ihrer Website – Sie korrigieren nur, was nicht stimmt. Alles lässt sich später ändern, indem Sie es dem Assistenten sagen.",
-    "need": [["1×", "Website-Adresse"], ["1×", "CVR-Nummer", "oder einfach den Namen"], ["1×", "die Nummer, die Ihre Kunden anrufen"]]
+    "need": [
+      [
+        "1×",
+        "Website-Adresse"
+      ],
+      [
+        "1×",
+        "CVR-Nummer",
+        "oder einfach den Namen"
+      ],
+      [
+        "1×",
+        "die Nummer, die Ihre Kunden anrufen"
+      ]
+    ]
   },
   "step1": {
     "kind": {
@@ -96,10 +130,22 @@
       "title": "Was soll er für Sie tun?",
       "hint": "Wählen Sie, was passt. Davon hängt ab, was in Schritt 2 und 3 abgefragt wird.",
       "cards": {
-        "phone": { "title": "Ans Telefon gehen", "sub": "wenn Sie es nicht können – oder immer" },
-        "booking": { "title": "Termine buchen", "sub": "direkt in Ihren Kalender" },
-        "web": { "title": "Auf der Website antworten", "sub": "Webchat – eine Codezeile" },
-        "outbound": { "title": "Kunden anrufen", "sub": "Kampagnen · {pCall} pro Anruf zzgl. MwSt." }
+        "phone": {
+          "title": "Ans Telefon gehen",
+          "sub": "wenn Sie es nicht können – oder immer"
+        },
+        "booking": {
+          "title": "Termine buchen",
+          "sub": "direkt in Ihren Kalender"
+        },
+        "web": {
+          "title": "Auf der Website antworten",
+          "sub": "Webchat – eine Codezeile"
+        },
+        "outbound": {
+          "title": "Kunden anrufen",
+          "sub": "Kampagnen · {pCall} pro Anruf zzgl. MwSt."
+        }
       },
       "langAria": "Sprache",
       "speaks": "Er spricht",
@@ -129,7 +175,16 @@
   "step2Page": {
     "eyebrow": "Schritt 2 von 3",
     "title": "Wo sollen die Termine landen?",
-    "need": [["1×", "Zugang zu Ihrem Kalender"], ["2", "Minuten"]],
+    "need": [
+      [
+        "1×",
+        "Zugang zu Ihrem Kalender"
+      ],
+      [
+        "2",
+        "Minuten"
+      ]
+    ],
     "connector": {
       "google_calendar": "Google Kalender",
       "microsoft_calendar": "Microsoft 365-Kalender"
@@ -165,7 +220,20 @@
     "writeUs": "Schreiben Sie uns",
     "managersOnly": "Nur Inhaber und Administratoren können Systeme verbinden.",
     "writesTitle": "Das trägt Dialogbot in den Kalender ein",
-    "writes": [["1×", "Termin mit Name, Nummer und Anliegen des Kunden"], ["1×", "Bestätigung an Sie mit dem Termin"], ["0×", "Änderungen an Ihren bestehenden Terminen – die rührt er nie an"]],
+    "writes": [
+      [
+        "1×",
+        "Termin mit Name, Nummer und Anliegen des Kunden"
+      ],
+      [
+        "1×",
+        "Bestätigung an Sie mit dem Termin"
+      ],
+      [
+        "0×",
+        "Änderungen an Ihren bestehenden Terminen – die rührt er nie an"
+      ]
+    ],
     "defaultsNote": "Die Zeiten richten sich nach Ihren Öffnungszeiten aus Schritt 1. Zu Beginn: Termine von 45 Minuten, 15 Minuten Pause und frühestens morgen. Das lässt sich unter Termine ändern.",
     "next": "Weiter zu Schritt 3: Testen & einschalten",
     "skip": "Überspringen – ich nutze keinen Kalender"
@@ -173,7 +241,16 @@
   "step3Page": {
     "eyebrow": "Schritt 3 von 3 · letzter Schritt",
     "title": "Stimme wählen, Telefon verbinden – und einschalten",
-    "need": [["1×", "ein Telefon zum Anrufen"], ["10", "Sekunden für die Rufumleitung"]]
+    "need": [
+      [
+        "1×",
+        "ein Telefon zum Anrufen"
+      ],
+      [
+        "10",
+        "Sekunden für die Rufumleitung"
+      ]
+    ]
   },
   "step3": {
     "failed": "Das hat nicht geklappt. Bitte versuchen Sie es erneut.",
@@ -295,21 +372,45 @@
     "managersOnly": "Nur Inhaber und Administratoren können einschalten.",
     "subscriptionNote": "Das Abonnement kostet ab {pMonthly}/Monat zzgl. MwSt., ausgehende Kampagnenanrufe kosten {pCall} pro Anruf zzgl. MwSt.",
     "confirmSubscription": "Abonnement bestätigen",
-    "findAgain": "Sie finden alles wieder unter dem Profilsymbol → Alle Einstellungen."
+    "findAgain": "Sie finden alles wieder unter dem Profilsymbol → Alle Einstellungen.",
+    "readerTitle": "Der Inhaber richtet Dialogbot ein",
+    "campaignsTitle": "Bereit für Ihre erste Kampagne",
+    "campaignsText": "Es gibt nichts einzuschalten: Dialogbot ruft erst an, wenn Sie eine Kampagne erstellt und gestartet haben.",
+    "campaignsCta": "Erste Kampagne erstellen",
+    "nothingTitle": "Wählen Sie, was Dialogbot tun soll",
+    "nothingText": "In Schritt 1 ist nichts ausgewählt, daher gibt es nichts einzuschalten. Wählen Sie mindestens eine Sache."
   },
   "assistant": {
     "setupChips": {
       "1": [
-        { "label": "Öffnungszeiten", "fill": "Öffnungszeiten Mo-Fr 8-16" },
-        { "label": "Was passiert in Schritt 2?", "say": "In Schritt 2 verbinden Sie Ihren Kalender, damit Termine dort landen. Das ist optional – Sie können es überspringen." }
+        {
+          "label": "Öffnungszeiten",
+          "fill": "Öffnungszeiten Mo-Fr 8-16"
+        },
+        {
+          "label": "Was passiert in Schritt 2?",
+          "say": "In Schritt 2 verbinden Sie Ihren Kalender, damit Termine dort landen. Das ist optional – Sie können es überspringen."
+        }
       ],
       "2": [
-        { "label": "Was tragen Sie in den Kalender ein?", "say": "Einen Termin mit Name, Nummer und Anliegen des Kunden – und eine Bestätigung an Sie. Ihre bestehenden Termine rühre ich nie an." },
-        { "label": "Was passiert in Schritt 3?", "say": "In Schritt 3 wählen Sie eine Stimme, verbinden das Telefon per Rufumleitung und schalten Dialogbot ein." }
+        {
+          "label": "Was tragen Sie in den Kalender ein?",
+          "say": "Einen Termin mit Name, Nummer und Anliegen des Kunden – und eine Bestätigung an Sie. Ihre bestehenden Termine rühre ich nie an."
+        },
+        {
+          "label": "Was passiert in Schritt 3?",
+          "say": "In Schritt 3 wählen Sie eine Stimme, verbinden das Telefon per Rufumleitung und schalten Dialogbot ein."
+        }
       ],
       "3": [
-        { "label": "Wie richte ich die Rufumleitung ein?", "say": "Tippen Sie den Code aus Schritt 3 auf Ihrem Telefon ein und drücken Sie auf Anrufen. Mit dem Code darunter schalten Sie die Rufumleitung wieder aus." },
-        { "label": "Kann ich das rückgängig machen?", "say": "Ja. Sie können Dialogbot unter Heute pausieren und die Rufumleitung auf Ihrem Telefon ausschalten." }
+        {
+          "label": "Wie richte ich die Rufumleitung ein?",
+          "say": "Tippen Sie den Code aus Schritt 3 auf Ihrem Telefon ein und drücken Sie auf Anrufen. Mit dem Code darunter schalten Sie die Rufumleitung wieder aus."
+        },
+        {
+          "label": "Kann ich das rückgängig machen?",
+          "say": "Ja. Sie können Dialogbot unter Heute pausieren und die Rufumleitung auf Ihrem Telefon ausschalten."
+        }
       ]
     },
     "chips": {

@@ -798,7 +798,8 @@
         "startOver": "Von vorn beginnen",
         "notLoggedIn": "Melde dich an, um zu sehen, wie der Anruf lief.",
         "login": "Anmelden",
-        "statusAria": "Status des Anrufs"
+        "statusAria": "Status des Anrufs",
+        "noCallTitle": "Sie ruft gerade nicht an"
       }
     }
   }

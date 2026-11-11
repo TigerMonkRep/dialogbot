@@ -1,0 +1,1359 @@
+
+Running 72 tests using 1 worker
+
+  ✓   1 [desktop-1440] › e2e/qa/erhverv-c/C02.spec.ts:7:5 › C02 · opret kampagne i browseren: navn + formål gemmes via API, overlever reload, ét klik = én kampagne (5.4s)
+  ✘   2 [desktop-1440] › e2e/qa/erhverv-c/C02.spec.ts:41:5 › C02 · F-E2C-01: kunde der kun har valgt kampagner kan slå udgående opkald til og oprette en kampagne (13.6s)
+  ✓   3 [desktop-1440] › e2e/qa/erhverv-c/C02.spec.ts:55:5 › C02 · serverfejl (500) ved oprettelse vises ærligt, og der oprettes intet (3.5s)
+  ✓   4 [desktop-1440] › e2e/qa/erhverv-c/C02.spec.ts:69:5 › C02 · udløbet session: oprettelse afvises, intet oprettes (4.7s)
+  ✓   5 [desktop-1440] › e2e/qa/erhverv-c/C02.spec.ts:82:5 › C02 · roller: medarbejder ser kampagner men kan ikke oprette; læser ser dem ikke; API afviser (18.7s)
+  ✘   6 [desktop-1440] › e2e/qa/erhverv-c/C02.spec.ts:107:5 › C02 · krav: sprogvalg for kampagnen (ikke bygget) (17.3s)
+  ✓   7 [desktop-1440] › e2e/qa/erhverv-c/C03.spec.ts:7:5 › C03 · CSV-fil uploades i browseren, kontakterne gemmes og overlever reload (13.4s)
+  ✓   8 [desktop-1440] › e2e/qa/erhverv-c/C03.spec.ts:33:5 › C03 · serverfejl ved import: fejlen vises, intet importeres, listen bevares (5.2s)
+  ✘   9 [desktop-1440] › e2e/qa/erhverv-c/C03.spec.ts:46:5 › C03 · krav: API-kilde eller skrivebeskyttet database som kontaktkilde med forbindelsesstatus (ikke bygget) (9.4s)
+  ✓  10 [desktop-1440] › e2e/qa/erhverv-c/C04.spec.ts:8:5 › C04 · samtykke er påkrævet – også for virksomheder – og gemmes pr. kontakt (9.8s)
+  ✘  11 [desktop-1440] › e2e/qa/erhverv-c/C04.spec.ts:33:5 › C04 · krav: kolonne-mapping, kontaktens sprog og godkendt variabel-mapping (ikke bygget) (7.2s)
+  ✓  12 [desktop-1440] › e2e/qa/erhverv-c/C05.spec.ts:8:5 › C05 · import viser tilføjet/dubletter/spærret/ugyldige; tællere = API; spærring fra spærrelisten virker (9.7s)
+  ✓  13 [desktop-1440] › e2e/qa/erhverv-c/C05.spec.ts:43:5 › C05 · spærring af et nummer efter import springer den ventende kontakt over (3.7s)
+  ✘  14 [desktop-1440] › e2e/qa/erhverv-c/C05.spec.ts:55:5 › C05 · alle importerede kontakter kan ses (501 kontakter: tæller og liste stemmer) (11.0s)
+  ✘  15 [desktop-1440] › e2e/qa/erhverv-c/C05.spec.ts:68:5 › C05 · krav: ret en ugyldig række og eksportér fejl (ikke bygget) (12.5s)
+  ✓  16 [desktop-1440] › e2e/qa/erhverv-c/C06.spec.ts:8:5 › C06 · manuskript: AI-forslag fyldes ind, gemmes, overlever reload; versionskonflikt afvises (14.4s)
+  ✘  17 [desktop-1440] › e2e/qa/erhverv-c/C06.spec.ts:45:5 › C06 · én primær knap pr. skærm på kampagnesiden (brand.md) (3.5s)
+  ✘  18 [desktop-1440] › e2e/qa/erhverv-c/C06.spec.ts:54:5 › C06 · krav: upload af manuskript, forgreninger, personlig forhåndsvisning og versioner (ikke bygget) (6.7s)
+  ✘  19 [desktop-1440] › e2e/qa/erhverv-c/C07.spec.ts:7:5 › C07 · F-E2C-04: ukendt variabel i første replik ({fornavn}) afvises eller advares om, før den kan blive sagt højt (7.0s)
+  ✘  20 [desktop-1440] › e2e/qa/erhverv-c/C07.spec.ts:20:5 › C07 · krav: simuleret testopkald med eksempler på manglende variabler og godkendelse (ikke bygget) (10.0s)
+  ✓  21 [desktop-1440] › e2e/qa/erhverv-c/C08.spec.ts:8:5 › C08 · startboks: antal = ventende kontakter fra API, alle vilkår skal krydses af, start aldrig uden bekræftelse (9.1s)
+  ✘  22 [desktop-1440] › e2e/qa/erhverv-c/C08.spec.ts:43:5 › C08 · krav: vælg hvilke kontakter der er med (udvalg) og fastfrys udvalget ved bekræftelse (ikke bygget) (6.9s)
+  ✓  23 [desktop-1440] › e2e/qa/erhverv-c/C12.spec.ts:20:5 › C12 · kørende kampagne: status, fremdrift = API, fejl vises, manuskript låst, pause virker og overlever reload (5.8s)
+C12 after import: {"status":"running","by_status":{"done":1,"failed":1,"pending":3},"before":2,"form":1}
+  ✘  24 [desktop-1440] › e2e/qa/erhverv-c/C12.spec.ts:48:5 › C12 · F-E2C-03: kontakter kan ikke tilføjes til en kørende kampagne uden ny bekræftelse (4.8s)
+C12 not built: {"upcoming":0,"live":false,"cancel":0}
+  ✘  25 [desktop-1440] › e2e/qa/erhverv-c/C12.spec.ts:67:5 › C12 · krav: kommende opkald, live-opdatering uden reload og «annullér resten» (ikke bygget) (19.3s)
+  ✓  26 [desktop-1440] › e2e/qa/erhverv-c/C13.spec.ts:20:5 › C13 · afsluttet kampagne: udfald pr. kontakt, tællere = API, kan ikke genstartes eller få nye kontakter (9.0s)
+  ✘  27 [desktop-1440] › e2e/qa/erhverv-c/C13.spec.ts:50:5 › C13 · krav: eksport, slutrapport og leveringsstatus (ikke bygget) (9.8s)
+  ✓  28 [desktop-1440] › e2e/qa/erhverv-c/C14.spec.ts:9:5 › C14 · frabedt sig opkald: står på spærrelisten, kan ikke fjernes, og nummeret springes over i næste kampagne (6.1s)
+  ✓  29 [desktop-1440] › e2e/qa/erhverv-c/C14.spec.ts:34:5 › C14 · roller: medarbejder kan spærre et nummer men ikke fjerne en spærring; læser kan ingenting (16.7s)
+  ✘  30 [desktop-1440] › e2e/qa/erhverv-c/C14.spec.ts:58:5 › C14 · krav: kontaktside med historik, forsøg, tilladt udskrift og bevis (ikke bygget) (6.0s)
+  ✓  31 [desktop-1440] › e2e/qa/erhverv-c/K01.spec.ts:9:5 › K01 · tom viden → forslag i kø → godkend i browseren: kø, godkendt viden og assistentens viden stemmer (7.0s)
+  ✓  32 [desktop-1440] › e2e/qa/erhverv-c/K01.spec.ts:46:5 › K01 · roller: læser ser viden men kan ikke rette, godkende eller oprette; API afviser (4.3s)
+  ✓  33 [desktop-1440] › e2e/qa/erhverv-c/K04.spec.ts:16:5 › K04 · opret tilbud i browseren: ≥ 40 m², datoer inkl., overlever reload; reglen 39/40/41/1. dec. holder (5.3s)
+  ✘  34 [desktop-1440] › e2e/qa/erhverv-c/K04.spec.ts:51:5 › K04 · tilbud uden datoer: fejlbeskeden er forståelig dansk (ikke feltnavne) (15.0s)
+  ✘  35 [desktop-1440] › e2e/qa/erhverv-c/K04.spec.ts:64:5 › K04 · tilstande: udløbet tilbud vises som udløbet, ikke som aktivt (17.5s)
+  ✓  36 [desktop-1440] › e2e/qa/erhverv-c/K04.spec.ts:75:5 › K04 · medarbejder foreslår tilbud → kladde venter, er ikke i assistentens viden; ejer kan genoprette fjernet tilbud med samme navn (11.1s)
+  ✓  37 [mobil-390] › e2e/qa/erhverv-c/C02.spec.ts:7:5 › C02 · opret kampagne i browseren: navn + formål gemmes via API, overlever reload, ét klik = én kampagne (5.0s)
+  ✘  38 [mobil-390] › e2e/qa/erhverv-c/C02.spec.ts:41:5 › C02 · F-E2C-01: kunde der kun har valgt kampagner kan slå udgående opkald til og oprette en kampagne (13.2s)
+  ✓  39 [mobil-390] › e2e/qa/erhverv-c/C02.spec.ts:55:5 › C02 · serverfejl (500) ved oprettelse vises ærligt, og der oprettes intet (5.8s)
+  ✓  40 [mobil-390] › e2e/qa/erhverv-c/C02.spec.ts:69:5 › C02 · udløbet session: oprettelse afvises, intet oprettes (6.4s)
+  ✓  41 [mobil-390] › e2e/qa/erhverv-c/C02.spec.ts:82:5 › C02 · roller: medarbejder ser kampagner men kan ikke oprette; læser ser dem ikke; API afviser (11.4s)
+  ✘  42 [mobil-390] › e2e/qa/erhverv-c/C02.spec.ts:107:5 › C02 · krav: sprogvalg for kampagnen (ikke bygget) (14.4s)
+  ✓  43 [mobil-390] › e2e/qa/erhverv-c/C03.spec.ts:7:5 › C03 · CSV-fil uploades i browseren, kontakterne gemmes og overlever reload (4.5s)
+  ✓  44 [mobil-390] › e2e/qa/erhverv-c/C03.spec.ts:33:5 › C03 · serverfejl ved import: fejlen vises, intet importeres, listen bevares (3.8s)
+  ✘  45 [mobil-390] › e2e/qa/erhverv-c/C03.spec.ts:46:5 › C03 · krav: API-kilde eller skrivebeskyttet database som kontaktkilde med forbindelsesstatus (ikke bygget) (7.8s)
+  ✓  46 [mobil-390] › e2e/qa/erhverv-c/C04.spec.ts:8:5 › C04 · samtykke er påkrævet – også for virksomheder – og gemmes pr. kontakt (3.2s)
+  ✘  47 [mobil-390] › e2e/qa/erhverv-c/C04.spec.ts:33:5 › C04 · krav: kolonne-mapping, kontaktens sprog og godkendt variabel-mapping (ikke bygget) (5.6s)
+  ✓  48 [mobil-390] › e2e/qa/erhverv-c/C05.spec.ts:8:5 › C05 · import viser tilføjet/dubletter/spærret/ugyldige; tællere = API; spærring fra spærrelisten virker (6.5s)
+  ✓  49 [mobil-390] › e2e/qa/erhverv-c/C05.spec.ts:43:5 › C05 · spærring af et nummer efter import springer den ventende kontakt over (3.3s)
+  ✘  50 [mobil-390] › e2e/qa/erhverv-c/C05.spec.ts:55:5 › C05 · alle importerede kontakter kan ses (501 kontakter: tæller og liste stemmer) (3.5s)
+  ✘  51 [mobil-390] › e2e/qa/erhverv-c/C05.spec.ts:68:5 › C05 · krav: ret en ugyldig række og eksportér fejl (ikke bygget) (6.3s)
+  ✓  52 [mobil-390] › e2e/qa/erhverv-c/C06.spec.ts:8:5 › C06 · manuskript: AI-forslag fyldes ind, gemmes, overlever reload; versionskonflikt afvises (8.0s)
+  ✘  53 [mobil-390] › e2e/qa/erhverv-c/C06.spec.ts:45:5 › C06 · én primær knap pr. skærm på kampagnesiden (brand.md) (3.3s)
+  ✘  54 [mobil-390] › e2e/qa/erhverv-c/C06.spec.ts:54:5 › C06 · krav: upload af manuskript, forgreninger, personlig forhåndsvisning og versioner (ikke bygget) (7.8s)
+  ✘  55 [mobil-390] › e2e/qa/erhverv-c/C07.spec.ts:7:5 › C07 · F-E2C-04: ukendt variabel i første replik ({fornavn}) afvises eller advares om, før den kan blive sagt højt (10.3s)
+  ✘  56 [mobil-390] › e2e/qa/erhverv-c/C07.spec.ts:20:5 › C07 · krav: simuleret testopkald med eksempler på manglende variabler og godkendelse (ikke bygget) (9.7s)
+  ✓  57 [mobil-390] › e2e/qa/erhverv-c/C08.spec.ts:8:5 › C08 · startboks: antal = ventende kontakter fra API, alle vilkår skal krydses af, start aldrig uden bekræftelse (6.6s)
+  ✘  58 [mobil-390] › e2e/qa/erhverv-c/C08.spec.ts:43:5 › C08 · krav: vælg hvilke kontakter der er med (udvalg) og fastfrys udvalget ved bekræftelse (ikke bygget) (8.6s)
+  ✓  59 [mobil-390] › e2e/qa/erhverv-c/C12.spec.ts:20:5 › C12 · kørende kampagne: status, fremdrift = API, fejl vises, manuskript låst, pause virker og overlever reload (10.4s)
+C12 after import: {"status":"running","by_status":{"done":1,"failed":1,"pending":3},"before":2,"form":1}
+  ✘  60 [mobil-390] › e2e/qa/erhverv-c/C12.spec.ts:48:5 › C12 · F-E2C-03: kontakter kan ikke tilføjes til en kørende kampagne uden ny bekræftelse (6.3s)
+C12 not built: {"upcoming":0,"live":false,"cancel":0}
+  ✘  61 [mobil-390] › e2e/qa/erhverv-c/C12.spec.ts:67:5 › C12 · krav: kommende opkald, live-opdatering uden reload og «annullér resten» (ikke bygget) (24.3s)
+  ✓  62 [mobil-390] › e2e/qa/erhverv-c/C13.spec.ts:20:5 › C13 · afsluttet kampagne: udfald pr. kontakt, tællere = API, kan ikke genstartes eller få nye kontakter (3.3s)
+  ✘  63 [mobil-390] › e2e/qa/erhverv-c/C13.spec.ts:50:5 › C13 · krav: eksport, slutrapport og leveringsstatus (ikke bygget) (5.5s)
+  ✓  64 [mobil-390] › e2e/qa/erhverv-c/C14.spec.ts:9:5 › C14 · frabedt sig opkald: står på spærrelisten, kan ikke fjernes, og nummeret springes over i næste kampagne (3.8s)
+  ✓  65 [mobil-390] › e2e/qa/erhverv-c/C14.spec.ts:34:5 › C14 · roller: medarbejder kan spærre et nummer men ikke fjerne en spærring; læser kan ingenting (6.1s)
+  ✘  66 [mobil-390] › e2e/qa/erhverv-c/C14.spec.ts:58:5 › C14 · krav: kontaktside med historik, forsøg, tilladt udskrift og bevis (ikke bygget) (3.7s)
+  ✓  67 [mobil-390] › e2e/qa/erhverv-c/K01.spec.ts:9:5 › K01 · tom viden → forslag i kø → godkend i browseren: kø, godkendt viden og assistentens viden stemmer (5.3s)
+  ✓  68 [mobil-390] › e2e/qa/erhverv-c/K01.spec.ts:46:5 › K01 · roller: læser ser viden men kan ikke rette, godkende eller oprette; API afviser (5.1s)
+  ✓  69 [mobil-390] › e2e/qa/erhverv-c/K04.spec.ts:16:5 › K04 · opret tilbud i browseren: ≥ 40 m², datoer inkl., overlever reload; reglen 39/40/41/1. dec. holder (11.9s)
+  ✘  70 [mobil-390] › e2e/qa/erhverv-c/K04.spec.ts:51:5 › K04 · tilbud uden datoer: fejlbeskeden er forståelig dansk (ikke feltnavne) (14.9s)
+  ✘  71 [mobil-390] › e2e/qa/erhverv-c/K04.spec.ts:64:5 › K04 · tilstande: udløbet tilbud vises som udløbet, ikke som aktivt (16.6s)
+  ✓  72 [mobil-390] › e2e/qa/erhverv-c/K04.spec.ts:75:5 › K04 · medarbejder foreslår tilbud → kladde venter, er ikke i assistentens viden; ejer kan genoprette fjernet tilbud med samme navn (10.6s)
+
+
+  1) [desktop-1440] › e2e/qa/erhverv-c/C02.spec.ts:41:5 › C02 · F-E2C-01: kunde der kun har valgt kampagner kan slå udgående opkald til og oprette en kampagne 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('main [role=alert]')
+    Expected: [32m0[39m
+    Received: [31m1[39m
+    Timeout:  10000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 10000ms[22m
+    [2m  - waiting for locator('main [role=alert]')[22m
+    [2m    14 × locator resolved to 1 element[22m
+    [2m       - unexpected value "1"[22m
+
+
+      48 |   }
+      49 |   await page.screenshot({ path: evid("C02", info, "kun-kampagner-kan-ikke-slaa-til"), fullPage: true });
+    > 50 |   await expect(page.locator("main [role=alert]")).toHaveCount(0);
+         |                                                   ^
+      51 |   await expect(page.getByRole("heading", { name: "Ny kampagne" })).toBeVisible();
+      52 |   expect((await (await page.request.get(`/api/backend/workspaces/${wsId}/goals`)).json()).product_intent).toBe("campaigns");
+      53 | });
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C02.spec.ts:50:51
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C02-C02-·-F-E-01062--til-og-oprette-en-kampagne-desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C02-C02-·-F-E-01062--til-og-oprette-en-kampagne-desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C02-C02-·-F-E-01062--til-og-oprette-en-kampagne-desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C02-C02-·-F-E-01062--til-og-oprette-en-kampagne-desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [desktop-1440] › e2e/qa/erhverv-c/C02.spec.ts:107:5 › C02 · krav: sprogvalg for kampagnen (ikke bygget) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByLabel(/sprog/i)
+    Expected: [32m1[39m
+    Received: [31m0[39m
+    Timeout:  10000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 10000ms[22m
+    [2m  - waiting for getByLabel(/sprog/i)[22m
+    [2m    14 × locator resolved to 0 elements[22m
+    [2m       - unexpected value "0"[22m
+
+
+      111 |   await page.goto(`/app/kampagner/${c.id}`);
+      112 |   await page.screenshot({ path: evid("C02", info, "intet-sprogvalg"), fullPage: true });
+    > 113 |   await expect(page.getByLabel(/sprog/i)).toHaveCount(1);
+          |                                           ^
+      114 | });
+      115 |
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C02.spec.ts:113:43
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C02-C02-·-kra-0d063--for-kampagnen-ikke-bygget--desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C02-C02-·-kra-0d063--for-kampagnen-ikke-bygget--desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C02-C02-·-kra-0d063--for-kampagnen-ikke-bygget--desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C02-C02-·-kra-0d063--for-kampagnen-ikke-bygget--desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [desktop-1440] › e2e/qa/erhverv-c/C03.spec.ts:46:5 › C03 · krav: API-kilde eller skrivebeskyttet database som kontaktkilde med forbindelsesstatus (ikke bygget) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByRole('radio', { name: /API|database/i }).or(getByRole('button', { name: /API|database|forbind/i }))
+    Expected: [32m1[39m
+    Received: [31m0[39m
+    Timeout:  3000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 3000ms[22m
+    [2m  - waiting for getByRole('radio', { name: /API|database/i }).or(getByRole('button', { name: /API|database|forbind/i }))[22m
+    [2m    7 × locator resolved to 0 elements[22m
+    [2m      - unexpected value "0"[22m
+
+
+      50 |   await page.goto(`/app/kampagner/${c.id}`);
+      51 |   await page.screenshot({ path: evid("C03", info, "kun-csv"), fullPage: true });
+    > 52 |   await expect(page.getByRole("radio", { name: /API|database/i }).or(page.getByRole("button", { name: /API|database|forbind/i }))).toHaveCount(1, { timeout: 3_000 });
+         |                                                                                                                                    ^
+      53 | });
+      54 |
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C03.spec.ts:52:132
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C03-C03-·-kra-a8897-indelsesstatus-ikke-bygget--desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C03-C03-·-kra-a8897-indelsesstatus-ikke-bygget--desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C03-C03-·-kra-a8897-indelsesstatus-ikke-bygget--desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C03-C03-·-kra-a8897-indelsesstatus-ikke-bygget--desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [desktop-1440] › e2e/qa/erhverv-c/C04.spec.ts:33:5 › C04 · krav: kolonne-mapping, kontaktens sprog og godkendt variabel-mapping (ikke bygget) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByRole('combobox', { name: /kolonne|sprog/i })
+    Expected: [32m1[39m
+    Received: [31m0[39m
+    Timeout:  3000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 3000ms[22m
+    [2m  - waiting for getByRole('combobox', { name: /kolonne|sprog/i })[22m
+    [2m    7 × locator resolved to 0 elements[22m
+    [2m      - unexpected value "0"[22m
+
+
+      37 |   await page.goto(`/app/kampagner/${c.id}`);
+      38 |   await page.screenshot({ path: evid("C04", info, "ingen-mapping"), fullPage: true });
+    > 39 |   await expect(page.getByRole("combobox", { name: /kolonne|sprog/i })).toHaveCount(1, { timeout: 3_000 });
+         |                                                                        ^
+      40 | });
+      41 |
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C04.spec.ts:39:72
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C04-C04-·-kra-aa517-riabel-mapping-ikke-bygget--desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C04-C04-·-kra-aa517-riabel-mapping-ikke-bygget--desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C04-C04-·-kra-aa517-riabel-mapping-ikke-bygget--desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C04-C04-·-kra-aa517-riabel-mapping-ikke-bygget--desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) [desktop-1440] › e2e/qa/erhverv-c/C05.spec.ts:55:5 › C05 · alle importerede kontakter kan ses (501 kontakter: tæller og liste stemmer) 
+
+    Error: list shows 500 of 501 contacts and offers no way to see the rest
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mfalse[39m
+
+      63 |   const shown = await page.locator("li").filter({ hasText: /^Kontakt \d+/ }).count();
+      64 |   const more = await page.getByRole("button", { name: /vis flere|se alle|næste/i }).count();
+    > 65 |   expect(shown === 501 || more > 0, `list shows ${shown} of 501 contacts and offers no way to see the rest`).toBe(true);
+         |                                                                                                              ^
+      66 | });
+      67 |
+      68 | test("C05 · krav: ret en ugyldig række og eksportér fejl (ikke bygget)", async ({ page }, info) => {
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C05.spec.ts:65:110
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C05-C05-·-all-4f3be-er-tæller-og-liste-stemmer--desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C05-C05-·-all-4f3be-er-tæller-og-liste-stemmer--desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C05-C05-·-all-4f3be-er-tæller-og-liste-stemmer--desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C05-C05-·-all-4f3be-er-tæller-og-liste-stemmer--desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) [desktop-1440] › e2e/qa/erhverv-c/C05.spec.ts:68:5 › C05 · krav: ret en ugyldig række og eksportér fejl (ikke bygget) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByRole('button', { name: /eksport|download|hent fejl/i }).or(getByRole('link', { name: /eksport|download/i }))
+    Expected: [32m1[39m
+    Received: [31m0[39m
+    Timeout:  3000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 3000ms[22m
+    [2m  - waiting for getByRole('button', { name: /eksport|download|hent fejl/i }).or(getByRole('link', { name: /eksport|download/i }))[22m
+    [2m    6 × locator resolved to 0 elements[22m
+    [2m      - unexpected value "0"[22m
+
+
+      76 |   await expect(page.locator("main [role=status]").filter({ hasText: "ugyldige" })).toBeVisible();
+      77 |   await page.screenshot({ path: evid("C05", info, "ingen-eksport"), fullPage: true });
+    > 78 |   await expect(page.getByRole("button", { name: /eksport|download|hent fejl/i }).or(page.getByRole("link", { name: /eksport|download/i }))).toHaveCount(1, { timeout: 3_000 });
+         |                                                                                                                                             ^
+      79 | });
+      80 |
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C05.spec.ts:78:141
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C05-C05-·-kra-1b5a4-eksportér-fejl-ikke-bygget--desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C05-C05-·-kra-1b5a4-eksportér-fejl-ikke-bygget--desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C05-C05-·-kra-1b5a4-eksportér-fejl-ikke-bygget--desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C05-C05-·-kra-1b5a4-eksportér-fejl-ikke-bygget--desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  7) [desktop-1440] › e2e/qa/erhverv-c/C06.spec.ts:45:5 › C06 · én primær knap pr. skærm på kampagnesiden (brand.md) 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeLessThanOrEqual[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: <= [32m1[39m
+    Received:    [31m3[39m
+
+      49 |   await expect(page.getByRole("button", { name: "Start kampagne" })).toBeVisible();
+      50 |   await page.screenshot({ path: evid("C06", info, "primaere-knapper"), fullPage: true });
+    > 51 |   expect(await primaryButtons(page)).toBeLessThanOrEqual(1);
+         |                                      ^
+      52 | });
+      53 |
+      54 | test("C06 · krav: upload af manuskript, forgreninger, personlig forhåndsvisning og versioner (ikke bygget)", async ({ page }, info) => {
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C06.spec.ts:51:38
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C06-C06-·-én--cf5d7--på-kampagnesiden-brand-md--desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C06-C06-·-én--cf5d7--på-kampagnesiden-brand-md--desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C06-C06-·-én--cf5d7--på-kampagnesiden-brand-md--desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C06-C06-·-én--cf5d7--på-kampagnesiden-brand-md--desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  8) [desktop-1440] › e2e/qa/erhverv-c/C06.spec.ts:54:5 › C06 · krav: upload af manuskript, forgreninger, personlig forhåndsvisning og versioner (ikke bygget) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByRole('button', { name: /version|historik|forhåndsvis/i }).or(getByRole('link', { name: /version|historik/i }))
+    Expected: [32m1[39m
+    Received: [31m0[39m
+    Timeout:  3000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 3000ms[22m
+    [2m  - waiting for getByRole('button', { name: /version|historik|forhåndsvis/i }).or(getByRole('link', { name: /version|historik/i }))[22m
+    [2m    7 × locator resolved to 0 elements[22m
+    [2m      - unexpected value "0"[22m
+
+
+      58 |   await page.goto(`/app/kampagner/${c.id}`);
+      59 |   await page.screenshot({ path: evid("C06", info, "ingen-versioner"), fullPage: true });
+    > 60 |   await expect(page.getByRole("button", { name: /version|historik|forhåndsvis/i }).or(page.getByRole("link", { name: /version|historik/i }))).toHaveCount(1, { timeout: 3_000 });
+         |                                                                                                                                               ^
+      61 | });
+      62 |
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C06.spec.ts:60:143
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C06-C06-·-kra-beafb-g-og-versioner-ikke-bygget--desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C06-C06-·-kra-beafb-g-og-versioner-ikke-bygget--desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C06-C06-·-kra-beafb-g-og-versioner-ikke-bygget--desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C06-C06-·-kra-beafb-g-og-versioner-ikke-bygget--desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  9) [desktop-1440] › e2e/qa/erhverv-c/C07.spec.ts:7:5 › C07 · F-E2C-04: ukendt variabel i første replik ({fornavn}) afvises eller advares om, før den kan blive sagt højt 
+
+    Error: saved opening "Hej {fornavn}, det er den digitale assistent fra {firma}." without any warning
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mfalse[39m
+
+      15 |   const saved = (await getCampaign(page.request, wsId, c.id)).opening as string;
+      16 |   const warned = await page.locator("main [role=alert]").filter({ hasText: /fornavn|variabel|ukendt/i }).count();
+    > 17 |   expect(warned > 0 || !saved.includes("{fornavn}"), `saved opening ${JSON.stringify(saved)} without any warning`).toBe(true);
+         |                                                                                                                    ^
+      18 | });
+      19 |
+      20 | test("C07 · krav: simuleret testopkald med eksempler på manglende variabler og godkendelse (ikke bygget)", async ({ page }, info) => {
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C07.spec.ts:17:116
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C07-C07-·-F-E-a0e09-før-den-kan-blive-sagt-højt-desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C07-C07-·-F-E-a0e09-før-den-kan-blive-sagt-højt-desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C07-C07-·-F-E-a0e09-før-den-kan-blive-sagt-højt-desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C07-C07-·-F-E-a0e09-før-den-kan-blive-sagt-højt-desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  10) [desktop-1440] › e2e/qa/erhverv-c/C07.spec.ts:20:5 › C07 · krav: simuleret testopkald med eksempler på manglende variabler og godkendelse (ikke bygget) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByRole('button', { name: /test|prøv|simul|hør/i })
+    Expected: [32m1[39m
+    Received: [31m0[39m
+    Timeout:  3000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 3000ms[22m
+    [2m  - waiting for getByRole('button', { name: /test|prøv|simul|hør/i })[22m
+    [2m    7 × locator resolved to 0 elements[22m
+    [2m      - unexpected value "0"[22m
+
+
+      24 |   await page.goto(`/app/kampagner/${c.id}`);
+      25 |   await page.screenshot({ path: evid("C07", info, "intet-testopkald"), fullPage: true });
+    > 26 |   await expect(page.getByRole("button", { name: /test|prøv|simul|hør/i })).toHaveCount(1, { timeout: 3_000 });
+         |                                                                            ^
+      27 | });
+      28 |
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C07.spec.ts:26:76
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C07-C07-·-kra-91d4b-og-godkendelse-ikke-bygget--desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C07-C07-·-kra-91d4b-og-godkendelse-ikke-bygget--desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C07-C07-·-kra-91d4b-og-godkendelse-ikke-bygget--desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C07-C07-·-kra-91d4b-og-godkendelse-ikke-bygget--desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  11) [desktop-1440] › e2e/qa/erhverv-c/C08.spec.ts:43:5 › C08 · krav: vælg hvilke kontakter der er med (udvalg) og fastfrys udvalget ved bekræftelse (ikke bygget) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('li').filter({ hasText: 'Mette Hansen' }).getByRole('checkbox')
+    Expected: [32m1[39m
+    Received: [31m0[39m
+    Timeout:  3000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 3000ms[22m
+    [2m  - waiting for locator('li').filter({ hasText: 'Mette Hansen' }).getByRole('checkbox')[22m
+    [2m    6 × locator resolved to 0 elements[22m
+    [2m      - unexpected value "0"[22m
+
+
+      47 |   await importCsv(page.request, wsId, c.id, "Mette Hansen;20304050\nOle Berg;21222324");
+      48 |   await page.goto(`/app/kampagner/${c.id}`);
+    > 49 |   await expect(page.locator("li").filter({ hasText: "Mette Hansen" }).getByRole("checkbox")).toHaveCount(1, { timeout: 3_000 });
+         |                                                                                              ^
+      50 | });
+      51 |
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C08.spec.ts:49:94
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C08-C08-·-kra-e7ea3-ed-bekræftelse-ikke-bygget--desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C08-C08-·-kra-e7ea3-ed-bekræftelse-ikke-bygget--desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C08-C08-·-kra-e7ea3-ed-bekræftelse-ikke-bygget--desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C08-C08-·-kra-e7ea3-ed-bekræftelse-ikke-bygget--desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  12) [desktop-1440] › e2e/qa/erhverv-c/C12.spec.ts:48:5 › C12 · F-E2C-03: kontakter kan ikke tilføjes til en kørende kampagne uden ny bekræftelse 
+
+    Error: campaign still running with 3 pending contacts (2 confirmed at start + newly added, no new confirmation)
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mfalse[39m
+
+      62 |   // either refused, or the campaign is paused for a new confirmation – never silently added to the running dial queue
+      63 |   expect(after.status !== "running" || after.counts.by_status.pending === before,
+    > 64 |     `campaign still running with ${after.counts.by_status.pending} pending contacts (${before} confirmed at start + newly added, no new confirmation)`).toBe(true);
+         |                                                                                                                                                         ^
+      65 | });
+      66 |
+      67 | test("C12 · krav: kommende opkald, live-opdatering uden reload og «annullér resten» (ikke bygget)", async ({ page }, info) => {
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C12.spec.ts:64:153
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C12-C12-·-F-E-d462e-ampagne-uden-ny-bekræftelse-desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C12-C12-·-F-E-d462e-ampagne-uden-ny-bekræftelse-desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C12-C12-·-F-E-d462e-ampagne-uden-ny-bekræftelse-desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C12-C12-·-F-E-d462e-ampagne-uden-ny-bekræftelse-desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  13) [desktop-1440] › e2e/qa/erhverv-c/C12.spec.ts:67:5 › C12 · krav: kommende opkald, live-opdatering uden reload og «annullér resten» (ikke bygget) 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 3[39m
+    [31m+ Received  + 3[39m
+
+    [2m  Object {[22m
+    [32m-   "cancel": true,[39m
+    [32m-   "live": true,[39m
+    [32m-   "upcoming": true,[39m
+    [31m+   "cancel": false,[39m
+    [31m+   "live": false,[39m
+    [31m+   "upcoming": false,[39m
+    [2m  }[22m
+
+      75 |   await page.screenshot({ path: evid("C12", info, "ikke-bygget"), fullPage: true });
+      76 |   console.log("C12 not built:", JSON.stringify({ upcoming, live, cancel }));
+    > 77 |   expect({ upcoming: upcoming > 0, live, cancel: cancel > 0 }).toEqual({ upcoming: true, live: true, cancel: true });
+         |                                                                ^
+      78 | });
+      79 |
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C12.spec.ts:77:64
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C12-C12-·-kra-bcac8-nullér-resten»-ikke-bygget--desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C12-C12-·-kra-bcac8-nullér-resten»-ikke-bygget--desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C12-C12-·-kra-bcac8-nullér-resten»-ikke-bygget--desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C12-C12-·-kra-bcac8-nullér-resten»-ikke-bygget--desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  14) [desktop-1440] › e2e/qa/erhverv-c/C13.spec.ts:50:5 › C13 · krav: eksport, slutrapport og leveringsstatus (ikke bygget) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByRole('button', { name: /eksport|download|rapport/i }).or(getByRole('link', { name: /eksport|download|rapport/i }))
+    Expected: [32m1[39m
+    Received: [31m0[39m
+    Timeout:  3000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 3000ms[22m
+    [2m  - waiting for getByRole('button', { name: /eksport|download|rapport/i }).or(getByRole('link', { name: /eksport|download|rapport/i }))[22m
+    [2m    7 × locator resolved to 0 elements[22m
+    [2m      - unexpected value "0"[22m
+
+
+      53 |   await page.goto(`/app/kampagner/${c.id}`);
+      54 |   await page.screenshot({ path: evid("C13", info, "ingen-eksport"), fullPage: true });
+    > 55 |   await expect(page.getByRole("button", { name: /eksport|download|rapport/i }).or(page.getByRole("link", { name: /eksport|download|rapport/i }))).toHaveCount(1, { timeout: 3_000 });
+         |                                                                                                                                                   ^
+      56 | });
+      57 |
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C13.spec.ts:55:147
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C13-C13-·-kra-a8865-everingsstatus-ikke-bygget--desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C13-C13-·-kra-a8865-everingsstatus-ikke-bygget--desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C13-C13-·-kra-a8865-everingsstatus-ikke-bygget--desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C13-C13-·-kra-a8865-everingsstatus-ikke-bygget--desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  15) [desktop-1440] › e2e/qa/erhverv-c/C14.spec.ts:58:5 › C14 · krav: kontaktside med historik, forsøg, tilladt udskrift og bevis (ikke bygget) 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 2[39m
+    [31m+ Received  + 2[39m
+
+    [2m  Object {[22m
+    [32m-   "link": 1,[39m
+    [32m-   "status": 200,[39m
+    [31m+   "link": 0,[39m
+    [31m+   "status": 404,[39m
+    [2m  }[22m
+
+      66 |   await page.screenshot({ path: evid("C14", info, "ingen-kontaktside"), fullPage: true });
+      67 |   const r = await page.goto(`/app/kampagner/${c.id}/kontakter/${x.id}`);
+    > 68 |   expect({ link: await link.count(), status: r?.status() }).toEqual({ link: 1, status: 200 });
+         |                                                             ^
+      69 | });
+      70 |
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C14.spec.ts:68:61
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C14-C14-·-kra-d0bed-krift-og-bevis-ikke-bygget--desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C14-C14-·-kra-d0bed-krift-og-bevis-ikke-bygget--desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C14-C14-·-kra-d0bed-krift-og-bevis-ikke-bygget--desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C14-C14-·-kra-d0bed-krift-og-bevis-ikke-bygget--desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  16) [desktop-1440] › e2e/qa/erhverv-c/K04.spec.ts:51:5 › K04 · tilbud uden datoer: fejlbeskeden er forståelig dansk (ikke feltnavne) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).not.[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: locator('main [role=alert]').first()
+    Expected pattern: not [32m/starts_on|ends_on|ISO/[39m
+    Received string: [31m"error[7mstarts_on[27m skal være en ISO-datoReference: 4ceb67664a0e48469913f12ff0375633"[39m
+    Timeout: 10000ms
+
+    Call log:
+    [2m  - Expect "not toContainText" with timeout 10000ms[22m
+    [2m  - waiting for locator('main [role=alert]').first()[22m
+    [2m    14 × locator resolved to <div role="alert" class="flex items-start gap-2.5 rounded-xl border-[1.5px] p-3.5 text-body-sm bg-danger-soft text-danger border-danger">…</div>[22m
+    [2m       - unexpected value "errorstarts_on skal være en ISO-datoReference: 4ceb67664a0e48469913f12ff0375633"[22m
+
+
+      58 |   await expect(err).toBeVisible();
+      59 |   await page.screenshot({ path: evid("K04", info, "uden-datoer"), fullPage: true });
+    > 60 |   await expect(err).not.toContainText(/starts_on|ends_on|ISO/);
+         |                         ^
+      61 |   expect((await (await page.request.get(`/api/backend/workspaces/${wsId}/knowledge/items?kind=offer`)).json()).items).toHaveLength(0);
+      62 | });
+      63 |
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/K04.spec.ts:60:25
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-K04-K04-·-til-7d7da-åelig-dansk-ikke-feltnavne--desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-K04-K04-·-til-7d7da-åelig-dansk-ikke-feltnavne--desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-K04-K04-·-til-7d7da-åelig-dansk-ikke-feltnavne--desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-K04-K04-·-til-7d7da-åelig-dansk-ikke-feltnavne--desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  17) [desktop-1440] › e2e/qa/erhverv-c/K04.spec.ts:64:5 › K04 · tilstande: udløbet tilbud vises som udløbet, ikke som aktivt 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: locator('div.flex-wrap').filter({ hasText: 'Sommerrabat' }).last()
+    Expected pattern: [32m/udløbet/i[39m
+    Received string:  [31m"Sommerrabat · -15% ved ≥ 40 m² · 1. jun. 2026 – 31. aug. 2026 (begge dage inkl.)Retdelete"[39m
+    Timeout: 10000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 10000ms[22m
+    [2m  - waiting for locator('div.flex-wrap').filter({ hasText: 'Sommerrabat' }).last()[22m
+    [2m    13 × locator resolved to <div class="flex flex-wrap items-center gap-3 py-2 border-t-[1.5px] border-line">…</div>[22m
+    [2m       - unexpected value "Sommerrabat · -15% ved ≥ 40 m² · 1. jun. 2026 – 31. aug. 2026 (begge dage inkl.)Retdelete"[22m
+
+
+      70 |   await expect(row).toBeVisible();
+      71 |   await page.screenshot({ path: evid("K04", info, "udloebet-tilbud"), fullPage: true });
+    > 72 |   await expect(row).toContainText(/udløbet/i);
+         |                     ^
+      73 | });
+      74 |
+      75 | test("K04 · medarbejder foreslår tilbud → kladde venter, er ikke i assistentens viden; ejer kan genoprette fjernet tilbud med samme navn", async ({ page }, info) => {
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/K04.spec.ts:72:21
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-K04-K04-·-til-72d48-som-udløbet-ikke-som-aktivt-desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-K04-K04-·-til-72d48-som-udløbet-ikke-som-aktivt-desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-K04-K04-·-til-72d48-som-udløbet-ikke-som-aktivt-desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-K04-K04-·-til-72d48-som-udløbet-ikke-som-aktivt-desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  18) [mobil-390] › e2e/qa/erhverv-c/C02.spec.ts:41:5 › C02 · F-E2C-01: kunde der kun har valgt kampagner kan slå udgående opkald til og oprette en kampagne 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('main [role=alert]')
+    Expected: [32m0[39m
+    Received: [31m1[39m
+    Timeout:  10000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 10000ms[22m
+    [2m  - waiting for locator('main [role=alert]')[22m
+    [2m    14 × locator resolved to 1 element[22m
+    [2m       - unexpected value "1"[22m
+
+
+      48 |   }
+      49 |   await page.screenshot({ path: evid("C02", info, "kun-kampagner-kan-ikke-slaa-til"), fullPage: true });
+    > 50 |   await expect(page.locator("main [role=alert]")).toHaveCount(0);
+         |                                                   ^
+      51 |   await expect(page.getByRole("heading", { name: "Ny kampagne" })).toBeVisible();
+      52 |   expect((await (await page.request.get(`/api/backend/workspaces/${wsId}/goals`)).json()).product_intent).toBe("campaigns");
+      53 | });
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C02.spec.ts:50:51
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C02-C02-·-F-E-01062--til-og-oprette-en-kampagne-mobil-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C02-C02-·-F-E-01062--til-og-oprette-en-kampagne-mobil-390/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C02-C02-·-F-E-01062--til-og-oprette-en-kampagne-mobil-390/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C02-C02-·-F-E-01062--til-og-oprette-en-kampagne-mobil-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  19) [mobil-390] › e2e/qa/erhverv-c/C02.spec.ts:107:5 › C02 · krav: sprogvalg for kampagnen (ikke bygget) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByLabel(/sprog/i)
+    Expected: [32m1[39m
+    Received: [31m0[39m
+    Timeout:  10000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 10000ms[22m
+    [2m  - waiting for getByLabel(/sprog/i)[22m
+    [2m    13 × locator resolved to 0 elements[22m
+    [2m       - unexpected value "0"[22m
+
+
+      111 |   await page.goto(`/app/kampagner/${c.id}`);
+      112 |   await page.screenshot({ path: evid("C02", info, "intet-sprogvalg"), fullPage: true });
+    > 113 |   await expect(page.getByLabel(/sprog/i)).toHaveCount(1);
+          |                                           ^
+      114 | });
+      115 |
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C02.spec.ts:113:43
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C02-C02-·-kra-0d063--for-kampagnen-ikke-bygget--mobil-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C02-C02-·-kra-0d063--for-kampagnen-ikke-bygget--mobil-390/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C02-C02-·-kra-0d063--for-kampagnen-ikke-bygget--mobil-390/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C02-C02-·-kra-0d063--for-kampagnen-ikke-bygget--mobil-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  20) [mobil-390] › e2e/qa/erhverv-c/C03.spec.ts:46:5 › C03 · krav: API-kilde eller skrivebeskyttet database som kontaktkilde med forbindelsesstatus (ikke bygget) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByRole('radio', { name: /API|database/i }).or(getByRole('button', { name: /API|database|forbind/i }))
+    Expected: [32m1[39m
+    Received: [31m0[39m
+    Timeout:  3000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 3000ms[22m
+    [2m  - waiting for getByRole('radio', { name: /API|database/i }).or(getByRole('button', { name: /API|database|forbind/i }))[22m
+    [2m    7 × locator resolved to 0 elements[22m
+    [2m      - unexpected value "0"[22m
+
+
+      50 |   await page.goto(`/app/kampagner/${c.id}`);
+      51 |   await page.screenshot({ path: evid("C03", info, "kun-csv"), fullPage: true });
+    > 52 |   await expect(page.getByRole("radio", { name: /API|database/i }).or(page.getByRole("button", { name: /API|database|forbind/i }))).toHaveCount(1, { timeout: 3_000 });
+         |                                                                                                                                    ^
+      53 | });
+      54 |
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C03.spec.ts:52:132
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C03-C03-·-kra-a8897-indelsesstatus-ikke-bygget--mobil-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C03-C03-·-kra-a8897-indelsesstatus-ikke-bygget--mobil-390/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C03-C03-·-kra-a8897-indelsesstatus-ikke-bygget--mobil-390/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C03-C03-·-kra-a8897-indelsesstatus-ikke-bygget--mobil-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  21) [mobil-390] › e2e/qa/erhverv-c/C04.spec.ts:33:5 › C04 · krav: kolonne-mapping, kontaktens sprog og godkendt variabel-mapping (ikke bygget) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByRole('combobox', { name: /kolonne|sprog/i })
+    Expected: [32m1[39m
+    Received: [31m0[39m
+    Timeout:  3000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 3000ms[22m
+    [2m  - waiting for getByRole('combobox', { name: /kolonne|sprog/i })[22m
+    [2m    7 × locator resolved to 0 elements[22m
+    [2m      - unexpected value "0"[22m
+
+
+      37 |   await page.goto(`/app/kampagner/${c.id}`);
+      38 |   await page.screenshot({ path: evid("C04", info, "ingen-mapping"), fullPage: true });
+    > 39 |   await expect(page.getByRole("combobox", { name: /kolonne|sprog/i })).toHaveCount(1, { timeout: 3_000 });
+         |                                                                        ^
+      40 | });
+      41 |
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C04.spec.ts:39:72
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C04-C04-·-kra-aa517-riabel-mapping-ikke-bygget--mobil-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C04-C04-·-kra-aa517-riabel-mapping-ikke-bygget--mobil-390/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C04-C04-·-kra-aa517-riabel-mapping-ikke-bygget--mobil-390/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C04-C04-·-kra-aa517-riabel-mapping-ikke-bygget--mobil-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  22) [mobil-390] › e2e/qa/erhverv-c/C05.spec.ts:55:5 › C05 · alle importerede kontakter kan ses (501 kontakter: tæller og liste stemmer) 
+
+    Error: list shows 500 of 501 contacts and offers no way to see the rest
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mfalse[39m
+
+      63 |   const shown = await page.locator("li").filter({ hasText: /^Kontakt \d+/ }).count();
+      64 |   const more = await page.getByRole("button", { name: /vis flere|se alle|næste/i }).count();
+    > 65 |   expect(shown === 501 || more > 0, `list shows ${shown} of 501 contacts and offers no way to see the rest`).toBe(true);
+         |                                                                                                              ^
+      66 | });
+      67 |
+      68 | test("C05 · krav: ret en ugyldig række og eksportér fejl (ikke bygget)", async ({ page }, info) => {
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C05.spec.ts:65:110
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C05-C05-·-all-4f3be-er-tæller-og-liste-stemmer--mobil-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C05-C05-·-all-4f3be-er-tæller-og-liste-stemmer--mobil-390/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C05-C05-·-all-4f3be-er-tæller-og-liste-stemmer--mobil-390/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C05-C05-·-all-4f3be-er-tæller-og-liste-stemmer--mobil-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  23) [mobil-390] › e2e/qa/erhverv-c/C05.spec.ts:68:5 › C05 · krav: ret en ugyldig række og eksportér fejl (ikke bygget) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByRole('button', { name: /eksport|download|hent fejl/i }).or(getByRole('link', { name: /eksport|download/i }))
+    Expected: [32m1[39m
+    Received: [31m0[39m
+    Timeout:  3000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 3000ms[22m
+    [2m  - waiting for getByRole('button', { name: /eksport|download|hent fejl/i }).or(getByRole('link', { name: /eksport|download/i }))[22m
+    [2m    7 × locator resolved to 0 elements[22m
+    [2m      - unexpected value "0"[22m
+
+
+      76 |   await expect(page.locator("main [role=status]").filter({ hasText: "ugyldige" })).toBeVisible();
+      77 |   await page.screenshot({ path: evid("C05", info, "ingen-eksport"), fullPage: true });
+    > 78 |   await expect(page.getByRole("button", { name: /eksport|download|hent fejl/i }).or(page.getByRole("link", { name: /eksport|download/i }))).toHaveCount(1, { timeout: 3_000 });
+         |                                                                                                                                             ^
+      79 | });
+      80 |
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C05.spec.ts:78:141
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C05-C05-·-kra-1b5a4-eksportér-fejl-ikke-bygget--mobil-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C05-C05-·-kra-1b5a4-eksportér-fejl-ikke-bygget--mobil-390/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C05-C05-·-kra-1b5a4-eksportér-fejl-ikke-bygget--mobil-390/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C05-C05-·-kra-1b5a4-eksportér-fejl-ikke-bygget--mobil-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  24) [mobil-390] › e2e/qa/erhverv-c/C06.spec.ts:45:5 › C06 · én primær knap pr. skærm på kampagnesiden (brand.md) 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeLessThanOrEqual[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: <= [32m1[39m
+    Received:    [31m3[39m
+
+      49 |   await expect(page.getByRole("button", { name: "Start kampagne" })).toBeVisible();
+      50 |   await page.screenshot({ path: evid("C06", info, "primaere-knapper"), fullPage: true });
+    > 51 |   expect(await primaryButtons(page)).toBeLessThanOrEqual(1);
+         |                                      ^
+      52 | });
+      53 |
+      54 | test("C06 · krav: upload af manuskript, forgreninger, personlig forhåndsvisning og versioner (ikke bygget)", async ({ page }, info) => {
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C06.spec.ts:51:38
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C06-C06-·-én--cf5d7--på-kampagnesiden-brand-md--mobil-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C06-C06-·-én--cf5d7--på-kampagnesiden-brand-md--mobil-390/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C06-C06-·-én--cf5d7--på-kampagnesiden-brand-md--mobil-390/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C06-C06-·-én--cf5d7--på-kampagnesiden-brand-md--mobil-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  25) [mobil-390] › e2e/qa/erhverv-c/C06.spec.ts:54:5 › C06 · krav: upload af manuskript, forgreninger, personlig forhåndsvisning og versioner (ikke bygget) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByRole('button', { name: /version|historik|forhåndsvis/i }).or(getByRole('link', { name: /version|historik/i }))
+    Expected: [32m1[39m
+    Received: [31m0[39m
+    Timeout:  3000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 3000ms[22m
+    [2m  - waiting for getByRole('button', { name: /version|historik|forhåndsvis/i }).or(getByRole('link', { name: /version|historik/i }))[22m
+    [2m    7 × locator resolved to 0 elements[22m
+    [2m      - unexpected value "0"[22m
+
+
+      58 |   await page.goto(`/app/kampagner/${c.id}`);
+      59 |   await page.screenshot({ path: evid("C06", info, "ingen-versioner"), fullPage: true });
+    > 60 |   await expect(page.getByRole("button", { name: /version|historik|forhåndsvis/i }).or(page.getByRole("link", { name: /version|historik/i }))).toHaveCount(1, { timeout: 3_000 });
+         |                                                                                                                                               ^
+      61 | });
+      62 |
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C06.spec.ts:60:143
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C06-C06-·-kra-beafb-g-og-versioner-ikke-bygget--mobil-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C06-C06-·-kra-beafb-g-og-versioner-ikke-bygget--mobil-390/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C06-C06-·-kra-beafb-g-og-versioner-ikke-bygget--mobil-390/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C06-C06-·-kra-beafb-g-og-versioner-ikke-bygget--mobil-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  26) [mobil-390] › e2e/qa/erhverv-c/C07.spec.ts:7:5 › C07 · F-E2C-04: ukendt variabel i første replik ({fornavn}) afvises eller advares om, før den kan blive sagt højt 
+
+    Error: saved opening "Hej {fornavn}, det er den digitale assistent fra {firma}." without any warning
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mfalse[39m
+
+      15 |   const saved = (await getCampaign(page.request, wsId, c.id)).opening as string;
+      16 |   const warned = await page.locator("main [role=alert]").filter({ hasText: /fornavn|variabel|ukendt/i }).count();
+    > 17 |   expect(warned > 0 || !saved.includes("{fornavn}"), `saved opening ${JSON.stringify(saved)} without any warning`).toBe(true);
+         |                                                                                                                    ^
+      18 | });
+      19 |
+      20 | test("C07 · krav: simuleret testopkald med eksempler på manglende variabler og godkendelse (ikke bygget)", async ({ page }, info) => {
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C07.spec.ts:17:116
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C07-C07-·-F-E-a0e09-før-den-kan-blive-sagt-højt-mobil-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C07-C07-·-F-E-a0e09-før-den-kan-blive-sagt-højt-mobil-390/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C07-C07-·-F-E-a0e09-før-den-kan-blive-sagt-højt-mobil-390/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C07-C07-·-F-E-a0e09-før-den-kan-blive-sagt-højt-mobil-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  27) [mobil-390] › e2e/qa/erhverv-c/C07.spec.ts:20:5 › C07 · krav: simuleret testopkald med eksempler på manglende variabler og godkendelse (ikke bygget) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByRole('button', { name: /test|prøv|simul|hør/i })
+    Expected: [32m1[39m
+    Received: [31m0[39m
+    Timeout:  3000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 3000ms[22m
+    [2m  - waiting for getByRole('button', { name: /test|prøv|simul|hør/i })[22m
+    [2m    7 × locator resolved to 0 elements[22m
+    [2m      - unexpected value "0"[22m
+
+
+      24 |   await page.goto(`/app/kampagner/${c.id}`);
+      25 |   await page.screenshot({ path: evid("C07", info, "intet-testopkald"), fullPage: true });
+    > 26 |   await expect(page.getByRole("button", { name: /test|prøv|simul|hør/i })).toHaveCount(1, { timeout: 3_000 });
+         |                                                                            ^
+      27 | });
+      28 |
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C07.spec.ts:26:76
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C07-C07-·-kra-91d4b-og-godkendelse-ikke-bygget--mobil-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C07-C07-·-kra-91d4b-og-godkendelse-ikke-bygget--mobil-390/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C07-C07-·-kra-91d4b-og-godkendelse-ikke-bygget--mobil-390/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C07-C07-·-kra-91d4b-og-godkendelse-ikke-bygget--mobil-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  28) [mobil-390] › e2e/qa/erhverv-c/C08.spec.ts:43:5 › C08 · krav: vælg hvilke kontakter der er med (udvalg) og fastfrys udvalget ved bekræftelse (ikke bygget) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('li').filter({ hasText: 'Mette Hansen' }).getByRole('checkbox')
+    Expected: [32m1[39m
+    Received: [31m0[39m
+    Timeout:  3000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 3000ms[22m
+    [2m  - waiting for locator('li').filter({ hasText: 'Mette Hansen' }).getByRole('checkbox')[22m
+    [2m    7 × locator resolved to 0 elements[22m
+    [2m      - unexpected value "0"[22m
+
+
+      47 |   await importCsv(page.request, wsId, c.id, "Mette Hansen;20304050\nOle Berg;21222324");
+      48 |   await page.goto(`/app/kampagner/${c.id}`);
+    > 49 |   await expect(page.locator("li").filter({ hasText: "Mette Hansen" }).getByRole("checkbox")).toHaveCount(1, { timeout: 3_000 });
+         |                                                                                              ^
+      50 | });
+      51 |
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C08.spec.ts:49:94
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C08-C08-·-kra-e7ea3-ed-bekræftelse-ikke-bygget--mobil-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C08-C08-·-kra-e7ea3-ed-bekræftelse-ikke-bygget--mobil-390/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C08-C08-·-kra-e7ea3-ed-bekræftelse-ikke-bygget--mobil-390/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C08-C08-·-kra-e7ea3-ed-bekræftelse-ikke-bygget--mobil-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  29) [mobil-390] › e2e/qa/erhverv-c/C12.spec.ts:48:5 › C12 · F-E2C-03: kontakter kan ikke tilføjes til en kørende kampagne uden ny bekræftelse 
+
+    Error: campaign still running with 3 pending contacts (2 confirmed at start + newly added, no new confirmation)
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mfalse[39m
+
+      62 |   // either refused, or the campaign is paused for a new confirmation – never silently added to the running dial queue
+      63 |   expect(after.status !== "running" || after.counts.by_status.pending === before,
+    > 64 |     `campaign still running with ${after.counts.by_status.pending} pending contacts (${before} confirmed at start + newly added, no new confirmation)`).toBe(true);
+         |                                                                                                                                                         ^
+      65 | });
+      66 |
+      67 | test("C12 · krav: kommende opkald, live-opdatering uden reload og «annullér resten» (ikke bygget)", async ({ page }, info) => {
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C12.spec.ts:64:153
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C12-C12-·-F-E-d462e-ampagne-uden-ny-bekræftelse-mobil-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C12-C12-·-F-E-d462e-ampagne-uden-ny-bekræftelse-mobil-390/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C12-C12-·-F-E-d462e-ampagne-uden-ny-bekræftelse-mobil-390/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C12-C12-·-F-E-d462e-ampagne-uden-ny-bekræftelse-mobil-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  30) [mobil-390] › e2e/qa/erhverv-c/C12.spec.ts:67:5 › C12 · krav: kommende opkald, live-opdatering uden reload og «annullér resten» (ikke bygget) 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 3[39m
+    [31m+ Received  + 3[39m
+
+    [2m  Object {[22m
+    [32m-   "cancel": true,[39m
+    [32m-   "live": true,[39m
+    [32m-   "upcoming": true,[39m
+    [31m+   "cancel": false,[39m
+    [31m+   "live": false,[39m
+    [31m+   "upcoming": false,[39m
+    [2m  }[22m
+
+      75 |   await page.screenshot({ path: evid("C12", info, "ikke-bygget"), fullPage: true });
+      76 |   console.log("C12 not built:", JSON.stringify({ upcoming, live, cancel }));
+    > 77 |   expect({ upcoming: upcoming > 0, live, cancel: cancel > 0 }).toEqual({ upcoming: true, live: true, cancel: true });
+         |                                                                ^
+      78 | });
+      79 |
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C12.spec.ts:77:64
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C12-C12-·-kra-bcac8-nullér-resten»-ikke-bygget--mobil-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C12-C12-·-kra-bcac8-nullér-resten»-ikke-bygget--mobil-390/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C12-C12-·-kra-bcac8-nullér-resten»-ikke-bygget--mobil-390/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C12-C12-·-kra-bcac8-nullér-resten»-ikke-bygget--mobil-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  31) [mobil-390] › e2e/qa/erhverv-c/C13.spec.ts:50:5 › C13 · krav: eksport, slutrapport og leveringsstatus (ikke bygget) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByRole('button', { name: /eksport|download|rapport/i }).or(getByRole('link', { name: /eksport|download|rapport/i }))
+    Expected: [32m1[39m
+    Received: [31m0[39m
+    Timeout:  3000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 3000ms[22m
+    [2m  - waiting for getByRole('button', { name: /eksport|download|rapport/i }).or(getByRole('link', { name: /eksport|download|rapport/i }))[22m
+    [2m    7 × locator resolved to 0 elements[22m
+    [2m      - unexpected value "0"[22m
+
+
+      53 |   await page.goto(`/app/kampagner/${c.id}`);
+      54 |   await page.screenshot({ path: evid("C13", info, "ingen-eksport"), fullPage: true });
+    > 55 |   await expect(page.getByRole("button", { name: /eksport|download|rapport/i }).or(page.getByRole("link", { name: /eksport|download|rapport/i }))).toHaveCount(1, { timeout: 3_000 });
+         |                                                                                                                                                   ^
+      56 | });
+      57 |
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C13.spec.ts:55:147
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C13-C13-·-kra-a8865-everingsstatus-ikke-bygget--mobil-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C13-C13-·-kra-a8865-everingsstatus-ikke-bygget--mobil-390/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C13-C13-·-kra-a8865-everingsstatus-ikke-bygget--mobil-390/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C13-C13-·-kra-a8865-everingsstatus-ikke-bygget--mobil-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  32) [mobil-390] › e2e/qa/erhverv-c/C14.spec.ts:58:5 › C14 · krav: kontaktside med historik, forsøg, tilladt udskrift og bevis (ikke bygget) 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 2[39m
+    [31m+ Received  + 2[39m
+
+    [2m  Object {[22m
+    [32m-   "link": 1,[39m
+    [32m-   "status": 200,[39m
+    [31m+   "link": 0,[39m
+    [31m+   "status": 404,[39m
+    [2m  }[22m
+
+      66 |   await page.screenshot({ path: evid("C14", info, "ingen-kontaktside"), fullPage: true });
+      67 |   const r = await page.goto(`/app/kampagner/${c.id}/kontakter/${x.id}`);
+    > 68 |   expect({ link: await link.count(), status: r?.status() }).toEqual({ link: 1, status: 200 });
+         |                                                             ^
+      69 | });
+      70 |
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/C14.spec.ts:68:61
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C14-C14-·-kra-d0bed-krift-og-bevis-ikke-bygget--mobil-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-C14-C14-·-kra-d0bed-krift-og-bevis-ikke-bygget--mobil-390/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-C14-C14-·-kra-d0bed-krift-og-bevis-ikke-bygget--mobil-390/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-C14-C14-·-kra-d0bed-krift-og-bevis-ikke-bygget--mobil-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  33) [mobil-390] › e2e/qa/erhverv-c/K04.spec.ts:51:5 › K04 · tilbud uden datoer: fejlbeskeden er forståelig dansk (ikke feltnavne) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).not.[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: locator('main [role=alert]').first()
+    Expected pattern: not [32m/starts_on|ends_on|ISO/[39m
+    Received string: [31m"error[7mstarts_on[27m skal være en ISO-datoReference: 3d77b097cad445ac9ffa2eb979cfc0ae"[39m
+    Timeout: 10000ms
+
+    Call log:
+    [2m  - Expect "not toContainText" with timeout 10000ms[22m
+    [2m  - waiting for locator('main [role=alert]').first()[22m
+    [2m    14 × locator resolved to <div role="alert" class="flex items-start gap-2.5 rounded-xl border-[1.5px] p-3.5 text-body-sm bg-danger-soft text-danger border-danger">…</div>[22m
+    [2m       - unexpected value "errorstarts_on skal være en ISO-datoReference: 3d77b097cad445ac9ffa2eb979cfc0ae"[22m
+
+
+      58 |   await expect(err).toBeVisible();
+      59 |   await page.screenshot({ path: evid("K04", info, "uden-datoer"), fullPage: true });
+    > 60 |   await expect(err).not.toContainText(/starts_on|ends_on|ISO/);
+         |                         ^
+      61 |   expect((await (await page.request.get(`/api/backend/workspaces/${wsId}/knowledge/items?kind=offer`)).json()).items).toHaveLength(0);
+      62 | });
+      63 |
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/K04.spec.ts:60:25
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-K04-K04-·-til-7d7da-åelig-dansk-ikke-feltnavne--mobil-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-K04-K04-·-til-7d7da-åelig-dansk-ikke-feltnavne--mobil-390/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-K04-K04-·-til-7d7da-åelig-dansk-ikke-feltnavne--mobil-390/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-K04-K04-·-til-7d7da-åelig-dansk-ikke-feltnavne--mobil-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  34) [mobil-390] › e2e/qa/erhverv-c/K04.spec.ts:64:5 › K04 · tilstande: udløbet tilbud vises som udløbet, ikke som aktivt 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: locator('div.flex-wrap').filter({ hasText: 'Sommerrabat' }).last()
+    Expected pattern: [32m/udløbet/i[39m
+    Received string:  [31m"Sommerrabat · -15% ved ≥ 40 m² · 1. jun. 2026 – 31. aug. 2026 (begge dage inkl.)Retdelete"[39m
+    Timeout: 10000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 10000ms[22m
+    [2m  - waiting for locator('div.flex-wrap').filter({ hasText: 'Sommerrabat' }).last()[22m
+    [2m    14 × locator resolved to <div class="flex flex-wrap items-center gap-3 py-2 border-t-[1.5px] border-line">…</div>[22m
+    [2m       - unexpected value "Sommerrabat · -15% ved ≥ 40 m² · 1. jun. 2026 – 31. aug. 2026 (begge dage inkl.)Retdelete"[22m
+
+
+      70 |   await expect(row).toBeVisible();
+      71 |   await page.screenshot({ path: evid("K04", info, "udloebet-tilbud"), fullPage: true });
+    > 72 |   await expect(row).toContainText(/udløbet/i);
+         |                     ^
+      73 | });
+      74 |
+      75 | test("K04 · medarbejder foreslår tilbud → kladde venter, er ikke i assistentens viden; ejer kan genoprette fjernet tilbud med samme navn", async ({ page }, info) => {
+        at /home/claude/wt-p1/web/e2e/qa/erhverv-c/K04.spec.ts:72:21
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-K04-K04-·-til-72d48-som-udløbet-ikke-som-aktivt-mobil-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../p1-results/E2C/qa-erhverv-c-K04-K04-·-til-72d48-som-udløbet-ikke-som-aktivt-mobil-390/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../p1-results/E2C/qa-erhverv-c-K04-K04-·-til-72d48-som-udløbet-ikke-som-aktivt-mobil-390/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../p1-results/E2C/qa-erhverv-c-K04-K04-·-til-72d48-som-udløbet-ikke-som-aktivt-mobil-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  34 failed
+    [desktop-1440] › e2e/qa/erhverv-c/C02.spec.ts:41:5 › C02 · F-E2C-01: kunde der kun har valgt kampagner kan slå udgående opkald til og oprette en kampagne 
+    [desktop-1440] › e2e/qa/erhverv-c/C02.spec.ts:107:5 › C02 · krav: sprogvalg for kampagnen (ikke bygget) 
+    [desktop-1440] › e2e/qa/erhverv-c/C03.spec.ts:46:5 › C03 · krav: API-kilde eller skrivebeskyttet database som kontaktkilde med forbindelsesstatus (ikke bygget) 
+    [desktop-1440] › e2e/qa/erhverv-c/C04.spec.ts:33:5 › C04 · krav: kolonne-mapping, kontaktens sprog og godkendt variabel-mapping (ikke bygget) 
+    [desktop-1440] › e2e/qa/erhverv-c/C05.spec.ts:55:5 › C05 · alle importerede kontakter kan ses (501 kontakter: tæller og liste stemmer) 
+    [desktop-1440] › e2e/qa/erhverv-c/C05.spec.ts:68:5 › C05 · krav: ret en ugyldig række og eksportér fejl (ikke bygget) 
+    [desktop-1440] › e2e/qa/erhverv-c/C06.spec.ts:45:5 › C06 · én primær knap pr. skærm på kampagnesiden (brand.md) 
+    [desktop-1440] › e2e/qa/erhverv-c/C06.spec.ts:54:5 › C06 · krav: upload af manuskript, forgreninger, personlig forhåndsvisning og versioner (ikke bygget) 
+    [desktop-1440] › e2e/qa/erhverv-c/C07.spec.ts:7:5 › C07 · F-E2C-04: ukendt variabel i første replik ({fornavn}) afvises eller advares om, før den kan blive sagt højt 
+    [desktop-1440] › e2e/qa/erhverv-c/C07.spec.ts:20:5 › C07 · krav: simuleret testopkald med eksempler på manglende variabler og godkendelse (ikke bygget) 
+    [desktop-1440] › e2e/qa/erhverv-c/C08.spec.ts:43:5 › C08 · krav: vælg hvilke kontakter der er med (udvalg) og fastfrys udvalget ved bekræftelse (ikke bygget) 
+    [desktop-1440] › e2e/qa/erhverv-c/C12.spec.ts:48:5 › C12 · F-E2C-03: kontakter kan ikke tilføjes til en kørende kampagne uden ny bekræftelse 
+    [desktop-1440] › e2e/qa/erhverv-c/C12.spec.ts:67:5 › C12 · krav: kommende opkald, live-opdatering uden reload og «annullér resten» (ikke bygget) 
+    [desktop-1440] › e2e/qa/erhverv-c/C13.spec.ts:50:5 › C13 · krav: eksport, slutrapport og leveringsstatus (ikke bygget) 
+    [desktop-1440] › e2e/qa/erhverv-c/C14.spec.ts:58:5 › C14 · krav: kontaktside med historik, forsøg, tilladt udskrift og bevis (ikke bygget) 
+    [desktop-1440] › e2e/qa/erhverv-c/K04.spec.ts:51:5 › K04 · tilbud uden datoer: fejlbeskeden er forståelig dansk (ikke feltnavne) 
+    [desktop-1440] › e2e/qa/erhverv-c/K04.spec.ts:64:5 › K04 · tilstande: udløbet tilbud vises som udløbet, ikke som aktivt 
+    [mobil-390] › e2e/qa/erhverv-c/C02.spec.ts:41:5 › C02 · F-E2C-01: kunde der kun har valgt kampagner kan slå udgående opkald til og oprette en kampagne 
+    [mobil-390] › e2e/qa/erhverv-c/C02.spec.ts:107:5 › C02 · krav: sprogvalg for kampagnen (ikke bygget) 
+    [mobil-390] › e2e/qa/erhverv-c/C03.spec.ts:46:5 › C03 · krav: API-kilde eller skrivebeskyttet database som kontaktkilde med forbindelsesstatus (ikke bygget) 
+    [mobil-390] › e2e/qa/erhverv-c/C04.spec.ts:33:5 › C04 · krav: kolonne-mapping, kontaktens sprog og godkendt variabel-mapping (ikke bygget) 
+    [mobil-390] › e2e/qa/erhverv-c/C05.spec.ts:55:5 › C05 · alle importerede kontakter kan ses (501 kontakter: tæller og liste stemmer) 
+    [mobil-390] › e2e/qa/erhverv-c/C05.spec.ts:68:5 › C05 · krav: ret en ugyldig række og eksportér fejl (ikke bygget) 
+    [mobil-390] › e2e/qa/erhverv-c/C06.spec.ts:45:5 › C06 · én primær knap pr. skærm på kampagnesiden (brand.md) 
+    [mobil-390] › e2e/qa/erhverv-c/C06.spec.ts:54:5 › C06 · krav: upload af manuskript, forgreninger, personlig forhåndsvisning og versioner (ikke bygget) 
+    [mobil-390] › e2e/qa/erhverv-c/C07.spec.ts:7:5 › C07 · F-E2C-04: ukendt variabel i første replik ({fornavn}) afvises eller advares om, før den kan blive sagt højt 
+    [mobil-390] › e2e/qa/erhverv-c/C07.spec.ts:20:5 › C07 · krav: simuleret testopkald med eksempler på manglende variabler og godkendelse (ikke bygget) 
+    [mobil-390] › e2e/qa/erhverv-c/C08.spec.ts:43:5 › C08 · krav: vælg hvilke kontakter der er med (udvalg) og fastfrys udvalget ved bekræftelse (ikke bygget) 
+    [mobil-390] › e2e/qa/erhverv-c/C12.spec.ts:48:5 › C12 · F-E2C-03: kontakter kan ikke tilføjes til en kørende kampagne uden ny bekræftelse 
+    [mobil-390] › e2e/qa/erhverv-c/C12.spec.ts:67:5 › C12 · krav: kommende opkald, live-opdatering uden reload og «annullér resten» (ikke bygget) 
+    [mobil-390] › e2e/qa/erhverv-c/C13.spec.ts:50:5 › C13 · krav: eksport, slutrapport og leveringsstatus (ikke bygget) 
+    [mobil-390] › e2e/qa/erhverv-c/C14.spec.ts:58:5 › C14 · krav: kontaktside med historik, forsøg, tilladt udskrift og bevis (ikke bygget) 
+    [mobil-390] › e2e/qa/erhverv-c/K04.spec.ts:51:5 › K04 · tilbud uden datoer: fejlbeskeden er forståelig dansk (ikke feltnavne) 
+    [mobil-390] › e2e/qa/erhverv-c/K04.spec.ts:64:5 › K04 · tilstande: udløbet tilbud vises som udløbet, ikke som aktivt 
+  38 passed (12.1m)

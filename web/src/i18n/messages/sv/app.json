@@ -305,7 +305,12 @@
       "lead": "Ärende",
       "cancel": "Avboka",
       "syncFailed": "Inte i kalendern",
-      "syncFailedDetail": "Bokningen kunde inte skrivas i den anslutna kalendern: {error}"
+      "syncFailedDetail": "Bokningen kunde inte skrivas i den anslutna kalendern: {error}",
+      "pending": "Väntar på bekräftelse",
+      "pendingDetail": "Kalendern kunde inte läsas när tiden bokades. Kunden har fått veta att en medarbetare bekräftar tiden. Kontrollera kalendern och bekräfta eller avboka.",
+      "confirm": "Bekräfta",
+      "confirming": "Bekräftar…",
+      "confirmAnyway": "Bekräfta ändå"
     },
     "book": {
       "noSlotsError": "Det finns inga lediga tider. Kontrollera öppettider och kalender.",
@@ -318,7 +323,8 @@
       "booked": "Bokat {label}.",
       "booking": "Bokar…",
       "submit": "Boka",
-      "note": "Kunden får inget sms än – skicka själv en bekräftelse. «Första lediga» tar nästa tid som öppettider och kalender tillåter."
+      "note": "Kunden får inget sms än – skicka själv en bekräftelse. «Första lediga» tar nästa tid som öppettider och kalender tillåter.",
+      "pending": "Noterat {label} – väntar på bekräftelse eftersom kalendern inte kunde läsas."
     },
     "calendar": {
       "reading": "Läser…",
@@ -339,7 +345,8 @@
       "provider": {
         "google_calendar": "Google Kalender",
         "microsoft_calendar": "Outlook-kalender (Microsoft 365)"
-      }
+      },
+      "pendingN": "{n} bokningar väntar på bekräftelse – kalendern kunde inte läsas när de bokades."
     },
     "staffOnly": "Bokningar kan ses av medarbetare, administratörer och ägare.",
     "eyebrow": "Idag → Bokningar",
@@ -556,7 +563,8 @@
       "consent": "Var och när har de sagt ja till att bli uppringda?",
       "consentHint": "Assistenten ringer utan en människa i luren. Enligt § 10 i den danska marknadsföringslagen (markedsføringsloven) kräver det att kontakten i förväg har bett om det – även när det är ett företag. Det räcker inte att de inte står på Robinsonlistan eller är reklamskyddade i CVR-registret.",
       "consentPlaceholder": "Anmälan på webbplatsen, mars 2026",
-      "importing": "Importerar…"
+      "importing": "Importerar…",
+      "pauseFirst": "Kampanjen pågår. Pausa den för att lägga till kontakter – när du startar igen bekräftar du det nya antalet."
     },
     "start": {
       "completed": "Kampanjen är avslutad: alla kontakter har ringts upp.",

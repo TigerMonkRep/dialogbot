@@ -798,7 +798,8 @@
         "startOver": "Start over",
         "notLoggedIn": "Log in to see how the call went.",
         "login": "Log in",
-        "statusAria": "Call status"
+        "statusAria": "Call status",
+        "noCallTitle": "She isn't calling right now"
       }
     }
   }

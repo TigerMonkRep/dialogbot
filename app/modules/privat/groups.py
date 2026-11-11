@@ -1,12 +1,15 @@
 """Saved groups («Mine folk»): share with many people in one tap.
 
 Data rules: a group is readable ONLY by its owner. The phone numbers in it are used for exactly two things – giving
-them back to the owner (so the owner texts from their OWN phone) and recognising people who are already on Dialogbot
-(user_id, or a verified phone). Dialogbot never contacts them and never markets to them; they are deleted with the
-group (cascade) or the account (owner_user_id cascade).
+them back to the owner (so the owner texts from their OWN phone) and nothing else. A typed number is NEVER looked up
+against Dialogbot's users (F-P2-02-X10): that would tell the owner whether – and as whom – any number is registered,
+and would put strangers on lists they never agreed to. Dialogbot never contacts them and never markets to them; they
+are deleted with the group (cascade) or the account (owner_user_id cascade).
 
-Sharing a list with a group: people already on Dialogbot are added to the list directly and get an in-app message;
-everyone else gets an SMS the owner sends from their own phone – one group SMS with one link, or a one-by-one queue
+Sharing a list with a group: only people who have themselves said yes to the owner before – a member row with a
+user_id, set when they accepted one of the owner's invitations (`suggested`, or a personal link from this group) or
+joined the group by its link – are added to the list directly and get an in-app message; everyone else (every typed
+number) gets an invitation the owner texts from their own phone, and joins only by accepting it – one group SMS with one link, or a one-by-one queue
 with a personal short link and text per person (then GET invite-status shows member / opened / invited per person).
 """
 from __future__ import annotations
@@ -159,12 +162,11 @@ def remove_member(db: OrmSession, g: PrivateGroup, member_id: uuid.UUID) -> None
 
 
 def _known_user(db: OrmSession, m: PrivateGroupMember) -> uuid.UUID | None:
-    """The person is already on Dialogbot Privat: a known user id, or a VERIFIED phone that matches."""
+    """The person has accepted the owner before (the member row carries their user id) and is on Dialogbot Privat.
+    Never by phone number: matching a typed number against users' verified phones leaked membership + real name and
+    enrolled strangers without consent (F-P2-02-X10)."""
     if m.user_id and db.scalar(select(PrivateProfile.workspace_id).where(PrivateProfile.user_id == m.user_id)):
         return m.user_id
-    if m.phone_e164:
-        return db.scalar(select(PrivateProfile.user_id).where(PrivateProfile.phone_e164 == m.phone_e164,
-                                                              PrivateProfile.phone_verified_at.is_not(None)))
     return None
 
 
@@ -196,8 +198,6 @@ def share(db: OrmSession, ctx, task_id: uuid.UUID, group_id: uuid.UUID, *, mode:
                             dedupe=f"shared:{task.id}:{uid}")
                 u = db.get(User, uid)  # the person's own name – never the owner's label for them
                 service.event(db, task, f"{rules.first_name(u.display_name if u else None)} er med på listen")
-            if m.user_id is None:
-                m.user_id = uid
             added.append({"name": m.name})
         elif uid is None and m.phone_e164:
             rest.append(m)

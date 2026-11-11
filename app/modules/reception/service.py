@@ -17,7 +17,10 @@ AI_DISCLOSURE = re.compile(r"digital assistent|ai-assistent|kunstig intelligens|
 def get(db: OrmSession, ws: Workspace) -> ReceptionScript:
     s = db.get(ReceptionScript, ws.id)
     if s is None:
-        s = ReceptionScript(workspace_id=ws.id, version=0, address_form="du", collect=[])
+        # Not saved yet: the column defaults only apply on INSERT, so give the transient row the same empty values –
+        # otherwise GET returns null for the text fields and the first PUT of them back is a 422 (F-E2B-01-O05).
+        s = ReceptionScript(workspace_id=ws.id, version=0, persona_name="", address_form="du", greeting="", collect=[],
+                            escalation="", avoid="", closing="")
     return s
 
 

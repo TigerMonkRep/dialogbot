@@ -305,7 +305,12 @@
       "lead": "Anfrage",
       "cancel": "Stornieren",
       "syncFailed": "Nicht im Kalender",
-      "syncFailedDetail": "Der Termin konnte nicht in den verbundenen Kalender geschrieben werden: {error}"
+      "syncFailedDetail": "Der Termin konnte nicht in den verbundenen Kalender geschrieben werden: {error}",
+      "pending": "Wartet auf Bestätigung",
+      "pendingDetail": "Der Kalender konnte bei der Buchung nicht gelesen werden. Der Kunde wurde informiert, dass ein Mitarbeiter den Termin bestätigt. Prüfen Sie den Kalender und bestätigen oder stornieren Sie.",
+      "confirm": "Bestätigen",
+      "confirming": "Wird bestätigt…",
+      "confirmAnyway": "Trotzdem bestätigen"
     },
     "book": {
       "noSlotsError": "Es gibt keine freien Zeiten. Prüfen Sie Öffnungszeiten und Kalender.",
@@ -318,7 +323,8 @@
       "booked": "{label} gebucht.",
       "booking": "Wird gebucht …",
       "submit": "Buchen",
-      "note": "Der Kunde erhält noch keine SMS – senden Sie selbst eine Bestätigung. «Nächster freier Termin» nimmt die nächste Zeit, die Öffnungszeiten und Kalender zulassen."
+      "note": "Der Kunde erhält noch keine SMS – senden Sie selbst eine Bestätigung. «Nächster freier Termin» nimmt die nächste Zeit, die Öffnungszeiten und Kalender zulassen.",
+      "pending": "{label} notiert – wartet auf Bestätigung, weil der Kalender nicht gelesen werden konnte."
     },
     "calendar": {
       "reading": "Wird gelesen …",
@@ -339,7 +345,8 @@
       "provider": {
         "google_calendar": "Google Kalender",
         "microsoft_calendar": "Outlook-Kalender (Microsoft 365)"
-      }
+      },
+      "pendingN": "{n} Termine warten auf Bestätigung – der Kalender konnte bei der Buchung nicht gelesen werden."
     },
     "staffOnly": "Termine können von Mitarbeitern, Administratoren und Inhabern eingesehen werden.",
     "eyebrow": "Heute → Termine",
@@ -556,7 +563,8 @@
       "consent": "Wo und wann haben sie zugestimmt, angerufen zu werden?",
       "consentHint": "Der Assistent ruft ohne einen Menschen am Hörer an. Nach § 10 des dänischen Marketinggesetzes (markedsføringsloven) setzt das voraus, dass der Kontakt dies vorher verlangt hat – auch wenn es sich um ein Unternehmen handelt. Es reicht nicht, dass er nicht auf der Robinsonliste steht oder im CVR-Register keine Werbesperre hat.",
       "consentPlaceholder": "Anmeldung auf der Website, März 2026",
-      "importing": "Wird importiert …"
+      "importing": "Wird importiert …",
+      "pauseFirst": "Die Kampagne läuft. Pausieren Sie sie, um Kontakte hinzuzufügen – beim erneuten Start bestätigen Sie die neue Anzahl."
     },
     "start": {
       "completed": "Die Kampagne ist abgeschlossen: Alle Kontakte wurden angerufen.",

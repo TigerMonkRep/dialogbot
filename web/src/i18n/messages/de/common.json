@@ -101,5 +101,12 @@
     "pushOff": "Benachrichtigungen sind auf diesem Gerät ausgeschaltet.",
     "pushDisable": "Benachrichtigungen ausschalten",
     "pushIosHome": "Auf dem iPhone funktionieren Benachrichtigungen nur aus der App auf dem Startbildschirm – leg sie zuerst dorthin (Download app oben)."
+  },
+  "pageError": {
+    "title": "Die Seite konnte nicht angezeigt werden",
+    "text": "Bei uns ist ein Fehler aufgetreten. Versuchen Sie es erneut – hilft das nicht, melden Sie sich erneut an.",
+    "retry": "Erneut versuchen",
+    "login": "Erneut anmelden",
+    "reference": "Fehlercode"
   }
 }

@@ -798,7 +798,8 @@
         "startOver": "Start på nytt",
         "notLoggedIn": "Logg inn for å se hvordan anropet gikk.",
         "login": "Logg inn",
-        "statusAria": "Status for anropet"
+        "statusAria": "Status for anropet",
+        "noCallTitle": "Hun ringer ikke akkurat nå"
       }
     }
   }

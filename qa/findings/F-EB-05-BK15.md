@@ -43,12 +43,27 @@ app/modules/integrations/connectors/calendar.py:304-311 – `_mirror_update`/`_m
 - `flyt_tid`: samme; teksten lover ikke den nye tid. Bookingen står på den nye tid i Dialogbot med `calendar_sync='failed'` (synlig for ejeren), Google beholder den gamle – uoverensstemmelsen er nu markeret i stedet for skjult. (Rollback til den gamle tid blev fravalgt, fordi en timeout kan have flyttet eventet alligevel; reporterens test forudsætter også, at Dialogbot står på den nye tid.) En senere flytning prøver igen; mangler eventet helt, oprettes det.
 - `aflys_tid`: aflysningen står (kunden har aflyst); fejler sletning i kalenderen, flagges bookingen `failed`, så ejeren ser, at eventet stadig ligger i kalenderen.
 - `ActionRun.status` bruger eksisterende `failed` (check-constraint ok/failed/refused) – ingen ny «afventer»-status, for at undgå endnu en migration; fejlteksten beskriver, at tiden er noteret og afventer bekræftelse.
-- Commit: (lead committer)
+- Commit: (lead committer) – beslutningsdel: se «Beslutning»
 
-## needs-decision: `connected_busy` returnerer [] ved udbyderfejl
+## (afgjort 2026-11-10 – se «Beslutning») needs-decision: `connected_busy` returnerer [] ved udbyderfejl
 `connectors/calendar.py connected_busy` registrerer fejlen på forbindelsen og returnerer `[]`, så ledige tider beregnes alene ud fra åbningstider – assistenten/widgetten kan booke oven i ejerens optagede Google-tid under et nedbrud. Ikke ændret (produktbeslutning). Muligheder:
 1. **Fail-closed:** ved fejl tilbydes ingen online-tider (assistenten tilbyder at en medarbejder ringer tilbage). Ingen dobbeltbookinger, men tabt booking under nedbrud.
 2. **Fail-open med sidst kendte optaget tid (nuværende + forbedring):** brug sidst hentede optagne perioder (cache) og/eller kun åbningstider, men markér bookinger lavet under fejl som «afventer bekræftelse» over for kunden og ejeren. Flere bookinger, risiko for konflikt som en medarbejder må løse.
+
+## Beslutning
+- Dato: 2026-11-10 kl. 17:26 (Fürster). Valgt: anbefalingen = mulighed 2, fail-open med «afventer bekræftelse».
+- Rodårsag (connected_busy): udbyderfejl returnerede `[]` uden at nogen fik det at vide, og en forbindelse der allerede stod i `error` blev sprunget over (så faldt man tavst tilbage til iCal/åbningstider).
+- Rettelse:
+  - Migration `alembic/versions/e7a2c5d9f1b3_booking_confirmation.py` (ny, reversibel, additiv): `bookings.confirmation` NULL | 'pending' | 'confirmed' (+ check-constraint). `status` er uændret 'confirmed', så aftalen stadig blokerer tiden overalt (slots, SMS, rapporter). upgrade → downgrade -1 → upgrade testet på qa_fix; `alembic check`: "No new upgrade operations detected".
+  - `connectors/calendar.py connected_busy` → `(busy, readable)`; forsøger også forbindelser i `error` og sætter dem `connected` igen, når læsningen virker (kun hvis fejlen var en læsefejl). `mirror_create` springer aftaler i 'pending' over (de skrives ved bekræftelse).
+  - `bookings/service.py`: `slots_state`/`_busy_state`; `book()` og `move()` sætter `confirmation='pending'`, når optaget tid ikke kunne læses, opretter opgaven «Bekræft aftale: …» (Opgaver) og sender push til arbejdsrummet (`push.notify_workspace`). `confirm()` viser konflikt med optaget tid ærligt (409 `calendar_conflict` med perioderne) medmindre `override_conflict`; afslutter opgaven. Aflysning afslutter også opgaven. `booking_out` + webhook-payload får `confirmation`.
+  - `bookings/router.py`: `POST /workspaces/{ws}/bookings/{id}/confirm` (bookings.create) → spejler via `mirror_create`/`mirror_update` (fejl → «Ikke i kalenderen» som før), audit `bookings.confirmed`; `calendar_connection.pending_confirmation`; widget-svar `confirmation`.
+  - Assistent: `book_tid`/`flyt_tid` returnerer `bekraeftelse: "afventer"` og teksten «Tiden … er noteret, men den er IKKE endeligt bekræftet … en medarbejder vender tilbage og bekræfter tiden …» (ingen «Booket»/«er flyttet»); `ledige_tider` siger, at en valgt tid skal bekræftes. Sælger-Peters `book_moede` (sales/tools.py) siger tilsvarende «noteret, ikke endeligt bekræftet». SMS-skabelonen «booking» afvises for en aftale, der afventer (`booking_pending`).
+  - Widget (`webchat/static/frame.js`, kun dansk som resten af widgetten): «Tak, X! Din tid … er noteret. En medarbejder bekræfter tiden.»
+  - Web /app/aftaler: mærkat «Afventer bekræftelse», forklaring, knap «Bekræft» (→ «Bekræft alligevel» ved konflikt), antal i kalenderkortet, «Book for en kunde» viser «Noteret … – afventer bekræftelse». i18n i 8 sprog (`bookings.card.pending|pendingDetail|confirm|confirming|confirmAnyway`, `bookings.calendar.pendingN`, `bookings.book.pending`).
+  - Test-hook (kun dev/fake): `POST /dev/fake-calendar/busy-down?workspace_id=…&down=…` (fakes `WORLD.busy_down`, pr. arbejdsrum).
+- Tests: `tests/test_booking_calendar_sync.py` (6 nye: udbyder nede → afventer + opgave + intet event, bekræft → spejlet + opgave lukket; konflikt 409 + bekræft alligevel; aflys lukker opgave; kalender ok → normal; book_tid/flyt_tid giver aldrig «Booket»/«er flyttet»; forbindelse i error forsøges og gendannes), `tests/qa/test_qa_voice_calendar_failure.py::test_bk15_busy_unreadable_booking_is_noted_not_confirmed` + eval-case `qa/voice/cases/BK15-03`, e2e `web/e2e/qa/erhverv-b/BK15-pending.spec.ts` (desktop + mobil).
+- Ikke ændret (opfølgning): public API v1 `Booking`-skemaet viser ikke `confirmation` (versioneret kontrakt); `SalesMeeting.status` for et afventende sælgermøde er stadig 'confirmed'; webchat-indbakkens «Booket»-udfald skelner ikke afventende aftaler.
 
 ## Testresultat
 - Før: `test_bk15_failed_external_move_is_not_reported_as_done`, `test_bk15_failed_external_create_is_not_reported_as_done` FAILED.

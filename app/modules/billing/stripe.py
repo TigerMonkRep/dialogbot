@@ -1,8 +1,8 @@
 """Stripe: card on file and monthly invoices in arrears (test mode first).
 
 - The owner saves a card through Stripe Checkout in *setup* mode – card data never touches us.
-- After a month closes, the worker turns that month's statement (the subscription and the 4 kr.
-  campaign calls; old model-B leads and old campaign packages on old months) into ONE Stripe invoice, charged
+- After a month closes, the worker turns that month's statement (the subscription, minutes above the shared
+  package; old model-B leads, 4 kr. campaign calls and old campaign packages on old months) into ONE Stripe invoice, charged
   automatically. One invoice per workspace and month (unique row + Stripe idempotency key).
 - Markets (docs/markets.md): the invoice is in the statement's currency. A Danish company gets 25 % Danish VAT (the
   exclusive tax rate "dk_vat_25"); an EU company with a VAT number gets no tax rate and the reverse-charge note, a
@@ -467,4 +467,5 @@ def invoice_out(i: Invoice) -> dict:
     return {"id": str(i.id), "month": i.month.strftime("%Y-%m"), "status": i.status, "number": i.number,
             "currency": i.currency, "tax_source": i.tax_source, "net_minor": i.net_minor, "tax_minor": i.tax_minor, "gross_minor": i.gross_minor,
             "hosted_invoice_url": i.hosted_invoice_url, "invoice_pdf": i.invoice_pdf, "note": i.note,
+            "lines": i.lines or [],  # the frozen statement lines of the invoiced month (package usage included)
             "created_at": i.created_at.isoformat()}

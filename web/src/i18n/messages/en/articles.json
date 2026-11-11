@@ -73,7 +73,7 @@
     "faq": [
       ["Can an AI answering machine replace a call answering service?", "For most routine enquiries, yes: it answers, clarifies the need and books. Complex matters are passed on to you."],
       ["Is an AI answering machine available at night?", "Yes, Dialogbot answers the phone around the clock."],
-      ["Which is cheaper: a call answering service or Dialogbot?", "A call answering service is usually billed per call or per month. Dialogbot is one subscription at {pMonthly} per month excl. VAT, with 300 minutes of incoming calls and no price per enquiry. See also /viden/dialogbot-vs-vocalis."],
+      ["Which is cheaper: a call answering service or Dialogbot?", "A call answering service is usually billed per call or per month. Dialogbot is one subscription at {pMonthly} per month excl. VAT, with 300 minutes for inbound and outbound calls and no price per enquiry. See also /viden/dialogbot-vs-vocalis."],
       ["Can I keep my number?", "Yes. You forward your number to Dialogbot when you are busy or closed."]
     ]
   },
@@ -132,7 +132,7 @@
     "faq": [
       ["Can Dialogbot also just be a chatbot?", "Yes. The web chat is included in the subscription and uses the same approved knowledge as the phone. It's one line of code on your website."],
       ["Does Dialogbot guess if it doesn't know the answer?", "No. It only answers from approved knowledge and takes a message for you if it can't answer."],
-      ["What does it cost?", "{pMonthly} per month excl. VAT with 300 minutes of incoming calls. No commitment."]
+      ["What does it cost?", "{pMonthly} per month excl. VAT with 300 minutes for inbound and outbound calls. No commitment."]
     ]
   },
   "dialogbot-vs-vocalis": {

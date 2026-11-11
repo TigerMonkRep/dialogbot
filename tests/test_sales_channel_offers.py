@@ -59,6 +59,12 @@ def test_offer_amounts_come_from_the_price_list_and_sent_is_not_accepted(api, ri
     token = _token_from_mail(db, "rene@example.invalid")
     view = api.c.get(f"/api/v1/public/offers/{token}").json()
     assert view["status"] == "sent" and view["setup_net_minor"] == 500_000 and view["company"] == "Salon Fiktiv"
+    # the offer states every call price after the package that accepting snapshots (F-VR-06): 4 / 1 / 0,25 kr. + 2 kr./min
+    shown_calls = (view["campaign_call_net_minor"], view["campaign_call_voicemail_net_minor"],
+                   view["campaign_call_no_answer_net_minor"])
+    assert shown_calls == (prices.OUTBOUND_CALL_ANSWERED_NET_MINOR, prices.OUTBOUND_CALL_VOICEMAIL_NET_MINOR,
+                           prices.OUTBOUND_CALL_NO_ANSWER_NET_MINOR) == (400, 100, 25)
+    assert view["campaign_minute_net_minor"] == prices.OUTBOUND_EXTRA_MINUTE_NET_MINOR == 200
     assert api.c.get("/api/v1/public/offers/forkert-token").status_code == 404
     # accepting needs a logged-in, verified user
     assert api.c.post(f"/api/v1/public/offers/{token}/accept", json={"confirm": True}).status_code == 401
@@ -74,6 +80,9 @@ def test_offer_amounts_come_from_the_price_list_and_sent_is_not_accepted(api, ri
     a = db.get(ReceptionAgreement, offer.agreement_id)
     assert offer.status == "accepted" and str(offer.workspace_id) == out["workspace_id"]
     assert a.setup_net_minor == 500_000 and a.sales_offer_id == offer.id and a.monthly_net_minor == 249_500
+    assert (a.outbound_call_answered_net_minor, a.outbound_call_voicemail_net_minor,
+            a.outbound_call_no_answer_net_minor) == shown_calls  # billed = shown
+    assert a.outbound_extra_minute_net_minor == view["campaign_minute_net_minor"]
     # the setup fee is on the first statement, once
     st = statement(db, a.workspace_id, date.today().replace(day=1), "Europe/Copenhagen")
     assert [x["net_minor"] for x in st["lines"] if x["kind"] == "setup_fee"] == [500_000]

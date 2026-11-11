@@ -184,7 +184,7 @@
     },
     "label": "Bedingungen",
     "title": "Abonnement- und Geschäftsbedingungen",
-    "updated": "Version 1 · gültig ab 6. Oktober 2026.",
+    "updated": "Version 2 · gültig ab 10. November 2026.",
     "intro": "Diese Bedingungen gelten, wenn ein Unternehmen ein Konto erstellt und Dialogbot nutzt. Dialogbot wird ausschließlich an Gewerbetreibende verkauft. \"Wir\" ist {name} (CVR-Nr. {cvr}), {address}. \"Sie\" ist das Unternehmen, das den Arbeitsbereich erstellt hat.",
     "sections": [
       {
@@ -202,8 +202,8 @@
             "type": "ul",
             "items": [
               [{ "b": "Abonnement:" }, " ab {pMonthly} pro Monat. Es gibt keinen Preis pro Anfrage."],
-              [{ "b": "Kampagnen (ausgehende Anrufe):" }, " {pCall} pro ausgehendem Anruf plus {pMinute} pro angefangener Gesprächsminute. Jeder getätigte Anruf zählt, auch ein erneuter Versuch (höchstens 2 Versuche und höchstens 3 Gesprächsminuten pro Kontakt). Der höchstmögliche Preis wird angezeigt, bevor eine Kampagne gestartet wird."],
-              [{ "b": "Eingehende Anrufe:" }, " eine dänische Telefonnummer für den Assistenten und 300 angefangene Gesprächsminuten pro Kalendermonat sind inbegriffen. Weitere Minuten kosten {pExtraMinute} pro angefangener Minute und werden auf der Monatsrechnung abgerechnet. Der Verbrauch kann laufend in Dialogbot verfolgt werden."]
+              [{ "b": "Minutenpaket:" }, " eine dänische Telefonnummer für den Assistenten und 300 angefangene Gesprächsminuten pro Kalendermonat sind inbegriffen. Die Minuten sind ein gemeinsames Kontingent für eingehende Anrufe und ausgehende Kampagnenanrufe und werden in der Reihenfolge der Anrufe verbraucht. Innerhalb des Pakets gibt es keinen Preis pro Anruf. Bei Kampagnen wird ein Kontakt höchstens zweimal angerufen und spricht höchstens 3 Minuten, und der höchstmögliche Preis wird angezeigt, bevor eine Kampagne gestartet wird."],
+              [{ "b": "Minuten über das Paket hinaus:" }, " {pExtraMinute} pro angefangener eingehender Minute. Ein ausgehender Kampagnenanruf, der nach Verbrauch des Pakets beginnt, kostet {pCallAnswered}, wenn die Person abnimmt, {pCallVoicemail} bei Mailbox und {pCallNoAnswer} bei nicht angenommen, besetzt oder unbekanntem Ergebnis – plus {pMinute} pro angefangener Gesprächsminute. Ein Anruf, der die Grenze überschreitet, teilt nur seine Minuten und bekommt keinen Anrufpreis. Sie werden auf der Monatsrechnung abgerechnet, und der Verbrauch pro Anruf kann laufend in Dialogbot verfolgt werden. Minuten werden nur gutgeschrieben, wenn Sie einen bestimmten Anruf beanstanden und wir die Beanstandung anerkennen: Ist der Monat noch nicht abgerechnet, gehen die Minuten zurück ins Paket; ist er abgerechnet, wird der Betrag auf der nächsten Rechnung gutgeschrieben."]
             ]
           },
           { "type": "p", "text": "Kommen Sie über einen Botschafter, erhalten Sie 50 % Rabatt auf Ihren ersten abgerechneten Monat. Wir können die Preise mit einer Frist von mindestens 30 Tagen per E-Mail ändern; die Änderung gilt ab dem ersten vollen Monat nach der Ankündigung." }

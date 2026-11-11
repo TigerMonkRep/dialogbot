@@ -130,22 +130,10 @@
       "title": "What should it do for you?",
       "hint": "Choose what fits. It decides what steps 2 and 3 ask about.",
       "cards": {
-        "phone": {
-          "title": "Answer the phone",
-          "sub": "when you can't – or always"
-        },
-        "booking": {
-          "title": "Book appointments",
-          "sub": "straight into your calendar"
-        },
-        "web": {
-          "title": "Answer on your website",
-          "sub": "web chat – one line of code"
-        },
-        "outbound": {
-          "title": "Call customers",
-          "sub": "campaigns · {pCall} per call excl. VAT"
-        }
+        "phone": { "title": "Answer the phone", "sub": "when you can't – or always" },
+        "booking": { "title": "Book appointments", "sub": "straight into your calendar" },
+        "web": { "title": "Answer on your website", "sub": "web chat – one line of code" },
+        "outbound": { "title": "Call customers", "sub": "campaigns · minutes from the package" }
       },
       "langAria": "Languages",
       "speaks": "It speaks",
@@ -370,7 +358,7 @@
     "turningOn": "Switching on …",
     "turnOn": "Switch on Dialogbot",
     "managersOnly": "Only owners and administrators can switch it on.",
-    "subscriptionNote": "The subscription is from {pMonthly}/month excl. VAT, and outbound campaign calls cost {pCall} per call excl. VAT.",
+    "subscriptionNote": "The subscription is from {pMonthly}/month excl. VAT with {pIncluded} minutes for inbound and outbound calls; then {pExtraMinute} per minute in, and outbound {pCallAnswered} per answered call + {pMinute} per minute.",
     "confirmSubscription": "Confirm subscription",
     "findAgain": "You'll find everything again under the profile icon → All settings.",
     "readerTitle": "The owner sets up Dialogbot",

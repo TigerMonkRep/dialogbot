@@ -738,7 +738,9 @@ test("22 · Kampagner: manuskript foreslås af AI, kontakter importeres med lovk
   await expect(page.getByRole("heading", { name: "Vil I også ringe ud?" })).toBeVisible();
   await page.getByRole("button", { name: "Ja, slå udgående opkald til" }).click();
   await expect(page.getByRole("heading", { name: "Ring til jeres kunder – én kampagne ad gangen" })).toBeVisible();
-  await expect(page.getByText(/4,00 kr\. \+ moms pr\. udgående opkald/)).toBeVisible();
+  // model A' (2026-11-10): no price per call inside the package; after it 4 / 1 / 0,25 kr. by outcome + 2 kr. per started minute
+  await expect(page.getByText(/minutter fra pakken, derefter 4,00 kr\. pr\. besvaret opkald \+ 2,00 kr\.\/min ekskl\. moms/)).toBeVisible();
+  await expect(page.getByText(/Er pakken brugt, koster et opkald 4,00 kr\. \(besvaret\), 1,00 kr\. \(telefonsvarer\) eller 0,25 kr\. \(ubesvaret\) plus 2,00 kr\. pr\. påbegyndt minut, ekskl\. moms\. Højst 2 forsøg og i alt 3 minutters samtale pr\. kontakt – højst 14,00 kr\. pr\. kontakt\./)).toBeVisible();
   await page.getByLabel("Navn på kampagnen").fill("Forårstilbud");
   await page.getByLabel("Hvad skal opkaldet handle om?").fill("Tilbyde gulvafslibning til tidligere kunder");
   await page.getByRole("button", { name: "Opret kampagne" }).click();
@@ -755,7 +757,9 @@ test("22 · Kampagner: manuskript foreslås af AI, kontakter importeres med lovk
   await page.getByRole("button", { name: "Tilføj kontakter" }).click();
   await expect(page.getByText(/1 kontakter tilføjet, 1 ugyldige numre \(fx række 2\)/)).toBeVisible();
   await expect(page.getByText("+4520304050")).toBeVisible();
-  await expect(page.getByText(/Højst 20,00 kr\. \+ moms/)).toBeVisible(); // 1 kontakt × 2 forsøg × (4 kr. + 3 min × 2 kr.)
+  // 1 kontakt: 2 forsøg × 4 kr. (besvaret) + 3 påbegyndte min × 2 kr. = 14 kr. (tests/test_campaigns.py::test_max_cost_is_the_worst_case_14_kr_per_contact)
+  await expect(page.getByRole("heading", { name: "1 kontakter · højst 14,00 kr. ekskl. moms" })).toBeVisible();
+  await expect(page.getByText(/højst 14,00 kr\. pr\. kontakt\) er prisen højst 14,00 kr\. \+ moms \(\d+,\d\d kr\. inkl\. moms\)\. Efter pakken koster et opkald 4,00 kr\. \(besvaret\), 1,00 kr\. \(telefonsvarer\) eller 0,25 kr\. \(ubesvaret\) plus 2,00 kr\. pr\. påbegyndt samtaleminut\./)).toBeVisible();
   // the start is explicit and honest: outbound calling is not set up by Dialogbot in this environment
   await expect(page.getByText(/Udgående opkald er ikke sat op hos Dialogbot endnu/)).toBeVisible();
   const start = page.getByRole("button", { name: "Start kampagne" });

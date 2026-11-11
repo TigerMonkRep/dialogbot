@@ -343,7 +343,7 @@
     },
     "label": "Conditions",
     "title": "Conditions d’abonnement et conditions générales de vente",
-    "updated": "Version 1 · en vigueur à compter du 6 octobre 2026.",
+    "updated": "Version 2 · en vigueur à compter du 10 novembre 2026.",
     "intro": "Les présentes conditions s’appliquent lorsqu’une entreprise crée un compte et utilise Dialogbot. Dialogbot est vendu exclusivement aux professionnels. « Nous » désigne {name} (n° CVR {cvr}), {address}. « Vous » désigne l’entreprise qui a créé l’espace de travail.",
     "sections": [
       {
@@ -377,15 +377,15 @@
               ],
               [
                 {
-                  "b": "Campagnes (appels sortants) :"
+                  "b": "Forfait de minutes :"
                 },
-                " {pCall} par appel sortant plus {pMinute} par minute de conversation entamée. Chaque appel passé compte, y compris une nouvelle tentative (2 tentatives maximum et 3 minutes de conversation maximum par contact). Le prix maximal possible est affiché avant le lancement d’une campagne."
+                " un numéro de téléphone danois pour l’assistant et 300 minutes de conversation entamées par mois civil sont inclus. Les minutes forment une enveloppe commune aux appels entrants et aux appels de campagne sortants et sont consommées dans l’ordre des appels. Dans le forfait, il n’y a aucun prix par appel. Dans les campagnes, un contact est appelé au plus deux fois et parle au plus 3 minutes, et le prix maximal possible est affiché avant le lancement d’une campagne."
               ],
               [
                 {
-                  "b": "Appels entrants :"
+                  "b": "Minutes au-delà du forfait :"
                 },
-                " un numéro de téléphone danois pour l’assistant et 300 minutes de conversation entamées par mois civil sont inclus. Les minutes supplémentaires coûtent {pExtraMinute} par minute entamée et sont facturées sur la facture du mois. La consommation peut être suivie en continu dans Dialogbot."
+                " {pExtraMinute} par minute entrante entamée. Un appel de campagne sortant qui commence après l’épuisement du forfait coûte {pCallAnswered} si la personne décroche, {pCallVoicemail} en cas de messagerie et {pCallNoAnswer} sans réponse, occupé ou d’issue inconnue – plus {pMinute} par minute de conversation entamée. Un appel qui franchit la limite ne fait que partager ses minutes et n’a pas de prix par appel. Elles sont facturées sur la facture du mois, et la consommation par appel peut être suivie en continu dans Dialogbot. Les minutes ne sont créditées que lorsque vous contestez un appel précis et que nous acceptons la réclamation : si le mois n’a pas encore été facturé, les minutes reviennent dans le forfait ; s’il l’a été, le montant est crédité sur la facture suivante."
               ]
             ]
           },

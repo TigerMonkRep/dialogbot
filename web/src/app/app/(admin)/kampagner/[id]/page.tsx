@@ -11,6 +11,7 @@ import { currencyOr, formatPrice } from "@/lib/markets";
 export default async function CampaignPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const ws = await requireWorkspace();
+  const loc = await getLocale();
   const t = await getT("app");
   if (ws.role === "reader") return <p className="text-body-md">{t("campaigns.staffOnly")}</p>;
   const canManage = ws.role === "owner" || ws.role === "admin";
@@ -65,7 +66,7 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
       </section>
       <aside className="flex-[1_1_300px] min-w-0 max-w-[440px] flex flex-col gap-5 lg:sticky lg:top-[88px]">
         {canManage && <StartCampaign wsId={ws.id} c={c} checklist={list.legal_checklist} />}
-        <p className="text-[13px] text-muted">{t("campaigns.detail.priceNote", { price: formatPrice(c.pricing.call_net_minor, currencyOr(c.pricing.currency), await getLocale()) })}</p>
+        <p className="text-[13px] text-muted">{t("campaigns.detail.priceNote", { price: formatPrice(c.pricing.minute_net_minor, currencyOr(c.pricing.currency), loc), answered: formatPrice(c.pricing.call_prices.answered, currencyOr(c.pricing.currency), loc), voicemail: formatPrice(c.pricing.call_prices.voicemail, currencyOr(c.pricing.currency), loc), noAnswer: formatPrice(c.pricing.call_prices.no_answer, currencyOr(c.pricing.currency), loc) })}</p>
       </aside>
     </div>
   );

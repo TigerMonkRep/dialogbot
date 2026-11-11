@@ -130,22 +130,10 @@
       "title": "Hva skal den gjøre for dere?",
       "hint": "Velg det som passer. Det bestemmer hva trinn 2 og 3 spør om.",
       "cards": {
-        "phone": {
-          "title": "Ta telefonen",
-          "sub": "når dere ikke rekker det – eller alltid"
-        },
-        "booking": {
-          "title": "Booke avtaler",
-          "sub": "rett i kalenderen deres"
-        },
-        "web": {
-          "title": "Svare på nettsiden",
-          "sub": "nettchat – én kodelinje"
-        },
-        "outbound": {
-          "title": "Ringe kunder",
-          "sub": "kampanjer · {pCall} per anrop eks. mva."
-        }
+        "phone": { "title": "Ta telefonen", "sub": "når dere ikke rekker det – eller alltid" },
+        "booking": { "title": "Booke avtaler", "sub": "rett i kalenderen deres" },
+        "web": { "title": "Svare på nettsiden", "sub": "nettchat – én kodelinje" },
+        "outbound": { "title": "Ringe kunder", "sub": "kampanjer · minutter fra pakken" }
       },
       "langAria": "Språk",
       "speaks": "Den snakker",
@@ -370,7 +358,7 @@
     "turningOn": "Slår på …",
     "turnOn": "Slå på Dialogbot",
     "managersOnly": "Bare eiere og administratorer kan slå på.",
-    "subscriptionNote": "Abonnementet koster fra {pMonthly}/mnd. eks. mva., og utgående kampanjeanrop koster {pCall} per anrop eks. mva.",
+    "subscriptionNote": "Abonnementet er fra {pMonthly}/mnd. eks. mva. med {pIncluded} minutter til inn- og utgående samtaler; deretter {pExtraMinute} per minutt inn, og utgående {pCallAnswered} per besvart anrop + {pMinute} per minutt.",
     "confirmSubscription": "Bekreft abonnement",
     "findAgain": "Du finner alt igjen under profilikonet → Alle innstillinger.",
     "readerTitle": "Eieren setter opp Dialogbot",

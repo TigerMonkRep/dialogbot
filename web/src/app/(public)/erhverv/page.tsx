@@ -293,7 +293,7 @@ function structuredData(t: T, lang: string, locale: Locale) {
       publisher: { "@id": `${SITE_URL}/#organization` },
       offers: [
         offer("subscription", m.erhverv.monthly),
-        offer("campaign", m.erhverv.call),
+        offer("campaign", m.erhverv.call_answered),
         offer("setup", m.erhverv.setup),
       ] },
     { "@context": "https://schema.org", ...videoStructuredData(SITE_URL, t, locale, lang) },

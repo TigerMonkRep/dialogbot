@@ -177,6 +177,12 @@ def customers(q: str = Query(default="", max_length=100), limit: int = Query(def
     return {"items": out}
 
 
+def _billing(db: OrmSession, ws: Workspace) -> dict:
+    from app.modules.billing.operator_router import customer_billing
+
+    return customer_billing(db, ws)
+
+
 @router.get("/customers/{workspace_id}")
 def customer(workspace_id: uuid.UUID, db: OrmSession = Depends(get_db), principal: Principal = Depends(operator)):
     ws = db.get(Workspace, workspace_id)
@@ -205,6 +211,8 @@ def customer(workspace_id: uuid.UUID, db: OrmSession = Depends(get_db), principa
         "telephony": ({"state": tel.state, "business_number": tel.business_number, "documents_status": tel.documents_status} if tel else None),
         "ambassador": ({"id": str(amb.id), "name": amb.full_name, "via": ref.via} if amb and ref else None),
         "invoices": [{"month": i.month.isoformat(), "status": i.status, "gross_minor": i.gross_minor, "number": i.number} for i in invoices],
+        # M04: the agreement's package snapshot and this month's usage (inbound/outbound, package, overage)
+        **_billing(db, ws),
         "calls": [{"started_at": _iso(c.started_at), "from": c.from_number, "seconds": c.duration_seconds, "reason": c.ended_reason,
                    "summary": c.summary[:200]} for c in calls],
         "campaigns": [{"id": str(c.id), "name": c.name, "status": c.status, "created_at": _iso(c.created_at)} for c in campaigns],

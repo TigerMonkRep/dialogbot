@@ -8,8 +8,6 @@ from __future__ import annotations
 
 from datetime import UTC, date, datetime, time
 
-import pytest
-
 from app.config import get_settings
 from app.models import CampaignCall, CampaignContact
 from app.modules.campaigns import service
@@ -96,15 +94,17 @@ def test_c15_campaign_does_not_claim_packages(api, two_workspaces):
     assert "max_cost" in c and "packages" not in c
 
 
-@pytest.mark.xfail(strict=True, reason="C15/C09 campaign packages, checkout, reconciliation and refunds: needs-decision "
-                   "(pay per call replaced packages)")
 def test_c15_c09_packages_checkout_and_refunds_exist(api, two_workspaces):
-    """C15: «Purchased/consumed/unused/pending packages, cancellation and pending/confirmed refunds». C09
-    (/app/campaigns/:id/checkout): «Payment summary, processing, action required, success and failure». Not built
-    (xfail strict – turns red when built)."""
+    """C15/C09 with the minute package (Fürster 2026-11-10): a campaign has no packages, checkout or orders of its own
+    – its minutes draw on the workspace's monthly package and are billed on the monthly invoice. What C15 asks for
+    («consumed/unused», «refunds») is: the campaign shows the package left and an honest maximum before it starts,
+    and a refund is a complaint about one call (billing disputes)."""
     t = two_workspaces
     tok, ws = t["tok_a"], t["ws_a"]
     c = api.post(tok, f"/workspaces/{ws}/campaigns", {"name": "QA-EB pakker"}).json()
-    missing = [p for p in ("reconciliation", "checkout", "packages", "refunds", "order")
-               if api.get(tok, f"/workspaces/{ws}/campaigns/{c['id']}/{p}").status_code in (404, 405)]
-    assert not missing, f"not built: {missing}"
+    assert c["package"] == {"included": 300, "remaining": 300} and c["pricing"]["call_prices"]["answered"] == 400
+    assert {"max_cost", "max_cost_with_package", "max_minutes"} <= set(c)
+    for p in ("checkout", "packages", "order"):  # no per-campaign purchase exists
+        assert api.get(tok, f"/workspaces/{ws}/campaigns/{c['id']}/{p}").status_code in (404, 405)
+    assert api.get(tok, f"/workspaces/{ws}/billing/disputes").status_code == 200  # «refunds»: complaints about calls
+    assert api.get(tok, f"/workspaces/{ws}/billing/usage").status_code == 200     # consumed per call

@@ -1,11 +1,18 @@
 /** Campaign types and status labels (plain module: usable from server and client components). */
 import type { T } from "@/i18n/translate";
+/** Prices after the package: per call by outcome and per started minute; inside the package no call price. */
+export type CampaignPricing = { call_net_minor: number; minute_net_minor: number; max_attempts: number; max_connected_seconds: number; currency?: string;
+  call_prices: { answered: number; voicemail: number; no_answer: number }; per_contact_max_net_minor: number };
 export type Counts = { total: number; open: number; calls: number; answered: number; by_status: Record<string, number>; by_outcome: Record<string, number> };
 export type Campaign = {
   id: string; name: string; status: "draft" | "running" | "paused" | "completed"; version: number; purpose: string; opening: string;
   questions: string[]; success: string; phone_number_id: string | null; call_days: string[]; call_from: string; call_to: string;
-  pricing: { call_net_minor: number; minute_net_minor: number; max_attempts: number; max_connected_seconds: number; currency?: string }; counts: Counts;
+  pricing: CampaignPricing; counts: Counts;
+  /** max_cost: the true maximum (if other calls use up the package first); max_cost_with_package: with the package
+   *  minutes left now. Minutes come out of the shared monthly package, no price per call. */
   max_cost: { net_minor: number; tax_minor: number; gross_minor: number }; outbound_problem: string | null;
+  max_minutes: number; package: { included: number; remaining: number };
+  max_cost_with_package: { net_minor: number; tax_minor: number; gross_minor: number };
   legal_confirmation: { at: string; accepted_max_net_minor: number } | null; started_at: string | null; completed_at: string | null;
 };
 export type Contact = {

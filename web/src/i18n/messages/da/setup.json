@@ -130,22 +130,10 @@
       "title": "Hvad skal den gøre for jer?",
       "hint": "Vælg det, der passer. Det bestemmer, hvad trin 2 og 3 spørger om.",
       "cards": {
-        "phone": {
-          "title": "Tage telefonen",
-          "sub": "når I ikke kan – eller altid"
-        },
-        "booking": {
-          "title": "Booke aftaler",
-          "sub": "direkte i jeres kalender"
-        },
-        "web": {
-          "title": "Svare på hjemmesiden",
-          "sub": "webchat – én kodelinje"
-        },
-        "outbound": {
-          "title": "Ringe kunder op",
-          "sub": "kampagner · {pCall} pr. opkald ekskl. moms"
-        }
+        "phone": { "title": "Tage telefonen", "sub": "når I ikke kan – eller altid" },
+        "booking": { "title": "Booke aftaler", "sub": "direkte i jeres kalender" },
+        "web": { "title": "Svare på hjemmesiden", "sub": "webchat – én kodelinje" },
+        "outbound": { "title": "Ringe kunder op", "sub": "kampagner · minutter fra pakken" }
       },
       "langAria": "Sprog",
       "speaks": "Den taler",
@@ -370,7 +358,7 @@
     "turningOn": "Tænder …",
     "turnOn": "Tænd Dialogbot",
     "managersOnly": "Kun ejere og administratorer kan tænde.",
-    "subscriptionNote": "Abonnementet er fra {pMonthly}/md. ekskl. moms, og udgående kampagneopkald koster {pCall} pr. opkald ekskl. moms.",
+    "subscriptionNote": "Abonnementet er fra {pMonthly}/md. ekskl. moms med {pIncluded} minutter til ind- og udgående opkald; derefter {pExtraMinute} pr. minut ind, og udgående {pCallAnswered} pr. besvaret opkald + {pMinute} pr. minut.",
     "confirmSubscription": "Bekræft abonnement",
     "findAgain": "Du finder alt igen under profil-ikonet → Alle indstillinger.",
     "readerTitle": "Ejeren sætter Dialogbot op",

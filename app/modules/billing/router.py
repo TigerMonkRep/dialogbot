@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import re
+import uuid
 from datetime import UTC, date, datetime
 
 from fastapi import APIRouter, Depends, Query, Request, Response
@@ -33,6 +34,50 @@ def get_statement(month: str | None = Query(default=None, description="YYYY-MM; 
     else:
         raise ValidationFailed("month skal være på formen ÅÅÅÅ-MM", field_errors=[{"field": "month"}])
     return statement(db, ctx.workspace.id, m, tz)
+
+
+# --------------------------------------------------------------------------- usage per call and complaints (B03/B04)
+
+@router.get("/usage")
+def get_usage(month: str | None = Query(default=None, description="YYYY-MM; default: current month"),
+              ctx: WorkspaceContext = Depends(require_capability("billing.read")), db: OrmSession = Depends(get_db)):
+    """Every billed call of the month with its minutes, how the package covered it and any complaint about it; for an
+    invoiced month also the invoice's frozen lines."""
+    from app.modules.billing import disputes
+
+    tz = tz_of(db, ctx.workspace.id)
+    m = local_today(tz).replace(day=1) if month is None else _month(month)
+    return disputes.month_usage(db, ctx.workspace.id, m, tz)
+
+
+class DisputeIn(BaseModel):
+    kind: str = Field(pattern="^(inbound|outbound)$")
+    call_id: uuid.UUID
+    reason: str = Field(min_length=1, max_length=2000)
+
+
+@router.get("/disputes")
+def list_disputes(ctx: WorkspaceContext = Depends(require_capability("billing.read")), db: OrmSession = Depends(get_db)):
+    from app.models import CallDispute
+    from app.modules.billing import disputes
+
+    rows = db.scalars(select(CallDispute).where(CallDispute.workspace_id == ctx.workspace.id)
+                      .order_by(CallDispute.created_at.desc()))
+    return {"items": [disputes.out(d) for d in rows]}
+
+
+@router.post("/disputes", status_code=201)
+def create_dispute(body: DisputeIn, request: Request, response: Response,
+                   ctx: WorkspaceContext = Depends(require_capability("billing.manage")), db: OrmSession = Depends(get_db)):
+    """Complain about one billed call. One complaint per call: asking again returns the first one (200)."""
+    from app.modules.billing import disputes
+
+    d, created = disputes.create(db, ctx.workspace.id, kind=body.kind, call_id=body.call_id, reason=body.reason,
+                                 user_id=ctx.user_id, tz=tz_of(db, ctx.workspace.id), request_id=request.state.request_id)
+    db.commit()
+    if not created:
+        response.status_code = 200
+    return disputes.out(d)
 
 
 # --------------------------------------------------------------------------- Stripe: card and invoices

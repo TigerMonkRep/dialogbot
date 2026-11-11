@@ -204,7 +204,7 @@
       "unit": "{pCur}/md. ekskl. mva.",
       "points": [
         "Telefon, booking og nettchat – alt er med",
-        "300 minutter innkommende samtaler i måneden",
+        "{pIncluded} minutter i måneden til inn- og utgående samtaler",
         "Oppsigelse måned for måned"
       ],
       "cta": "Hør den først"

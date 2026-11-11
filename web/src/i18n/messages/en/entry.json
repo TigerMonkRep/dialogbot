@@ -204,7 +204,7 @@
       "unit": "/month excl. VAT",
       "points": [
         "Phone, booking and web chat – all included",
-        "300 minutes of incoming calls per month",
+        "{pIncluded} minutes a month for incoming and outgoing calls",
         "Cancel month to month"
       ],
       "cta": "Hear it first"

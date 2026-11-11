@@ -60,7 +60,7 @@
       "title": "Campagnes",
       "sub": "Appelez vos propres clients",
       "outbound": "Appels sortants",
-      "chosen": "Choisi – {pCall} par appel + {pMinute} par minute HT",
+      "chosen": "Choisi – minutes du forfait, puis {pCallAnswered} par appel décroché + {pMinute} par minute HT",
       "notChosen": "Non choisi"
     },
     "systems": {

@@ -151,7 +151,8 @@
   "memberships": "IntegrityError: (psycopg.errors.UniqueViolation) duplicate key value violates unique constraint \"uq_memberships_workspace_user\"",
   "referrals": "LookupError: needs a ambassadors row",
   "commission_entries": "LookupError: needs a ambassadors row",
-  "sales_offers": "LookupError: needs a sales_companies row"
+  "sales_offers": "LookupError: needs a sales_companies row",
+  "call_disputes": "IntegrityError: (psycopg.errors.CheckViolation) new row for relation \"call_disputes\" violates check constraint \"ck_call_disputes_one_call\""
  },
  "not_made_P1": {
   "discount_redemptions": "LookupError: needs a discount_codes row",
@@ -161,6 +162,7 @@
   "referrals": "LookupError: needs a ambassadors row",
   "commission_entries": "LookupError: needs a ambassadors row",
   "phone_numbers": "IntegrityError: (psycopg.errors.UniqueViolation) duplicate key value violates unique constraint \"phone_numbers_e164_key\"",
-  "sales_offers": "LookupError: needs a sales_companies row"
+  "sales_offers": "LookupError: needs a sales_companies row",
+  "call_disputes": "IntegrityError: (psycopg.errors.CheckViolation) new row for relation \"call_disputes\" violates check constraint \"ck_call_disputes_one_call\""
  }
 }

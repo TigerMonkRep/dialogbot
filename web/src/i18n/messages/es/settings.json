@@ -60,7 +60,7 @@
       "title": "Campañas",
       "sub": "Llame a sus propios clientes",
       "outbound": "Llamadas salientes",
-      "chosen": "Elegido: {pCall} por llamada + {pMinute} por minuto, IVA no incluido",
+      "chosen": "Elegido – minutos del paquete, después {pCallAnswered} por llamada atendida + {pMinute} por minuto sin IVA",
       "notChosen": "No elegido"
     },
     "systems": {

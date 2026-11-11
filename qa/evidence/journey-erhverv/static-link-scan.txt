@@ -1,0 +1,26 @@
+# Statisk link-scan (scripts uden for repo; samme resolver som tests/qa/qa_routes.py).
+# Alle hits nedenfor er FALSKE POSITIVER: FastAPI-routerstier (/apply, /privat/tasks, /verify-email/resend …) eller
+# skabelonstier (/opsaetning/${n} med n=1..3, /viden/${slug} med faste artikler). Ingen side-link fra backend/web rammer en manglende rute.
+app/modules/ambassadors/router.py:136: /apply
+app/modules/browser/router.py:18: /privat/tasks
+app/modules/identity/router.py:141: /verify-email/resend
+app/modules/privat/apps_router.py:270: /apps/{key}/overview
+app/modules/privat/apps_router.py:282: /apps/{key}/items/{item_id}/photo
+app/modules/privat/apps_router.py:303: /apps/{key}/items/{item_id}
+app/modules/privat/calendar_router.py:21: /privat/calendar
+app/modules/privat/calendar_router.py:84: /appointments
+app/modules/privat/calendar_router.py:90: /appointments/{appointment_id}.ics
+app/modules/privat/calendar_router.py:99: /appointments/{appointment_id}
+app/modules/privat/router.py:321: /invites/by-code/{code}
+app/modules/privat/router.py:331: /invites/{token}
+app/modules/privat/router.py:341: /invites/by-code/{code}/accept
+app/modules/privat/router.py:349: /invites/{token}/accept
+app/modules/public_api/management_router.py:107: /privat/api-keys/scopes
+app/modules/public_api/management_router.py:112: /privat/api-keys
+app/modules/public_api/management_router.py:117: /privat/api-keys
+app/modules/public_api/management_router.py:125: /privat/api-keys/{key_id}
+web/src/app/app/(admin)/page.tsx:39: /opsaetning/${st.next}
+web/src/app/app/(admin)/page.tsx:67: /opsaetning/${st.next}
+web/src/app/opsaetning/1/step1.tsx:314: /opsaetning/${next}
+web/src/app/viden/page.tsx:26: /viden/${a.slug}
+web/src/components/setup-shell.tsx:38: /opsaetning/${n}

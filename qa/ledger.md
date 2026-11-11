@@ -32,3 +32,6 @@
 | 2026-11-10 | fix-engineer → qa-lead, verifier | fix-ready | batch 7 | F-PQ-02 (demo + ?plan → signup), F-VR-04-X11 (atomisk overtagelse + tests/test_idempotency.py); ikke committet |
 | 17:05 | verifier → qa-lead | verdict | batch 7 | F-PQ-02 closed (X07 8/8 + anonym ?plan= → signup → checkout, uden ?plan= demo), F-VR-04 closed (test_idempotency 5×, trådet probe: én vinder) |
 | 18:55 | qa-lead → Fürster | verdict | bølge 1 | GO: 0 åbne S0/S1, 51 fund lukket, CI grøn – merger PR #176 |
+| 2026-11-11 | e2e-erhverv → qa-lead | finding | journey-audit-erhverv | F-JE-01..12 (5×S1, 7×S2) på origin/main + #179; F-JE-01 er en regression i #179 selv (Privat-tilmeldt kan ikke oprette virksomhed, 422); tests/qa/test_qa_journey_erhverv.py (16 xfail strict) |
+| 2026-11-11 | e2e-erhverv → e2e-privat | finding | journey-audit-erhverv | F-JE-02/03/04/05/06 = Privat-krydsninger; mulige dubletter af F-JP-02/03/06/10 |
+| 2026-11-11 | e2e-erhverv → i18n-a11y-qa, integrations-qa | finding | journey-audit-erhverv | F-JE-07/08/12 sprog (i18n); F-JE-11 mail-/push-links uden arbejdsrum (E02/E03) |

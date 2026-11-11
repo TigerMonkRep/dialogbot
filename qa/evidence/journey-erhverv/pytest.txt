@@ -1,0 +1,18 @@
+.............xxxxxxxxx.xxxxxxx.                                          [100%]
+=========================== short test summary info ============================
+XFAIL tests/qa/test_qa_journey_erhverv.py::test_F_JE_01_privat_signup_can_still_create_an_erhverv_workspace - F-JE-01: samme login i Privat og Erhverv – signup_intent «privat» (#179) giver 422 «Ugyldig produktintention» ved oprettelse af virksomhed
+XFAIL tests/qa/test_qa_journey_erhverv.py::test_F_JE_01b_workspace_without_intent_for_privat_signup - F-JE-01: også uden product_intent falder backend tilbage på signup_intent «privat»
+XFAIL tests/qa/test_qa_journey_erhverv.py::test_F_JE_02_privat_user_reset_mail_is_privat - F-JE-02: Privat-bruger, der nulstiller adgangskode, får den blå Erhverv-mail
+XFAIL tests/qa/test_qa_journey_erhverv.py::test_F_JE_02b_reset_page_knows_privat - F-JE-02: /password/reset sender altid til /login?reset=1 (→ /app) og har altid Erhverv-ramme – også for Privat-brugere
+XFAIL tests/qa/test_qa_journey_erhverv.py::test_F_JE_03_login_without_next_routes_by_account - F-JE-03: login uden ?next sender alle til /app – en Privat-bruger lander i Erhverv-opsætningen /opsaetning/1
+XFAIL tests/qa/test_qa_journey_erhverv.py::test_F_JE_04_privat_funnel_welcome_mail_is_privat - F-JE-04: Privat-quiz-funnelens velkomstmail er den blå Erhverv-mail, og dens link fører via /login?reset=1 til /app (Erhverv)
+XFAIL tests/qa/test_qa_journey_erhverv.py::test_F_JE_05_privat_funnel_user_resend_verify_is_privat - F-JE-05: Privat-funnel-bruger (signup_intent None) får ved «Send igen» den blå Erhverv-bekræftelsesmail, og «Fortsæt» fører til Erhverv-opsætningen
+XFAIL tests/qa/test_qa_journey_erhverv.py::test_F_JE_06_every_privat_mail_builder_sets_privat_audience - F-JE-06: Privat-notifikationsmails (påmindelse, regning, fødselsdag, pakke, bil, fællesgave, invitation) sætter aldrig audience=«privat» – de er blå Erhverv-mails
+XFAIL tests/qa/test_qa_journey_erhverv.py::test_F_JE_07_signup_sends_the_visitors_language - F-JE-07: /signup sender ikke interface_language – bekræftelsesmail og alle senere konto-mails er danske for en tysk/engelsk/… besøgende
+XFAIL tests/qa/test_qa_journey_erhverv.py::test_F_JE_08_erhverv_funnel_welcome_follows_language - F-JE-08: Erhverv-quiz-funnel: velkomstmailen er hårdkodet dansk, og kontoen oprettes altid med interface_language «da»
+XFAIL tests/qa/test_qa_journey_erhverv.py::test_F_JE_09_funnel_choose_password_link_verifies_email - F-JE-09: funnel-bruger får aldrig en bekræftelsesmail; «Vælg adgangskode»-linket (beviser e-mailen) markerer den ikke bekræftet → gult «Bekræft e-mail»-banner bliver
+XFAIL tests/qa/test_qa_journey_erhverv.py::test_F_JE_10_invite_accept_goes_to_the_app - F-JE-10: inviteret medarbejder sendes efter accept til /opsaetning/1 (ejerens virksomhedsopsætning) i stedet for /app
+XFAIL tests/qa/test_qa_journey_erhverv.py::test_F_JE_10b_invited_staff_verify_mail_is_not_owner_setup - F-JE-10: inviteret medarbejders bekræftelsesmail lover «sæt din AI-receptionist op», og «Fortsæt» fører til opsætningen (opretter ny virksomhed, hvis invitationen endnu ikke er accepteret)
+XFAIL tests/qa/test_qa_journey_erhverv.py::test_F_JE_11_new_lead_link_carries_workspace - F-JE-11: «Ny henvendelse»-mailens link bærer ikke arbejdsrummet – ejer med to virksomheder får fejl/den forkerte virksomhed
+XFAIL tests/qa/test_qa_journey_erhverv.py::test_F_JE_11b_daily_report_link_carries_workspace - F-JE-11: dagsrapportens link /app/ugen?date=… viser den valgte virksomheds uge, ikke rapportens
+XFAIL tests/qa/test_qa_journey_erhverv.py::test_F_JE_12_auth_errors_are_localized - F-JE-12: login/tilmelding/bekræft/nulstil viser backendens danske fejltekst på alle 8 sprog

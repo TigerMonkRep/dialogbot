@@ -39,3 +39,17 @@ def test_privat_verify_texts_in_every_language():
     for lang in ("da", "en", "de", "es", "fr", "it", "no", "sv"):
         m = tpl.verify("https://x/verify-email?token=t&for=privat", lang=lang, privat=True)
         assert "Dialogbot Privat" in m.heading and "Dialogbot Privat" in m.paragraphs[0], lang
+
+
+def test_privat_signup_can_still_create_a_business(api, db):
+    """F-JE-01: «privat» is not a product – a Privat sign-up who creates a company gets the default product."""
+    r = api.c.post(f"{api.base}/auth/register", json={"email": "both@testmail.dk", "password": "hemmelig-kode-1",
+                                                       "display_name": "Bo", "signup_intent": "privat"})
+    assert r.status_code == 201, r.text
+    tok = api.login("both@testmail.dk", password="hemmelig-kode-1")
+    api.verify(tok)
+    r = api.post(tok, "/workspaces", {"name": "Bo ApS", "product_intent": "privat"})
+    assert r.status_code == 201, r.text
+    assert r.json()["product_intent"] == "reception"
+    r = api.post(tok, "/workspaces", {"name": "Bo 2 ApS"})
+    assert r.status_code == 201 and r.json()["product_intent"] == "reception", r.text

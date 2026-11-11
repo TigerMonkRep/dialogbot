@@ -121,11 +121,13 @@ def propose(db: OrmSession, ctx, *, business_name: str, phone: str | None, addre
     c = PrivateCall(workspace_id=ctx.ws_id, task_id=task.id, business_name=business_name[:200],
                     business_address=address or "", business_phone_e164=phone, business_price_text=price_text,
                     purpose=purpose[:2000], window=window[:200],
-                    may_ask=str(may_ask or f"Om de kan {rules.lower_first(purpose)}{' ' + window if window else ''}, "
+                    # «Om de kan hjælpe med: …» reads right whatever form the purpose has («Aflever cyklen …») – F-PX-07
+                    may_ask=str(may_ask or f"Om de kan hjælpe med: {rules.lower_first(purpose)}"
+                                           f"{' ' + window if window and window.lower() not in purpose.lower() else ''}, "
                                            "og hvad det koster")[:2000],
                     may_agree=str(may_agree or (f"En tid {window}" if window else "Et tidspunkt, der passer"))[:2000],
-                    may_not=str(may_not or "Betale, give andre oplysninger end dit navn, eller sige ja til ekstra "
-                                           "arbejde eller andre tider")[:2000],
+                    # the general limits always hold; an app's own rule (health, cancelling …) is ADDED (F-PX-02)
+                    may_not=_may_not(may_not)[:2000],
                     status="proposed", created_at=now, place_id=place_id, phone_source=phone_source,
                     next_open_at=next_open_at if next_open_at and next_open_at > now else None)
     db.add(c)
@@ -145,6 +147,16 @@ def pending_usage_text(db: OrmSession, ws_id: uuid.UUID) -> str:
     if ent["entitled"] and ent["calls_left"] > 0:
         return f"Opkald {ent['calls_used'] + 1} af {ent['calls_quota']} i {subscriptions.plan_label(ent)}, når du godkender"
     return "Højst 3 credits, når du godkender"
+
+
+DEFAULT_MAY_NOT = "Betale, give andre oplysninger end dit navn, eller sige ja til ekstra arbejde eller andre tider"
+
+
+def _may_not(extra: str | None) -> str:
+    extra = str(extra or "").strip()
+    if not extra or extra.rstrip(".").lower() == DEFAULT_MAY_NOT.lower():
+        return DEFAULT_MAY_NOT
+    return f"{DEFAULT_MAY_NOT}. {extra}"
 
 
 def latest_proposed(db: OrmSession, task: PrivateTask) -> PrivateCall | None:
@@ -182,6 +194,11 @@ def approve(db: OrmSession, ctx, task_id: uuid.UUID, *, window: str | None, shar
             at_next_open: bool = False, confirm_business: bool = False) -> PrivateTask:
     addons.require(db, ctx.ws_id, ADDON)
     task, c = _own_call_task(db, ctx, task_id)
+    # Lock the call and read it FRESH: a parallel «Godkend» (double click, another key) waits here until the first
+    # has committed, then sees it is no longer «proposed» – never a second reservation / unique violation (F-PX-08).
+    c = db.scalar(select(PrivateCall).where(PrivateCall.id == c.id).with_for_update()
+                  .execution_options(populate_existing=True))
+    db.refresh(task)
     if c.status != "proposed" or task.status != "awaiting_user":
         return task  # already approved (or declined): repeating it changes nothing
     if not c.business_phone_e164:

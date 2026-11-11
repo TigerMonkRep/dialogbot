@@ -3,7 +3,7 @@ id: F-PX-08-PC-CALL-03
 scenario: PC-CALL-03
 reported_by: voice-qa (PX)
 severity: S2
-status: new
+status: fixed
 owner_fix: fix-engineer
 related: []
 ---
@@ -28,3 +28,10 @@ Svar 500, 200, 409, 200 (stak :8400 efter 451d53b, kørt 2 gange). pd-api.log: `
 
 ## Forslag
 IdempotencyGuard: fang IntegrityError ved indsættelse af nøglen → 409 `idempotency_in_progress` (eller vent og returnér replay); web bør desuden deaktivere knappen ved første tryk.
+
+## Rettelse (udfyldes af fix-engineer)
+- Rodårsag: calls.approve læste opkaldet uden lås. Et parallelt kald (anden Idempotency-Key) ventede kun på profil-låsen og gik derefter videre med en forældet «proposed»-status, hvilket gav en anden reservation og en unique violation (500).
+- Rettelse: approve låser PrivateCall-rækken (FOR UPDATE, populate_existing) og genlæser opgaven, før status tjekkes. Det parallelle kald ser «approved/dialling» og returnerer opgaven (200). Samme nøgle mens det første stadig kører giver 409 fra idempotensvagten – aldrig 500.
+- Filer: app/modules/privat/calls.py
+- Test: tests/qa/test_qa_pd_x.py::test_px_call_03_double_approve_parallel (+ assert «500 not in results»)
+- Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)

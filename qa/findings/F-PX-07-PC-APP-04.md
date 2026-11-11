@@ -3,7 +3,7 @@ id: F-PX-07-PC-APP-04
 scenario: PC-APP-04
 reported_by: voice-qa (PX)
 severity: S3
-status: new
+status: fixed
 owner_fix: fix-engineer
 related: [F-PX-02-PC-APP-04]
 ---
@@ -26,3 +26,10 @@ Naturligt dansk (voice-qa: «Danish number reading, times …», brand: kort og 
 
 ## Forslag
 «Om de kan hjælpe med: aflever cyklen …» eller lad modellen levere may_ask; vis vinduet under Tidspunkt.
+
+## Rettelse (udfyldes af fix-engineer)
+- Rettelse: standard-may_ask lyder nu «Om de kan hjælpe med: <formål>[ <tidsrum>], og hvad det koster». Det er grammatisk uanset formålets form, og tidsrummet gentages ikke, hvis det allerede står i formålet.
+- Ikke ændret: «Tidspunkt –» på kortet (det er ui-ux/tasks.tsx).
+- Filer: app/modules/privat/calls.py
+- Test: tests/test_privat.py::test_default_may_ask_reads_right_whatever_the_purpose (rød før: «Om de kan aflever cyklen … torsdag efter kl. 15 torsdag efter kl. 15»; grøn efter)
+- Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)

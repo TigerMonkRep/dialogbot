@@ -3,7 +3,7 @@ id: F-PX-02-PC-APP-04
 scenario: PC-APP-04
 reported_by: voice-qa (PX)
 severity: S2
-status: new
+status: fixed
 owner_fix: fix-engineer
 related: []
 ---
@@ -32,4 +32,7 @@ Butikkens løfte (addons.py, ring-for-mig + laege-og-tandlaege): «Siger kun dit
 
 ## Rodårsag (udfyldes af fix-engineer)
 ## Rettelse (udfyldes af fix-engineer)
-## Verifikation (udfyldes af verifier)
+- Rettelse: calls.propose bruger nu _may_not(). De generelle forbud (DEFAULT_MAY_NOT: betale, andre oplysninger end navnet, ja til ekstra arbejde eller andre tider) gælder altid, og en apps egen regel (helbred, opsigelse …) lægges til.
+- Filer: app/modules/privat/calls.py
+- Test: tests/qa/test_qa_pd_x.py::test_px_app_04_health_purpose_and_may_not (grøn)
+- Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)

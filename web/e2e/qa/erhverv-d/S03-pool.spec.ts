@@ -51,7 +51,7 @@ test("S03 · samtidige offentlige widget-opslag (GET /booking) under kalenderudf
   await page.goto(r.authorize_url);
   await page.waitForLoadState("networkidle"); // integrationssidens egne kald må ikke blande sig i målingen
   await page.request.post(`/api/backend/dev/fake-calendar/busy-down?workspace_id=${wsId}&down=true`, { headers: CSRF });
-  const api = process.env.API_BASE_URL ?? "http://localhost:8200";
+  const api = process.env.API_BASE_URL ?? "http://localhost:8000";
   try {
     const t0 = Date.now();
     const res = await Promise.all(Array.from({ length: N }, () =>

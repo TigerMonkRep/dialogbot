@@ -23,6 +23,14 @@ test("P09 · de juridiske sider deler skabelon: én h1, dato, læsbar bredde, li
   for (const d of [...DOCS, "/da/gdpr"]) await expect(page.locator(`footer a[href='${d}']`).first()).toBeAttached();
 });
 
+test("P09 · juridiske sider i Privat og på lange sprog scroller ikke vandret (F-VER4-02-P09)", async ({ page }) => {
+  // The legal-page header: logo + three 44 px links. At 390 px «Kontakt» stuck out 5 px; /privat/vilkaar shares it.
+  for (const d of ["/privat/vilkaar", "/de/privatliv", "/fr/vilkaar"]) {
+    expect((await page.goto(d))?.status(), d).toBe(200);
+    await noHorizontalScroll(page);
+  }
+});
+
 test("P09 · cookie-oplysning og databehandleraftale kan findes", async ({ page }) => {
   await page.goto("/da/privatliv");
   await expect(page.locator("main")).toContainText("Cookies");

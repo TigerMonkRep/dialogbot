@@ -28,7 +28,7 @@ test("S09 · det ændrede objekt står i loggen (fx hvilken kategori, hvilken si
   const first = page.locator("ol > li").first();
   await page.screenshot({ path: `${EVID("S09")}/${info.project.name}-objekt.png`, fullPage: true });
   // the audit row has object_type/after (the category); the page renders only the action label, actor and time
-  await expect(first).toContainText("Gulvafslibning");
+  await expect(first).toContainText("Gulvafslibning", { timeout: 5_000 }); // known: fail fast
 });
 
 test("S09 · læser ser ikke loggen, og API'et afviser", async ({ page }) => {

@@ -1,9 +1,15 @@
 import { readFileSync, mkdirSync } from "node:fs";
+import { resolve } from "node:path";
 import { expect, type Page, type TestInfo } from "@playwright/test";
 import { PREVIEW_CODE } from "../../helpers";
 
 /* Shared bits for QA wave 2 (P1), instance A (prefix E2A). */
 export const CSRF = { "x-requested-with": "dialogbot" };
+/** The web origin under test (same default as playwright.config.ts baseURL; the local QA stack sets BASE_URL=:3200). */
+export const WEB = new URL(process.env.BASE_URL ?? "http://localhost:3000").origin;
+/** The API's log, where the fake SMS adapter writes its codes. CI: e2e.yml sets P1_API_LOG (the stack writes api.log
+ *  in the repository root, which is also the default here); the local QA stack sets its own path. */
+export const API_LOG = process.env.P1_API_LOG ?? resolve(__dirname, "../../../../api.log");
 
 /** Evidence folder qa/evidence/<id>/ (relative to web/). */
 export function evid(id: string) {
@@ -37,7 +43,7 @@ export function uniqueMobile() {
 export async function smsCodeFor(e164: string): Promise<string> {
   let code: string | undefined;
   await expect.poll(() => {
-    const log = readFileSync(process.env.P1_API_LOG ?? "/home/claude/p1-api.log", "utf8");
+    const log = readFileSync(API_LOG, "utf8");
     const lines = log.split("\n").filter((l) => l.includes("sms.simulated") && l.includes(e164));
     const m = lines.at(-1)?.match(/er (\d{6})\./);
     code = m?.[1];

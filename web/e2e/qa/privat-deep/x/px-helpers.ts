@@ -1,7 +1,7 @@
-import { expect, type Page, type TestInfo } from "@playwright/test";
+import { expect, test, type Page, type TestInfo } from "@playwright/test";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { CSRF, privatUser, startTrial } from "../../privat/pq-helpers";
+import { CSRF, needsPrivatStack, privatUser, startTrial } from "../../privat/pq-helpers";
 
 /** PX (Privat-dybderunde fase 2: i18n/a11y, integrations, voice). Stack: web :3400 → API :8400 (qa_privat_stack).
  *  Run: cd web && BASE_URL=http://localhost:3400 QA_PRIV_API=http://localhost:8400 npx playwright test
@@ -30,8 +30,16 @@ export async function uniqueIp(page: Page) {
   await page.context().setExtraHTTPHeaders({ "x-real-ip": `10.77.${Math.floor(Math.random() * 200)}.${(ip % 250) + 1}` });
 }
 
+/** Specs with a Privat user need qa_privat_stack (PRIVAT_ENABLED, /__qa hooks, QA_PRIV_LOG). The shared stack (CI
+ *  qa-catalog, journeys) runs without it and answers 403 privat_not_enabled, so these skip with the reason instead of
+ *  failing on the environment. */
+export async function requirePrivatStack(page: Page) {
+  test.skip(!(await needsPrivatStack(page.request, API)), `kræver tests/qa/qa_privat_stack.py (PRIVAT_ENABLED, /__qa) på QA_PRIV_API=${API} og next med API_BASE_URL dertil – ikke en del af qa-catalog-stakken`);
+}
+
 /** A Plus-trial user, logged in in this page's context, with Privat locale cookie set. */
 export async function plusUser(page: Page, info: TestInfo, tag: string, locale: L = "da") {
+  await requirePrivatStack(page);
   await uniqueIp(page);
   await setLocale(page, locale);
   const u = await privatUser(page, info, `px-${tag}`);

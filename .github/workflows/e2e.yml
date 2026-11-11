@@ -168,6 +168,11 @@ jobs:
           for i in $(seq 1 30); do curl -sf -o /dev/null localhost:3000/login && break; sleep 1; done
       - name: Playwright QA catalogue (shard ${{ matrix.shard }}/4)
         working-directory: web
+        env:
+          # erhverv-p1a reads the fake SMS codes from the API log ("Start API and worker" writes api.log in the repo root).
+          P1_API_LOG: ${{ github.workspace }}/api.log
+          # X23 offline page: lets Playwright route/observe requests made by the service worker (context.setOffline).
+          PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS: "1"
         # Playwright stops itself before the job's 45-minute timeout. A cancelled job makes the whole E2E run
         # "cancelled", and Render's checksPass then never deploys (main 215b75f, 11/11). A failed job is
         # absorbed by continue-on-error; a cancelled one is not.

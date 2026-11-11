@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { login, SEEDED } from "../../helpers";
-import { closeAll, CSRF, EVID, visitor, widgetWorkspace, type Widget } from "./d-helpers";
+import { closeAll, CSRF, EVID, forwardPublicApi, visitor, widgetWorkspace, type Widget } from "./d-helpers";
 
 /* BK02 – /app/bookings/:bookingId: «Booking detail, linked conversation/enquiry, provider, timeline, sync,
  * notification state and permitted actions.» Built as an expandable card on /app/aftaler (no own route). */
@@ -10,9 +10,7 @@ test.afterEach(async () => { if (w) await closeAll(w.servers); w = null; });
 async function pendingWidgetBooking(page: import("@playwright/test").Page, browser: import("@playwright/test").Browser, info: import("@playwright/test").TestInfo) {
   w = await widgetWorkspace(page, info, { booking: true });
   const r = await (await page.request.post(`/api/backend/workspaces/${w.wsId}/integrations/google_calendar/connect`, { headers: { ...CSRF, "Idempotency-Key": `qa-e2d-bk02-${Date.now()}` }, data: { config: {}, secrets: {} } })).json();
-  await page.context().route("http://localhost:8000/**", async (route) => {
-    try { await route.fulfill({ response: await route.fetch({ url: route.request().url().replace("localhost:8000", "localhost:8200"), maxRedirects: 0 }) }); } catch { /* closed */ }
-  });
+  await forwardPublicApi(page.context(), { maxRedirects: 0 });
   await page.goto(r.authorize_url);
   await expect(page).toHaveURL(/integrationer/);
   await page.request.post(`/api/backend/dev/fake-calendar/busy-down?workspace_id=${w.wsId}&down=true`, { headers: CSRF });

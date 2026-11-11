@@ -1,6 +1,6 @@
 import { expect, test, type Page, type TestInfo } from "@playwright/test";
 import { DEMO_PASSWORD } from "../../helpers";
-import { CSRF, evid, expireTokens, mailbox, snap } from "./p1a-helpers";
+import { CSRF, evid, expireTokens, mailbox, snap, WEB } from "./p1a-helpers";
 
 /* QA A04 (e2e-erhverv A, wave 2): /password/forgot and /password/reset – request reset, confirmation, new password,
  * expired link and return to login. Source: web/src/app/password/{forgot,reset}/page.tsx,
@@ -31,7 +31,7 @@ test("A04 · bestil → bekræftelse → ny kode → login med ny kode; gammel k
   await register(page, email);
   // another device logged in before the reset
   const other = await browser.newContext();
-  expect((await other.request.post("http://localhost:3200/api/auth/login", { headers: CSRF, data: { email, password: DEMO_PASSWORD } })).ok()).toBeTruthy();
+  expect((await other.request.post(`${WEB}/api/auth/login`, { headers: CSRF, data: { email, password: DEMO_PASSWORD } })).ok()).toBeTruthy();
   const link = await requestReset(page, email);
   await snap(page, info, ID, "bekraeftelse");
   await page.goto(link);
@@ -47,7 +47,7 @@ test("A04 · bestil → bekræftelse → ny kode → login med ny kode; gammel k
   await expect(page.getByText("Adgangskoden er ændret. Log ind med den nye.")).toBeVisible();
   await snap(page, info, ID, "tilbage-til-login");
   expect((await page.request.get("/api/backend/auth/me")).status()).toBe(401);
-  expect((await other.request.get("http://localhost:3200/api/backend/auth/me")).status()).toBe(401);
+  expect((await other.request.get(`${WEB}/api/backend/auth/me`)).status()).toBe(401);
   await other.close();
   expect((await page.request.post("/api/auth/login", { headers: CSRF, data: { email, password: DEMO_PASSWORD } })).status()).toBe(401);
   await page.getByLabel("E-mail").fill(email);

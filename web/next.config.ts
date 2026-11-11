@@ -11,6 +11,12 @@ const MOVED: [string, string][] = [
   ["/app/overview", "/app"],
   ["/app/knowledge", "/app/viden"],
   ["/app/reception", "/app/indstillinger?ark=hilsen"],
+  // The requirement matrix's reception sub-routes (R04–R07, F-V2-07-R05): widget → webchat sheet, script → greeting
+  // sheet, test → «Det ved den» (the assistant's test mode), routing/hours/handoff → telephony sheet.
+  ["/app/reception/widget", "/app/indstillinger?ark=webchat"],
+  ["/app/reception/assistant", "/app/indstillinger?ark=hilsen"],
+  ["/app/reception/test", "/app/viden"],
+  ["/app/reception/routing", "/app/indstillinger?ark=telefoni"],
   ["/app/inbox", "/app/opkald"],
   ["/app/inbox/:id", "/app/opkald/:id"],
   ["/app/leads", "/app/opkald?f=to_you"],

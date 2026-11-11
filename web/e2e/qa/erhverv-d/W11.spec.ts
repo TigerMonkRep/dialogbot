@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { closeAll, CSRF, EVID, visitor, widgetWorkspace, type Widget } from "./d-helpers";
+import { API, closeAll, CSRF, EVID, forwardPublicApi, visitor, widgetWorkspace, type Widget } from "./d-helpers";
 
 /* W11 – widget/public slot selector: «Date/slots/timezone, loading, no slots, limited availability, stale provider and
  * alternatives.» Stale provider = the connected calendar cannot be read (dev hook POST /dev/fake-calendar/busy-down):
@@ -9,10 +9,8 @@ test.afterEach(async () => { if (w) await closeAll(w.servers); w = null; });
 
 async function connectCalendar(page: import("@playwright/test").Page, wsId: string) {
   const r = await (await page.request.post(`/api/backend/workspaces/${wsId}/integrations/google_calendar/connect`, { headers: { ...CSRF, "Idempotency-Key": `qa-e2d-${Date.now()}` }, data: { config: {}, secrets: {} } })).json();
-  // OAuth callback lands on PUBLIC_BASE_URL (:8000 default on this stack) → forward to :8200 (env workaround)
-  await page.context().route("http://localhost:8000/**", async (route) => {
-    try { await route.fulfill({ response: await route.fetch({ url: route.request().url().replace("localhost:8000", "localhost:8200"), maxRedirects: 0 }) }); } catch { /* closed */ }
-  });
+  // OAuth callback lands on PUBLIC_BASE_URL (:8000 default); forwarded to API_BASE_URL when that differs (d-helpers)
+  await forwardPublicApi(page.context(), { maxRedirects: 0 });
   await page.goto(r.authorize_url);
   await expect(page).toHaveURL(/integrationer/);
 }
@@ -20,7 +18,7 @@ async function connectCalendar(page: import("@playwright/test").Page, wsId: stri
 test("W11 · tiderne i widgetten er API'ets ledige tider med dato og klokkeslæt; skift af type henter nye tider", async ({ page, browser }, info) => {
   w = await widgetWorkspace(page, info, { booking: true });
   await page.request.post(`/api/backend/workspaces/${w.wsId}/bookings/types`, { headers: CSRF, data: { name: "Gulvslibning (heldag)", duration_minutes: 480 } });
-  const api = await (await page.request.get(`http://localhost:8200/api/v1/public/webchat/${w.key}/booking`)).json();
+  const api = await (await page.request.get(`${API}/api/v1/public/webchat/${w.key}/booking`)).json();
   const { v, chat, close } = await visitor(browser, page);
   await chat.getByRole("button", { name: "Book en tid" }).click();
   const form = chat.locator("form.book");
@@ -107,6 +105,6 @@ test("W11 · tidszonen står ved tiderne (virksomhedens lokale tid)", async ({ p
   const { chat, close } = await visitor(browser, page);
   await chat.getByRole("button", { name: "Book en tid" }).click();
   // Requirement W11: «Date/slots/timezone». Labels are «tirsdag 10. november kl. 14.00» with no zone anywhere.
-  await expect(chat.locator("form.book")).toContainText(/dansk tid|Europe\/Copenhagen|tidszone|lokal tid|CET|CEST/i);
+  await expect(chat.locator("form.book")).toContainText(/dansk tid|Europe\/Copenhagen|tidszone|lokal tid|CET|CEST/i, { timeout: 5_000 }); // known: fail fast
   await close();
 });

@@ -35,7 +35,7 @@ test("W08 · forbindelsen er væk: den besøgende får en dansk besked og kan pr
   await expect(msg).toBeVisible();
   await v.screenshot({ path: `${EVID("W08")}/${info.project.name}-offline.png` });
   // frame.js:207 shows err.message – for a network error that is the browser's own «Failed to fetch» (English, technical)
-  await expect(msg).not.toHaveText(/Failed to fetch|NetworkError|Load failed/);
+  await expect(msg).not.toHaveText(/Failed to fetch|NetworkError|Load failed/, { timeout: 5_000 }); // known: fail fast
   await expect(msg).toHaveText(/Prøv igen|forbindelse/i);
   // retry without retyping: the text is kept in the field or a «Prøv igen» action is offered
   const kept = await chat.locator("textarea").inputValue();
@@ -63,6 +63,6 @@ test("W08 · chatten bliver utilgængelig midt i samtalen: besked + virksomheden
   await expect(chat.locator("textarea")).toBeDisabled();
   await v.screenshot({ path: `${EVID("W08")}/${info.project.name}-utilgaengelig.png` });
   // «business contact fallback»: tell the visitor HOW to contact the business directly
-  await expect(chat.locator("ol.log")).toContainText(/70 ?20 ?30 ?40/);
+  await expect(chat.locator("ol.log")).toContainText(/70 ?20 ?30 ?40/, { timeout: 5_000 }); // known: fail fast
   await close();
 });

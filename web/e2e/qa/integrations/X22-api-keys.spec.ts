@@ -5,7 +5,7 @@ import { freshOwner, login, SEEDED } from "../../helpers";
  * public-api.md §1: «API-nøgle fra Integrationer → API-nøgler i appen». Klikkes igennem som en kunde:
  * opret (navn + scope) → den fulde nøgle vises ÉN gang → efter reload kun maskeret (prefix…last4) → nøglen virker mod
  * /v1/me → tilbagekald (med bekræftelse) → nøglen afvises (401). Læser/medarbejder ser ikke kortet. */
-const API = process.env.API_BASE_URL ?? "http://localhost:8200";
+const API = process.env.API_BASE_URL ?? "http://localhost:8000";
 const EVID = `${__dirname}/../../../../qa/evidence/X22`;
 
 test("X22 · API-nøgler: opret → vist én gang → maskeret efter reload → virker → tilbagekald → afvist", async ({ page }, info) => {

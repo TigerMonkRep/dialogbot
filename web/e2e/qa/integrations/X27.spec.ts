@@ -13,7 +13,7 @@ for (const code of ["oauth_denied", "oauth_scope_missing", "oauth_state_expired"
     const alert = page.getByText(/Google Kalender blev ikke forbundet/);
     await expect(alert).toBeVisible();
     await shot(page, info, `x27-callback-${code}`);
-    await expect(alert).not.toContainText(code);
+    await expect(alert).not.toContainText(code, { timeout: 5_000 }); // known: fail fast
   });
 }
 

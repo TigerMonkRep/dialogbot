@@ -68,6 +68,6 @@ test("W01 · widgetten er kundens (client-branded): virksomhedens navn står i c
   const vis = await visitor(browser, page);
   await vis.v.screenshot({ path: `${EVID("W01")}/${info.project.name}-branding.png` });
   // Requirement W01: «open client-branded chat». The greeting may mention the name, but the frame header/title must.
-  await expect(vis.chat.locator("header")).toContainText(ws.name);
+  await expect(vis.chat.locator("header")).toContainText(ws.name, { timeout: 5_000 }); // known: fail fast
   await vis.close();
 });

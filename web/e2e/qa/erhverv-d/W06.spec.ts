@@ -28,7 +28,7 @@ test("W06 · bekræftelsen nævner det valgte tidsrum (ikke «hurtigst muligt»,
   await expect(ok).toContainText("Tak, Henrik Villumsen!");
   await v.screenshot({ path: `${EVID("W06")}/${info.project.name}-bekraeftelse.png` });
   await expect(ok).toContainText(label.replace(/\s*\(.*\)$/, "").trim().toLowerCase().split(" ")[0], { ignoreCase: true });
-  await expect(ok).not.toContainText("hurtigst muligt");
+  await expect(ok).not.toContainText("hurtigst muligt", { timeout: 5_000 }); // known: fail fast
   await close();
 });
 

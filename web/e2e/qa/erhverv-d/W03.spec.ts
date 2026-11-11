@@ -74,6 +74,6 @@ test("W03 · formularen spørger om årsag (hvad det drejer sig om), så virksom
   await chat.getByRole("button", { name: "Bliv kontaktet af en medarbejder" }).click();
   await v.screenshot({ path: `${EVID("W03")}/${info.project.name}-formular.png` });
   // Requirement W03: «Name, phone/country, reason and language». The frame always sends note: "" (frame.js:107).
-  await expect(chat.locator("form.contact").getByLabel(/Hvad drejer det sig om|Årsag|Hvad vil du tale om/)).toBeVisible();
+  await expect(chat.locator("form.contact").getByLabel(/Hvad drejer det sig om|Årsag|Hvad vil du tale om/)).toBeVisible({ timeout: 5_000 }); // known: fail fast
   await close();
 });

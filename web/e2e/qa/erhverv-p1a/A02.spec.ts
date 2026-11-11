@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { DEMO_PASSWORD, SEEDED, skipSetupGate } from "../../helpers";
-import { CSRF, evid, snap } from "./p1a-helpers";
+import { CSRF, evid, snap, WEB } from "./p1a-helpers";
 
 /* QA A02 (e2e-erhverv A, wave 2): /login – login, remembered destination, validation and invalid-credential state.
  * Source: web/src/app/login/page.tsx, web/src/proxy.ts (next=), web/src/lib/safe-next.ts, web/src/lib/client.ts:14
@@ -76,7 +76,7 @@ test("A02 · åben omdirigering: next til et andet domæne ender i /app", async 
     await fill(page, SEEDED.owner, DEMO_PASSWORD);
     await page.getByRole("button", { name: "Log ind" }).click();
     await page.waitForURL((u) => !u.pathname.startsWith("/login"));
-    expect(new URL(page.url()).host, `next=${next}`).toBe("localhost:3200");
+    expect(new URL(page.url()).host, `next=${next}`).toBe(new URL(WEB).host);
   }
 });
 
@@ -122,7 +122,7 @@ test("A02 · udløbet session: besked «Din session er udløbet», og efter logi
   const cookies = await page.context().cookies();
   const other = await browser.newContext();
   await other.addCookies(cookies);
-  expect((await other.request.post("http://localhost:3200/api/auth/logout", { headers: CSRF })).ok()).toBeTruthy();
+  expect((await other.request.post(`${WEB}/api/auth/logout`, { headers: CSRF })).ok()).toBeTruthy();
   await other.close();
   // The browser still holds the (now dead) cookie; the next page load must lead to /login, not a crash (F-E2A-04).
   await page.reload();

@@ -84,7 +84,7 @@ test("W02 · sprog: arbejdsrum med engelsk slået til – en engelsk besøgende 
   await expect(chat.locator("textarea")).toBeVisible();
   await v.screenshot({ path: `${EVID("W02")}/${info.project.name}-engelsk-besoegende.png` });
   // the chrome (header, notice, buttons, placeholder) follows an enabled language the visitor reads
-  await expect(chat.locator("textarea")).not.toHaveAttribute("placeholder", "Skriv din besked…");
+  await expect(chat.locator("textarea")).not.toHaveAttribute("placeholder", "Skriv din besked…", { timeout: 5_000 }); // known: fail fast
   await expect(chat.getByRole("button", { name: "Bliv kontaktet af en medarbejder" })).toHaveCount(0);
   await ctx.close();
 });

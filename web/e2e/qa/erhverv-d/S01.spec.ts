@@ -38,7 +38,7 @@ test("S01 · kategorier og tidszone kan ses og rettes på virksomhedssiden", asy
   await page.request.post(`/api/backend/workspaces/${wsId}/categories`, { headers: CSRF, data: { label: "Gulvafslibning", slug: null, is_primary: true } });
   await page.goto("/app/settings/business");
   await page.screenshot({ path: `${EVID("S01")}/${info.project.name}-kategori-tidszone.png`, fullPage: true });
-  await expect(page.getByText("Gulvafslibning")).toBeVisible();
+  await expect(page.getByText("Gulvafslibning")).toBeVisible({ timeout: 5_000 }); // known: fail fast
   await expect(page.getByLabel(/Tidszone/i)).toBeVisible();
 });
 

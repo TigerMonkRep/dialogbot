@@ -1661,7 +1661,7 @@
     "download": "Descargar tus datos",
     "expired": "El enlace ha caducado. Vuelve a pedir tus datos.",
     "delete": "Eliminar mi cuenta",
-    "deleteText": "Se elimina todo en Dialogbot Privat y tu suscripción se detiene. No se puede deshacer.",
+    "deleteText": "Se elimina todo en Dialogbot Privat y tu suscripción se detiene. El saldo de llamadas restante se pierde y no se reembolsa. No se puede deshacer.",
     "deleteLabel": "Escribe tu e-mail para confirmar",
     "deleteConfirm": "Eliminar todo para siempre",
     "cancel": "Cancelar",

@@ -1661,7 +1661,7 @@
     "download": "Download your data",
     "expired": "The link has expired. Ask for your data again.",
     "delete": "Delete my account",
-    "deleteText": "Everything in Dialogbot Privat is deleted and your subscription stops. This cannot be undone.",
+    "deleteText": "Everything in Dialogbot Privat is deleted and your subscription stops. Any remaining call balance is lost and not refunded. This cannot be undone.",
     "deleteLabel": "Type your e-mail to confirm",
     "deleteConfirm": "Delete everything for good",
     "cancel": "Cancel",

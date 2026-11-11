@@ -1661,7 +1661,7 @@
     "download": "Télécharger tes données",
     "expired": "Le lien a expiré. Redemande tes données.",
     "delete": "Supprimer mon compte",
-    "deleteText": "Tout est supprimé dans Dialogbot Privat et ton abonnement s'arrête. C'est définitif.",
+    "deleteText": "Tout est supprimé dans Dialogbot Privat et ton abonnement s'arrête. Le solde d'appels restant est perdu et n'est pas remboursé. C'est définitif.",
     "deleteLabel": "Saisis ton e-mail pour confirmer",
     "deleteConfirm": "Tout supprimer définitivement",
     "cancel": "Annuler",

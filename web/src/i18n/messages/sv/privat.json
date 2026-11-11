@@ -1661,7 +1661,7 @@
     "download": "Hämta dina data",
     "expired": "Länken har gått ut. Be om dina data igen.",
     "delete": "Radera mitt konto",
-    "deleteText": "Allt i Dialogbot Privat raderas och ditt abonnemang upphör. Det går inte att ångra.",
+    "deleteText": "Allt i Dialogbot Privat raderas och ditt abonnemang upphör. Ett kvarvarande samtalssaldo går förlorat och återbetalas inte. Det går inte att ångra.",
     "deleteLabel": "Skriv din e-post för att bekräfta",
     "deleteConfirm": "Radera allt för alltid",
     "cancel": "Avbryt",

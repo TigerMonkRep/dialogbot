@@ -1661,7 +1661,7 @@
     "download": "Scarica i tuoi dati",
     "expired": "Il link è scaduto. Richiedi di nuovo i tuoi dati.",
     "delete": "Elimina il mio account",
-    "deleteText": "Tutto in Dialogbot Privat viene eliminato e l'abbonamento si ferma. Non si può annullare.",
+    "deleteText": "Tutto in Dialogbot Privat viene eliminato e l'abbonamento si ferma. L'eventuale credito chiamate residuo va perso e non viene rimborsato. Non si può annullare.",
     "deleteLabel": "Scrivi la tua e-mail per confermare",
     "deleteConfirm": "Elimina tutto per sempre",
     "cancel": "Annulla",

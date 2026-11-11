@@ -1661,7 +1661,7 @@
     "download": "Last ned dataene dine",
     "expired": "Lenken har utløpt. Be om dataene dine igjen.",
     "delete": "Slett kontoen min",
-    "deleteText": "Alt i Dialogbot Privat slettes, og abonnementet ditt stopper. Det kan ikke angres.",
+    "deleteText": "Alt i Dialogbot Privat slettes, og abonnementet ditt stopper. En gjenværende samtalesaldo går tapt og refunderes ikke. Det kan ikke angres.",
     "deleteLabel": "Skriv e-posten din for å bekrefte",
     "deleteConfirm": "Slett alt for godt",
     "cancel": "Avbryt",

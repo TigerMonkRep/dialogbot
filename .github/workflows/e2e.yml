@@ -69,7 +69,7 @@ jobs:
         working-directory: web
         run: |
           npm ci
-          npx playwright install --with-deps chromium || { echo "apt unreachable (GitHub runner DNS 11/11) – chromium without apt; the runner image carries its libraries"; npx playwright install chromium; }
+          if getent hosts azure.archive.ubuntu.com >/dev/null; then npx playwright install --with-deps chromium; else echo "apt unreachable (GitHub runner DNS 11/11) – chromium without apt; the runner image carries its libraries"; npx playwright install chromium; fi
           npm run build
           nohup npm run start -- -p 3000 > ../web.log 2>&1 &
           for i in $(seq 1 30); do curl -sf -o /dev/null localhost:3000/login && break; sleep 1; done
@@ -162,7 +162,7 @@ jobs:
         working-directory: web
         run: |
           npm ci
-          npx playwright install --with-deps chromium || { echo "apt unreachable (GitHub runner DNS 11/11) – chromium without apt; the runner image carries its libraries"; npx playwright install chromium; }
+          if getent hosts azure.archive.ubuntu.com >/dev/null; then npx playwright install --with-deps chromium; else echo "apt unreachable (GitHub runner DNS 11/11) – chromium without apt; the runner image carries its libraries"; npx playwright install chromium; fi
           npm run build
           nohup npm run start -- -p 3000 > ../web.log 2>&1 &
           for i in $(seq 1 30); do curl -sf -o /dev/null localhost:3000/login && break; sleep 1; done
@@ -203,7 +203,7 @@ jobs:
         working-directory: web
         run: |
           npm ci
-          npx playwright install --with-deps chromium || { echo "apt unreachable (GitHub runner DNS 11/11) – chromium without apt; the runner image carries its libraries"; npx playwright install chromium; }
+          if getent hosts azure.archive.ubuntu.com >/dev/null; then npx playwright install --with-deps chromium; else echo "apt unreachable (GitHub runner DNS 11/11) – chromium without apt; the runner image carries its libraries"; npx playwright install chromium; fi
           npm run build
           nohup npm run start -- -p 3000 > ../web.log 2>&1 &
           for i in $(seq 1 30); do curl -sf -o /dev/null localhost:3000/privat && break; sleep 1; done

@@ -3,7 +3,7 @@ id: F-PX-03-PC-CALL-02
 scenario: PC-CALL-02
 reported_by: voice-qa (PX)
 severity: S2
-status: new
+status: fixed
 owner_fix: fix-engineer
 related: []
 ---
@@ -29,4 +29,8 @@ Tilføj `own` som keyterm/customVocabulary også når `ws is None` (kun forretni
 
 ## Rodårsag (udfyldes af fix-engineer)
 ## Rettelse (udfyldes af fix-engineer)
-## Verifikation (udfyldes af verifier)
+- Rodårsag: vapi.transcriber_for sprang alle keyterms/customVocabulary over, når ws is None – også opkaldets egne navne (extra).
+- Rettelse: uden workspace sendes opkaldets egne navne stadig (keyterm til Deepgram, customVocabulary til Speechmatics). Kun virksomhedens termer mangler.
+- Filer: app/modules/telephony/vapi.py
+- Test: tests/test_privat.py::test_privat_call_gives_its_names_to_the_transcriber; test_telephony, test_linden, test_voices, test_stemmetest og test_sales_demo_calls er grønne
+- Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)

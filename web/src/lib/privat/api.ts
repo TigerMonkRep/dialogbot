@@ -466,7 +466,15 @@ export const realPrivat: PrivatApi = {
     const q = [sessionId ? `session_id=${enc(sessionId)}` : "", currency ? `currency=${enc(currency)}` : ""].filter(Boolean).join("&");
     return api(`${P}/subscription${q ? `?${q}` : ""}`);
   },
-  subscriptionCheckout: (body) => api(`${P}/subscription/checkout`, json(body)),
+  // One subscription per account (PC-SUB-07): with a running one the API answers 409 subscription_exists – then the
+  // customer goes to Stripe's Billing Portal (change plan/interval there) instead of a second Checkout.
+  subscriptionCheckout: async (body) => {
+    try { return await api<{ url: string }>(`${P}/subscription/checkout`, json(body)); }
+    catch (e) {
+      if ((e as Partial<ApiError>)?.code === "subscription_exists") return api<{ url: string }>(`${P}/subscription/portal`, json({}));
+      throw e;
+    }
+  },
   subscriptionPortal: () => api(`${P}/subscription/portal`, json({})),
   sponsorClaim: (taskId) => api(`${P}/sponsor/claim`, json({ task_id: taskId })),
   sharedTasks: () => api(`${P}/tasks?shared=1`),

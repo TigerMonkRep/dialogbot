@@ -21,7 +21,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session as OrmSession
 
 from app.config import get_settings
-from app.core.errors import NotFound, NotImplementedYet, ValidationFailed
+from app.core.errors import Conflict, NotFound, NotImplementedYet, ValidationFailed
 from app.models import PrivateCall, PrivateProfile, PrivateSubscription, Workspace
 from app.modules.billing import markets, prices
 from app.modules.billing import stripe as stripe_api
@@ -216,6 +216,11 @@ def checkout(db: OrmSession, ctx, *, plan: str, interval: str, code: str | None 
     base = s.frontend_base_url.rstrip("/")
     p = PLANS[plan]
     row = ensure(db, ctx.ws_id)
+    if row.stripe_subscription_id and _state(row, rules.now())[2]:
+        # One subscription per account (PC-SUB-07): a running Stripe subscription (trial, active, past_due, or cancelled
+        # but still paid up) is changed in the Billing Portal – a second Checkout would start a second subscription.
+        raise Conflict("Du har allerede et abonnement. Skift plan eller betaling under «Administrér abonnement».",
+                       code="subscription_exists", extra={"portal": True})
     currency = market.currency(row.currency, locale)
     if row.currency != currency:
         row.currency = currency  # a customer keeps the currency of its first Checkout
@@ -354,6 +359,14 @@ def upsert_from_stripe_subscription(db: OrmSession, obj: dict, *, session_meta: 
     row = get(db, ws_id, lock=True) or start_free(db, ws_id)
     if row.stripe_subscription_id and row.stripe_subscription_id != sid and status == "canceled":
         return "ignored"  # an older subscription ending must not touch the one that replaced it
+    if (row.stripe_subscription_id and row.stripe_subscription_id != sid and status in ENTITLED_STATUSES
+            and _state(row, rules.now())[2]):
+        # A SECOND live subscription for an account that already has one (two Checkouts opened before either was
+        # completed – two tabs, the plan sheet and Konto …): one subscription per account, so the newcomer is
+        # cancelled at Stripe at once – nothing is charged after its trial, a paid first invoice is refunded – and the
+        # row keeps the first (F-PBQ-01, F-PBQ-09). Checkout itself refuses a second one once the first has arrived.
+        _cancel_duplicate(obj, ws_id, row.stripe_subscription_id)
+        return "dup_canceled"  # ≤ 16 chars: webhook_events.outcome
     if plan is None and row.stripe_subscription_id != sid:
         return "unmatched"  # a subscription we cannot place on a plan
     if row.stripe_subscription_id == sid and status == "trial" and row.status in ("active", "past_due", "canceled"):
@@ -396,6 +409,38 @@ def upsert_from_stripe_subscription(db: OrmSession, obj: dict, *, session_meta: 
             except ApiError:
                 pass  # not in this plan / coming soon: the plan still applies
     return "applied"
+
+
+def _cancel_duplicate(obj: dict, ws_id: uuid.UUID, kept: str) -> None:
+    """Cancel the duplicate at Stripe; without a trial its first invoice is already paid – refund it in full
+    (idempotent per subscription), so the customer never pays for a subscription they do not get (F-PBQ-09)."""
+    import structlog
+
+    log = structlog.get_logger("dialogbot.privat.subscriptions")
+    sid, trialing = str(obj.get("id") or ""), str(obj.get("status")) == "trialing"
+    try:
+        stripe_api.request("DELETE", f"/subscriptions/{sid}")
+        log.warning("privat.duplicate_subscription_canceled", workspace_id=str(ws_id), canceled=sid, kept=kept)
+    except Exception:  # noqa: BLE001 - already cancelled, or Stripe down: alert so a person cancels it
+        log.error("privat.duplicate_subscription_not_canceled", workspace_id=str(ws_id), subscription=sid, kept=kept)
+    if trialing:
+        return  # nothing was charged
+    inv_id = obj.get("latest_invoice")
+    if isinstance(inv_id, dict):
+        inv_id = inv_id.get("id")
+    try:
+        inv = stripe_api.request("GET", f"/invoices/{inv_id}") if inv_id else None
+        pi = (inv or {}).get("payment_intent")
+        if isinstance(pi, dict):
+            pi = pi.get("id")
+        if inv and inv.get("status") == "paid" and int(inv.get("amount_paid") or 0) > 0 and pi:
+            stripe_api.request("POST", "/refunds", {"payment_intent": pi, "metadata": {
+                "kind": KIND, "reason": "duplicate_subscription", "subscription": sid, "workspace_id": str(ws_id)}},
+                idempotency_key=f"privat-dup-refund-{sid}")
+            log.warning("privat.duplicate_subscription_refunded", workspace_id=str(ws_id), subscription=sid,
+                        amount=int(inv.get("amount_paid") or 0))
+    except Exception:  # noqa: BLE001 - a person must refund by hand; never silently
+        log.error("privat.duplicate_subscription_not_refunded", workspace_id=str(ws_id), subscription=sid)
 
 
 def on_checkout_completed(db: OrmSession, obj: dict) -> str | None:

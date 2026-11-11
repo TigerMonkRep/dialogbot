@@ -480,8 +480,9 @@ def group_invite_join(code: str, body: GroupJoinIn, request: Request, db: OrmSes
     """Login optional. Without login: name, and a number only after an SMS code (first call: code_sent; then again
     with `code`). Max 50 new members per link per hour."""
     _public_enabled()
+    ip = lookup_limits.client_ip(request)
     out = lookup_limits.guarded(db, request, lambda: groups.join(db, code, principal=principal, name=body.name,
-                                                                 phone=body.phone, sms_code=body.code))
+                                                                 phone=body.phone, sms_code=body.code, ip=ip))
     db.commit()
     return out
 
@@ -778,8 +779,9 @@ def push_test(ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(g
 # --------------------------------------------------------------------------- phone and credits
 
 @router.post("/phone/start")
-def phone_start(body: PhoneStartIn, ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
-    phone.start(db, ctx, body.phone)
+def phone_start(body: PhoneStartIn, request: Request, ctx: PrivateCtx = Depends(private_ctx),
+                db: OrmSession = Depends(get_db)):
+    phone.start(db, ctx, body.phone, ip=lookup_limits.client_ip(request))
     db.commit()
     return {"sent": True}
 

@@ -24,6 +24,8 @@ const FREE_LIMIT = 0; // no free tasks any more: without a plan the account only
 const X = extraCallPrices("DKK");
 const B = balanceAmounts("DKK");
 const kr = (minor: number) => formatPrice(minor, "DKK", "da");
+/** SMS the user sends from their own phone: GSM-7 like the backend's invites._gsm (F-P2-05) – «–» would make it UCS-2. */
+const gsm = (s: string) => s.replace(/[–—]/g, "-").replace(/[«»]/g, '"');
 
 type Shop = { name: string; address: string; phone: string | null; price: string; open: boolean; next?: string; rating: number; count: number; km: number };
 /** Fictional demo businesses (like the backend's DemoPlaces without a Google key) – never callable. */
@@ -799,8 +801,8 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       event(t, body.mode === "wishlist" ? "Delt som ønskeliste" : "Delt som fælles liste");
       save();
       const short = `${location.origin}/i/${token}`;
-      const text = body.mode === "wishlist" ? `Hej! Jeg har lavet en ønskeliste – se den og reservér her: ${bareLink(short)} – ${FAKE_ME}`
-        : `Hej! Jeg har lavet en fælles liste – se den og tilføj her: ${bareLink(short)} – ${FAKE_ME}`;
+      const text = body.mode === "wishlist" ? `Hej! Jeg har lavet en ønskeliste - se den og reservér her: ${bareLink(short)} - ${FAKE_ME}`
+        : `Hej! Jeg har lavet en fælles liste - se den og tilføj her: ${bareLink(short)} - ${FAKE_ME}`;
       return { invite_url: `${location.origin}/privat/invitation/${token}`, token, expires_at: atDay(30, 23, 59),
         short_code: token, short_url: short, suggested_text: text, share_text: text };
     },
@@ -888,14 +890,14 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       }
       if (smsPeople.length) {
         if (body.style === "group_sms") {
-          res.sms_group = { recipients: smsPeople.map((m) => m.phone_e164!), body: `Hej! Jeg har lavet ${what}: ${link} – ${FAKE_ME}`, short_url: link };
+          res.sms_group = { recipients: smsPeople.map((m) => m.phone_e164!), body: gsm(`Hej! Jeg har lavet ${what}: ${link} - ${FAKE_ME}`), short_url: link };
         } else {
           res.sms_queue = smsPeople.map((m) => {
             const personal = Array.from({ length: 8 }, () => "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[Math.floor(Math.random() * 32)]).join("");
             s.invites[personal] = t.id;
             const pl = bareLink(`${location.origin}/i/${personal}`);
             const hi = /^\+?\d/.test(m.name) ? "Hej!" : `Hej ${m.name.split(" ")[0]}!`;
-            return { member_id: m.id, name: m.name, phone_e164: m.phone_e164!, body: `${hi} Jeg har lavet ${what}: ${pl} – ${FAKE_ME}`, short_url: pl };
+            return { member_id: m.id, name: m.name, phone_e164: m.phone_e164!, body: gsm(`${hi} Jeg har lavet ${what}: ${pl} - ${FAKE_ME}`), short_url: pl };
           });
         }
       }

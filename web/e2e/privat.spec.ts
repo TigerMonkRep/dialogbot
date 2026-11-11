@@ -156,7 +156,11 @@ for (const width of [375, 1440]) {
       await gotoTab(page, "Opgaver");
       const tasks = page.getByRole("region", { name: "Mine opgaver" });
       await expect(tasks.getByText("Hente pakken", { exact: true })).toHaveCount(1);
-      await expect(tasks.getByText(/Påmindelse i morgen kl\. 17\.00/)).toBeVisible();
+      // The row reads «kind · when» (UX phase 2): the moved time only, never the old one.
+      const row = tasks.getByRole("button", { name: /^Hente pakken/ });
+      await expect(row).toHaveCount(1);
+      await expect(row.getByText("Påmindelse · I morgen kl. 17.00", { exact: true })).toBeVisible();
+      await expect(row).not.toContainText("16.00");
     });
 
     test("opkald: Cykelmageren → bekræft nummer → godkend → svarer → bekræftet (tæller på planen, ikke saldoen)", async ({ page }) => {
@@ -286,7 +290,9 @@ for (const width of [375, 1440]) {
       await say(page, "Lav en indkøbsliste med mælk");
       await chat(page).getByRole("button", { name: "Del", exact: true }).click();
       const sheet = page.getByRole("dialog", { name: "Del «Indkøbsliste»" });
-      await sheet.getByLabel(/Fælles liste/).check();
+      // A plain list is always shared as a shared list – no kind choice (ux-audit #14 / F-UX-03).
+      await expect(sheet.getByText("Alle kan tilføje og krydse af")).toBeVisible();
+      await expect(sheet.getByRole("radio", { name: /Ønskeliste|Fælles liste/ })).toHaveCount(0);
       await sheet.getByRole("button", { name: "Lav invitationslink" }).click();
       await expect(sheet.getByTestId("share-link")).toHaveText(/localhost:\d+\/i\/[A-HJ-NP-Z2-9]{8}/);
       await sheet.getByRole("button", { name: "Luk" }).click();
@@ -374,6 +380,7 @@ for (const width of [375, 1440]) {
       const next = sheet.getByTestId("queue-next");
       await expect(next).toHaveText(/Næste: \+45 12 34 56 78 \(1 af 2\)/);
       await expect(next).toHaveAttribute("href", /^sms:\+4512345678\?body=Hej!%20Jeg%20har%20lavet%20en%20%C3%B8nskeliste/);
+      expect(decodeURIComponent((await next.getAttribute("href"))!)).not.toMatch(/[–—«»]/);  // GSM-7 (F-P2-05)
       await next.click();
       await expect(next).toHaveText(/Sendt\? Næste: \+45 87 65 43 21 \(2 af 2\)/);
       await expect(next).toHaveAttribute("href", /^sms:\+4587654321\?body=/);
@@ -477,7 +484,9 @@ for (const width of [375, 1440]) {
     test("apps: Butikken → appens side → Slå til (samtykke) → trin 1 → Mine apps og Min dag; kommer snart; uden plan → planvalg → appen slås til", async ({ page }) => {
       await open(page, "/privat/butik");
       await expect(page.getByRole("heading", { name: "Butikken", level: 1 })).toBeVisible();
-      await expect(page.getByTestId("app-row-foedselsdage")).toContainText("Plus · Familie");
+      // The trial covers the plan apps: no «Plus · Familie» badge on the row (ux-audit #9) – it shows after the trial.
+      await expect(page.getByTestId("app-row-foedselsdage")).toContainText("Fødselsdage");
+      await expect(page.getByTestId("app-row-foedselsdage")).not.toContainText("Plus · Familie");
       await page.getByTestId("app-row-foedselsdage").click();
       await expect(page).toHaveURL(/\/privat\/butik\/foedselsdage$/);
       await expect(page.getByText("Hvad den gør")).toBeVisible();
@@ -506,6 +515,8 @@ for (const width of [375, 1440]) {
       await page.goto("/privat/konto");
       await page.getByRole("button", { name: "Afslut prøveperioden" }).click();
       await expect(page.getByTestId("subscription-card")).toContainText("Prøveperiode slut");
+      await page.goto("/privat/butik");
+      await expect(page.getByTestId("app-row-kalender")).toContainText("Plus · Familie");
       await page.goto("/privat/butik/kalender");
       await page.getByTestId("needs-plan").click();
       const plan = page.getByRole("dialog", { name: "Kalender kræver Plus" });
@@ -521,7 +532,9 @@ for (const width of [375, 1440]) {
       // Only the visible card: on a slow runner the server-streamed copy of the pane (inside a hidden Suspense
       // template, «Ingen plan» before the data) can still be in the DOM for a moment and would trip strict mode.
       const card = page.getByTestId("subscription-card").filter({ visible: true });
-      await expect(card).toContainText("Prøveperiode");
+      // The trial shows as the days left on the trial plan, and what happens after it.
+      await expect(card).toContainText("14 dage tilbage");
+      await expect(card).toContainText("Vælg en plan, før den slutter");
       // Without a chosen plan the three plans are open from the start – no «Vælg plan» tap before the payment.
       const picker = page.getByTestId("plan-picker");
       await expect(picker).toBeVisible();
@@ -562,7 +575,9 @@ for (const [label, ua, scheme] of [["iPhone", IOS_UA, "sms:?&body="], ["Android"
       const href = await sheet.getByTestId("share-sms").getAttribute("href");
       expect(href!.startsWith(scheme)).toBeTruthy();
       const body = decodeURIComponent(href!.slice(scheme.length));
-      expect(body).toMatch(/^Hej! Jeg har lavet en ønskeliste – se den og reservér her: localhost:\d+\/i\/[A-HJ-NP-Z2-9]{8} – Mette$/);
+      // GSM-7 only (F-P2-05): «–» would turn it into a UCS-2 SMS of 70 characters per part.
+      expect(body).toMatch(/^Hej! Jeg har lavet en ønskeliste - se den og reservér her: localhost:\d+\/i\/[A-HJ-NP-Z2-9]{8} - Mette$/);
+      expect(body).not.toMatch(/[–—«»]/);
       expect(body.length).toBeLessThanOrEqual(160);
       await expect(sheet.getByTestId("share-contacts")).toHaveCount(0);
       await expect(sheet.getByRole("link", { name: "WhatsApp" })).toHaveAttribute("href", /^https:\/\/wa\.me\/\?text=/);

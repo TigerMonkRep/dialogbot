@@ -32,7 +32,7 @@ def safe_next(value: object) -> str | None:
     sign-up). "//host", "/\\host", ".." and control characters are refused."""
     if not isinstance(value, str) or not value or len(value) > MAX_NEXT:
         return None
-    if "//" in value or ".." in value or not _NEXT.match(value):
+    if "//" in value or ".." in value or not _NEXT.match(value) or re.search(r"%(2e|2f|5c)", value, re.I):
         return None
     return value
 

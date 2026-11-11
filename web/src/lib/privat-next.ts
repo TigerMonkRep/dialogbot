@@ -10,7 +10,7 @@ export const PRIVAT_HOME = "/privat/dag";
 
 /** `next` when it is a safe Privat return address, else null. */
 export function privatNext(next: string | null | undefined): string | null {
-  if (!next || next.length > 512 || next.includes("//") || next.includes("..")) return null;
+  if (!next || next.length > 512 || next.includes("//") || next.includes("..") || /%2e|%2f|%5c/i.test(next)) return null;
   return PRIVAT_NEXT.test(next) ? next : null;
 }
 

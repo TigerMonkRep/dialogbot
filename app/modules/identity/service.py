@@ -15,6 +15,7 @@ from app.core.security import hash_password, new_token, normalize_email, token_d
 from app.models import AuthToken, Session, User
 
 INTENTS = ("reception", "campaigns", "both")
+PRIVAT_INTENT = "privat"  # a Dialogbot Privat sign-up: Privat verify mail and link (F-PK-04); never a product intent
 
 
 def _now() -> datetime:
@@ -25,7 +26,7 @@ def register(db: OrmSession, *, email: str, password: str, display_name: str, si
              interface_language: str = "da", request_id: str | None = None) -> User:
     if len(password) < 10:
         raise ValidationFailed("Adgangskoden skal være mindst 10 tegn", field_errors=[{"field": "password"}])
-    if signup_intent is not None and signup_intent not in INTENTS:
+    if signup_intent is not None and signup_intent not in (*INTENTS, PRIVAT_INTENT):
         raise ValidationFailed("Ugyldig produktintention", field_errors=[{"field": "signup_intent"}])
     norm = normalize_email(email)
     if db.scalar(select(User).where(User.email_normalized == norm)):
@@ -47,10 +48,11 @@ def issue_verification(db: OrmSession, user: User) -> None:
     raw = new_token()
     db.add(AuthToken(user_id=user.id, purpose="verify_email", token_hash=token_digest(raw),
                      expires_at=_now() + timedelta(hours=s.verification_ttl_hours)))
-    link = f"{s.frontend_base_url}/verify-email?token={raw}"
+    privat = user.signup_intent == PRIVAT_INTENT
+    link = f"{s.frontend_base_url}/verify-email?token={raw}" + ("&for=privat" if privat else "")
     enqueue(db, event_type="email.verify_address", dedupe_key=f"verify:{user.id}:{token_digest(raw)[:16]}",
             payload={"user_id": str(user.id), "to_email": user.email, "link": link,
-                     "lang": normalize_language(user.interface_language)})
+                     "lang": normalize_language(user.interface_language), **({"audience": "privat"} if privat else {})})
 
 
 def verify_email(db: OrmSession, raw_token: str) -> User:

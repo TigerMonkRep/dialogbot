@@ -32,6 +32,7 @@ INK_SOFT = "#3C4659"
 PAPER = "#FFFFFF"
 PANEL = "#EEF4FB"
 ACCENT = "#2456F6"
+PRIVAT_ACCENT = "#C4461A"  # docs/brand.md – the Privat orange (white text ≥ 4.5:1)
 HIGHLIGHT = "#FFCF3F"
 MUTED = "#5B6475"
 LINE = "#D6DEEA"
@@ -39,6 +40,7 @@ FONT = "Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial
 HEAD_FONT = "Outfit,Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif"
 # The mark served by the website (the icon is the brand mark: blue rounded square with the chat bubble).
 LOGO_PATH = "/icons/icon-192.png"
+PRIVAT_LOGO_PATH = "/icons/privat-icon-192.png"
 
 # Dark mode (docs/brand.md has one surface colour, ink; the card is ink, the page one step darker).
 DARK_PAGE = "#0D1630"
@@ -95,6 +97,7 @@ class Email:
     step: int | None = None  # set when the mail is a step in the set-up: a yellow step square above the heading
     rows: list[tuple[str, str]] = field(default_factory=list)  # label/value facts shown in a panel (the day's numbers)
     lang: str = "da"  # the language of the layout's own words (greeting, button fallback, footer company line)
+    audience: str = "erhverv"  # "privat": the Privat orange (#C4461A), the Privat icon and «Dialogbot Privat» in the header
 
     def text(self) -> str:
         lang = self.lang
@@ -112,8 +115,10 @@ class Email:
     def html(self) -> str:
         lang = normalize(self.lang)
         base = get_settings().frontend_base_url.rstrip("/")
-        logo = f"{base}{LOGO_PATH}"
+        logo = f"{base}{PRIVAT_LOGO_PATH if self.audience == 'privat' else LOGO_PATH}"
         e = html.escape
+        accent = PRIVAT_ACCENT if self.audience == "privat" else ACCENT
+        brand = "Dialogbot Privat" if self.audience == "privat" else "Dialogbot"
         paras = "".join(
             f'<p class="tx" style="margin:0 0 16px;font:16px/1.6 {FONT};color:{INK_SOFT};">'
             f'{e(p).replace(chr(10), "<br>")}</p>' for p in self.paragraphs)
@@ -131,13 +136,13 @@ class Email:
         if self.button_url:
             button = (
                 f'<table class="btnt" role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 24px;">'
-                f'<tr><td style="border-radius:14px;background:{ACCENT};">'
+                f'<tr><td style="border-radius:14px;background:{accent};">'
                 f'<a class="btna" href="{e(self.button_url, quote=True)}" style="display:inline-block;padding:16px 26px;'
                 f'font:600 16px/1 {FONT};color:#ffffff;text-decoration:none;border-radius:14px;">'
                 f'{e(self.button_label or t(lang, "open"))}</a></td></tr></table>'
                 f'<p class="mt" style="margin:0 0 16px;font:13px/1.5 {FONT};color:{MUTED};">{e(t(lang, "button_fallback"))}'
                 f'<br><a class="lk" href="{e(self.button_url, quote=True)}" '
-                f'style="color:{ACCENT};word-break:break-all;">{e(self.button_url)}</a></p>')
+                f'style="color:{accent};word-break:break-all;">{e(self.button_url)}</a></p>')
         note = (f'<p class="mt" style="margin:0 0 16px;font:13px/1.5 {FONT};color:{MUTED};">{e(self.note)}</p>'
                 if self.note else "")
         pre = (f'<div style="display:none;max-height:0;overflow:hidden;opacity:0;">{e(self.preheader)}</div>'
@@ -160,7 +165,7 @@ class Email:
 <tr><td style="padding:0 4px 20px;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
 <td style="vertical-align:middle;"><img src="{e(logo, quote=True)}" width="36" height="36" alt="" style="display:block;border:0;border-radius:10px;"></td>
-<td class="wm" style="vertical-align:middle;padding-left:10px;font:800 22px/1 {HEAD_FONT};color:{INK};letter-spacing:-0.3px;">Dialogbot</td>
+<td class="wm" style="vertical-align:middle;padding-left:10px;font:800 22px/1 {HEAD_FONT};color:{INK};letter-spacing:-0.3px;">{brand}</td>
 </tr></table></td></tr>
 <tr><td class="card" style="background:{PAPER};border:2px solid {INK};border-radius:20px;">
 <div class="pad" style="padding:32px 32px 16px;">
@@ -213,17 +218,19 @@ def from_plain(subject: str, body: str, footer_reason: str | None = None, lang: 
 # --------------------------------------------------------------------------- the emails
 # Every builder takes `lang` (app/core/languages.py; Danish is the source). The texts live in email_texts.py.
 
-def verify(link: str, lang: str = "da") -> Email:
+def verify(link: str, lang: str = "da", *, privat: bool = False) -> Email:
+    """`privat`: the sign-up came from Dialogbot Privat – its own words (no «AI-receptionist»), F-PK-04."""
     lang = normalize(lang)
+    sfx = "_privat" if privat else ""
     return Email(
         subject=t(lang, "verify_subject"),
         preheader=t(lang, "verify_preheader"),
-        heading=t(lang, "verify_heading"),
+        heading=t(lang, "verify_heading" + sfx),
         step=1,
-        paragraphs=[t(lang, "verify_body")],
+        paragraphs=[t(lang, "verify_body" + sfx)],
         button_label=t(lang, "verify_button"), button_url=link,
         note=t(lang, "verify_note"),
-        footer_reason=t(lang, "verify_footer"), lang=lang)
+        footer_reason=t(lang, "verify_footer"), lang=lang, audience="privat" if privat else "erhverv")
 
 
 def reset(link: str, lang: str = "da") -> Email:
@@ -384,7 +391,7 @@ def to_payload(mail: Email) -> dict:
     return {"subject": mail.subject, "heading": mail.heading, "paragraphs": mail.paragraphs,
             "button_label": mail.button_label, "button_url": mail.button_url, "note": mail.note,
             "footer_reason": mail.footer_reason, "preheader": mail.preheader, "step": mail.step,
-            "rows": [list(r) for r in mail.rows], "lang": mail.lang}
+            "rows": [list(r) for r in mail.rows], "lang": mail.lang, "audience": mail.audience}
 
 
 def from_payload(p: dict) -> Email:

@@ -4126,7 +4126,7 @@
                 "type": "null"
               }
             ],
-            "description": "reception | campaigns | both (A01)",
+            "description": "reception | campaigns | both (A01), or privat (a Dialogbot Privat sign-up: Privat verify mail)",
             "title": "Signup Intent"
           }
         },

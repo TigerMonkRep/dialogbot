@@ -22,6 +22,7 @@ from app.modules.privat import rules
 CODE_TTL = timedelta(minutes=10)
 MAX_ATTEMPTS = 5
 RESEND_AFTER = timedelta(seconds=30)
+CODES_PER_ACCOUNT_HOUR = 5  # on top of RESEND_AFTER, plus the per-IP and Privat-wide hourly budget (F-PS-01)
 SENDER = "Dialogbot"
 
 
@@ -37,17 +38,20 @@ def _simulated() -> bool:
     return s.connectors_provider == "fake" or (s.app_env in ("dev", "test") and providers() is None)
 
 
-def start(db: OrmSession, ctx, raw_phone: str) -> None:
-    from app.modules.campaigns.service import normalize_phone
+def start(db: OrmSession, ctx, raw_phone: str, *, ip: str = "unknown") -> None:
     from app.modules.integrations.connectors import sms
+    from app.modules.privat import lookup_limits
+    from app.modules.sales.service import danish_number
 
-    phone = normalize_phone(raw_phone or "")
-    if phone is None:
-        raise ValidationFailed("Skriv dit mobilnummer med 8 cifre", field_errors=[{"field": "phone"}])
+    try:  # Danish numbers only (+45, 8 digits, not premium 90xx): no verification SMS abroad (F-PS-01)
+        phone = danish_number(raw_phone or "")
+    except ValidationFailed:
+        raise ValidationFailed("Skriv dit mobilnummer med 8 cifre", field_errors=[{"field": "phone"}]) from None
     p = db.scalar(select(PrivateProfile).where(PrivateProfile.workspace_id == ctx.ws_id).with_for_update())
     now = rules.now()
     if p.phone_code_sent_at and now - p.phone_code_sent_at < RESEND_AFTER:
         raise Conflict("Vent et øjeblik, før du beder om en ny kode", code="too_soon")
+    lookup_limits.sms_budget(db, ip=ip, account=f"ws:{ctx.ws_id}", per_account=CODES_PER_ACCOUNT_HOUR)
     code = f"{secrets.randbelow(1_000_000):06d}"
     p.phone_pending_e164, p.phone_code_hash = phone, _hash(ctx.ws_id, phone, code)
     p.phone_code_attempts, p.phone_code_expires_at, p.phone_code_sent_at = 0, now + CODE_TTL, now

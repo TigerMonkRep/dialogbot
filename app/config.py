@@ -295,6 +295,13 @@ class Settings(BaseSettings):
     # Short invitation links people text from their own phone: <base><code>, resolved by the web route /i/{code}.
     privat_short_url_base: str = Field(default="https://dialogbot.app/i/", alias="PRIVAT_SHORT_URL_BASE")
     privat_group_url_base: str = Field(default="https://dialogbot.app/g/", alias="PRIVAT_GROUP_URL_BASE")
+    # The caller's IP for the per-IP limits (lookup_limits.client_ip, F-PS-02). CLIENT_IP_SECRET is shared with the web
+    # BFF (same value on Vercel): the BFF signs the visitor's IP with it. Once set, an unsigned request is counted by
+    # the X-Forwarded-For entry TRUSTED_PROXY_HOPS from the right – the address Render's edge appended, which a client
+    # cannot forge. Unset = the old behaviour (first X-Forwarded-For entry), so BFF traffic is never lumped on Vercel's
+    # few egress IPs before the web side signs.
+    client_ip_secret: str | None = Field(default=None, alias="CLIENT_IP_SECRET")
+    trusted_proxy_hops: int = Field(default=1, ge=1, le=5, alias="TRUSTED_PROXY_HOPS")
     # Web Push (VAPID) for Dialogbot Privat. `python -m scripts.generate_vapid` prints a new pair. Without the keys,
     # notifications go by e-mail. VAPID_SUBJECT is a mailto: or https: contact for the push services.
     vapid_public_key: str | None = Field(default=None, alias="VAPID_PUBLIC_KEY")

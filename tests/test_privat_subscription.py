@@ -532,7 +532,7 @@ def test_webhook_for_an_account_without_a_row(api, client, pv, db, monkeypatch):
 
 
 def test_checkout_completed_and_session_sync(api, client, pv, db, monkeypatch):
-    tok = pv.account("mette@testmail.dk")
+    tok = pv.account("mette@testmail.dk", trial=False)  # no running subscription yet (one per account, F-PBQ-01)
     ws = pv.ws(tok)
     _stripe_env(monkeypatch)
     meta = {"kind": "privat_subscription", "workspace_id": str(ws), "plan": "basis", "interval": "year"}
@@ -591,3 +591,114 @@ def test_portal(api, pv, monkeypatch):
                         {"url": "https://billing.stripe.com/p/session/x"})
     assert api.post(tok, "/privat/subscription/portal").json() == {"url": "https://billing.stripe.com/p/session/x"}
     assert sent == [("POST", "/billing_portal/sessions", {"customer": "cus_test", "return_url": "http://frontend.test/privat/konto"})]
+
+
+# --------------------------------------------------------------------------- one subscription per account
+
+def _two_checkouts_completed(client, pv, ws, monkeypatch, *, status: str, invoice: dict | None = None):
+    """Two Checkouts opened before either completed (two tabs …): both sessions complete at Stripe."""
+    subs = {"sub_a": _sub_obj(ws, sid="sub_a", status=status, plan="basis"),
+            "sub_b": _sub_obj(ws, sid="sub_b", status=status, plan="plus")}
+    for sub in subs.values():
+        sub["latest_invoice"] = f"in_{sub['id']}"
+    sent = []
+
+    def fake(m, p, d=None, **k):
+        sent.append((m, p, d, k.get("idempotency_key")))
+        if p.startswith("/subscriptions/"):
+            sub = subs[p.rsplit("/", 1)[1]]
+            if m == "DELETE":
+                sub["status"] = "canceled"
+            return sub
+        if m == "GET" and p.startswith("/invoices/"):
+            return invoice or {}
+        if (m, p) == ("POST", "/refunds"):
+            return {"id": "re_1", "status": "succeeded"}
+        raise AssertionError((m, p))
+
+    monkeypatch.setattr(stripe_api, "request", fake)
+    outs = []
+    for sid in ("sub_a", "sub_b"):
+        meta = {"kind": "privat_subscription", "workspace_id": str(ws), "plan": subs[sid]["metadata"]["plan"],
+                "interval": "month"}
+        session = {"id": f"cs_{sid}", "object": "checkout.session", "mode": "subscription", "subscription": sid,
+                   "customer": "cus_1", "metadata": meta, "status": "complete"}
+        outs.append(_stripe_event(client, {"id": f"evt_{sid}", "type": "checkout.session.completed",
+                                           "data": {"object": session}})["outcome"])
+    return outs, subs, sent
+
+
+def test_two_open_checkouts_leave_one_live_subscription(api, client, pv, db, monkeypatch):
+    """F-PBQ-01 (S0): the second completed Checkout is cancelled at Stripe at once (in its trial: nothing charged, no
+    refund) and the account keeps the first – never two subscriptions billing the same card."""
+    tok = pv.account("mette@testmail.dk", trial=False)
+    ws = pv.ws(tok)
+    _stripe_env(monkeypatch)
+    outs, subs, sent = _two_checkouts_completed(client, pv, ws, monkeypatch, status="trialing")
+    assert outs == ["applied", "dup_canceled"]
+    assert [s["id"] for s in subs.values() if s["status"] in ("trialing", "active", "past_due")] == ["sub_a"]
+    assert ("DELETE", "/subscriptions/sub_b") in [(m, p) for m, p, _d, _k in sent]
+    assert not [x for x in sent if x[1] in ("/refunds", "/credit_notes") or x[1].startswith("/invoices/")]
+    db.expire_all()
+    row = db.get(PrivateSubscription, ws)
+    assert (row.stripe_subscription_id, row.plan, row.status) == ("sub_a", "basis", "trial")
+    # the cancelled duplicate's own deletion event never touches the account
+    gone = subs["sub_b"] | {"ended_at": int(WED_10.timestamp())}
+    assert _stripe_event(client, {"id": "evt_gone", "type": "customer.subscription.deleted",
+                                  "data": {"object": gone}})["outcome"] == "ignored"
+    assert pv.subscription(tok)["entitled"] is True
+
+
+def test_paid_duplicate_without_trial_is_refunded(api, client, pv, db, monkeypatch):
+    """F-PBQ-09 (S0): without a trial the duplicate's first invoice is already paid – it is refunded in full, once."""
+    tok = pv.account("mette@testmail.dk", trial=False)
+    ws = pv.ws(tok)
+    _stripe_env(monkeypatch)
+    inv = {"id": "in_sub_b", "status": "paid", "amount_paid": 9900, "payment_intent": "pi_dup"}
+    outs, subs, sent = _two_checkouts_completed(client, pv, ws, monkeypatch, status="active", invoice=inv)
+    assert outs == ["applied", "dup_canceled"] and subs["sub_b"]["status"] == "canceled"
+    refunds = [(d, k) for m, p, d, k in sent if (m, p) == ("POST", "/refunds")]
+    assert len(refunds) == 1
+    body, key = refunds[0]
+    assert body["payment_intent"] == "pi_dup" and body["metadata"]["subscription"] == "sub_b"
+    assert key == "privat-dup-refund-sub_b"
+    assert ("GET", "/invoices/in_sub_b") in [(m, p) for m, p, _d, _k in sent]
+
+
+def test_unpaid_duplicate_is_cancelled_but_not_refunded(api, client, pv, db, monkeypatch):
+    tok = pv.account("mette@testmail.dk", trial=False)
+    ws = pv.ws(tok)
+    _stripe_env(monkeypatch)
+    inv = {"id": "in_sub_b", "status": "open", "amount_paid": 0, "payment_intent": "pi_dup"}
+    outs, subs, sent = _two_checkouts_completed(client, pv, ws, monkeypatch, status="active", invoice=inv)
+    assert outs == ["applied", "dup_canceled"] and subs["sub_b"]["status"] == "canceled"
+    assert not [x for x in sent if x[1] == "/refunds"]
+
+
+def test_credit_pack_checkout_takes_no_discount_codes(api, client, pv, db, monkeypatch):
+    """F-PBQ-03 (S0): a Privat code paid the pack below its price and the webhook (rightly) gave no credits – the
+    pack's Checkout shows no code field, so amount and credits always match."""
+    _stripe_env(monkeypatch)
+    sent = _fake_checkout(monkeypatch)
+    tok = pv.account("hans@testmail.dk", trial=False)
+    for body in ({}, {"locale": "de"}, {"locale": "sv"}):
+        assert api.post(tok, "/privat/credits/checkout", body).status_code == 200
+        d = _sessions(sent)[-1]
+        assert d["mode"] == "payment" and "allow_promotion_codes" not in d and "discounts" not in d
+
+
+def test_no_second_checkout_while_a_subscription_runs(api, pv, db, monkeypatch):
+    """PC-SUB-07 / F-PBQ-01: with a running Stripe subscription (here the card trial) a new Checkout would start a
+    second subscription. 409 subscription_exists → the web sends the customer to the Billing Portal instead."""
+    tok = pv.account("mette@testmail.dk")  # trial via Checkout: a Stripe subscription exists
+    _stripe_env(monkeypatch)
+    sent = _fake_checkout(monkeypatch)
+    r = api.post(tok, "/privat/subscription/checkout", {"plan": "familie", "interval": "year"})
+    assert r.status_code == 409 and r.json()["code"] == "subscription_exists" and r.json()["portal"] is True
+    assert _sessions(sent) == []
+    pv.set_plan(tok, "plus")  # active
+    assert api.post(tok, "/privat/subscription/checkout", {"plan": "basis", "interval": "month"}).status_code == 409
+    row = db.get(PrivateSubscription, pv.ws(tok))
+    row.status, row.current_period_end = "canceled", None  # ended: a new subscription is allowed again
+    db.commit()
+    assert api.post(tok, "/privat/subscription/checkout", {"plan": "basis", "interval": "month"}).status_code == 200

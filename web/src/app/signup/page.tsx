@@ -21,7 +21,7 @@ function SignupForm() {
   const privat = isPrivat(params.get("next"));
   const [form, setForm] = useState({ email: "", password: "", display_name: "", signup_intent: INTENTS.includes(params.get("intent") ?? "") ? params.get("intent")! : "reception" });
   const { run, pending, error } = useSubmit(async () => {
-    await api("/auth/register", { method: "POST", body: JSON.stringify(privat ? { ...form, signup_intent: null } : form) });
+    await api("/auth/register", { method: "POST", body: JSON.stringify(privat ? { ...form, signup_intent: "privat" } : form) });
     const r = await fetch("/api/auth/login", { method: "POST", headers: { "content-type": "application/json", "x-requested-with": "dialogbot" }, body: JSON.stringify({ email: form.email, password: form.password }) });
     if (!r.ok) throw await r.json();
     const next = params.get("next");

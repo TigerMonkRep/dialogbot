@@ -31,7 +31,7 @@ from app.models import (
     PrivateTaskMember,
     User,
 )
-from app.modules.privat import addons, invites, rules, service, sharing
+from app.modules.privat import addons, invites, lookup_limits, rules, service, sharing
 
 MAX_MEMBERS = 100
 
@@ -245,6 +245,7 @@ def invite_status(db: OrmSession, ctx, task: PrivateTask) -> list[dict]:
 JOINS_PER_HOUR = 50        # new members per link per hour
 CODES_PER_LINK_HOUR = 20   # SMS codes per link per hour (anti SMS-pumping)
 CODES_PER_PHONE_HOUR = 3
+CODES_PER_OWNER_HOUR = 20  # all of one owner's links together: minting more links never buys more SMS (F-PS-01)
 
 
 def _rate_limited(msg: str):
@@ -315,7 +316,7 @@ def _code_hash(link_id, phone: str, code: str) -> str:
 
 
 def join(db: OrmSession, code: str, *, principal=None, name: str | None, phone: str | None,
-         sms_code: str | None) -> dict:
+         sms_code: str | None, ip: str = "unknown") -> dict:
     """Join a group by its link. Logged in: linked to the user id. Not logged in: the name, plus a number only once
     it is verified with an SMS code (first call sends the code, second call with `code` joins). Deduped by user id or
     number (and by exact name for name-only joins)."""
@@ -363,9 +364,7 @@ def join(db: OrmSession, code: str, *, principal=None, name: str | None, phone: 
         db.add(PrivateGroupMember(group_id=g.id, name=name, joined_via_link_id=link.id, created_at=now))
         db.flush()
         return {"joined": True, "already": False}
-    e164 = normalize(phone)
-    if e164 is None:
-        raise ValidationFailed("Skriv dit mobilnummer med 8 cifre", field_errors=[{"field": "phone"}])
+    e164 = _danish_mobile(phone)
     if any(m.phone_e164 == e164 for m in existing):
         return {"joined": True, "already": True}
     q = select(PrivatePhoneCode).where(PrivatePhoneCode.purpose == "group_join", PrivatePhoneCode.ref_id == link.id,
@@ -380,6 +379,7 @@ def join(db: OrmSession, code: str, *, principal=None, name: str | None, phone: 
         if per_link >= CODES_PER_LINK_HOUR or per_phone >= CODES_PER_PHONE_HOUR:
             raise _rate_limited("Der er sendt for mange koder. Prøv igen senere.")
         rate_check()
+        lookup_limits.sms_budget(db, ip=ip, account=f"user:{g.owner_user_id}", per_account=CODES_PER_OWNER_HOUR)
         c = f"{secrets.randbelow(1_000_000):06d}"
         db.add(PrivatePhoneCode(purpose="group_join", ref_id=link.id, phone_e164=e164, code_hash=_code_hash(link.id, e164, c),
                                 expires_at=now + timedelta(minutes=10), created_at=now))
@@ -403,6 +403,18 @@ def join(db: OrmSession, code: str, *, principal=None, name: str | None, phone: 
     db.add(PrivateGroupMember(group_id=g.id, name=name, phone_e164=e164, joined_via_link_id=link.id, created_at=now))
     db.flush()
     return {"joined": True, "already": False}
+
+
+def _danish_mobile(raw: str | None) -> str:
+    """Codes go only to Danish numbers (+45, 8 digits, not premium 90xx) – what Privat's SMS path supports and what
+    the UI asks for («8 cifre»; the funnel has the same rule). Any other E.164 number would let a public link pump paid
+    SMS abroad (F-PS-01)."""
+    from app.modules.sales.service import danish_number
+
+    try:
+        return danish_number(raw or "")
+    except ValidationFailed:
+        raise ValidationFailed("Skriv dit mobilnummer med 8 cifre", field_errors=[{"field": "phone"}]) from None
 
 
 def _send_code(db: OrmSession, g: PrivateGroup, e164: str, code: str) -> None:

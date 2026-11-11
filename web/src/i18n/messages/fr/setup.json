@@ -1,6 +1,6 @@
 {
   "later": {
-    "link": "Je ferai le reste plus tard"
+    "link": "Configurer moi-même"
   },
   "need": {
     "title": "Il vous faut"
@@ -160,6 +160,7 @@
       "idle": "Enregistrement automatique",
       "comeBack": " · vous pouvez toujours revenir ici",
       "fillIn": "Renseignez le nom, le numéro de téléphone et votre activité pour continuer.",
+      "fillInNoPhone": "Indiquez le nom et votre activité pour continuer.",
       "reload": "Recharger"
     },
     "nextTo2": "Passer à l’étape 2 : agenda & outils",
@@ -348,6 +349,11 @@
       "oneLine": "Une seule ligne doit être ajoutée à votre site. Pas besoin de la comprendre – envoyez-la à la personne qui gère votre site.",
       "codeAria": "Ligne de code",
       "copied": "Copié",
+      "notReady": {
+        "no_approved_knowledge": "Approuvez d’abord au moins un élément dans Connaissances – le chat ne répond qu’à partir de ce que vous avez approuvé.",
+        "no_allowed_origins": "Indiquez l’adresse de votre site à l’étape 1 – le chat ne peut apparaître que là.",
+        "ai_not_configured": "Les réponses IA ne sont pas encore activées dans Dialogbot. Écrivez-nous."
+      },
       "copy": "Copier la ligne",
       "sendWebmaster": "Envoyer à mon webmaster",
       "seen": "La ligne est sur le site – le statut est Prêt.",
@@ -370,6 +376,9 @@
     "readyNoPhone": "Une fois activé, Dialogbot est prêt.",
     "missing": "Manquant : {list}.",
     "goToday": "Aller à Aujourd’hui",
+    "toPayment": "Continuer vers l’abonnement et le paiement",
+    "payNext": "Dernière étape : confirmez l’abonnement.",
+    "payAfter": "Ensuite, vous confirmez l’abonnement.",
     "turningOn": "Activation …",
     "turnOn": "Activer Dialogbot",
     "managersOnly": "Seuls les propriétaires et administrateurs peuvent l’activer.",

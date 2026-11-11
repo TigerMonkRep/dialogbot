@@ -136,7 +136,15 @@
       "aria": "Activar o desactivar Dialogbot",
       "onlyAdmins": "Solo los propietarios y administradores pueden activarlo y desactivarlo",
       "setupFirst": "Hay que configurar el teléfono antes de poder activar Dialogbot"
-    }
+    },
+    "payTag": "Último paso",
+    "payNext": "Dialogbot está configurado · elige suscripción y pago",
+    "chatOn": "El chat web está activado",
+    "chatOff": "El chat web no está activado",
+    "chatStatusOn": "Responde en vuestra web. El teléfono es opcional y no está configurado.",
+    "chatStatusOff": "Activa el chat web y Dialogbot responderá en vuestra web, sin número de teléfono.",
+    "setUpChat": "Configurar el chat web",
+    "turnedOnChatSub": "Ya responde en vuestra web."
   },
   "time": {
     "today": "Hoy",
@@ -809,7 +817,12 @@
       "confirm": "Confirmar suscripción",
       "ownerMustConfirm": "El propietario debe confirmar la suscripción.",
       "older": "Contrato anterior: confirme la suscripción para cambiar a la suscripción actual.",
-      "note": "Precios sin IVA. Sin permanencia: dígaselo al asistente o escriba a info@dialogbot.dk si quiere darse de baja. El pago nunca inicia llamadas."
+      "note": "Precios sin IVA. Sin permanencia: dígaselo al asistente o escriba a info@dialogbot.dk si quiere darse de baja. El pago nunca inicia llamadas.",
+      "fromSetup": "Último paso: confirma la suscripción abajo y añade una tarjeta de pago. Y ya estáis en marcha.",
+      "fromSetupNoCard": "Último paso: confirma la suscripción abajo. Y ya estáis en marcha.",
+      "fromSetupCard": "La suscripción está confirmada. Último paso: añade una tarjeta de pago abajo.",
+      "fromSetupLive": "Ya estáis en marcha. La suscripción está activa.",
+      "goToday": "Ir a Hoy"
     },
     "usage": {
       "title": "Consumo por llamada",

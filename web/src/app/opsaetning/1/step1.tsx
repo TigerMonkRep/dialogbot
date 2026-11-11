@@ -7,6 +7,7 @@ import { Icon, inputCls } from "@/components/ui";
 import { api, type ApiError } from "@/lib/client";
 import { useRaw, useT } from "@/i18n/client";
 import { LOCALES, LOCALE_NAMES, isLocale } from "@/i18n/config";
+import { profileIsDone } from "@/lib/setup-done";
 import { cardsFromGoals, goalsFromCards, hoursText, originOf, parseHours, parseZones, zonesText, type Cards, type DayVocab, type WeeklyRange } from "@/lib/setup";
 import { MobileActionBar } from "@/components/mobile-action-bar";
 
@@ -78,6 +79,12 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
    *  server, website suggestions, CVR look-up). */
   const chain = useRef<Partial<Record<Group, Promise<void>>>>({});
   const doneRef = useRef(done);
+  const saved = useRef<Profile>(profile);
+  /** Trin 1 just became done (or stopped being done) on the server: let the stepper and «I dag» say so now. */
+  const recheckDone = () => {
+    const isDone = profileIsDone(saved.current, latest.current.cards.phone);
+    if (isDone !== doneRef.current) { doneRef.current = isDone; router.refresh(); }
+  };
 
   // --- the draft kept in this tab until the server has it ---
   const seen = useRef<Record<string, string[]>>({});
@@ -112,15 +119,15 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
     for (const k of PROFILE_TEXT) remember(k, String(x[k] ?? ""));
     const next = await api<Profile>(`/workspaces/${wsId}/profile`, { method: "PUT", body: JSON.stringify(body) });
     ver.current.profile = next.version;
-    // Trin 1 just became done (or stopped being done): let the stepper and the «I dag» banner say so now.
-    const isDone = Boolean(next.legal_name && next.description.trim() && next.phone);
-    if (isDone !== doneRef.current) { doneRef.current = isDone; router.refresh(); }
+    saved.current = next;
+    recheckDone();
   }), [run, wsId, t, router]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const saveGoals = useCallback(() => run("goals", async () => {
     const g = goalsFromCards(latest.current.cards);
     const next = await api<Goals>(`/workspaces/${wsId}/goals`, { method: "PUT", body: JSON.stringify({ ...g, guidance_mode: goals.guidance_mode, conversation_goals: goals.conversation_goals, expected_version: ver.current.goals }) });
     ver.current.goals = next.version;
+    recheckDone();
   }), [run, wsId, goals.guidance_mode, goals.conversation_goals]);
 
   const saveLangs = useCallback(() => run("langs", async () => {
@@ -332,7 +339,8 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
   const toggle = (k: keyof Cards) => { setCards((c) => ({ ...c, [k]: !c[k] })); later("goals", 400); };
   const toggleLang = (code: string) => { if (code === primary) return; setLangs((cur) => (cur.includes(code) ? cur.filter((c) => c !== code) : [...cur, code])); later("langs", 400); };
   const choosePrimary = (code: string) => { setLangs((cur) => cur.filter((c) => c !== code && c !== primary)); setPrimary(code); later("langs", 400); };
-  const ready = p.legal_name.trim() && (p.phone ?? "").trim() && p.description.trim();
+  // The phone number is needed only when Dialogbot takes the phone; chat only (or campaigns) goes on without one.
+  const ready = profileIsDone(p, cards.phone);
   const next = cards.booking ? 2 : 3;
 
   return (
@@ -412,7 +420,7 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
       <MobileActionBar className="flex-col-reverse sm:flex-row sm:items-center sm:justify-between">
         <p className="text-[13px] leading-snug text-muted" role="status" aria-live="polite">
           {save === "saving" ? t("status.saving") : save === "saved" ? t("status.saved") : save === "error" ? t("status.notSaved") : t("status.idle")}{t("status.comeBack")}
-          {!ready && <span className="block">{t("status.fillIn")}</span>}
+          {!ready && <span className="block">{cards.phone ? t("status.fillIn") : t("status.fillInNoPhone")}</span>}
           {problem && <span className="block text-danger" role="alert">{problem} {problem === t("versionConflict") && <button type="button" className="underline" onClick={() => { clearDraft(); window.location.reload(); }}>{t("status.reload")}</button>}</span>}
         </p>
         <button type="button" disabled={!ready || going} onClick={async () => {

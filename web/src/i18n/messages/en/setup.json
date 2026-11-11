@@ -1,6 +1,6 @@
 {
   "later": {
-    "link": "I'll do the rest later"
+    "link": "Set it up yourself"
   },
   "need": {
     "title": "You'll need"
@@ -148,6 +148,7 @@
       "idle": "Saved as you go",
       "comeBack": " · you can always come back here",
       "fillIn": "Fill in name, phone number and what you do to continue.",
+      "fillInNoPhone": "Fill in the name and what you do to continue.",
       "reload": "Reload"
     },
     "nextTo2": "Continue to step 2: calendar & systems",
@@ -336,6 +337,11 @@
       "oneLine": "One line needs to go on your website. You don't need to understand it – send it to whoever looks after the site.",
       "codeAria": "Line of code",
       "copied": "Copied",
+      "notReady": {
+        "no_approved_knowledge": "Approve at least one item under Knowledge first – the chat only answers from what you have approved.",
+        "no_allowed_origins": "Enter your website address in step 1 – the chat may only appear there.",
+        "ai_not_configured": "AI answers are not switched on in Dialogbot yet. Write to us."
+      },
       "copy": "Copy the line",
       "sendWebmaster": "Send to my web person",
       "seen": "The line is on the site – status is Ready.",
@@ -358,6 +364,9 @@
     "readyNoPhone": "When you switch on, Dialogbot is ready.",
     "missing": "Missing: {list}.",
     "goToday": "Go to Today",
+    "toPayment": "On to subscription and payment",
+    "payNext": "Last step: confirm the subscription.",
+    "payAfter": "Afterwards you confirm the subscription.",
     "turningOn": "Switching on …",
     "turnOn": "Switch on Dialogbot",
     "managersOnly": "Only owners and administrators can switch it on.",

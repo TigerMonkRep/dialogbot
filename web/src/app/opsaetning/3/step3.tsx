@@ -266,7 +266,11 @@ function Chat({ wsId, w, canManage, website }: { wsId: string; w: Webchat; canMa
       const origins = Array.from(new Set([...w.allowed_origins, ...(origin ? [origin] : [])]));
       await api(`/workspaces/${wsId}/webchat`, { method: "PUT", body: JSON.stringify({ expected_version: w.version, enabled: true, greeting: w.greeting, allowed_origins: origins }) });
       router.refresh();
-    } catch (e) { setErr(msg(e, tr("failed"))); }
+    } catch (e) {
+      // Say what is missing instead of «kan ikke slås til endnu» (most often: nothing approved under Viden yet).
+      const reasons = ((e as ApiError & { reasons?: string[] }).reasons ?? []).filter((r) => ["no_approved_knowledge", "no_allowed_origins", "ai_not_configured"].includes(r));
+      setErr(reasons.length ? reasons.map((r) => tr(`chat.notReady.${r}`)).join(" ") : msg(e, tr("failed")));
+    }
     setBusy(false);
   };
   const mail = `mailto:?subject=${encodeURIComponent(tr("chat.mailSubject"))}&body=${encodeURIComponent(tr("chat.mailBody", { code: w.embed_code }))}`;
@@ -300,8 +304,11 @@ function Chat({ wsId, w, canManage, website }: { wsId: string; w: Webchat; canMa
 export function Step3(props: {
   wsId: string; canManage: boolean; reader?: boolean; goals: { inbound_phone: boolean; webchat: boolean; product_intent: string };
   voices: VoicesData | null; t: Telephony | null; webchat: Webchat | null; company: string; cvr: string; address: string; phone: string; website: string;
+  /** The subscription (owner/admin only). The guide ends on payment until it is paid (Fürster 11/11); null = not ours to pay. */
+  billing?: { paid: boolean } | null;
 }) {
-  const { wsId, canManage, reader = false, goals, voices, t, webchat, company, cvr, address, phone, website } = props;
+  const { wsId, canManage, reader = false, goals, voices, t, webchat, company, cvr, address, phone, website, billing = null } = props;
+  const pay = Boolean(billing && !billing.paid);
   const router = useRouter();
   const tr = useT("setup.step3");
   const [err, setErr] = useState<string | null>(null);
@@ -326,9 +333,10 @@ export function Step3(props: {
     setBusy(true); setErr(null);
     try {
       if (phoneOn && !t!.active) await api(`/workspaces/${wsId}/telephony/activate`, { method: "POST" });
-      router.push("/app?taendt=1"); router.refresh();
+      // Not paid yet: the last step is the subscription and card, said plainly; paid: «I dag» with «Dialogbot er tændt».
+      router.push(pay ? "/app/konto?fra=opsaetning#abonnement" : "/app?taendt=1"); router.refresh();
     } catch (e) { setErr(msg(e, tr("failed"))); setBusy(false); }
-  }, [phoneOn, t, wsId, router, tr]);
+  }, [phoneOn, t, wsId, router, tr, pay]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -352,11 +360,12 @@ export function Step3(props: {
         <div>
           {/* A reader cannot see the phone's status (telephony.read is staff+): no «Alt er klar»/«tændt» guesses. */}
           <h2 id="taend-h" className="font-display font-extrabold text-[24px] leading-tight">{reader ? tr("readerTitle") : alreadyOn ? tr("isOn") : ready ? tr("allReady") : tr("almost")}</h2>
-          {!reader && <p className="text-[14px] text-line mt-1">{alreadyOn ? tr("pauseNote") : ready ? (phoneOn ? tr("readyPhone") : tr("readyNoPhone")) : tr("missing", { list: needs.join(", ") })}</p>}
+          {!reader && <p className="text-[14px] text-line mt-1">{alreadyOn ? (pay ? tr("payNext") : tr("pauseNote")) : ready ? (phoneOn ? tr("readyPhone") : tr("readyNoPhone")) + (pay ? ` ${tr("payAfter")}` : "") : tr("missing", { list: needs.join(", ") })}</p>}
           {err && <p role="alert" className="text-[14px] text-highlight mt-1">{err}</p>}
         </div>
         {canManage ? (
-          alreadyOn ? <Link href="/app" className={`${btn} bg-highlight text-ink min-h-[52px] px-6`}>{tr("goToday")}</Link>
+          alreadyOn ? (pay ? <Link href="/app/konto?fra=opsaetning#abonnement" className={`${btn} bg-highlight text-ink min-h-[52px] px-6`}>{tr("toPayment")}<Icon name="arrow_forward" size={18} /></Link>
+            : <Link href="/app" className={`${btn} bg-highlight text-ink min-h-[52px] px-6`}>{tr("goToday")}</Link>)
             : <button type="button" onClick={turnOn} disabled={!ready || busy} className={`${btn} bg-highlight text-ink min-h-[52px] px-6 text-[16px]`}><Icon name="power_settings_new" size={20} />{busy ? tr("turningOn") : tr("turnOn")}</button>
         ) : <p className="text-[14px] text-line">{tr("managersOnly")}</p>}
       </section>

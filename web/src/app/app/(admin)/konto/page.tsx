@@ -43,13 +43,13 @@ function device(t: T, ua: string | null) {
 const BOX = "flex flex-col gap-4 px-5 md:px-6 py-5 rounded-2xl bg-paper border-2 border-ink";
 
 /** «Konto»: who may see and change, the subscription and the invoices – and your own login on the right. */
-export default async function KontoPage({ searchParams }: { searchParams: Promise<{ card?: string }> }) {
+export default async function KontoPage({ searchParams }: { searchParams: Promise<{ card?: string; fra?: string }> }) {
   const ws = await requireWorkspace();
   const t = await getT("app");
   const lang = HTML_LANG[await getLocale()];
   const admin = ws.role === "owner" || ws.role === "admin";
   const owner = ws.role === "owner";
-  const { card } = await searchParams;
+  const { card, fra } = await searchParams;
   const month = new Date().toISOString().slice(0, 7);
   const [members, invitations, me, sessions] = await Promise.all([
     backend<Member[]>(`/workspaces/${ws.id}/members`),
@@ -121,6 +121,13 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
           <>
             <section id="abonnement" className={`${BOX.replace("bg-paper", !confirmed && owner ? "bg-highlight" : "bg-paper")}`} aria-labelledby="konto-2">
               <Head n={2} id="konto-2" title={t("account.sub.title")} />
+              {/* The guide ends here until the subscription is paid (Fürster 11/11): one plain next step, or «Du er live». */}
+              {fra === "opsaetning" && (() => {
+                const paid = confirmed && (!!acc.card || !acc.configured);
+                return paid
+                  ? <p role="status" className="rounded-xl bg-success-soft px-4 py-3 text-[15px] font-semibold text-success">{t("account.sub.fromSetupLive")} <Link href="/app" className="underline">{t("account.sub.goToday")}</Link></p>
+                  : <p role="status" className="rounded-xl border-2 border-ink bg-paper px-4 py-3 text-[15px] font-semibold text-ink">{!confirmed ? (acc.configured ? t("account.sub.fromSetup") : t("account.sub.fromSetupNoCard")) : t("account.sub.fromSetupCard")}</p>;
+              })()}
               {card === "saved" && <p role="status" className="rounded-xl bg-success-soft px-4 py-3 text-[14px] font-semibold text-success">{t("account.sub.cardSaved")}</p>}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1 rounded-xl border-[1.5px] border-ink bg-paper px-4 py-3.5">

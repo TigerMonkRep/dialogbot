@@ -136,7 +136,15 @@
       "aria": "Activer ou désactiver Dialogbot",
       "onlyAdmins": "Seuls les propriétaires et administrateurs peuvent activer et désactiver",
       "setupFirst": "Le téléphone doit être configuré avant de pouvoir activer Dialogbot"
-    }
+    },
+    "payTag": "Dernière étape",
+    "payNext": "Dialogbot est configuré · choisissez abonnement et paiement",
+    "chatOn": "Le chat web est activé",
+    "chatOff": "Le chat web n’est pas activé",
+    "chatStatusOn": "Répond sur votre site. Le téléphone est facultatif et non configuré.",
+    "chatStatusOff": "Activez le chat web et Dialogbot répond sur votre site – sans numéro de téléphone.",
+    "setUpChat": "Configurer le chat web",
+    "turnedOnChatSub": "Il répond maintenant sur votre site."
   },
   "time": {
     "today": "Aujourd’hui",
@@ -809,7 +817,12 @@
       "confirm": "Confirmer l’abonnement",
       "ownerMustConfirm": "Le propriétaire doit confirmer l’abonnement.",
       "older": "Ancien contrat – confirmez l’abonnement pour passer à l’abonnement actuel.",
-      "note": "Les prix sont HT. Sans engagement – dites-le à l’assistant ou écrivez à info@dialogbot.dk si vous souhaitez résilier. Le paiement ne déclenche jamais d’appel."
+      "note": "Les prix sont HT. Sans engagement – dites-le à l’assistant ou écrivez à info@dialogbot.dk si vous souhaitez résilier. Le paiement ne déclenche jamais d’appel.",
+      "fromSetup": "Dernière étape : confirmez l’abonnement ci-dessous et ajoutez une carte de paiement. Vous serez alors en ligne.",
+      "fromSetupNoCard": "Dernière étape : confirmez l’abonnement ci-dessous. Vous serez alors en ligne.",
+      "fromSetupCard": "L’abonnement est confirmé. Dernière étape : ajoutez une carte de paiement ci-dessous.",
+      "fromSetupLive": "Vous êtes en ligne. L’abonnement est en place.",
+      "goToday": "Aller à Aujourd’hui"
     },
     "usage": {
       "title": "Consommation par appel",

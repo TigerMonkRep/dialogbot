@@ -2,6 +2,7 @@ import Link from "next/link";
 import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
 import { getT } from "@/i18n/server";
+import { setupStatus } from "@/lib/setup.server";
 import { Sheet } from "./sheet";
 import { SettingsTiles, type Chapter, type Row } from "./tiles";
 import BookingSheet from "./_sheets/booking";
@@ -28,7 +29,8 @@ export default async function IndstillingerPage({ searchParams }: { searchParams
   const sp = await searchParams;
   const staff = ws.role !== "reader";
   const settle = async <T,>(p: Promise<T>) => p.catch(() => null);
-  const [tel, web, book, goals, know, cat, members, script, voices, acc] = await Promise.all([
+  const [st, tel, web, book, goals, know, cat, members, script, voices, acc] = await Promise.all([
+    staff ? settle(setupStatus(ws.id, ws.role)) : null,
     staff ? settle(backend<Tel>(`/workspaces/${ws.id}/telephony`)) : null,
     staff ? settle(backend<Web>(`/workspaces/${ws.id}/webchat`)) : null,
     staff ? settle(backend<Book>(`/workspaces/${ws.id}/bookings/settings`)) : null,
@@ -94,6 +96,13 @@ export default async function IndstillingerPage({ searchParams }: { searchParams
         <h1 className="font-display font-extrabold text-[26px] sm:text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("overview.title")}</h1>
         <p className="text-[15px] leading-relaxed text-ink-soft max-w-[640px]">{t("overview.intro")}</p>
       </div>
+      {/* Set up by hand here or in the guide – both count; the way back to the guide while it is not finished. */}
+      {st && !st.done && (
+        <Link href={`/opsaetning/${st.next}`} className="flex flex-wrap items-center gap-3 px-5 py-4 rounded-2xl border-2 border-dashed border-ink bg-paper hover:bg-panel">
+          <span className="flex-1 min-w-[200px] text-[15px] font-semibold text-ink">{t("overview.guide", { n: st.next })}</span>
+          <span className="text-[14px] font-semibold text-ink underline underline-offset-2">{t("overview.guideCta")}</span>
+        </Link>
+      )}
       <SettingsTiles chapters={chapters} canChange={staff} />
       {ark && (
         <Sheet title={t(`overview.sheets.${ark}`)} closeLabel={t("sheet.close")}>

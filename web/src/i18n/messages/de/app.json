@@ -136,7 +136,15 @@
       "aria": "Dialogbot ein- oder ausschalten",
       "onlyAdmins": "Nur Inhaber und Administratoren können ein- und ausschalten",
       "setupFirst": "Das Telefon muss eingerichtet sein, bevor Dialogbot eingeschaltet werden kann"
-    }
+    },
+    "payTag": "Letzter Schritt",
+    "payNext": "Dialogbot ist eingerichtet · Abo und Zahlung wählen",
+    "chatOn": "Der Webchat ist an",
+    "chatOff": "Der Webchat ist nicht an",
+    "chatStatusOn": "Antwortet auf Ihrer Website. Das Telefon ist optional und nicht eingerichtet.",
+    "chatStatusOff": "Schalten Sie den Webchat ein, dann antwortet Dialogbot auf Ihrer Website – ohne Telefonnummer.",
+    "setUpChat": "Webchat einrichten",
+    "turnedOnChatSub": "Er antwortet jetzt auf Ihrer Website."
   },
   "time": {
     "today": "Heute",
@@ -809,7 +817,12 @@
       "confirm": "Abonnement bestätigen",
       "ownerMustConfirm": "Der Inhaber muss das Abonnement bestätigen.",
       "older": "Ältere Vereinbarung – bestätigen Sie das Abonnement, um zum aktuellen Abonnement zu wechseln.",
-      "note": "Preise zzgl. MwSt. Keine Mindestlaufzeit – sagen Sie es dem Assistenten oder schreiben Sie an info@dialogbot.dk, wenn Sie kündigen möchten. Eine Zahlung startet niemals Anrufe."
+      "note": "Preise zzgl. MwSt. Keine Mindestlaufzeit – sagen Sie es dem Assistenten oder schreiben Sie an info@dialogbot.dk, wenn Sie kündigen möchten. Eine Zahlung startet niemals Anrufe.",
+      "fromSetup": "Letzter Schritt: Bestätigen Sie unten das Abo und fügen Sie eine Zahlungskarte hinzu. Dann sind Sie live.",
+      "fromSetupNoCard": "Letzter Schritt: Bestätigen Sie unten das Abo. Dann sind Sie live.",
+      "fromSetupCard": "Das Abo ist bestätigt. Letzter Schritt: Fügen Sie unten eine Zahlungskarte hinzu.",
+      "fromSetupLive": "Sie sind live. Das Abo ist eingerichtet.",
+      "goToday": "Zu Heute"
     },
     "usage": {
       "title": "Verbrauch pro Anruf",

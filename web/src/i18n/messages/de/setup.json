@@ -1,6 +1,6 @@
 {
   "later": {
-    "link": "Den Rest erledige ich später"
+    "link": "Selbst einrichten"
   },
   "need": {
     "title": "Sie benötigen"
@@ -148,6 +148,7 @@
       "idle": "Wird laufend gespeichert",
       "comeBack": " · Sie können jederzeit hierher zurückkehren",
       "fillIn": "Geben Sie Name, Telefonnummer und Ihre Tätigkeit an, um fortzufahren.",
+      "fillInNoPhone": "Füllen Sie Namen und Tätigkeit aus, um fortzufahren.",
       "reload": "Neu laden"
     },
     "nextTo2": "Weiter zu Schritt 2: Kalender & Systeme",
@@ -336,6 +337,11 @@
       "oneLine": "Eine Zeile muss auf Ihre Website. Sie müssen sie nicht verstehen – schicken Sie sie an die Person, die die Seite betreut.",
       "codeAria": "Codezeile",
       "copied": "Kopiert",
+      "notReady": {
+        "no_approved_knowledge": "Geben Sie zuerst mindestens einen Eintrag unter Wissen frei – der Chat antwortet nur mit Freigegebenem.",
+        "no_allowed_origins": "Geben Sie in Schritt 1 Ihre Website-Adresse ein – nur dort darf der Chat erscheinen.",
+        "ai_not_configured": "KI-Antworten sind in Dialogbot noch nicht aktiviert. Schreiben Sie uns."
+      },
       "copy": "Zeile kopieren",
       "sendWebmaster": "An meinen Webmaster senden",
       "seen": "Die Zeile ist auf der Seite – Status ist Bereit.",
@@ -358,6 +364,9 @@
     "readyNoPhone": "Sobald Sie einschalten, ist Dialogbot bereit.",
     "missing": "Es fehlt: {list}.",
     "goToday": "Zu Heute",
+    "toPayment": "Weiter zu Abo und Zahlung",
+    "payNext": "Letzter Schritt: Bestätigen Sie das Abo.",
+    "payAfter": "Danach bestätigen Sie das Abo.",
     "turningOn": "Wird eingeschaltet …",
     "turnOn": "Dialogbot einschalten",
     "managersOnly": "Nur Inhaber und Administratoren können einschalten.",

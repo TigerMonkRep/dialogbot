@@ -51,7 +51,7 @@ export async function SetupShell({ step, steps, workspaceName, children, wide = 
         </div>
       </header>
       <main id="main" className="flex-grow w-full pb-action-bar sm:pb-10">
-        <div className={`${wide ? "max-w-[1100px]" : "max-w-[1280px]"} mx-auto px-4 md:px-6 py-5 md:py-8`}>{children}{later && <p className="text-[13px] text-muted mt-6 hidden sm:block"><SetupLater />{t("laterNote")}</p>}</div>
+        <div className={`${wide ? "max-w-[1100px]" : "max-w-[1280px]"} mx-auto px-4 md:px-6 py-5 md:py-8`}>{children}{later && <p className="text-[14px] text-muted mt-6"><SetupLater className="font-semibold text-ink" />{t("laterNote")}</p>}</div>
       </main>
       {assistant && <AssistantDock wsId={assistant.wsId} canChange={assistant.canChange} step={step} column={false} />}
     </div>

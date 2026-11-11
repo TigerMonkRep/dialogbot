@@ -89,7 +89,9 @@
       "webhooksValue": "Signerte webhooks til systemene deres",
       "log": "Logg og eksport",
       "logValue": "Alle endringer, nyeste først"
-    }
+    },
+    "guide": "Veiviseren er ikke ferdig · neste: trinn {n}. Det du setter opp her, teller med.",
+    "guideCta": "Tilbake til veiviseren"
   },
   "sheet": {
     "close": "Lukk"

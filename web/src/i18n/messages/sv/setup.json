@@ -1,6 +1,6 @@
 {
   "later": {
-    "link": "Jag gör resten senare"
+    "link": "Ställ in själv"
   },
   "need": {
     "title": "Du behöver"
@@ -148,6 +148,7 @@
       "idle": "Sparas löpande",
       "comeBack": " · du kan alltid komma tillbaka hit",
       "fillIn": "Fyll i namn, telefonnummer och vad ni gör för att gå vidare.",
+      "fillInNoPhone": "Fyll i namn och vad ni gör för att gå vidare.",
       "reload": "Ladda om"
     },
     "nextTo2": "Vidare till steg 2: kalender & system",
@@ -336,6 +337,11 @@
       "oneLine": "En rad ska in på er webbplats. Du behöver inte förstå den – skicka den till den som sköter sidan.",
       "codeAria": "Kodrad",
       "copied": "Kopierat",
+      "notReady": {
+        "no_approved_knowledge": "Godkänn minst en sak under Kunskap först – chatten svarar bara utifrån det ni har godkänt.",
+        "no_allowed_origins": "Skriv er webbplats adress i steg 1 – chatten får bara visas där.",
+        "ai_not_configured": "AI-svar är inte påslagna i Dialogbot än. Skriv till oss."
+      },
       "copy": "Kopiera raden",
       "sendWebmaster": "Skicka till min webbansvarige",
       "seen": "Raden finns på sidan – status är Klar.",
@@ -358,6 +364,9 @@
     "readyNoPhone": "När du slår på är Dialogbot redo.",
     "missing": "Saknas: {list}.",
     "goToday": "Gå till Idag",
+    "toPayment": "Vidare till abonnemang och betalning",
+    "payNext": "Sista steget: bekräfta abonnemanget.",
+    "payAfter": "Efteråt bekräftar du abonnemanget.",
     "turningOn": "Slår på …",
     "turnOn": "Slå på Dialogbot",
     "managersOnly": "Endast ägare och administratörer kan slå på.",

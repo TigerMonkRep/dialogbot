@@ -500,27 +500,52 @@ def connected_busy(db: OrmSession, workspace_id: uuid.UUID, frm: datetime,
     return None, True
 
 
+_PENDING_STATUS = "calendar_status_pending"
+
+
 def _record_status(db: OrmSession, conn, *, ok: bool, message: str = "") -> None:
     """Record the read's outcome on the connection so it sticks even when the caller never commits: slot look-ups are
     GETs, whose session is rolled back on close – the error was lost and Integrationer kept saying «Forbundet»
-    (F-E2D-13-S03). Written in its own short transaction (never waits long on a row lock), then mirrored on the
-    caller's object so the rest of this request sees the same status."""
+    (F-E2D-13-S03). The values are mirrored on the caller's object at once (the rest of this request sees the same
+    status) and written in their own short transaction once the caller's transaction has ended – commit or rollback,
+    i.e. after its connection went back to the pool. Never while the caller still holds one: a second connection per
+    request is hold-and-wait, and >pool concurrent look-ups during an outage (the widget's GET /booking is public)
+    exhausted the pool and gave every API call 500 (F-E2D-13-S03, reopened)."""
+    from sqlalchemy import event
+
+    # Same values as credentials.mark_ok / mark_error.
+    values = ({"status": "connected", "error": None, "last_ok_at": datetime.now(UTC)} if ok
+              else {"status": "error", "error": message[:300]})
+    pending = db.info.setdefault(_PENDING_STATUS, {})
+    if not pending and not db.info.get(_PENDING_STATUS + "_hooked"):
+        event.listen(db, "after_transaction_end", _write_pending_status)
+        db.info[_PENDING_STATUS + "_hooked"] = True
+    pending[conn.id] = values
+    with db.no_autoflush:
+        for k, v in values.items():
+            setattr(conn, k, v)
+
+
+def _write_pending_status(session: OrmSession, transaction) -> None:
+    """after_transaction_end of the caller's root transaction: its connection is closed (returned to the pool) before
+    this hook runs, so the short side transaction below takes at most the one connection the request gave back."""
+    if transaction.parent is not None:  # savepoint / subtransaction: the request still holds its connection
+        return
+    pending = session.info.pop(_PENDING_STATUS, None)
+    if not pending:
+        return
     import structlog
     from sqlalchemy import text, update
     from sqlalchemy.orm import Session
 
     from app.models import IntegrationConnection
 
-    # Same values as credentials.mark_ok / mark_error.
-    values = ({"status": "connected", "error": None, "last_ok_at": datetime.now(UTC)} if ok
-              else {"status": "error", "error": message[:300]})
-    try:
-        with Session(bind=db.get_bind()) as side:
-            side.execute(text("SET LOCAL lock_timeout = '2s'"))
-            side.execute(update(IntegrationConnection).where(IntegrationConnection.id == conn.id).values(**values))
-            side.commit()
-    except Exception:  # noqa: BLE001 - recording the status must never break the look-up (fail-open)
-        structlog.get_logger("dialogbot.calendar").warning("calendar_status_not_recorded", connection_id=str(conn.id))
-    with db.no_autoflush:
-        for k, v in values.items():
-            setattr(conn, k, v)
+    for conn_id, values in pending.items():
+        try:
+            with Session(bind=session.get_bind()) as side:
+                side.execute(text("SET LOCAL lock_timeout = '2s'"))
+                side.execute(update(IntegrationConnection).where(IntegrationConnection.id == conn_id).values(**values))
+                side.commit()
+        except Exception:  # noqa: BLE001 - recording the status must never break the look-up (fail-open)
+            structlog.get_logger("dialogbot.calendar").warning("calendar_status_not_recorded",
+                                                               connection_id=str(conn_id))

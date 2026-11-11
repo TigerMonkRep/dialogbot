@@ -269,3 +269,31 @@ def test_calendar_down_is_recorded_by_a_read_only_slot_lookup(api, client, two_w
     assert client.get(f"/api/v1/public/webchat/{key}/booking").status_code == 200
     s = api.get(tok, f"/workspaces/{ws}/bookings/settings").json()["calendar_connection"]
     assert s["status"] == "connected" and not s["error"], s
+
+
+def test_recording_calendar_status_never_takes_a_second_pool_connection(api, client, two_workspaces, fake, monkeypatch):
+    """F-E2D-13-S03 (reopened): the status was written through a second connection from the same pool while the
+    request still held its own (hold-and-wait). With more concurrent look-ups than the pool during an outage (the
+    widget's GET /booking is public) every API call got 500 «QueuePool limit … reached». With a pool of ONE
+    connection a slot look-up during an outage must still answer 200 and record the error."""
+    from sqlalchemy import create_engine
+
+    import app.db as app_db
+
+    t = two_workspaces
+    tok, ws = t["tok_a"], t["ws_a"]
+    type_id = _ready(api, client, t, connect=True)
+    tiny = create_engine(get_settings().database_url, pool_size=1, max_overflow=0, pool_timeout=3, future=True)
+    monkeypatch.setattr(app_db, "_engine", tiny)
+    monkeypatch.setattr(app_db, "_session_factory", None)
+    try:
+        with monkeypatch.context() as m:
+            _busy_down(m)
+            r = api.get(tok, f"/workspaces/{ws}/bookings/slots?type_id={type_id}")
+            assert r.status_code == 200 and r.json()["items"], r.text  # fail-open, no pool exhaustion
+            assert tiny.pool.checkedout() == 0  # nothing left holding a connection
+            with app_db.get_session_factory()() as s:
+                g = s.query(IntegrationConnection).filter_by(connector="google_calendar").one()
+                assert g.status == "error" and g.error.startswith("Optaget tid kunne ikke hentes"), (g.status, g.error)
+    finally:
+        tiny.dispose()

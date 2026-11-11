@@ -92,7 +92,16 @@ export function AccountPane() {
     setRedirecting(true); setError(null);
     const kode = (code ?? params.get("kode") ?? "").trim();
     try { const { url } = await api.subscriptionCheckout({ plan, interval, locale, ...(kode ? { code: kode } : {}) }); window.location.href = url; }
-    catch (e) { setError(e as ApiError); setRedirecting(false); }
+    catch (e) {
+      // The checkout needs a confirmed e-mail: to the Privat verify page, whose link comes back to this plan and starts
+      // the checkout from here (F-JP-01) – not a dead-end error.
+      if ((e as ApiError).code === "email_not_verified") {
+        const back = `/privat/konto?plan=${plan}&interval=${interval}${kode ? `&kode=${encodeURIComponent(kode)}` : ""}`;
+        window.location.assign(`/verify-email?for=privat&next=${encodeURIComponent(back)}`);
+        return;
+      }
+      setError(e as ApiError); setRedirecting(false);
+    }
   };
   // Without a plan (the trial included) the three plans are open from the start – one tap to the payment; the button
   // folds them away. With a plan they open on «Skift plan», ?planer=1 or ?plan=….

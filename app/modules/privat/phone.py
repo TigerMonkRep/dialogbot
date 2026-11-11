@@ -39,6 +39,7 @@ def _simulated() -> bool:
 
 
 def start(db: OrmSession, ctx, raw_phone: str, *, ip: str = "unknown") -> None:
+    from app.modules.integrations import privat_mails
     from app.modules.integrations.connectors import sms
     from app.modules.privat import lookup_limits
     from app.modules.sales.service import danish_number
@@ -56,8 +57,8 @@ def start(db: OrmSession, ctx, raw_phone: str, *, ip: str = "unknown") -> None:
     p.phone_pending_e164, p.phone_code_hash = phone, _hash(ctx.ws_id, phone, code)
     p.phone_code_attempts, p.phone_code_expires_at, p.phone_code_sent_at = 0, now + CODE_TTL, now
     try:
-        sms.send(db, ctx.workspace, sender=SENDER, to=phone,
-                 body=f"Din kode til Dialogbot er {code}. Den gælder i 10 minutter.", simulated=_simulated())
+        sms.send(db, ctx.workspace, sender=SENDER, to=phone,  # in the user's own language (F-JP-07)
+                 body=privat_mails.sms_code(code, ctx.user.interface_language), simulated=_simulated())
     except ApiError as e:
         raise ApiError("SMS kunne ikke sendes lige nu. Prøv igen om lidt.", code="sms_failed", status_code=502) from e
     except Exception as e:  # noqa: BLE001 - e.g. ActionError from the adapter

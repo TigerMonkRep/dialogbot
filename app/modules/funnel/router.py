@@ -44,6 +44,8 @@ class GateIn(BaseModel):
 
 class VerifyIn(BaseModel):
     code: str = Field(min_length=1, max_length=12)
+    # The language the visitor saw the funnel in: the new account and its mails follow it (F-JE-08); default Danish.
+    interface_language: Literal["da", "en", "de", "es", "fr", "it", "no", "sv"] | None = None
 
 
 @router.get("/industries")
@@ -113,7 +115,8 @@ def verify(draft_id: uuid.UUID, body: VerifyIn, request: Request, background: Ba
     """The code → the account, the session (same shape as POST /auth/login plus `session_token`), and the build."""
     limits.hit(db, request, "verify")
     d = service.get(db, draft_id, lock=True)
-    out, jobs = service.verify(db, d, code=body.code, user_agent=user_agent, request_id=request.state.request_id)
+    out, jobs = service.verify(db, d, code=body.code, user_agent=user_agent, request_id=request.state.request_id,
+                               lang=body.interface_language)
     db.commit()
     for fn, *args in jobs:
         background.add_task(fn, *args)

@@ -549,7 +549,9 @@
     "brandTitle": "{name} utilise Dialogbot",
     "brandText": "– un assistant personnel qui fait des listes, vous rappelle des choses et appelle pour vous.",
     "brandOffer": "Ayez le vôtre : essayez Dialogbot Privat gratuitement pendant 14 jours",
-    "brandCta": "En savoir plus sur Dialogbot Privat"
+    "brandCta": "En savoir plus sur Dialogbot Privat",
+    "signupFree": "Créer un compte gratuit",
+    "verifyFirst": "Confirme ton e-mail pour ouvrir la liste."
   },
   "paywall": {
     "titleDigital": "Il faut un forfait",
@@ -1588,5 +1590,14 @@
     "all": "Toutes ({n})",
     "stripStep": "Étape {n} sur {total} – continuer la configuration",
     "accountLine": "{n|1 app activée|# apps activées}"
+  },
+  "problem": {
+    "notFoundTitle": "Cette page n'existe pas",
+    "notFoundText": "Le lien est peut-être ancien ou mal saisi.",
+    "errorTitle": "Un problème est survenu",
+    "errorText": "La page n'a pas pu s'afficher. Réessaie dans un instant.",
+    "retry": "Réessayer",
+    "toDay": "Vers Ma journée",
+    "toHome": "Vers l'accueil"
   }
 }

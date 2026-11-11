@@ -32,10 +32,33 @@ class Pv:
         self.api, self.clock = api, clock
 
     def user(self, email: str, name: str = "Mette Hansen") -> str:
-        self.api.register(email, name=name)
-        tok = self.api.login(email)
+        """A verified Privat sign-up (signup_intent «privat», as /signup?next=/privat… sends since #179)."""
+        tok = self.unverified(email, name)
         self.api.verify(tok)
         return tok
+
+    def unverified(self, email: str, name: str = "Mette Hansen", *, next_: str | None = None,
+                   lang: str = "da") -> str:
+        """A fresh Privat sign-up that has NOT clicked the verify link yet – what the web has right after /signup
+        (F-JP-01: checkout and accept need the e-mail first). `next_` is the return address the web sends."""
+        body = {"email": email, "password": "CorrectHorse!42", "display_name": name, "signup_intent": "privat",
+                "interface_language": lang, **({"next": next_} if next_ else {})}
+        r = self.api.c.post(f"{self.api.base}/auth/register", json=body)
+        assert r.status_code == 201, r.text
+        return self.api.login(email)
+
+    def verify_link(self, tok: str) -> str:
+        """The newest verify link in the mailbox (full URL, as in the mail)."""
+        return "https://" + self.api.mailbox_link(tok, "Bekræft", r"https?://(\S+verify-email\?\S+)")
+
+    def click_verify(self, link: str) -> dict:
+        """What /verify-email does with the link's token (works in any browser – no session needed)."""
+        import re as _re
+
+        raw = _re.search(r"token=([A-Za-z0-9_\-]+)", link).group(1)
+        r = self.api.c.post(f"{self.api.base}/auth/verify-email", json={"token": raw})
+        assert r.status_code == 200, r.text
+        return r.json()
 
     def account(self, email: str, name: str = "Mette Hansen", *, trial: bool = True) -> str:
         """A private account. `trial=True` (the default) puts it on the 14-day trial as Stripe Checkout would have

@@ -6,6 +6,7 @@ import { Suspense, useState } from "react";
 import { Alert, Button,  ErrorBox, Field, Input, useSubmit } from "@/components/ui";
 import { AuthFrame } from "@/components/auth-frame";
 import { safeNext } from "@/lib/safe-next";
+import { nextQuery, privatNext } from "@/lib/privat-next";
 import { PasswordField } from "@/components/password-field";
 import type { ApiError } from "@/lib/client";
 
@@ -17,8 +18,11 @@ function LoginForm() {
   const { run, pending, error } = useSubmit(async () => {
     const r = await fetch("/api/auth/login", { method: "POST", headers: { "content-type": "application/json", "x-requested-with": "dialogbot" }, body: JSON.stringify(form) });
     if (!r.ok) throw (await r.json()) as ApiError;
-    const next = params.get("next");
-    router.push(safeNext(next));
+    // Without ?next the account decides (F-JE-03, F-JP-02): a Privat-only account goes to /privat/dag, never to /app →
+    // the business set-up. The API computes it (user.home).
+    const { user } = (await r.json()) as { user?: { home?: string } };
+    const home = user?.home === "/privat/dag" ? "/privat/dag" : "/app";
+    router.push(safeNext(params.get("next"), home));
     router.refresh();
   });
   return (
@@ -30,20 +34,22 @@ function LoginForm() {
       <PasswordField label={t("fields.password")} value={form.password} onChange={(v) => setForm({ ...form, password: v })} autoComplete="current-password" withRules={false} />
       <Button type="submit" icon="login" disabled={pending} className="w-full h-12 rounded-lg">{pending ? t("login.submitting") : t("login.submit")}</Button>
       <p className="flex justify-between text-body-sm text-ink-soft">
-        <Link className="font-semibold text-ink underline" href="/password/forgot">{t("login.forgot")}</Link>
+        <Link className="font-semibold text-ink underline" href={`/password/forgot${nextQuery(params.get("next"), "?")}`}>{t("login.forgot")}</Link>
         <Link className="font-semibold text-ink underline" href={params.get("next") ? `/signup?next=${encodeURIComponent(params.get("next")!)}` : "/signup"}>{t("login.signup")}</Link>
       </p>
     </form>
   );
 }
 
-/** ?next=/privat… is a Dialogbot Privat login: the orange frame, and the sign-up link keeps `next`. */
+/** ?next=/privat…, /g/… or /i/… is a Dialogbot Privat login (lib/privat-next.ts): the orange frame, and the sign-up
+ *  and forgot links keep `next` (F-JP-04). After an expired session no trial pitch – just «log in again» (F-JP-14). */
 function LoginScreen() {
   const t = useT("auth");
-  const next = useSearchParams().get("next");
-  const privat = !!next && next.startsWith("/privat");
+  const params = useSearchParams();
+  const privat = privatNext(params.get("next")) !== null;
+  const expired = !!params.get("expired");
   return (
-    <AuthFrame icon="key" audience={privat ? "privat" : "erhverv"} title={t("login.title")} subtitle={privat ? t("login.privatSubtitle") : t("login.subtitle")}>
+    <AuthFrame icon="key" audience={privat ? "privat" : "erhverv"} title={t("login.title")} subtitle={privat ? (expired ? t("login.privatExpiredSubtitle") : t("login.privatSubtitle")) : t("login.subtitle")}>
       <LoginForm />
     </AuthFrame>
   );

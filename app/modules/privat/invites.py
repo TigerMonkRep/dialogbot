@@ -211,15 +211,25 @@ def revoke_for(db: OrmSession, resource_type: str, resource_id: uuid.UUID) -> in
 
 
 def _notify_inviter(db: OrmSession, inv: PrivateInvite, user: User) -> None:
-    """The inviter hears that someone said yes (push; e-mail without a subscription). Never anything to the invitee."""
+    """The inviter hears that someone said yes (push; e-mail without a subscription). Never anything to the invitee.
+    Both open what was shared – the list, the app, or Min dag (F-JP-08)."""
+    from app.models import PrivateTask
     from app.modules.integrations import email_templates as tpl
+    from app.modules.integrations import privat_mails
     from app.modules.privat import push
 
     inviter = db.get(User, inv.inviter_user_id)
     if inviter is None:
         return
-    text = f"{rules.first_name(user.display_name)} har sagt ja til din invitation."
-    mail = tpl.Email(subject=text, heading=text, paragraphs=["Du kan se det i Dialogbot."],
-                     footer_reason="Du får denne e-mail, fordi du har inviteret nogen i Dialogbot.")
-    push.notify(db, inviter.id, title="Dialogbot", body=text, url=None, dedupe=f"invite-accepted:{inv.id}:{user.id}",
+    title, path = "Dialogbot Privat", "/privat/dag"
+    task = db.get(PrivateTask, inv.resource_id) if inv.resource_type == "list" and inv.resource_id else None
+    if task is not None:
+        title, path = task.title, f"/privat/opgaver/{task.id}"
+    elif inv.addon_key and inv.addon_key in addons.CATALOG:
+        title, path = addons.CATALOG[inv.addon_key].name, "/privat/apps"
+    link = privat_mails.url(path)
+    first = rules.first_name(user.display_name)
+    text = f"{first} har sagt ja til din invitation."
+    mail = privat_mails.invite_accepted(first, title, link, inviter.interface_language)
+    push.notify(db, inviter.id, title="Dialogbot", body=text, url=link, dedupe=f"invite-accepted:{inv.id}:{user.id}",
                 email={"to_email": inviter.email, "email": tpl.to_payload(mail)})

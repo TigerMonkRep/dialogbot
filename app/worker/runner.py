@@ -65,12 +65,13 @@ def handle_invitation(db: OrmSession, ev: OutboxEvent) -> None:
 
 def handle_verify(db: OrmSession, ev: OutboxEvent) -> None:
     lang = ev.payload.get("lang") or user_language(db, ev.payload.get("user_id"))
-    _send_mail(db, ev, tpl.verify(ev.payload["link"], lang=lang, privat=ev.payload.get("audience") == "privat"))
+    _send_mail(db, ev, tpl.verify(ev.payload["link"], lang=lang, privat=ev.payload.get("audience") == "privat",
+                                  variant=ev.payload.get("variant", "trial")))
 
 
 def handle_reset(db: OrmSession, ev: OutboxEvent) -> None:
     lang = ev.payload.get("lang") or user_language(db, ev.payload.get("user_id"))
-    _send_mail(db, ev, tpl.reset(ev.payload["link"], lang=lang))
+    _send_mail(db, ev, tpl.reset(ev.payload["link"], lang=lang, privat=ev.payload.get("audience") == "privat"))
 
 
 def handle_new_lead(db: OrmSession, ev: OutboxEvent) -> None:

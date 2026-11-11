@@ -1,0 +1,411 @@
+"""Dialogbot Privat's fixed mail and SMS texts, per language – merged into email_texts.TEXTS, so they are read with the
+same `t(lang, key)` and checked by the same test (every language, every key, the same placeholders).
+
+It also holds the few account texts the 11/11 journey fixes gave Erhverv (the invited colleague's verify line, the
+quiz-funnel's welcome in every language – keys without the privat_ prefix). Danish is the source. German, French, Italian and Spanish use the formal register (Sie, vous, Lei, usted) like the rest
+of every mail (F-JP-15); the Nordic languages and English use the ordinary "du"/"you". Only the frame is fixed here
+(subject, button, footer, the explanatory line): a task title, a call summary or an app's own reminder line is the
+user's or the assistant's text and is shown as it is.
+"""
+from __future__ import annotations
+
+PRIVAT_TEXTS: dict[str, dict[str, str]] = {
+    "da": {
+        "welcome_subject": "Velkommen til Dialogbot – vælg din adgangskode",  # Erhverv quiz-funnel (F-JE-08)
+        "welcome_body": "Din konto hos Dialogbot er oprettet med {email}, og din digitale receptionist er klar. Du er logget ind nu; vælg en adgangskode, så du også kan logge ind næste gang.",
+        "verify_body_invited": "Tak, fordi du har oprettet en konto. Bekræft din e-mailadresse, så kan du tage imod invitationen.",  # Erhverv: an invited colleague (F-JE-10)
+        "verify_body_privat_list": "Tak, fordi du har oprettet en konto. Bekræft din e-mail, så kan du åbne listen.",
+        "verify_body_privat_neutral": "Tak, fordi du har oprettet en konto. Bekræft din e-mailadresse, så kan du "
+                                      "fortsætte i Dialogbot Privat.",
+        "privat_reminder_subject": "Påmindelse: {title}",
+        "privat_reminder_body": "Du bad mig minde dig om det {when}.",
+        "privat_reminder_footer": "Du får denne e-mail, fordi du bad Dialogbot om en påmindelse.",
+        "privat_open_task": "Åbn opgaven",
+        "privat_task_footer": "Du får denne e-mail, fordi Dialogbot arbejder på en opgave for dig.",
+        "privat_accepted_subject": "{name} har sagt ja til din invitation",
+        "privat_accepted_body": "{name} er nu med på «{title}».",
+        "privat_accepted_button": "Åbn listen",
+        "privat_accepted_footer": "Du får denne e-mail, fordi du har inviteret nogen i Dialogbot.",
+        "privat_parcel_subject": "Din pakke",
+        "privat_parcel_button": "Se pakker",
+        "privat_parcel_footer": "Du får denne e-mail, fordi du følger en pakke i Dialogbot.",
+        "privat_car_subject": "Bilen",
+        "privat_car_button": "Se bilen",
+        "privat_car_footer": "Du får denne e-mail, fordi du har slået Bil & syn til i Dialogbot.",
+        "privat_birthday_subject": "Fødselsdag: {name}",
+        "privat_birthday_body": "Skriv til din assistent i Dialogbot, hvis du vil have idéer til en gave eller en "
+                                "påmindelse om at ringe.",
+        "privat_birthday_button": "Se fødselsdage",
+        "privat_birthday_footer": "Du får denne e-mail, fordi du har slået Fødselsdage til i Dialogbot.",
+        "privat_bill_subject": "Regning: {name}",
+        "privat_bill_body": "Dialogbot betaler aldrig selv og har ikke adgang til din bank.",
+        "privat_bill_button": "Se regninger",
+        "privat_bill_footer": "Du får denne e-mail, fordi du har slået Regninger til i Dialogbot.",
+        "privat_app_button": "Åbn {app}",
+        "privat_app_footer": "Du får denne e-mail, fordi du har slået {app} til i Dialogbot.",
+        "privat_gift_subject": "Fællesgave",
+        "privat_gift_button": "Se ønskesedlen",
+        "privat_gift_footer": "Du får denne e-mail, fordi du er med i en fællesgave i Dialogbot.",
+        "privat_welcome_subject": "Velkommen til Dialogbot Privat – vælg din adgangskode",
+        "welcome_preheader": "Din konto er oprettet. Vælg en adgangskode, så du kan logge ind igen.",
+        "welcome_heading": "Velkommen, {name}",
+        "privat_welcome_body": "Din konto hos Dialogbot Privat er oprettet med {email}, og din personlige assistent er "
+                               "klar. Du er logget ind nu; vælg en adgangskode, så du også kan logge ind næste gang.",
+        "welcome_ignore": "Har du ikke oprettet en konto hos Dialogbot, kan du se bort fra denne mail – der sker "
+                                 "ikke mere.",
+        "welcome_button": "Vælg adgangskode",
+        "welcome_note": "Linket virker i {hours} timer.",
+        "welcome_footer": "Du får denne e-mail, fordi der er oprettet en konto hos Dialogbot med din adresse.",
+        "privat_sms_code": "Din kode til Dialogbot er {code}. Den gælder i 10 minutter.",
+    },
+    "en": {
+        "welcome_subject": "Welcome to Dialogbot – choose your password",  # Erhverv quiz-funnel (F-JE-08)
+        "welcome_body": "Your Dialogbot account has been created with {email}, and your digital receptionist is ready. You are logged in now; choose a password so you can also log in next time.",
+        "verify_body_invited": "Thank you for creating an account. Confirm your e-mail address, and you can accept the invitation.",  # Erhverv: an invited colleague (F-JE-10)
+        "verify_body_privat_list": "Thank you for creating an account. Confirm your e-mail, and you can open the list.",
+        "verify_body_privat_neutral": "Thank you for creating an account. Confirm your e-mail address, and you can "
+                                      "carry on in Dialogbot Privat.",
+        "privat_reminder_subject": "Reminder: {title}",
+        "privat_reminder_body": "You asked me to remind you about this: {when}.",
+        "privat_reminder_footer": "You are receiving this e-mail because you asked Dialogbot for a reminder.",
+        "privat_open_task": "Open the task",
+        "privat_task_footer": "You are receiving this e-mail because Dialogbot is working on a task for you.",
+        "privat_accepted_subject": "{name} has accepted your invitation",
+        "privat_accepted_body": "{name} has now joined «{title}».",
+        "privat_accepted_button": "Open the list",
+        "privat_accepted_footer": "You are receiving this e-mail because you invited someone in Dialogbot.",
+        "privat_parcel_subject": "Your parcel",
+        "privat_parcel_button": "See parcels",
+        "privat_parcel_footer": "You are receiving this e-mail because you are tracking a parcel in Dialogbot.",
+        "privat_car_subject": "Your car",
+        "privat_car_button": "See your car",
+        "privat_car_footer": "You are receiving this e-mail because you switched on Car & inspection in Dialogbot.",
+        "privat_birthday_subject": "Birthday: {name}",
+        "privat_birthday_body": "Write to your assistant in Dialogbot if you would like gift ideas or a reminder to "
+                                "call.",
+        "privat_birthday_button": "See birthdays",
+        "privat_birthday_footer": "You are receiving this e-mail because you switched on Birthdays in Dialogbot.",
+        "privat_bill_subject": "Bill: {name}",
+        "privat_bill_body": "Dialogbot never pays anything itself and has no access to your bank.",
+        "privat_bill_button": "See bills",
+        "privat_bill_footer": "You are receiving this e-mail because you switched on Bills in Dialogbot.",
+        "privat_app_button": "Open {app}",
+        "privat_app_footer": "You are receiving this e-mail because you switched on {app} in Dialogbot.",
+        "privat_gift_subject": "Group gift",
+        "privat_gift_button": "See the wishlist",
+        "privat_gift_footer": "You are receiving this e-mail because you are part of a group gift in Dialogbot.",
+        "privat_welcome_subject": "Welcome to Dialogbot Privat – choose your password",
+        "welcome_preheader": "Your account has been created. Choose a password so you can log in again.",
+        "welcome_heading": "Welcome, {name}",
+        "privat_welcome_body": "Your Dialogbot Privat account has been created with {email}, and your personal "
+                               "assistant is ready. You are logged in now; choose a password so you can also log in "
+                               "next time.",
+        "welcome_ignore": "If you did not create an account with Dialogbot, you can ignore this e-mail – "
+                                 "nothing more will happen.",
+        "welcome_button": "Choose password",
+        "welcome_note": "The link is valid for {hours} hours.",
+        "welcome_footer": "You are receiving this e-mail because an account was created at Dialogbot with your "
+                                 "address.",
+        "privat_sms_code": "Your Dialogbot code is {code}. It is valid for 10 minutes.",
+    },
+    "de": {
+        "welcome_subject": "Willkommen bei Dialogbot – wählen Sie Ihr Passwort",  # Erhverv quiz-funnel (F-JE-08)
+        "welcome_body": "Ihr Konto bei Dialogbot wurde mit {email} erstellt, und Ihre digitale Rezeption ist bereit. Sie sind jetzt angemeldet; wählen Sie ein Passwort, damit Sie sich auch beim nächsten Mal anmelden können.",
+        "verify_body_invited": "Vielen Dank, dass Sie ein Konto erstellt haben. Bestätigen Sie Ihre E-Mail-Adresse, dann können Sie die Einladung annehmen.",  # Erhverv: an invited colleague (F-JE-10)
+        "verify_body_privat_list": "Vielen Dank, dass Sie ein Konto erstellt haben. Bestätigen Sie Ihre E-Mail-Adresse, dann können Sie die Liste öffnen.",
+        "verify_body_privat_neutral": "Vielen Dank, dass Sie ein Konto erstellt haben. Bestätigen Sie Ihre "
+                                      "E-Mail-Adresse, dann können Sie in Dialogbot Privat weitermachen.",
+        "privat_reminder_subject": "Erinnerung: {title}",
+        "privat_reminder_body": "Sie haben mich gebeten, Sie daran zu erinnern: {when}.",
+        "privat_reminder_footer": "Sie erhalten diese E-Mail, weil Sie Dialogbot um eine Erinnerung gebeten haben.",
+        "privat_open_task": "Aufgabe öffnen",
+        "privat_task_footer": "Sie erhalten diese E-Mail, weil Dialogbot an einer Aufgabe für Sie arbeitet.",
+        "privat_accepted_subject": "{name} hat Ihre Einladung angenommen",
+        "privat_accepted_body": "{name} ist jetzt bei «{title}» dabei.",
+        "privat_accepted_button": "Liste öffnen",
+        "privat_accepted_footer": "Sie erhalten diese E-Mail, weil Sie jemanden in Dialogbot eingeladen haben.",
+        "privat_parcel_subject": "Ihr Paket",
+        "privat_parcel_button": "Pakete ansehen",
+        "privat_parcel_footer": "Sie erhalten diese E-Mail, weil Sie ein Paket in Dialogbot verfolgen.",
+        "privat_car_subject": "Ihr Auto",
+        "privat_car_button": "Auto ansehen",
+        "privat_car_footer": "Sie erhalten diese E-Mail, weil Sie Auto & TÜV in Dialogbot eingeschaltet haben.",
+        "privat_birthday_subject": "Geburtstag: {name}",
+        "privat_birthday_body": "Schreiben Sie Ihrem Assistenten in Dialogbot, wenn Sie Geschenkideen oder eine "
+                                "Erinnerung zum Anrufen möchten.",
+        "privat_birthday_button": "Geburtstage ansehen",
+        "privat_birthday_footer": "Sie erhalten diese E-Mail, weil Sie Geburtstage in Dialogbot eingeschaltet haben.",
+        "privat_bill_subject": "Rechnung: {name}",
+        "privat_bill_body": "Dialogbot bezahlt nie selbst und hat keinen Zugriff auf Ihre Bank.",
+        "privat_bill_button": "Rechnungen ansehen",
+        "privat_bill_footer": "Sie erhalten diese E-Mail, weil Sie Rechnungen in Dialogbot eingeschaltet haben.",
+        "privat_app_button": "{app} öffnen",
+        "privat_app_footer": "Sie erhalten diese E-Mail, weil Sie {app} in Dialogbot eingeschaltet haben.",
+        "privat_gift_subject": "Gemeinschaftsgeschenk",
+        "privat_gift_button": "Wunschliste ansehen",
+        "privat_gift_footer": "Sie erhalten diese E-Mail, weil Sie an einem Gemeinschaftsgeschenk in Dialogbot "
+                              "beteiligt sind.",
+        "privat_welcome_subject": "Willkommen bei Dialogbot Privat – wählen Sie Ihr Passwort",
+        "welcome_preheader": "Ihr Konto ist erstellt. Wählen Sie ein Passwort, damit Sie sich wieder anmelden "
+                                    "können.",
+        "welcome_heading": "Willkommen, {name}",
+        "privat_welcome_body": "Ihr Konto bei Dialogbot Privat wurde mit {email} erstellt, und Ihr persönlicher "
+                               "Assistent ist bereit. Sie sind jetzt angemeldet; wählen Sie ein Passwort, damit Sie sich "
+                               "auch beim nächsten Mal anmelden können.",
+        "welcome_ignore": "Wenn Sie kein Konto bei Dialogbot erstellt haben, können Sie diese E-Mail ignorieren "
+                                 "– es passiert nichts weiter.",
+        "welcome_button": "Passwort wählen",
+        "welcome_note": "Der Link ist {hours} Stunden gültig.",
+        "welcome_footer": "Sie erhalten diese E-Mail, weil bei Dialogbot ein Konto mit Ihrer Adresse erstellt "
+                                 "wurde.",
+        "privat_sms_code": "Ihr Code für Dialogbot ist {code}. Er gilt 10 Minuten.",
+    },
+    "es": {
+        "welcome_subject": "Bienvenido a Dialogbot: elija su contraseña",  # Erhverv quiz-funnel (F-JE-08)
+        "welcome_body": "Su cuenta de Dialogbot se ha creado con {email} y su recepcionista digital está lista. Ya ha iniciado sesión; elija una contraseña para poder iniciar sesión también la próxima vez.",
+        "verify_body_invited": "Gracias por crear una cuenta. Confirme su dirección de correo electrónico y podrá aceptar la invitación.",  # Erhverv: an invited colleague (F-JE-10)
+        "verify_body_privat_list": "Gracias por crear una cuenta. Confirme su correo electrónico y podrá abrir la lista.",
+        "verify_body_privat_neutral": "Gracias por crear una cuenta. Confirme su dirección de correo electrónico y "
+                                      "podrá continuar en Dialogbot Privat.",
+        "privat_reminder_subject": "Recordatorio: {title}",
+        "privat_reminder_body": "Me pidió que se lo recordara: {when}.",
+        "privat_reminder_footer": "Recibe este correo electrónico porque pidió un recordatorio a Dialogbot.",
+        "privat_open_task": "Abrir la tarea",
+        "privat_task_footer": "Recibe este correo electrónico porque Dialogbot está trabajando en una tarea para usted.",
+        "privat_accepted_subject": "{name} ha aceptado su invitación",
+        "privat_accepted_body": "{name} ya forma parte de «{title}».",
+        "privat_accepted_button": "Abrir la lista",
+        "privat_accepted_footer": "Recibe este correo electrónico porque ha invitado a alguien en Dialogbot.",
+        "privat_parcel_subject": "Su paquete",
+        "privat_parcel_button": "Ver paquetes",
+        "privat_parcel_footer": "Recibe este correo electrónico porque sigue un paquete en Dialogbot.",
+        "privat_car_subject": "Su coche",
+        "privat_car_button": "Ver el coche",
+        "privat_car_footer": "Recibe este correo electrónico porque ha activado Coche e ITV en Dialogbot.",
+        "privat_birthday_subject": "Cumpleaños: {name}",
+        "privat_birthday_body": "Escriba a su asistente en Dialogbot si desea ideas de regalo o un recordatorio para "
+                                "llamar.",
+        "privat_birthday_button": "Ver cumpleaños",
+        "privat_birthday_footer": "Recibe este correo electrónico porque ha activado Cumpleaños en Dialogbot.",
+        "privat_bill_subject": "Factura: {name}",
+        "privat_bill_body": "Dialogbot nunca paga por sí mismo y no tiene acceso a su banco.",
+        "privat_bill_button": "Ver facturas",
+        "privat_bill_footer": "Recibe este correo electrónico porque ha activado Facturas en Dialogbot.",
+        "privat_app_button": "Abrir {app}",
+        "privat_app_footer": "Recibe este correo electrónico porque ha activado {app} en Dialogbot.",
+        "privat_gift_subject": "Regalo conjunto",
+        "privat_gift_button": "Ver la lista de deseos",
+        "privat_gift_footer": "Recibe este correo electrónico porque participa en un regalo conjunto en Dialogbot.",
+        "privat_welcome_subject": "Bienvenido a Dialogbot Privat: elija su contraseña",
+        "welcome_preheader": "Su cuenta está creada. Elija una contraseña para poder volver a iniciar sesión.",
+        "welcome_heading": "Bienvenido, {name}",
+        "privat_welcome_body": "Su cuenta de Dialogbot Privat se ha creado con {email} y su asistente personal está "
+                               "listo. Ya ha iniciado sesión; elija una contraseña para poder iniciar sesión también la "
+                               "próxima vez.",
+        "welcome_ignore": "Si no ha creado una cuenta en Dialogbot, puede ignorar este correo: no ocurrirá nada "
+                                 "más.",
+        "welcome_button": "Elegir contraseña",
+        "welcome_note": "El enlace es válido durante {hours} horas.",
+        "welcome_footer": "Recibe este correo electrónico porque se ha creado una cuenta en Dialogbot con su "
+                                 "dirección.",
+        "privat_sms_code": "Su código de Dialogbot es {code}. Es válido durante 10 minutos.",
+    },
+    "fr": {
+        "welcome_subject": "Bienvenue chez Dialogbot – choisissez votre mot de passe",  # Erhverv quiz-funnel (F-JE-08)
+        "welcome_body": "Votre compte Dialogbot a été créé avec {email}, et votre réceptionniste numérique est prête. Vous êtes connecté ; choisissez un mot de passe pour pouvoir aussi vous connecter la prochaine fois.",
+        "verify_body_invited": "Merci d'avoir créé un compte. Confirmez votre adresse e-mail pour accepter l'invitation.",  # Erhverv: an invited colleague (F-JE-10)
+        "verify_body_privat_list": "Merci d'avoir créé un compte. Confirmez votre adresse e-mail pour ouvrir la liste.",
+        "verify_body_privat_neutral": "Merci d'avoir créé un compte. Confirmez votre adresse e-mail pour continuer "
+                                      "dans Dialogbot Privat.",
+        "privat_reminder_subject": "Rappel : {title}",
+        "privat_reminder_body": "Vous m'avez demandé de vous le rappeler : {when}.",
+        "privat_reminder_footer": "Vous recevez cet e-mail parce que vous avez demandé un rappel à Dialogbot.",
+        "privat_open_task": "Ouvrir la tâche",
+        "privat_task_footer": "Vous recevez cet e-mail parce que Dialogbot travaille sur une tâche pour vous.",
+        "privat_accepted_subject": "{name} a accepté votre invitation",
+        "privat_accepted_body": "{name} fait maintenant partie de «{title}».",
+        "privat_accepted_button": "Ouvrir la liste",
+        "privat_accepted_footer": "Vous recevez cet e-mail parce que vous avez invité quelqu'un dans Dialogbot.",
+        "privat_parcel_subject": "Votre colis",
+        "privat_parcel_button": "Voir les colis",
+        "privat_parcel_footer": "Vous recevez cet e-mail parce que vous suivez un colis dans Dialogbot.",
+        "privat_car_subject": "Votre voiture",
+        "privat_car_button": "Voir la voiture",
+        "privat_car_footer": "Vous recevez cet e-mail parce que vous avez activé Voiture et contrôle technique dans "
+                             "Dialogbot.",
+        "privat_birthday_subject": "Anniversaire : {name}",
+        "privat_birthday_body": "Écrivez à votre assistant dans Dialogbot si vous souhaitez des idées de cadeau ou un "
+                                "rappel pour appeler.",
+        "privat_birthday_button": "Voir les anniversaires",
+        "privat_birthday_footer": "Vous recevez cet e-mail parce que vous avez activé Anniversaires dans Dialogbot.",
+        "privat_bill_subject": "Facture : {name}",
+        "privat_bill_body": "Dialogbot ne paie jamais lui-même et n'a pas accès à votre banque.",
+        "privat_bill_button": "Voir les factures",
+        "privat_bill_footer": "Vous recevez cet e-mail parce que vous avez activé Factures dans Dialogbot.",
+        "privat_app_button": "Ouvrir {app}",
+        "privat_app_footer": "Vous recevez cet e-mail parce que vous avez activé {app} dans Dialogbot.",
+        "privat_gift_subject": "Cadeau commun",
+        "privat_gift_button": "Voir la liste de souhaits",
+        "privat_gift_footer": "Vous recevez cet e-mail parce que vous participez à un cadeau commun dans Dialogbot.",
+        "privat_welcome_subject": "Bienvenue sur Dialogbot Privat – choisissez votre mot de passe",
+        "welcome_preheader": "Votre compte est créé. Choisissez un mot de passe pour pouvoir vous reconnecter.",
+        "welcome_heading": "Bienvenue, {name}",
+        "privat_welcome_body": "Votre compte Dialogbot Privat a été créé avec {email}, et votre assistant personnel est "
+                               "prêt. Vous êtes connecté ; choisissez un mot de passe pour pouvoir aussi vous connecter "
+                               "la prochaine fois.",
+        "welcome_ignore": "Si vous n'avez pas créé de compte chez Dialogbot, vous pouvez ignorer cet e-mail – il "
+                                 "ne se passera rien de plus.",
+        "welcome_button": "Choisir un mot de passe",
+        "welcome_note": "Le lien est valable {hours} heures.",
+        "welcome_footer": "Vous recevez cet e-mail parce qu'un compte Dialogbot a été créé avec votre adresse.",
+        "privat_sms_code": "Votre code Dialogbot est {code}. Il est valable 10 minutes.",
+    },
+    "it": {
+        "welcome_subject": "Benvenuto in Dialogbot – scelga la Sua password",  # Erhverv quiz-funnel (F-JE-08)
+        "welcome_body": "Il Suo account Dialogbot è stato creato con {email} e il Suo receptionist digitale è pronto. Ha già effettuato l'accesso; scelga una password per poter accedere anche la prossima volta.",
+        "verify_body_invited": "Grazie per aver creato un account. Confermi il Suo indirizzo e-mail per accettare l'invito.",  # Erhverv: an invited colleague (F-JE-10)
+        "verify_body_privat_list": "Grazie per aver creato un account. Confermi il Suo indirizzo e-mail per aprire la lista.",
+        "verify_body_privat_neutral": "Grazie per aver creato un account. Confermi il Suo indirizzo e-mail per "
+                                      "continuare in Dialogbot Privat.",
+        "privat_reminder_subject": "Promemoria: {title}",
+        "privat_reminder_body": "Mi ha chiesto di ricordarglielo: {when}.",
+        "privat_reminder_footer": "Riceve questa e-mail perché ha chiesto un promemoria a Dialogbot.",
+        "privat_open_task": "Apri l'attività",
+        "privat_task_footer": "Riceve questa e-mail perché Dialogbot sta lavorando a un'attività per Lei.",
+        "privat_accepted_subject": "{name} ha accettato il Suo invito",
+        "privat_accepted_body": "{name} ora partecipa a «{title}».",
+        "privat_accepted_button": "Apri la lista",
+        "privat_accepted_footer": "Riceve questa e-mail perché ha invitato qualcuno in Dialogbot.",
+        "privat_parcel_subject": "Il Suo pacco",
+        "privat_parcel_button": "Vedi i pacchi",
+        "privat_parcel_footer": "Riceve questa e-mail perché segue un pacco in Dialogbot.",
+        "privat_car_subject": "La Sua auto",
+        "privat_car_button": "Vedi l'auto",
+        "privat_car_footer": "Riceve questa e-mail perché ha attivato Auto e revisione in Dialogbot.",
+        "privat_birthday_subject": "Compleanno: {name}",
+        "privat_birthday_body": "Scriva al Suo assistente in Dialogbot se desidera idee regalo o un promemoria per "
+                                "telefonare.",
+        "privat_birthday_button": "Vedi i compleanni",
+        "privat_birthday_footer": "Riceve questa e-mail perché ha attivato Compleanni in Dialogbot.",
+        "privat_bill_subject": "Bolletta: {name}",
+        "privat_bill_body": "Dialogbot non paga mai da solo e non ha accesso alla Sua banca.",
+        "privat_bill_button": "Vedi le bollette",
+        "privat_bill_footer": "Riceve questa e-mail perché ha attivato Bollette in Dialogbot.",
+        "privat_app_button": "Apri {app}",
+        "privat_app_footer": "Riceve questa e-mail perché ha attivato {app} in Dialogbot.",
+        "privat_gift_subject": "Regalo di gruppo",
+        "privat_gift_button": "Vedi la lista dei desideri",
+        "privat_gift_footer": "Riceve questa e-mail perché partecipa a un regalo di gruppo in Dialogbot.",
+        "privat_welcome_subject": "Benvenuto in Dialogbot Privat – scelga la Sua password",
+        "welcome_preheader": "Il Suo account è stato creato. Scelga una password per poter accedere di nuovo.",
+        "welcome_heading": "Benvenuto, {name}",
+        "privat_welcome_body": "Il Suo account Dialogbot Privat è stato creato con {email} e il Suo assistente personale "
+                               "è pronto. Ha già effettuato l'accesso; scelga una password per poter accedere anche la "
+                               "prossima volta.",
+        "welcome_ignore": "Se non ha creato un account su Dialogbot, può ignorare questa e-mail: non succederà "
+                                 "nient'altro.",
+        "welcome_button": "Scegli la password",
+        "welcome_note": "Il link è valido per {hours} ore.",
+        "welcome_footer": "Riceve questa e-mail perché è stato creato un account su Dialogbot con il Suo "
+                                 "indirizzo.",
+        "privat_sms_code": "Il Suo codice Dialogbot è {code}. È valido per 10 minuti.",
+    },
+    "no": {
+        "welcome_subject": "Velkommen til Dialogbot – velg passordet ditt",  # Erhverv quiz-funnel (F-JE-08)
+        "welcome_body": "Kontoen din hos Dialogbot er opprettet med {email}, og den digitale resepsjonisten din er klar. Du er logget inn nå; velg et passord så du også kan logge inn neste gang.",
+        "verify_body_invited": "Takk for at du har opprettet en konto. Bekreft e-postadressen din, så kan du takke ja til invitasjonen.",  # Erhverv: an invited colleague (F-JE-10)
+        "verify_body_privat_list": "Takk for at du har opprettet en konto. Bekreft e-posten din, så kan du åpne listen.",
+        "verify_body_privat_neutral": "Takk for at du har opprettet en konto. Bekreft e-postadressen din, så kan du "
+                                      "fortsette i Dialogbot Privat.",
+        "privat_reminder_subject": "Påminnelse: {title}",
+        "privat_reminder_body": "Du ba meg minne deg på det {when}.",
+        "privat_reminder_footer": "Du får denne e-posten fordi du ba Dialogbot om en påminnelse.",
+        "privat_open_task": "Åpne oppgaven",
+        "privat_task_footer": "Du får denne e-posten fordi Dialogbot jobber med en oppgave for deg.",
+        "privat_accepted_subject": "{name} har takket ja til invitasjonen din",
+        "privat_accepted_body": "{name} er nå med på «{title}».",
+        "privat_accepted_button": "Åpne listen",
+        "privat_accepted_footer": "Du får denne e-posten fordi du har invitert noen i Dialogbot.",
+        "privat_parcel_subject": "Pakken din",
+        "privat_parcel_button": "Se pakker",
+        "privat_parcel_footer": "Du får denne e-posten fordi du følger en pakke i Dialogbot.",
+        "privat_car_subject": "Bilen",
+        "privat_car_button": "Se bilen",
+        "privat_car_footer": "Du får denne e-posten fordi du har slått på Bil & EU-kontroll i Dialogbot.",
+        "privat_birthday_subject": "Bursdag: {name}",
+        "privat_birthday_body": "Skriv til assistenten din i Dialogbot hvis du vil ha gaveideer eller en påminnelse om "
+                                "å ringe.",
+        "privat_birthday_button": "Se bursdager",
+        "privat_birthday_footer": "Du får denne e-posten fordi du har slått på Bursdager i Dialogbot.",
+        "privat_bill_subject": "Regning: {name}",
+        "privat_bill_body": "Dialogbot betaler aldri selv og har ikke tilgang til banken din.",
+        "privat_bill_button": "Se regninger",
+        "privat_bill_footer": "Du får denne e-posten fordi du har slått på Regninger i Dialogbot.",
+        "privat_app_button": "Åpne {app}",
+        "privat_app_footer": "Du får denne e-posten fordi du har slått på {app} i Dialogbot.",
+        "privat_gift_subject": "Fellesgave",
+        "privat_gift_button": "Se ønskelisten",
+        "privat_gift_footer": "Du får denne e-posten fordi du er med på en fellesgave i Dialogbot.",
+        "privat_welcome_subject": "Velkommen til Dialogbot Privat – velg passordet ditt",
+        "welcome_preheader": "Kontoen din er opprettet. Velg et passord så du kan logge inn igjen.",
+        "welcome_heading": "Velkommen, {name}",
+        "privat_welcome_body": "Kontoen din hos Dialogbot Privat er opprettet med {email}, og den personlige "
+                               "assistenten din er klar. Du er logget inn nå; velg et passord så du også kan logge inn "
+                               "neste gang.",
+        "welcome_ignore": "Har du ikke opprettet en konto hos Dialogbot, kan du se bort fra denne e-posten – det "
+                                 "skjer ikke noe mer.",
+        "welcome_button": "Velg passord",
+        "welcome_note": "Lenken er gyldig i {hours} timer.",
+        "welcome_footer": "Du får denne e-posten fordi det er opprettet en konto hos Dialogbot med adressen din.",
+        "privat_sms_code": "Koden din til Dialogbot er {code}. Den gjelder i 10 minutter.",
+    },
+    "sv": {
+        "welcome_subject": "Välkommen till Dialogbot – välj ditt lösenord",  # Erhverv quiz-funnel (F-JE-08)
+        "welcome_body": "Ditt konto hos Dialogbot har skapats med {email}, och din digitala receptionist är redo. Du är inloggad nu; välj ett lösenord så att du kan logga in nästa gång också.",
+        "verify_body_invited": "Tack för att du har skapat ett konto. Bekräfta din e-postadress, så kan du tacka ja till inbjudan.",  # Erhverv: an invited colleague (F-JE-10)
+        "verify_body_privat_list": "Tack för att du har skapat ett konto. Bekräfta din e-post, så kan du öppna listan.",
+        "verify_body_privat_neutral": "Tack för att du har skapat ett konto. Bekräfta din e-postadress, så kan du "
+                                      "fortsätta i Dialogbot Privat.",
+        "privat_reminder_subject": "Påminnelse: {title}",
+        "privat_reminder_body": "Du bad mig påminna dig om det {when}.",
+        "privat_reminder_footer": "Du får det här mejlet eftersom du bad Dialogbot om en påminnelse.",
+        "privat_open_task": "Öppna uppgiften",
+        "privat_task_footer": "Du får det här mejlet eftersom Dialogbot arbetar med en uppgift åt dig.",
+        "privat_accepted_subject": "{name} har tackat ja till din inbjudan",
+        "privat_accepted_body": "{name} är nu med på «{title}».",
+        "privat_accepted_button": "Öppna listan",
+        "privat_accepted_footer": "Du får det här mejlet eftersom du har bjudit in någon i Dialogbot.",
+        "privat_parcel_subject": "Ditt paket",
+        "privat_parcel_button": "Se paket",
+        "privat_parcel_footer": "Du får det här mejlet eftersom du följer ett paket i Dialogbot.",
+        "privat_car_subject": "Bilen",
+        "privat_car_button": "Se bilen",
+        "privat_car_footer": "Du får det här mejlet eftersom du har slagit på Bil & besiktning i Dialogbot.",
+        "privat_birthday_subject": "Födelsedag: {name}",
+        "privat_birthday_body": "Skriv till din assistent i Dialogbot om du vill ha presentidéer eller en påminnelse om "
+                                "att ringa.",
+        "privat_birthday_button": "Se födelsedagar",
+        "privat_birthday_footer": "Du får det här mejlet eftersom du har slagit på Födelsedagar i Dialogbot.",
+        "privat_bill_subject": "Räkning: {name}",
+        "privat_bill_body": "Dialogbot betalar aldrig själv och har ingen tillgång till din bank.",
+        "privat_bill_button": "Se räkningar",
+        "privat_bill_footer": "Du får det här mejlet eftersom du har slagit på Räkningar i Dialogbot.",
+        "privat_app_button": "Öppna {app}",
+        "privat_app_footer": "Du får det här mejlet eftersom du har slagit på {app} i Dialogbot.",
+        "privat_gift_subject": "Gemensam present",
+        "privat_gift_button": "Se önskelistan",
+        "privat_gift_footer": "Du får det här mejlet eftersom du är med i en gemensam present i Dialogbot.",
+        "privat_welcome_subject": "Välkommen till Dialogbot Privat – välj ditt lösenord",
+        "welcome_preheader": "Ditt konto är skapat. Välj ett lösenord så att du kan logga in igen.",
+        "welcome_heading": "Välkommen, {name}",
+        "privat_welcome_body": "Ditt konto hos Dialogbot Privat har skapats med {email}, och din personliga assistent "
+                               "är redo. Du är inloggad nu; välj ett lösenord så att du kan logga in nästa gång också.",
+        "welcome_ignore": "Om du inte har skapat ett konto hos Dialogbot kan du bortse från det här mejlet – "
+                                 "inget mer händer.",
+        "welcome_button": "Välj lösenord",
+        "welcome_note": "Länken gäller i {hours} timmar.",
+        "welcome_footer": "Du får det här mejlet eftersom någon har skapat ett konto hos Dialogbot med din "
+                                 "adress.",
+        "privat_sms_code": "Din kod till Dialogbot är {code}. Den gäller i 10 minuter.",
+    },
+}

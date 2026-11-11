@@ -269,7 +269,8 @@ TEXTS: dict[str, dict[str, str]] = {
                        "Sie mit der Einrichtung Ihrer KI-Rezeption beginnen.",
         "verify_button": "E-Mail-Adresse bestätigen",
         "verify_heading_privat": "Willkommen bei Dialogbot Privat",
-        "verify_body_privat": "Danke, dass du ein Konto erstellt hast. Bestätige deine E-Mail-Adresse, dann kannst du deine Testphase von Dialogbot Privat starten.",
+        "verify_body_privat": "Vielen Dank, dass Sie ein Konto erstellt haben. Bestätigen Sie Ihre E-Mail-Adresse, dann können "
+                              "Sie Ihre Testphase von Dialogbot Privat starten.",
         "verify_note": "Der Link ist 48 Stunden gültig. Wenn Sie kein Konto bei Dialogbot erstellt haben, können Sie diese "
                        "E-Mail ignorieren.",
         "verify_footer": "Sie erhalten diese E-Mail, weil jemand mit Ihrer Adresse ein Konto bei Dialogbot erstellt hat.",
@@ -385,7 +386,8 @@ TEXTS: dict[str, dict[str, str]] = {
                        "configurar su recepcionista con IA.",
         "verify_button": "Confirmar mi correo",
         "verify_heading_privat": "Bienvenido a Dialogbot Privat",
-        "verify_body_privat": "Gracias por crear una cuenta. Confirma tu dirección de correo electrónico y podrás empezar tu prueba de Dialogbot Privat.",
+        "verify_body_privat": "Gracias por crear una cuenta. Confirme su dirección de correo electrónico y podrá empezar su "
+                              "prueba de Dialogbot Privat.",
         "verify_note": "El enlace es válido durante 48 horas. Si no ha creado una cuenta en Dialogbot, puede ignorar este "
                        "correo.",
         "verify_footer": "Recibe este correo electrónico porque alguien ha creado una cuenta en Dialogbot con su dirección.",
@@ -502,7 +504,8 @@ TEXTS: dict[str, dict[str, str]] = {
                        "réceptionniste IA.",
         "verify_button": "Confirmer mon adresse e-mail",
         "verify_heading_privat": "Bienvenue sur Dialogbot Privat",
-        "verify_body_privat": "Merci d'avoir créé un compte. Confirme ton adresse e-mail pour commencer ton essai de Dialogbot Privat.",
+        "verify_body_privat": "Merci d'avoir créé un compte. Confirmez votre adresse e-mail pour commencer votre essai de "
+                              "Dialogbot Privat.",
         "verify_note": "Le lien est valable 48 heures. Si vous n'avez pas créé de compte chez Dialogbot, vous pouvez "
                        "ignorer cet e-mail.",
         "verify_footer": "Vous recevez cet e-mail parce que quelqu'un a créé un compte Dialogbot avec votre adresse.",
@@ -620,7 +623,8 @@ TEXTS: dict[str, dict[str, str]] = {
                        "Suo receptionist IA.",
         "verify_button": "Conferma il mio indirizzo e-mail",
         "verify_heading_privat": "Benvenuto in Dialogbot Privat",
-        "verify_body_privat": "Grazie per aver creato un account. Conferma il tuo indirizzo e-mail per iniziare la prova di Dialogbot Privat.",
+        "verify_body_privat": "Grazie per aver creato un account. Confermi il Suo indirizzo e-mail per iniziare la prova di "
+                              "Dialogbot Privat.",
         "verify_note": "Il link è valido per 48 ore. Se non ha creato un account su Dialogbot, può ignorare questa e-mail.",
         "verify_footer": "Riceve questa e-mail perché qualcuno ha creato un account su Dialogbot con il Suo indirizzo.",
         "reset_subject": "Reimposti la Sua password di Dialogbot",
@@ -954,6 +958,12 @@ GREETING_WORDS: dict[str, tuple[str, ...]] = {
     "es": ("Hola", "Estimado", "Estimada"), "fr": ("Bonjour", "Cher", "Chère", "Madame", "Monsieur"),
     "it": ("Buongiorno", "Ciao", "Gentile", "Caro", "Cara"), "no": ("Hei", "Kjære"), "sv": ("Hej", "Kära"),
 }
+
+# Dialogbot Privat's texts (service mails, the funnel welcome, the SMS code) live in their own file, same mechanism.
+from app.modules.integrations.email_texts_privat import PRIVAT_TEXTS  # noqa: E402
+
+for _lang, _table in PRIVAT_TEXTS.items():
+    TEXTS[_lang].update(_table)
 
 
 def t(lang: str | None, key: str, **values) -> str:

@@ -1,7 +1,7 @@
 "use client";
 import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { LogoMark } from "@/components/ui";
 import { AssistantNameProvider, useT } from "@/i18n/client";
 import { AccountPane } from "./account";
@@ -18,6 +18,7 @@ import { clearSwPages } from "@/lib/sw-register";
 import { StandaloneBack, StandaloneChrome } from "@/components/standalone";
 import { APP_SCREENS, PrivatProvider, initials, usePlan, usePrivat, type Screen, type Session } from "./store";
 import { TaskDetail, TasksPane } from "./tasks";
+import { nextQuery, PRIVAT_HOME } from "@/lib/privat-next";
 
 export function PrivatApp({ session }: { session: Session }) {
   return (
@@ -87,13 +88,17 @@ function Shell() {
   );
 }
 
+/** The Privat verify page, back to where the person is (F-JP-10): orange, Privat words, and the new link returns here. */
+const verifyHref = (pathname: string | null) => `/verify-email?for=privat${nextQuery(pathname ?? PRIVAT_HOME)}`;
+
 /** Errors that block the whole Privat app: e-mail not confirmed, or an operator's «Se som kunde» session. */
 function AccountNotice() {
   const t = useT("privat");
   const { error } = usePrivat();
+  const pathname = usePathname();
   if (error?.code === "email_not_verified") return (
     <div role="alert" className="flex-none bg-highlight border-b-2 border-ink px-4 py-2 text-[14px] text-center">
-      {t("errors.emailNotVerified")} <Link href="/verify-email" className="underline font-semibold">{t("errors.verifyLink")}</Link>
+      {t("errors.emailNotVerified")} <Link href={verifyHref(pathname)} className="underline font-semibold">{t("errors.verifyLink")}</Link>
     </div>
   );
   if (error?.code === "view_as_not_allowed") return <div role="alert" className="flex-none bg-ink text-paper px-4 py-2 text-[14px] text-center">{t("errors.viewAs")}</div>;

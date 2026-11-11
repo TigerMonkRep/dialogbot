@@ -114,6 +114,7 @@ def due_reminders(data: dict, today: date) -> list[tuple[str, str]]:
 
 def send_due(db: OrmSession, now: datetime | None = None) -> int:
     from app.modules.integrations import email_templates as tpl
+    from app.modules.integrations import privat_mails
     from app.modules.privat import push
 
     if addons.CATALOG.get(ADDON) is None or addons.CATALOG[ADDON].live_status == "coming_soon":
@@ -139,8 +140,7 @@ def send_due(db: OrmSession, now: datetime | None = None) -> int:
             reminded[key] = data[key] if key in ("inspection_due", "service_due") else "sent"
             if owner is None:
                 continue
-            mail = tpl.Email(subject="Bilen", heading=text, paragraphs=[], button_label="Se bilen", button_url=url,
-                             footer_reason="Du får denne e-mail, fordi du har slået Bil & syn til i Dialogbot.")
+            mail = privat_mails.car(text, url, owner.interface_language)
             push.notify(db, owner.id, title="Bilen", body=text, url=url, dedupe=f"car:{row.workspace_id}:{key}:{reminded[key]}",
                         email={"to_email": owner.email, "email": tpl.to_payload(mail)}, workspace_id=row.workspace_id)
             n += 1

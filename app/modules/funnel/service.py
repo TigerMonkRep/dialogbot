@@ -51,6 +51,7 @@ from app.models import (
     WorkspaceVoiceSettings,
 )
 from app.modules.funnel import estimates, privat_seed
+from app.modules.identity.privat_context import PRIVAT_INTENT
 from app.modules.privat import phone as sms_code
 from app.modules.privat import rules
 from app.modules.sales import places as gp
@@ -413,14 +414,24 @@ def _check_code(db: OrmSession, d: FunnelDraft, code: str) -> None:
 
 def _welcome(db: OrmSession, user: User, kind: str) -> None:
     """A new account has a random password: the welcome mail carries a «vælg adgangskode» link (the ordinary
-    password-reset token, valid as long as a verification link)."""
+    password-reset token, valid as long as a verification link). Privat: the Privat mail in the user's language, and
+    the link keeps the Privat context and returns to Min dag (F-JP-03); Erhverv is unchanged."""
+    from app.modules.identity import privat_context
     from app.modules.integrations import email_templates as tpl
+    from app.modules.integrations import privat_mails
 
     s = get_settings()
     raw = new_token()
     db.add(AuthToken(user_id=user.id, purpose="password_reset", token_hash=token_digest(raw),
                      expires_at=_now() + timedelta(hours=s.verification_ttl_hours)))
     link = f"{s.frontend_base_url}/password/reset?token={raw}"
+    if kind == "privat":
+        link += privat_context.link_suffix(privat=True, next_=privat_context.PRIVAT_HOME)
+        mail = privat_mails.funnel_welcome(rules.first_name(user.display_name), user.email, link,
+                                           s.verification_ttl_hours, user.interface_language)
+        enqueue(db, event_type="email.branded", dedupe_key=f"funnel-welcome:{user.id}",
+                payload={"user_id": str(user.id), "to_email": user.email, "email": tpl.to_payload(mail)})
+        return
     what = ("din digitale receptionist" if kind == "erhverv" else "din personlige assistent")
     mail = tpl.Email(subject="Velkommen til Dialogbot – vælg din adgangskode",
                      preheader="Din konto er oprettet. Vælg en adgangskode, så du kan logge ind igen.",
@@ -455,7 +466,7 @@ def _new_user(db: OrmSession, d: FunnelDraft, request_id: str | None) -> User:
     g = d.gate
     norm = normalize_email(g["email"])
     user = User(email=g["email"].strip(), email_normalized=norm, password_hash=hash_password(new_token()),
-                display_name=g["name"], signup_intent="reception" if d.kind == "erhverv" else None,
+                display_name=g["name"], signup_intent="reception" if d.kind == "erhverv" else PRIVAT_INTENT,
                 interface_language="da", phone_verified_at=_now(),
                 signup_source=f"funnel:{d.kind}" + (f":{d.hook}" if d.hook else ""))
     db.add(user)
@@ -496,7 +507,7 @@ def verify(db: OrmSession, d: FunnelDraft, *, code: str, user_agent: str | None,
                  after={"kind": d.kind, "new_user": created, "hook": d.hook, "utm": d.utm}, request_id=request_id)
     flag_modified(d, "build")
     return ({"status": "ok", "next": NEXT[d.kind], "session_token": raw, "access_token": raw, "token_type": "bearer",
-             "user": user_out(user).model_dump(mode="json"), "new_user": created,
+             "user": user_out(user, db).model_dump(mode="json"), "new_user": created,
              "workspace_id": str(d.workspace_id) if d.workspace_id else None}, jobs)
 
 

@@ -129,6 +129,7 @@ def find(rows: list[dict], wanted: str, field: str = "name") -> dict | None:
 def send_due(db: OrmSession, now: datetime | None = None) -> int:
     """Every household app's reminders: `due(data, today)` gives (tag, text); each tag is sent once (`reminded`)."""
     from app.modules.integrations import email_templates as tpl
+    from app.modules.integrations import privat_mails
     from app.modules.privat import push
 
     local = rules.local(now)
@@ -157,9 +158,7 @@ def send_due(db: OrmSession, now: datetime | None = None) -> int:
                 reminded[tag] = today.isoformat()
                 if owner is None:
                     continue
-                mail = tpl.Email(subject=a.name, heading=text, paragraphs=[], button_label=f"Åbn {a.name}",
-                                 button_url=url,
-                                 footer_reason=f"Du får denne e-mail, fordi du har slået {a.name} til i Dialogbot.")
+                mail = privat_mails.app_reminder(a.name, text, url, owner.interface_language)
                 push.notify(db, owner.id, title=a.name, body=text, url=url, dedupe=f"{key}:{row.workspace_id}:{tag}",
                             email={"to_email": owner.email, "email": tpl.to_payload(mail)}, workspace_id=row.workspace_id)
                 n += 1

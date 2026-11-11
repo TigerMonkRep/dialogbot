@@ -7,7 +7,6 @@ import { expect, test } from "@playwright/test";
 const EVID = "../qa/evidence/A01-journey";
 
 test("F-JE-07 · /signup sends interface_language for a non-Danish visitor", async ({ page, context, baseURL }, info) => {
-  test.fail(!process.env.QA_RUNXFAIL, "F-JE-07: web/src/app/signup/page.tsx never sends interface_language → verify mail is always Danish");
   await context.addCookies([{ name: "dlg_lang", value: "de", url: baseURL ?? "http://localhost:3000" }]);
   let body: Record<string, unknown> | null = null;
   await page.route("**/api/backend/auth/register", async (r) => {

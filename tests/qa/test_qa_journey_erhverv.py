@@ -48,9 +48,10 @@ def _render(ev: OutboxEvent) -> tpl.Email:
     """The Email exactly as the worker builds it for this outbox event (app/worker/runner.py)."""
     p, t = ev.payload, ev.event_type
     if t == "email.verify_address":
-        return tpl.verify(p["link"], lang=p.get("lang") or "da", privat=p.get("audience") == "privat")
-    if t == "email.password_reset":
-        return tpl.reset(p["link"], lang=p.get("lang") or "da")
+        return tpl.verify(p["link"], lang=p.get("lang") or "da", privat=p.get("audience") == "privat",
+                          variant=p.get("variant", "trial"))
+    if t == "email.password_reset":  # as runner.handle_reset since F-JP-02/F-JE-02
+        return tpl.reset(p["link"], lang=p.get("lang") or "da", privat=p.get("audience") == "privat")
     if t == "email.invitation":
         return tpl.invitation(p["workspace_name"], p["invited_by"], p["role"], p["link"], lang=p.get("lang") or "da")
     if t == "email.new_lead":
@@ -188,8 +189,6 @@ def test_ok_backend_inapp_links_resolve():
 
 # =========================================================================== findings (open → xfail strict)
 
-@pytest.mark.xfail(strict=True, reason="F-JE-01: samme login i Privat og Erhverv – signup_intent «privat» (#179) "
-                                       "giver 422 «Ugyldig produktintention» ved oprettelse af virksomhed")
 def test_F_JE_01_privat_signup_can_still_create_an_erhverv_workspace(api, client, db):
     email = "privat-foerst@fjordgulv.example"
     _register(api, email, intent="privat")
@@ -202,7 +201,6 @@ def test_F_JE_01_privat_signup_can_still_create_an_erhverv_workspace(api, client
     assert r.status_code == 201, r.text
 
 
-@pytest.mark.xfail(strict=True, reason="F-JE-01: også uden product_intent falder backend tilbage på signup_intent «privat»")
 def test_F_JE_01b_workspace_without_intent_for_privat_signup(api, client, db):
     email = "privat-foerst2@fjordgulv.example"
     _register(api, email, intent="privat")
@@ -212,7 +210,6 @@ def test_F_JE_01b_workspace_without_intent_for_privat_signup(api, client, db):
     assert r.status_code == 201, r.text
 
 
-@pytest.mark.xfail(strict=True, reason="F-JE-02: Privat-bruger, der nulstiller adgangskode, får den blå Erhverv-mail")
 def test_F_JE_02_privat_user_reset_mail_is_privat(api, client, db):
     email = "pia@fjordgulv.example"
     _register(api, email, intent="privat", name="Pia Jensen")
@@ -221,15 +218,11 @@ def test_F_JE_02_privat_user_reset_mail_is_privat(api, client, db):
     assert_privat_mail(_render(ev), "reset[privat]")
 
 
-@pytest.mark.xfail(strict=True, reason="F-JE-02: /password/reset sender altid til /login?reset=1 (→ /app) og har "
-                                       "altid Erhverv-ramme – også for Privat-brugere")
 def test_F_JE_02b_reset_page_knows_privat():
     src = read("web/src/app/password/reset/page.tsx")
     assert "privat" in src, "reset page has no Privat variant (frame or destination)"
 
 
-@pytest.mark.xfail(strict=True, reason="F-JE-03: login uden ?next sender alle til /app – en Privat-bruger lander i "
-                                       "Erhverv-opsætningen /opsaetning/1")
 def test_F_JE_03_login_without_next_routes_by_account():
     src = read("web/src/app/login/page.tsx")
     body = src[src.index("useSubmit("):src.index("return (")]
@@ -237,8 +230,6 @@ def test_F_JE_03_login_without_next_routes_by_account():
     assert re.search(r"privat|signup_intent|workspaces", body), body
 
 
-@pytest.mark.xfail(strict=True, reason="F-JE-04: Privat-quiz-funnelens velkomstmail er den blå Erhverv-mail, og "
-                                       "dens link fører via /login?reset=1 til /app (Erhverv)")
 def test_F_JE_04_privat_funnel_welcome_mail_is_privat(api, client, db):
     from app.modules.funnel import service as funnel
 
@@ -253,8 +244,6 @@ def test_F_JE_04_privat_funnel_welcome_mail_is_privat(api, client, db):
     assert_privat_mail(_render(ev), "funnel-welcome[privat]")
 
 
-@pytest.mark.xfail(strict=True, reason="F-JE-05: Privat-funnel-bruger (signup_intent None) får ved «Send igen» den blå "
-                                       "Erhverv-bekræftelsesmail, og «Fortsæt» fører til Erhverv-opsætningen")
 def test_F_JE_05_privat_funnel_user_resend_verify_is_privat(api, client, db, monkeypatch):
     from app.config import get_settings
     from app.modules.privat import deps
@@ -278,8 +267,6 @@ def test_F_JE_05_privat_funnel_user_resend_verify_is_privat(api, client, db, mon
     assert_privat_mail(_render(ev), "verify-resend[privat-funnel]")
 
 
-@pytest.mark.xfail(strict=True, reason="F-JE-06: Privat-notifikationsmails (påmindelse, regning, fødselsdag, pakke, bil, "
-                                       "fællesgave, invitation) sætter aldrig audience=«privat» – de er blå Erhverv-mails")
 def test_F_JE_06_every_privat_mail_builder_sets_privat_audience():
     import os
 
@@ -295,8 +282,6 @@ def test_F_JE_06_every_privat_mail_builder_sets_privat_audience():
     assert not missing, missing
 
 
-@pytest.mark.xfail(strict=True, reason="F-JE-07: /signup sender ikke interface_language – bekræftelsesmail og alle "
-                                       "senere konto-mails er danske for en tysk/engelsk/… besøgende")
 def test_F_JE_07_signup_sends_the_visitors_language():
     src = read("web/src/app/signup/page.tsx")
     assert "interface_language" in src or "useLocale" in src

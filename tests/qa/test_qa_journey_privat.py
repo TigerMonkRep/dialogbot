@@ -45,12 +45,20 @@ def mails(monkeypatch):
     return sent
 
 
-def privat_signup(api, email: str, name: str = "Pia Privat", lang: str = "da") -> str:
-    """What /signup?next=/privat… does since #179: signup_intent privat, then log in."""
+def privat_signup(api, email: str, name: str = "Pia Privat", lang: str = "da", next_: str | None = None) -> str:
+    """What /signup?next=<Privat route> does: signup_intent privat, the page's language and `next`, then log in."""
     r = api.c.post(f"{api.base}/auth/register", json={"email": email, "password": PASSWORD, "display_name": name,
-                                                      "signup_intent": "privat", "interface_language": lang})
+                                                      "signup_intent": "privat", "interface_language": lang,
+                                                      **({"next": next_} if next_ else {})})
     assert r.status_code == 201, r.text
     return api.login(email, PASSWORD)
+
+
+def link_next(link: str) -> str | None:
+    """The decoded `next` of a mailed link (what the web page reads with searchParams.get("next"))."""
+    from urllib.parse import parse_qs, urlsplit
+
+    return (parse_qs(urlsplit(link).query).get("next") or [None])[0]
 
 
 def verify_from_mailbox(api, tok: str) -> str:
@@ -104,7 +112,7 @@ def src(rel: str) -> str:
 def test_jp_verify_mail_is_privat_and_lands_on_a_privat_route(api, db, mails, pv):
     tok = privat_signup(api, "pia@testmail.dk")
     link = verify_from_mailbox(api, tok)
-    assert link.endswith("&for=privat")
+    assert link.endswith("&for=privat") or "&for=privat&" in link
     ev, mail = next((e, m) for e, m in mails if e.event_type == "email.verify_address")
     assert_privat_mail(mail, "verify")
     page = (WEB_APP / "verify-email" / "page.tsx").read_text(encoding="utf-8")
@@ -123,29 +131,53 @@ def test_jp_verify_mail_in_all_8_languages(api, mails, pv):
 
 # --------------------------------------------------------------------------- F-JP-01  «Prøv gratis» stops at e-mail
 
-@pytest.mark.xfail(strict=True, reason="F-JP-01: a new e-mail sign-up cannot reach Stripe Checkout before the e-mail "
-                                       "is verified (403 email_not_verified)")
+PLAN_NEXT = "/privat/konto?plan=plus&interval=month"
+
+
 def test_jp01_try_free_goes_straight_to_checkout(api, pv, monkeypatch):
+    """F-JP-01 (decision: the e-mail is confirmed BEFORE the checkout – kept). «Prøv gratis i 14 dage» →
+    /privat/konto?plan=plus&interval=month → /signup?next=… (next goes to the API) → verify link carries that next →
+    back on the plan → the checkout starts. Another browser works too: the way back is in the link, not localStorage."""
     fake_stripe(monkeypatch)
-    tok = privat_signup(api, "ny@testmail.dk")
-    # /privat «Prøv gratis i 14 dage» → /privat/konto?plan=plus&interval=month → /signup?next=… → back → checkout
+    tok = pv.unverified("ny@testmail.dk", next_=PLAN_NEXT)
+    r = api.post(tok, "/privat/subscription/checkout", {"plan": "plus", "interval": "month", "locale": "da"})
+    assert r.status_code == 403 and r.json()["code"] == "email_not_verified"  # deliberate: e-mail first
+    link = pv.verify_link(tok)
+    assert "for=privat" in link and link_next(link) == PLAN_NEXT, link
+    pv.click_verify(link)
     r = api.post(tok, "/privat/subscription/checkout", {"plan": "plus", "interval": "month", "locale": "da"})
     assert r.status_code == 200, r.text
+    # the web: the signup sends `next`, waits on the Privat verify page, and the verify page goes to `next`, where
+    # /privat/konto?plan= starts the checkout by itself
+    signup = (WEB_APP / "signup" / "page.tsx").read_text(encoding="utf-8")
+    assert "next: privatNext(next)" in signup and "/verify-email?for=privat&next=" in signup
+    verify = (WEB_APP / "verify-email" / "page.tsx").read_text(encoding="utf-8")
+    assert "setAfter(next)" in verify
 
 
-@pytest.mark.xfail(strict=True, reason="F-JP-01: after the verify mail the person lands on /privat/konto without the "
-                                       "plan they chose – the checkout does not resume")
 def test_jp01_verify_link_resumes_the_chosen_plan(api, pv):
-    tok = privat_signup(api, "ny2@testmail.dk")
+    tok = privat_signup(api, "ny2@testmail.dk", next_=PLAN_NEXT)
     link = verify_from_mailbox(api, tok)
+    assert link_next(link) == PLAN_NEXT, link
     page = (WEB_APP / "verify-email" / "page.tsx").read_text(encoding="utf-8")
-    # either the link itself carries the chosen plan, or the verify page sends the person back to the ?plan= checkout
-    assert "plan=" in link or re.search(r"privat/konto\?plan", page), link
+    assert 'kind === "trial" ? t("verify.continuePrivat")' in page  # «Fortsæt til din prøveperiode» → the plan
+
+
+def test_jp01_bad_next_is_dropped_never_an_open_redirect(api, pv):
+    from app.modules.identity.privat_context import safe_next
+
+    for bad in ("https://evil.example/privat", "//evil.example", "/\\evil.example", "/app", "/opsaetning/1",
+                "/privat/../app", "/privatx", "/privat/ x", "javascript:alert(1)"):
+        assert safe_next(bad) is None, bad
+    for ok in ("/privat", "/privat/dag", PLAN_NEXT, "/g/ABCDEFGH", "/i/ABCDEFGH", "/privat/invitation/AB?accept=1"):
+        assert safe_next(ok) == ok, ok
+    tok = privat_signup(api, "ny3@testmail.dk", next_="//evil.example/privat")
+    link = verify_from_mailbox(api, tok)
+    assert "evil" not in link and link_next(link) is None
 
 
 # --------------------------------------------------------------------------- F-JP-02  password reset → Erhverv
 
-@pytest.mark.xfail(strict=True, reason="F-JP-02: a Privat user's password-reset mail is the blue Erhverv mail")
 def test_jp02_reset_mail_is_privat(api, pv, mails):
     tok = privat_signup(api, "glemsom@testmail.dk")
     verify_from_mailbox(api, tok)
@@ -154,22 +186,43 @@ def test_jp02_reset_mail_is_privat(api, pv, mails):
     runner.drain()
     ev, mail = next((e, m) for e, m in mails if e.event_type == "email.password_reset")
     assert_privat_mail(mail, "reset")
+    assert "for=privat" in mail.button_url
 
 
-@pytest.mark.xfail(strict=True, reason="F-JP-02: after a reset (and any login without ?next) a Privat user is sent to "
-                                       "/app → /opsaetning/1 (Erhverv set-up) – nothing routes a personal-only account "
-                                       "to /privat")
-def test_jp02_after_reset_a_privat_user_lands_in_privat():
-    reset = (WEB_APP / "password" / "reset" / "page.tsx").read_text(encoding="utf-8")
+def test_jp02_erhverv_reset_mail_is_unchanged(api, mails):
+    tok = api.user("ejer@testmail.dk")
+    api.workspace(tok, "Hansen VVS")
+    assert api.c.post(f"{api.base}/auth/password/forgot", json={"email": "ejer@testmail.dk"}).status_code == 202
+    runner.drain()
+    ev, mail = next((e, m) for e, m in mails if e.event_type == "email.password_reset")
+    assert mail.audience == "erhverv" and "for=privat" not in mail.button_url
+
+def test_jp02_after_reset_a_privat_user_lands_in_privat(api, pv):
+    """Login without ?next: the API's user.home decides – /privat/dag for a Privat-only account, /app otherwise; the
+    login page and /app (requireWorkspace) both follow it."""
+    tok = pv.account("pia@testmail.dk")
+    r = api.c.post(f"{api.base}/auth/login", json={"email": "pia@testmail.dk", "password": "CorrectHorse!42"})
+    assert r.json()["user"]["home"] == "/privat/dag"
+    assert api.c.get(f"{api.base}/auth/me", headers=api.h(tok)).json()["home"] == "/privat/dag"
+    # a fresh Privat sign-up without a personal workspace yet is Privat too
+    privat_signup(api, "ny@testmail.dk")
+    r = api.c.post(f"{api.base}/auth/login", json={"email": "ny@testmail.dk", "password": PASSWORD})
+    assert r.json()["user"]["home"] == "/privat/dag"
+    # an Erhverv owner – and a Privat user who also has a company – go to /app
+    api.workspace(tok, "Pias Frisør")
+    assert api.c.get(f"{api.base}/auth/me", headers=api.h(tok)).json()["home"] == "/app"
+    owner = api.user("ejer@testmail.dk")
+    assert api.c.get(f"{api.base}/auth/me", headers=api.h(owner)).json()["home"] == "/app"
+    login = (WEB_APP / "login" / "page.tsx").read_text(encoding="utf-8")
+    assert "safeNext(params.get(\"next\"), home)" in login
     ws = src("lib/workspace.server.ts")
-    # either the reset page keeps the Privat context, or /app sends a person without a business workspace to /privat
-    assert "privat" in reset or "/privat" in ws
+    assert 'me?.home === "/privat/dag"' in ws and 'redirect("/opsaetning/1")' not in ws
+    reset = (WEB_APP / "password" / "reset" / "page.tsx").read_text(encoding="utf-8")
+    assert "isPrivatContext(params)" in reset and "/login?reset=1${nextQuery(next)}" in reset
 
 
 # --------------------------------------------------------------------------- F-JP-03  funnel welcome mail
 
-@pytest.mark.xfail(strict=True, reason="F-JP-03: the Privat quiz-funnel's welcome mail («Vælg adgangskode») is the "
-                                       "blue Erhverv mail, Danish only, and its link goes through the Erhverv reset")
 def test_jp03_funnel_welcome_mail_is_privat(api, pv, db, mails, monkeypatch):
     from app.modules.funnel import service as funnel
 
@@ -182,51 +235,114 @@ def test_jp03_funnel_welcome_mail_is_privat(api, pv, db, mails, monkeypatch):
     runner.drain()
     ev, mail = next((e, m) for e, m in mails if (e.dedupe_key or "").startswith("funnel-welcome:"))
     assert_privat_mail(mail, "funnel welcome")
+    assert "for=privat" in mail.button_url and link_next(mail.button_url) == "/privat/dag"
 
 
-@pytest.mark.xfail(strict=True, reason="F-JP-03: a Privat funnel account has signup_intent NULL, so a later «Send nyt "
-                                       "link» gives the Erhverv verify mail («AI-receptionist», → /opsaetning/1)")
 def test_jp03_funnel_account_resend_verify_is_privat(api, pv, db, mails):
-    from app.modules.funnel import service as funnel
+    """A Privat funnel account is marked Privat, and «Send nyt link» gives the Privat verify mail – also for an older
+    funnel account from before the fix (signup_intent NULL, but a personal workspace)."""
+    from datetime import UTC, datetime
+    from types import SimpleNamespace
 
-    src_ = Path(funnel.__file__).read_text(encoding="utf-8")
-    m = re.search(r'signup_intent="reception" if d\.kind == "erhverv" else (\w+)', src_)
-    assert m is None or m.group(1) != "None", "funnel privat account gets signup_intent=None"
+    from app.core.security import hash_password
+    from app.modules.funnel import service as funnel
+    from app.modules.privat import deps
+
+    d = SimpleNamespace(kind="privat", hook=None, gate={"email": "quiz2@testmail.dk", "name": "Quiz To"})
+    monkey_welcome = funnel._welcome
+    try:
+        funnel._welcome = lambda *a, **k: None
+        u = funnel._new_user(db, d, None)
+    finally:
+        funnel._welcome = monkey_welcome
+    assert u.signup_intent == "privat"
+    old = User(email="gammel@testmail.dk", email_normalized="gammel@testmail.dk", password_hash=hash_password(PASSWORD),
+               display_name="Gammel Konto", signup_intent=None, interface_language="da", phone_verified_at=datetime.now(UTC))
+    db.add(old)
+    db.flush()
+    deps.ensure_account(db, old)
+    db.commit()
+    tok = api.login("gammel@testmail.dk", PASSWORD)
+    assert api.c.post(f"{api.base}/auth/verify-email/resend", headers=api.h(tok)).status_code == 202
+    runner.drain()
+    ev, mail = next((e, m) for e, m in mails if e.event_type == "email.verify_address")
+    assert "for=privat" in ev.payload["link"]
+    assert_privat_mail(mail, "resend verify (funnel account)")
 
 
 # --------------------------------------------------------------------------- F-JP-04  /g group link → Erhverv sign-up
 
-@pytest.mark.xfail(strict=True, reason="F-JP-04: /signup and /login treat only ?next=/privat… as Privat; the group "
-                                       "link /g/<code> sends people to the Erhverv sign-up (intent=reception)")
-def test_jp04_group_link_login_is_privat():
-    signup = (WEB_APP / "signup" / "page.tsx").read_text(encoding="utf-8")
-    m = re.search(r"const isPrivat = \(next: string \| null\) => (.+);", signup)
-    assert m and "/g/" in m.group(1), m.group(1) if m else "isPrivat not found"
+def test_jp04_group_link_login_is_privat(api, pv, mails):
+    """/g/ and /i/ are Privat in the one shared rule (web/src/lib/privat-next.ts, used by signup, login, verify, forgot
+    and reset) and in the API; a sign-up from a group link gets the Privat mail and returns to the group."""
+    lib = src("lib/privat-next.ts")
+    rule = re.search(r"const PRIVAT_NEXT = (/.+/);", lib).group(1)
+    assert "g\\/" in rule and "i\\/" in rule, rule
+    for page in ("signup", "login", "verify-email"):
+        assert "privatNext(" in (WEB_APP / page / "page.tsx").read_text(encoding="utf-8"), page
+    tok = privat_signup(api, "gruppe@testmail.dk", next_="/g/ABCDEFGH")
+    link = verify_from_mailbox(api, tok)
+    assert link_next(link) == "/g/ABCDEFGH"
+    ev, mail = next((e, m) for e, m in mails if e.event_type == "email.verify_address")
+    assert_privat_mail(mail, "verify from /g/")
+    assert "prøveperiode" not in mail.text()
 
 
 # --------------------------------------------------------------------------- F-JP-05  invitee loses the invitation
 
-@pytest.mark.xfail(strict=True, reason="F-JP-05: a new person who signs up from a shared list/wishlist gets 403 "
-                                       "email_not_verified on «Åbn listen», and the verify link then goes to the trial "
-                                       "page (/privat/konto), not back to the list")
-def test_jp05_invitee_can_open_the_list_after_signup(api, pv):
-    anna = pv.account("anna@testmail.dk", "Anna Ejer")
-    tid = pv.make_list(anna, "Lav en ønskeliste med bog")
-    r = api.post(anna, f"/privat/tasks/{tid}/share", {"mode": "wishlist", "role": "editor"})
-    assert r.status_code == 200, r.text
-    inv = r.json()
-    ole = privat_signup(api, "ole@testmail.dk", "Ole Gæst")
-    r = api.post(ole, f"/privat/invites/{inv['token']}/accept")
-    if r.status_code == 403:
-        link = verify_from_mailbox(api, ole)
-        assert "invitation" in link, f"verify link loses the invitation: {link}"
-    else:
+def test_jp05_invitee_can_open_the_list_after_signup(api, pv, client, mails):
+    """The whole way for a new person a list was shared with (Fürster's decision: a FREE account, no trial, no plan):
+    invitation → «Opret gratis konto» (/signup?next=/privat/invitation/<code>?accept=1) → Privat verify page (no accept
+    before the e-mail) → the mail («…åbne listen», never «prøveperiode») → «Åbn listen» = next → accept → the list.
+    No 403 anywhere, never /privat/konto."""
+    statuses: list[tuple[str, int]] = []
+    real = client.request
+
+    def spy(method, url, *a, **k):
+        r = real(method, url, *a, **k)
+        statuses.append((f"{method} {url}", r.status_code))
+        return r
+
+    client.request = spy
+    try:
+        anna = pv.account("anna@testmail.dk", "Anna Ejer")
+        tid = pv.make_list(anna, "Lav en ønskeliste med bog")
+        r = api.post(anna, f"/privat/tasks/{tid}/share", {"mode": "wishlist", "role": "editor"})
         assert r.status_code == 200, r.text
+        code = r.json()["short_code"]
+        assert api.c.get(f"{api.base}/privat/invites/by-code/{code}").status_code == 200  # the public invitation page
+        nxt = f"/privat/invitation/{code}?accept=1"
+        ole = privat_signup(api, "ole@testmail.dk", "Ole Gæst", next_=nxt)
+        link = verify_from_mailbox(api, ole)
+        assert "for=privat" in link and link_next(link) == nxt, link
+        ev, mail = next((e, m) for e, m in mails if e.event_type == "email.verify_address"
+                        and e.payload["to_email"] == "ole@testmail.dk")
+        assert_privat_mail(mail, "invitee verify")
+        assert "prøveperiode" not in mail.text().lower() and "åbne listen" in mail.text(), mail.text()
+        r = api.post(ole, f"/privat/invites/by-code/{code}/accept")
+        assert r.status_code == 200, r.text
+        task_id = r.json()["id"]
+        r = api.get(ole, f"/privat/tasks/{task_id}")
+        assert r.status_code == 200 and [i["text"] for i in r.json()["items"]] == ["Bog"], r.text
+    finally:
+        client.request = real
+    assert not [s for s in statuses if s[1] == 403], statuses
+    # the web half: free-account CTA on the invitation, signup waits on the verify page, «Fortsæt» goes to next
+    pub = src("components/privat/public.tsx")
+    assert 't("invitation.signupFree")' in pub and "/verify-email?for=privat&next=" in pub
+    verify = (WEB_APP / "verify-email" / "page.tsx").read_text(encoding="utf-8")
+    assert 'kind === "list" ? t("verify.continueList")' in verify
+    signup = (WEB_APP / "signup" / "page.tsx").read_text(encoding="utf-8")
+    assert 't("signup.freeSubtitle")' in signup
+    for lang in ("da", "en", "de", "es", "fr", "it", "no", "sv"):
+        auth = json.loads((WEB_APP.parent / "i18n" / "messages" / lang / "auth.json").read_text(encoding="utf-8"))
+        assert auth["signup"]["freeSubtitle"] and auth["verify"]["subtitlePrivatList"], lang
+        assert not re.search(r"14|Plus|prøve|trial|Test|prueba|essai|prova|prøve|provperiod",
+                             auth["signup"]["freeSubtitle"]), (lang, auth["signup"]["freeSubtitle"])
 
 
 # --------------------------------------------------------------------------- F-JP-06  service mails in Erhverv layout
 
-@pytest.mark.xfail(strict=True, reason="F-JP-06: the reminder mail is the blue Erhverv layout")
 def test_jp06_reminder_mail_is_privat(api, pv, db, mails):
     from datetime import UTC, datetime
 
@@ -242,7 +358,6 @@ def test_jp06_reminder_mail_is_privat(api, pv, db, mails):
     assert_privat_mail(mail, "reminder")
 
 
-@pytest.mark.xfail(strict=True, reason="F-JP-06: «X har sagt ja til din invitation» is the blue Erhverv layout")
 def test_jp06_invite_accepted_mail_is_privat(api, pv, mails):
     anna = pv.account("anna@testmail.dk", "Anna Ejer")
     ole = pv.user("ole@testmail.dk", "Ole Berg")
@@ -254,7 +369,6 @@ def test_jp06_invite_accepted_mail_is_privat(api, pv, mails):
     assert_privat_mail(mail, "invite accepted")
 
 
-@pytest.mark.xfail(strict=True, reason="F-JP-06: call outcomes and task notices (notify_owner) are the blue Erhverv layout")
 def test_jp06_task_notice_mail_is_privat(api, pv, db, mails):
     from app.models import PrivateTask
     from app.modules.privat import service
@@ -270,7 +384,6 @@ def test_jp06_task_notice_mail_is_privat(api, pv, db, mails):
     assert_privat_mail(mail, "task notice")
 
 
-@pytest.mark.xfail(strict=True, reason="F-JP-06: tpl.Email(...) under app/modules/privat without audience='privat'")
 def test_jp06_no_privat_mail_without_audience():
     offenders = []
     for p in sorted((ROOT / "app" / "modules" / "privat").glob("*.py")):
@@ -284,7 +397,6 @@ def test_jp06_no_privat_mail_without_audience():
 
 # --------------------------------------------------------------------------- F-JP-07  language
 
-@pytest.mark.xfail(strict=True, reason="F-JP-07: Privat service mails are Danish whatever the user's language")
 def test_jp07_reminder_mail_follows_user_language(api, pv, db, mails):
     from datetime import UTC, datetime
 
@@ -301,7 +413,6 @@ def test_jp07_reminder_mail_follows_user_language(api, pv, db, mails):
     assert mail.lang == "en" and not mail.subject.startswith("Påmindelse"), (mail.lang, mail.subject)
 
 
-@pytest.mark.xfail(strict=True, reason="F-JP-07: the SMS code is Danish for every language")
 def test_jp07_sms_code_follows_user_language(api, pv, db):
     from app.modules.integrations.connectors.fakes import WORLD
 
@@ -315,7 +426,6 @@ def test_jp07_sms_code_follows_user_language(api, pv, db):
 
 # --------------------------------------------------------------------------- F-JP-08  no next action
 
-@pytest.mark.xfail(strict=True, reason="F-JP-08: reminder mail has no button/link – no next action")
 def test_jp08_reminder_mail_has_a_next_action(api, pv, db, mails):
     from datetime import UTC, datetime
 
@@ -330,7 +440,6 @@ def test_jp08_reminder_mail_has_a_next_action(api, pv, db, mails):
     assert mail.button_url and "/privat/" in mail.button_url
 
 
-@pytest.mark.xfail(strict=True, reason="F-JP-08: «X har sagt ja» mail has no link to the list (push url is None too)")
 def test_jp08_invite_accepted_has_a_next_action(api, pv, mails):
     anna = pv.account("anna@testmail.dk", "Anna Ejer")
     ole = pv.user("ole@testmail.dk", "Ole Berg")
@@ -381,11 +490,11 @@ def test_jp09_portal_is_privat(api, pv, monkeypatch):
 
 # --------------------------------------------------------------------------- F-JP-10  /verify-email from the Privat app
 
-@pytest.mark.xfail(strict=True, reason="F-JP-10: «Bekræft din e-mail» in the Privat app links to /verify-email without "
-                                       "?for=privat – Erhverv frame and «arbejdsrummet … oprette virksomheder»")
 def test_jp10_privat_banner_links_to_privat_verify_page():
     shell = src("components/privat/shell.tsx")
-    assert 'href="/verify-email"' not in shell
+    assert 'href="/verify-email"' not in shell and "`/verify-email?for=privat${nextQuery(" in shell
+    page = (WEB_APP / "verify-email" / "page.tsx").read_text(encoding="utf-8")
+    assert "isPrivatContext(params)" in page  # ?for=privat or a Privat next → never the workspace/company subtitle
 
 
 # --------------------------------------------------------------------------- F-JP-11  404 / error pages
@@ -396,6 +505,17 @@ def test_jp11_privat_has_its_own_404_and_error_page():
     have = [p for p in ("privat/not-found.tsx", "not-found.tsx") if (WEB_APP / p).exists()]
     err = [p for p in ("privat/error.tsx", "error.tsx", "global-error.tsx") if (WEB_APP / p).exists()]
     assert have and err, (have, err)
+    # unknown /privat/… addresses reach the Privat 404 (catch-all → notFound()), and both pages are i18n, orange, with
+    # a way back
+    assert "notFound()" in (WEB_APP / "privat" / "[...rest]" / "page.tsx").read_text(encoding="utf-8")
+    frame = src("components/privat/not-found-frame.tsx")
+    assert 'data-theme="privat"' in frame
+    for f in ("privat/not-found.tsx", "privat/error.tsx"):
+        page = (WEB_APP / f).read_text(encoding="utf-8")
+        assert 't("problem.' in page and "/privat/dag" in page, f
+    for lang in ("da", "en", "de", "es", "fr", "it", "no", "sv"):
+        msgs = json.loads((WEB_APP.parent / "i18n" / "messages" / lang / "privat.json").read_text(encoding="utf-8"))
+        assert set(msgs["problem"]) >= {"notFoundTitle", "errorTitle", "toDay", "toHome", "retry"}, lang
 
 
 # --------------------------------------------------------------------------- F-JP-12  Stripe Checkout colour
@@ -420,8 +540,6 @@ def test_jp13_ref_on_privat_landing_is_used():
 
 # --------------------------------------------------------------------------- F-JP-14  expired session pitch
 
-@pytest.mark.xfail(strict=True, reason="F-JP-14: a paying Privat user whose session expired sees «14 dage gratis med "
-                                       "Plus» on the login page")
 def test_jp14_expired_login_does_not_pitch_the_trial():
     login = (WEB_APP / "login" / "page.tsx").read_text(encoding="utf-8")
     assert re.search(r"expired[^\n]*privatSubtitle|privatSubtitle[^\n]*expired", login)
@@ -429,8 +547,6 @@ def test_jp14_expired_login_does_not_pitch_the_trial():
 
 # --------------------------------------------------------------------------- F-JP-15  register in the #179 texts
 
-@pytest.mark.xfail(strict=True, reason="F-JP-15: the #179 Privat verify texts say «du» (de/es/fr/it) inside a mail whose "
-                                       "other lines say «Sie/usted/vous/Lei»")
 def test_jp15_privat_verify_mail_keeps_one_register():
     formal = {"de": r"\bSie\b", "es": r"\b(usted|su)\b", "fr": r"\bvous\b", "it": r"\b(Lei|Suo|può)\b"}
     informal = {"de": r"\b(du|deine?)\b", "es": r"\b(tu|podrás|Confirma)\b", "fr": r"\b(ton|Confirme)\b",

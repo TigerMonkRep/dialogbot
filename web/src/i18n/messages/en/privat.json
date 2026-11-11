@@ -549,7 +549,9 @@
     "brandTitle": "{name} uses Dialogbot",
     "brandText": "– a personal assistant that makes lists, reminds you of things and calls for you.",
     "brandOffer": "Get your own: try Dialogbot Privat free for 14 days",
-    "brandCta": "Read about Dialogbot Privat"
+    "brandCta": "Read about Dialogbot Privat",
+    "signupFree": "Create a free account",
+    "verifyFirst": "Confirm your e-mail, and you can open the list."
   },
   "paywall": {
     "titleDigital": "This needs a plan",

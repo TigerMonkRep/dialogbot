@@ -549,7 +549,9 @@
     "brandTitle": "{name} använder Dialogbot",
     "brandText": "– en personlig assistent som gör listor, påminner dig om saker och ringer åt dig.",
     "brandOffer": "Skaffa din egen: prova Dialogbot Privat gratis i 14 dagar",
-    "brandCta": "Läs om Dialogbot Privat"
+    "brandCta": "Läs om Dialogbot Privat",
+    "signupFree": "Skapa ett gratiskonto",
+    "verifyFirst": "Bekräfta din e-post, så kan du öppna listan."
   },
   "paywall": {
     "titleDigital": "Det kräver en plan",

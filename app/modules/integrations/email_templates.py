@@ -218,22 +218,27 @@ def from_plain(subject: str, body: str, footer_reason: str | None = None, lang: 
 # --------------------------------------------------------------------------- the emails
 # Every builder takes `lang` (app/core/languages.py; Danish is the source). The texts live in email_texts.py.
 
-def verify(link: str, lang: str = "da", *, privat: bool = False) -> Email:
-    """`privat`: the sign-up came from Dialogbot Privat – its own words (no «AI-receptionist»), F-PK-04."""
+def verify(link: str, lang: str = "da", *, privat: bool = False, variant: str = "trial") -> Email:
+    """`privat`: the sign-up came from Dialogbot Privat – its own words (no «AI-receptionist»), F-PK-04. `variant`
+    (privat_context.next_kind): "trial" may mention the trial; "list" (a shared list or group – a free account) and
+    "other" promise no trial (F-JP-05)."""
     lang = normalize(lang)
     sfx = "_privat" if privat else ""
+    body = {"list": "verify_body_privat_list", "other": "verify_body_privat_neutral"}.get(variant, "verify_body" + sfx) \
+        if privat else "verify_body"
     return Email(
         subject=t(lang, "verify_subject"),
         preheader=t(lang, "verify_preheader"),
         heading=t(lang, "verify_heading" + sfx),
         step=1,
-        paragraphs=[t(lang, "verify_body" + sfx)],
+        paragraphs=[t(lang, body)],
         button_label=t(lang, "verify_button"), button_url=link,
         note=t(lang, "verify_note"),
         footer_reason=t(lang, "verify_footer"), lang=lang, audience="privat" if privat else "erhverv")
 
 
-def reset(link: str, lang: str = "da") -> Email:
+def reset(link: str, lang: str = "da", *, privat: bool = False) -> Email:
+    """`privat`: a Privat-only account or a reset asked for from a Privat page – the Privat layout (F-JP-02)."""
     lang = normalize(lang)
     return Email(
         subject=t(lang, "reset_subject"),
@@ -242,7 +247,7 @@ def reset(link: str, lang: str = "da") -> Email:
         paragraphs=[t(lang, "reset_body")],
         button_label=t(lang, "reset_button"), button_url=link,
         note=t(lang, "reset_note"),
-        footer_reason=t(lang, "footer_account"), lang=lang)
+        footer_reason=t(lang, "footer_account"), lang=lang, audience="privat" if privat else "erhverv")
 
 
 def invitation(workspace: str, invited_by: str, role: str, link: str, lang: str = "da") -> Email:

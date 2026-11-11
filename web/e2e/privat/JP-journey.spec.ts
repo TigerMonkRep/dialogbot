@@ -18,36 +18,41 @@ for (const width of [390, 1280]) {
     });
 
     test("F-JP-04: «Log ind» fra et gruppelink (/g/…) viser Privat-login, ikke Erhverv", async ({ page }) => {
-      test.fail(true, "F-JP-04");
       await page.goto(`/login?next=${encodeURIComponent("/g/ABCDEFGH")}`);
       expect(await audienceOf(page)).toBe("privat");
     });
 
     test("F-JP-04: «Opret konto» fra et gruppelink har ingen Erhverv-produktvalg", async ({ page }) => {
-      test.fail(true, "F-JP-04");
       await page.goto(`/signup?next=${encodeURIComponent("/g/ABCDEFGH")}`);
       expect(await audienceOf(page)).toBe("privat");
       await expect(page.getByRole("combobox")).toHaveCount(0);
     });
 
     test("F-JP-10: «Bekræft din e-mail» fra Privat-appen viser ikke «arbejdsrummet»/«virksomheder»", async ({ page }) => {
-      test.fail(true, "F-JP-10");
-      await page.goto("/verify-email"); // the href in components/privat/shell.tsx AccountNotice
+      // the href in components/privat/shell.tsx AccountNotice since the fix (for=privat + the way back)
+      await page.goto(`/verify-email?for=privat&next=${encodeURIComponent("/privat/dag")}`);
+      expect(await audienceOf(page)).toBe("privat");
       await expect(page.locator("body")).not.toContainText(/arbejdsrum|virksomhed/i);
     });
 
     test("F-JP-02: nulstil adgangskode → login uden ?next viser Privat (ikke Erhverv)", async ({ page }) => {
-      test.fail(true, "F-JP-02");
-      await page.goto("/login?reset=1"); // where /password/reset sends everyone
+      // where /password/reset sends a Privat user since the fix (a login without next then goes by user.home)
+      await page.goto(`/login?reset=1&next=${encodeURIComponent("/privat/dag")}`);
       expect(await audienceOf(page)).toBe("privat");
     });
 
     test("F-JP-11: ukendt /privat-adresse giver en orange Privat-404 på dansk med vej tilbage", async ({ page }) => {
-      test.fail(true, "F-JP-11");
       const r = await page.goto("/privat/findes-ikke");
       expect(r?.status()).toBe(404);
       await expect(page.locator("[data-theme=privat]")).toHaveCount(1);
       await expect(page.getByRole("link", { name: /Dialogbot|forside|Min dag/i })).toBeVisible();
+    });
+
+    test("F-JP-05: invitation → «Opret gratis konto» er orange, uden prøveperiode og uden produktvalg", async ({ page }) => {
+      await page.goto(`/signup?next=${encodeURIComponent("/privat/invitation/ABCDEFGH?accept=1")}`);
+      expect(await audienceOf(page)).toBe("privat");
+      await expect(page.locator("body")).not.toContainText(/prøveperiode|14 dage|Plus/i);
+      await expect(page.getByRole("combobox")).toHaveCount(0);
     });
 
     test("/privat/offline er Privat-temaet", async ({ page }) => {

@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { BASE, within, go, APP_ROUTES, AXE, EVID, PUBLIC_ROUTES, evidence, plusUser, runAxe, settle, uniqueIp } from "./px-helpers";
+import { BASE, within, go, APP_ROUTES, AXE, EVID, PUBLIC_ROUTES, evidence, plusUser, requirePrivatStack, runAxe, settle, uniqueIp } from "./px-helpers";
 
 /** PX · i18n-a11y-qa: PC-A11Y-01/02 (axe, 44 px, tekststørrelse, sheets/fokus, toast), PC-BRAND-02 (accent #C4461A,
  *  theme-color), PC-BRAND-03 (ord over folden), PC-PWA-01 (manifest), PC-PWA-02 (offline-side), PC-SHOP-12, PC-DAY-04,
@@ -94,6 +94,7 @@ test("PC-A11Y-01 · axe + 44 px + tekst ≥16 px + 200 % zoom på alle Privat-sk
 
 test("PC-A11Y-01 · PlanSheet/sheets: fokus fanges, Escape lukker, radiogruppe", async ({ page }, info) => {
   await uniqueIp(page);
+  await requirePrivatStack(page);
   const { privatUser } = await import("../../privat/pq-helpers");
   await privatUser(page, info, "px-sheet");          // free tier: Plus-apps open the PlanSheet
   await go(page, "/privat/butik/kalender");

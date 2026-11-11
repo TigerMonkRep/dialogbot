@@ -8,8 +8,9 @@ import { DEMO_PASSWORD, latestMailLink, skipSetupGate } from "../../helpers";
 export const QA_API = process.env.QA_PRIV_API ?? "http://localhost:8100";
 export const CSRF = { "x-requested-with": "dialogbot" };
 
-export async function needsPrivatStack(request: APIRequestContext) {
-  const r = await request.get(`${QA_API}/__qa/calls`).catch(() => null);
+/** True when tests/qa/qa_privat_stack.py answers on `api` (its /__qa hooks exist only there). */
+export async function needsPrivatStack(request: APIRequestContext, api = QA_API) {
+  const r = await request.get(`${api}/__qa/calls`).catch(() => null);
   return !!r && r.ok();
 }
 

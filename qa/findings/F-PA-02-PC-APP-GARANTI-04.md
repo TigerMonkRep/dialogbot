@@ -3,7 +3,7 @@ id: F-PA-02-PC-APP-GARANTI-04
 scenario: PC-APP-GARANTI-04
 reported_by: e2e-privat (PA)
 severity: S2
-status: confirmed
+status: fixed
 owner_fix: fix-engineer
 related: []
 ---
@@ -27,3 +27,9 @@ PC-APP-GARANTI-04: «Ret overskriver i stedet for dublet». De andre husstandsap
 
 ## Forslag
 Ret, når produkt+butik+købsdato er ens (eller produkt+butik inden for få dage). To ens maskiner må gerne kræve, at brugeren siger det.
+
+## Rettelse (udfyldes af fix-engineer)
+- Rettelse: warranty.add retter et eksisterende køb med samme ting, butik og købsdato i stedet for at lave en ny række (samme id, så der heller ikke kommer en ekstra påmindelse).
+- Filer: app/modules/privat/warranty.py
+- Test: tests/qa/test_qa_pd_apps_a.py::test_pa_04_garanti_same_purchase_twice_is_two_rows (grøn)
+- Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)

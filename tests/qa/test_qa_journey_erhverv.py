@@ -296,8 +296,6 @@ def test_F_JE_07_api_side_language_is_respected_when_sent(api, client, db):
     assert _events(db, "email.verify_address", "web@fjordgulv.example")[-1].payload["lang"] == "da"
 
 
-@pytest.mark.xfail(strict=True, reason="F-JE-08: Erhverv-quiz-funnel: velkomstmailen er hårdkodet dansk, og kontoen "
-                                       "oprettes altid med interface_language «da»")
 def test_F_JE_08_erhverv_funnel_welcome_follows_language(api, client, db):
     from app.modules.funnel import service as funnel
 
@@ -312,8 +310,6 @@ def test_F_JE_08_erhverv_funnel_welcome_follows_language(api, client, db):
     assert m.lang == "de" and "Velkommen" not in m.subject, m.subject
 
 
-@pytest.mark.xfail(strict=True, reason="F-JE-09: funnel-bruger får aldrig en bekræftelsesmail; «Vælg adgangskode»-linket "
-                                       "(beviser e-mailen) markerer den ikke bekræftet → gult «Bekræft e-mail»-banner bliver")
 def test_F_JE_09_funnel_choose_password_link_verifies_email(api, client, db):
     from app.modules.funnel import service as funnel
 
@@ -332,16 +328,11 @@ def test_F_JE_09_funnel_choose_password_link_verifies_email(api, client, db):
     assert r.json()["email_verified"] is True
 
 
-@pytest.mark.xfail(strict=True, reason="F-JE-10: inviteret medarbejder sendes efter accept til /opsaetning/1 "
-                                       "(ejerens virksomhedsopsætning) i stedet for /app")
 def test_F_JE_10_invite_accept_goes_to_the_app():
     src = read("web/src/app/invite/[token]/accept.tsx")
     assert 'router.push("/opsaetning/1")' not in src
 
 
-@pytest.mark.xfail(strict=True, reason="F-JE-10: inviteret medarbejders bekræftelsesmail lover «sæt din AI-receptionist "
-                                       "op», og «Fortsæt» fører til opsætningen (opretter ny virksomhed, hvis invitationen "
-                                       "endnu ikke er accepteret)")
 def test_F_JE_10b_invited_staff_verify_mail_is_not_owner_setup(api, client, db):
     tok, ws = _owner_with_workspace(api, db)
     assert api.invite(tok, ws, STAFF, "staff").status_code == 201

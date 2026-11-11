@@ -58,9 +58,20 @@ def issue_verification(db: OrmSession, user: User, *, next_: str | None = None) 
     privat = user.signup_intent == PRIVAT_INTENT or next_ is not None or pctx.is_privat_user(db, user)
     link = f"{s.frontend_base_url}/verify-email?token={raw}" + pctx.link_suffix(privat=privat, next_=next_)
     extra = {"audience": "privat", "variant": pctx.next_kind(next_)} if privat else {}
+    if not privat and _invited(db, user):  # a colleague joining a company: no «set up your AI receptionist» (F-JE-10)
+        extra = {"variant": "invited"}
     enqueue(db, event_type="email.verify_address", dedupe_key=f"verify:{user.id}:{token_digest(raw)[:16]}",
             payload={"user_id": str(user.id), "to_email": user.email, "link": link,
                      "lang": normalize_language(user.interface_language), **extra})
+
+
+def _invited(db: OrmSession, user: User) -> bool:
+    """A pending, unexpired invitation to a company for this address."""
+    from app.models import Invitation
+
+    return db.scalar(select(Invitation.id).where(Invitation.email_normalized == user.email_normalized,
+                                                 Invitation.status == "pending", Invitation.expires_at > _now())
+                     .limit(1)) is not None
 
 
 def verify_email(db: OrmSession, raw_token: str) -> User:
@@ -130,6 +141,10 @@ def reset_password(db: OrmSession, *, raw_token: str, new_password: str) -> User
     user = db.get(User, tok.user_id)
     assert user is not None
     user.password_hash = hash_password(new_password)
+    # The token was mailed to this address, so using it proves the e-mail: a funnel account (welcome mail «Vælg
+    # adgangskode») or anyone resetting before verifying is verified here – no lasting «Bekræft din e-mail» (F-JE-09).
+    if user.email_verified_at is None:
+        user.email_verified_at = _now()
     # Revoke all sessions after a reset.
     for sess in db.scalars(select(Session).where(Session.user_id == user.id, Session.revoked_at.is_(None))):
         sess.revoked_at = _now()

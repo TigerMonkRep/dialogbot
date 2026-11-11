@@ -35,6 +35,7 @@ from sqlalchemy.orm.attributes import flag_modified
 from app.config import get_settings
 from app.core.audit import record_audit
 from app.core.errors import ApiError, Conflict, Forbidden, NotFound, ValidationFailed
+from app.core.languages import normalize as normalize_language
 from app.core.outbox import enqueue
 from app.core.security import hash_password, new_token, normalize_email, token_digest
 from app.models import (
@@ -432,17 +433,8 @@ def _welcome(db: OrmSession, user: User, kind: str) -> None:
         enqueue(db, event_type="email.branded", dedupe_key=f"funnel-welcome:{user.id}",
                 payload={"user_id": str(user.id), "to_email": user.email, "email": tpl.to_payload(mail)})
         return
-    what = ("din digitale receptionist" if kind == "erhverv" else "din personlige assistent")
-    mail = tpl.Email(subject="Velkommen til Dialogbot – vælg din adgangskode",
-                     preheader="Din konto er oprettet. Vælg en adgangskode, så du kan logge ind igen.",
-                     heading=f"Velkommen, {rules.first_name(user.display_name)}",
-                     paragraphs=[f"Din konto hos Dialogbot er oprettet med {user.email}, og {what} er klar. Du er "
-                                 "logget ind nu; vælg en adgangskode, så du også kan logge ind næste gang.",
-                                 "Har du ikke oprettet en konto hos Dialogbot, kan du se bort fra denne mail – der "
-                                 "sker ikke mere."],
-                     button_label="Vælg adgangskode", button_url=link,
-                     note=f"Linket virker i {s.verification_ttl_hours} timer.",
-                     footer_reason="Du får denne e-mail, fordi der er oprettet en konto hos Dialogbot med din adresse.")
+    mail = tpl.funnel_welcome(rules.first_name(user.display_name), user.email, link, s.verification_ttl_hours,
+                              user.interface_language)  # Erhverv: the same words, in the user's language (F-JE-08)
     enqueue(db, event_type="email.branded", dedupe_key=f"funnel-welcome:{user.id}",
             payload={"user_id": str(user.id), "to_email": user.email, "email": tpl.to_payload(mail)})
 
@@ -462,12 +454,13 @@ def _existing_account(db: OrmSession, d: FunnelDraft, request_id: str | None) ->
     raise Conflict("Der findes allerede en konto med den e-mail. Log ind for at fortsætte.", code="account_exists")
 
 
-def _new_user(db: OrmSession, d: FunnelDraft, request_id: str | None) -> User:
+def _new_user(db: OrmSession, d: FunnelDraft, request_id: str | None, lang: str | None = None) -> User:
+    """`lang`: the language the visitor saw the funnel in (the web sends it) – the account and its mails follow it."""
     g = d.gate
     norm = normalize_email(g["email"])
     user = User(email=g["email"].strip(), email_normalized=norm, password_hash=hash_password(new_token()),
                 display_name=g["name"], signup_intent="reception" if d.kind == "erhverv" else PRIVAT_INTENT,
-                interface_language="da", phone_verified_at=_now(),
+                interface_language=normalize_language(lang), phone_verified_at=_now(),
                 signup_source=f"funnel:{d.kind}" + (f":{d.hook}" if d.hook else ""))
     db.add(user)
     db.flush()
@@ -479,7 +472,7 @@ def _new_user(db: OrmSession, d: FunnelDraft, request_id: str | None) -> User:
 
 
 def verify(db: OrmSession, d: FunnelDraft, *, code: str, user_agent: str | None,
-           request_id: str | None) -> tuple[dict, list]:
+           request_id: str | None, lang: str | None = None) -> tuple[dict, list]:
     """Returns (response, background jobs [(fn, *args)]) – the router runs the jobs after the commit."""
     from app.modules.identity.router import user_out
     from app.modules.identity.service import start_session
@@ -490,7 +483,7 @@ def verify(db: OrmSession, d: FunnelDraft, *, code: str, user_agent: str | None,
     if d.kind == "privat":
         _check_privat_allowed(d.gate["email"])
     _existing_account(db, d, request_id)  # never a session for an account the code does not prove (F-P2-01-X04)
-    user, created = _new_user(db, d, request_id), True
+    user, created = _new_user(db, d, request_id, lang), True
     now = _now()
     d.user_id = user.id
     d.gate = {**d.gate, "verified_at": now.isoformat()}

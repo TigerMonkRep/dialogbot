@@ -221,11 +221,11 @@ def from_plain(subject: str, body: str, footer_reason: str | None = None, lang: 
 def verify(link: str, lang: str = "da", *, privat: bool = False, variant: str = "trial") -> Email:
     """`privat`: the sign-up came from Dialogbot Privat – its own words (no «AI-receptionist»), F-PK-04. `variant`
     (privat_context.next_kind): "trial" may mention the trial; "list" (a shared list or group – a free account) and
-    "other" promise no trial (F-JP-05)."""
+    "other" promise no trial (F-JP-05). Erhverv "invited": a colleague invited to a company – no set-up (F-JE-10)."""
     lang = normalize(lang)
     sfx = "_privat" if privat else ""
     body = {"list": "verify_body_privat_list", "other": "verify_body_privat_neutral"}.get(variant, "verify_body" + sfx) \
-        if privat else "verify_body"
+        if privat else ("verify_body_invited" if variant == "invited" else "verify_body")
     return Email(
         subject=t(lang, "verify_subject"),
         preheader=t(lang, "verify_preheader"),
@@ -248,6 +248,17 @@ def reset(link: str, lang: str = "da", *, privat: bool = False) -> Email:
         button_label=t(lang, "reset_button"), button_url=link,
         note=t(lang, "reset_note"),
         footer_reason=t(lang, "footer_account"), lang=lang, audience="privat" if privat else "erhverv")
+
+
+def funnel_welcome(name: str, email: str, link: str, hours: int, lang: str = "da") -> Email:
+    """The Erhverv quiz-funnel's welcome: the account exists with a random password – «Vælg adgangskode», in the
+    user's language (F-JE-08). The Privat one is privat_mails.funnel_welcome."""
+    lang = normalize(lang)
+    return Email(subject=t(lang, "welcome_subject"), preheader=t(lang, "welcome_preheader"),
+                 heading=t(lang, "welcome_heading", name=name),
+                 paragraphs=[t(lang, "welcome_body", email=email), t(lang, "welcome_ignore")],
+                 button_label=t(lang, "welcome_button"), button_url=link, note=t(lang, "welcome_note", hours=hours),
+                 footer_reason=t(lang, "welcome_footer"), lang=lang)
 
 
 def invitation(workspace: str, invited_by: str, role: str, link: str, lang: str = "da") -> Email:
@@ -441,6 +452,8 @@ def samples() -> dict[str, Email]:
             [("Facebook · i dag kl. 15.30", "Booking"), ("Instagram · i dag kl. 16.15", "Booking"),
              ("TikTok · i dag kl. 19.00", "Booking")], "https://www.dialogbot.dk/app/operator/social"),
         "intro_mail": intro_mail("Salon Test"),
+        "funnel_welcome": funnel_welcome("Mads", "mads@example.dk", "https://www.dialogbot.dk/password/reset?token=eksempel",
+                                         48),
         "from_plain": from_plain("Gammel besked", "Hej Mads\n\nTekst her.\n\nSe det her: https://www.dialogbot.dk/x\n\n"
                                                   "Venlig hilsen\nDialogbot"),
     }

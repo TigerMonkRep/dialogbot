@@ -1,7 +1,8 @@
 """Dialogbot Privat's fixed mail and SMS texts, per language – merged into email_texts.TEXTS, so they are read with the
 same `t(lang, key)` and checked by the same test (every language, every key, the same placeholders).
 
-Danish is the source. German, French, Italian and Spanish use the formal register (Sie, vous, Lei, usted) like the rest
+It also holds the few account texts the 11/11 journey fixes gave Erhverv (the invited colleague's verify line, the
+quiz-funnel's welcome in every language – keys without the privat_ prefix). Danish is the source. German, French, Italian and Spanish use the formal register (Sie, vous, Lei, usted) like the rest
 of every mail (F-JP-15); the Nordic languages and English use the ordinary "du"/"you". Only the frame is fixed here
 (subject, button, footer, the explanatory line): a task title, a call summary or an app's own reminder line is the
 user's or the assistant's text and is shown as it is.
@@ -10,6 +11,9 @@ from __future__ import annotations
 
 PRIVAT_TEXTS: dict[str, dict[str, str]] = {
     "da": {
+        "welcome_subject": "Velkommen til Dialogbot – vælg din adgangskode",  # Erhverv quiz-funnel (F-JE-08)
+        "welcome_body": "Din konto hos Dialogbot er oprettet med {email}, og din digitale receptionist er klar. Du er logget ind nu; vælg en adgangskode, så du også kan logge ind næste gang.",
+        "verify_body_invited": "Tak, fordi du har oprettet en konto. Bekræft din e-mailadresse, så kan du tage imod invitationen.",  # Erhverv: an invited colleague (F-JE-10)
         "verify_body_privat_list": "Tak, fordi du har oprettet en konto. Bekræft din e-mail, så kan du åbne listen.",
         "verify_body_privat_neutral": "Tak, fordi du har oprettet en konto. Bekræft din e-mailadresse, så kan du "
                                       "fortsætte i Dialogbot Privat.",
@@ -55,6 +59,9 @@ PRIVAT_TEXTS: dict[str, dict[str, str]] = {
         "privat_sms_code": "Din kode til Dialogbot er {code}. Den gælder i 10 minutter.",
     },
     "en": {
+        "welcome_subject": "Welcome to Dialogbot – choose your password",  # Erhverv quiz-funnel (F-JE-08)
+        "welcome_body": "Your Dialogbot account has been created with {email}, and your digital receptionist is ready. You are logged in now; choose a password so you can also log in next time.",
+        "verify_body_invited": "Thank you for creating an account. Confirm your e-mail address, and you can accept the invitation.",  # Erhverv: an invited colleague (F-JE-10)
         "verify_body_privat_list": "Thank you for creating an account. Confirm your e-mail, and you can open the list.",
         "verify_body_privat_neutral": "Thank you for creating an account. Confirm your e-mail address, and you can "
                                       "carry on in Dialogbot Privat.",
@@ -102,6 +109,9 @@ PRIVAT_TEXTS: dict[str, dict[str, str]] = {
         "privat_sms_code": "Your Dialogbot code is {code}. It is valid for 10 minutes.",
     },
     "de": {
+        "welcome_subject": "Willkommen bei Dialogbot – wählen Sie Ihr Passwort",  # Erhverv quiz-funnel (F-JE-08)
+        "welcome_body": "Ihr Konto bei Dialogbot wurde mit {email} erstellt, und Ihre digitale Rezeption ist bereit. Sie sind jetzt angemeldet; wählen Sie ein Passwort, damit Sie sich auch beim nächsten Mal anmelden können.",
+        "verify_body_invited": "Vielen Dank, dass Sie ein Konto erstellt haben. Bestätigen Sie Ihre E-Mail-Adresse, dann können Sie die Einladung annehmen.",  # Erhverv: an invited colleague (F-JE-10)
         "verify_body_privat_list": "Vielen Dank, dass Sie ein Konto erstellt haben. Bestätigen Sie Ihre E-Mail-Adresse, dann können Sie die Liste öffnen.",
         "verify_body_privat_neutral": "Vielen Dank, dass Sie ein Konto erstellt haben. Bestätigen Sie Ihre "
                                       "E-Mail-Adresse, dann können Sie in Dialogbot Privat weitermachen.",
@@ -151,6 +161,9 @@ PRIVAT_TEXTS: dict[str, dict[str, str]] = {
         "privat_sms_code": "Ihr Code für Dialogbot ist {code}. Er gilt 10 Minuten.",
     },
     "es": {
+        "welcome_subject": "Bienvenido a Dialogbot: elija su contraseña",  # Erhverv quiz-funnel (F-JE-08)
+        "welcome_body": "Su cuenta de Dialogbot se ha creado con {email} y su recepcionista digital está lista. Ya ha iniciado sesión; elija una contraseña para poder iniciar sesión también la próxima vez.",
+        "verify_body_invited": "Gracias por crear una cuenta. Confirme su dirección de correo electrónico y podrá aceptar la invitación.",  # Erhverv: an invited colleague (F-JE-10)
         "verify_body_privat_list": "Gracias por crear una cuenta. Confirme su correo electrónico y podrá abrir la lista.",
         "verify_body_privat_neutral": "Gracias por crear una cuenta. Confirme su dirección de correo electrónico y "
                                       "podrá continuar en Dialogbot Privat.",
@@ -198,6 +211,9 @@ PRIVAT_TEXTS: dict[str, dict[str, str]] = {
         "privat_sms_code": "Su código de Dialogbot es {code}. Es válido durante 10 minutos.",
     },
     "fr": {
+        "welcome_subject": "Bienvenue chez Dialogbot – choisissez votre mot de passe",  # Erhverv quiz-funnel (F-JE-08)
+        "welcome_body": "Votre compte Dialogbot a été créé avec {email}, et votre réceptionniste numérique est prête. Vous êtes connecté ; choisissez un mot de passe pour pouvoir aussi vous connecter la prochaine fois.",
+        "verify_body_invited": "Merci d'avoir créé un compte. Confirmez votre adresse e-mail pour accepter l'invitation.",  # Erhverv: an invited colleague (F-JE-10)
         "verify_body_privat_list": "Merci d'avoir créé un compte. Confirmez votre adresse e-mail pour ouvrir la liste.",
         "verify_body_privat_neutral": "Merci d'avoir créé un compte. Confirmez votre adresse e-mail pour continuer "
                                       "dans Dialogbot Privat.",
@@ -245,6 +261,9 @@ PRIVAT_TEXTS: dict[str, dict[str, str]] = {
         "privat_sms_code": "Votre code Dialogbot est {code}. Il est valable 10 minutes.",
     },
     "it": {
+        "welcome_subject": "Benvenuto in Dialogbot – scelga la Sua password",  # Erhverv quiz-funnel (F-JE-08)
+        "welcome_body": "Il Suo account Dialogbot è stato creato con {email} e il Suo receptionist digitale è pronto. Ha già effettuato l'accesso; scelga una password per poter accedere anche la prossima volta.",
+        "verify_body_invited": "Grazie per aver creato un account. Confermi il Suo indirizzo e-mail per accettare l'invito.",  # Erhverv: an invited colleague (F-JE-10)
         "verify_body_privat_list": "Grazie per aver creato un account. Confermi il Suo indirizzo e-mail per aprire la lista.",
         "verify_body_privat_neutral": "Grazie per aver creato un account. Confermi il Suo indirizzo e-mail per "
                                       "continuare in Dialogbot Privat.",
@@ -292,6 +311,9 @@ PRIVAT_TEXTS: dict[str, dict[str, str]] = {
         "privat_sms_code": "Il Suo codice Dialogbot è {code}. È valido per 10 minuti.",
     },
     "no": {
+        "welcome_subject": "Velkommen til Dialogbot – velg passordet ditt",  # Erhverv quiz-funnel (F-JE-08)
+        "welcome_body": "Kontoen din hos Dialogbot er opprettet med {email}, og den digitale resepsjonisten din er klar. Du er logget inn nå; velg et passord så du også kan logge inn neste gang.",
+        "verify_body_invited": "Takk for at du har opprettet en konto. Bekreft e-postadressen din, så kan du takke ja til invitasjonen.",  # Erhverv: an invited colleague (F-JE-10)
         "verify_body_privat_list": "Takk for at du har opprettet en konto. Bekreft e-posten din, så kan du åpne listen.",
         "verify_body_privat_neutral": "Takk for at du har opprettet en konto. Bekreft e-postadressen din, så kan du "
                                       "fortsette i Dialogbot Privat.",
@@ -338,6 +360,9 @@ PRIVAT_TEXTS: dict[str, dict[str, str]] = {
         "privat_sms_code": "Koden din til Dialogbot er {code}. Den gjelder i 10 minutter.",
     },
     "sv": {
+        "welcome_subject": "Välkommen till Dialogbot – välj ditt lösenord",  # Erhverv quiz-funnel (F-JE-08)
+        "welcome_body": "Ditt konto hos Dialogbot har skapats med {email}, och din digitala receptionist är redo. Du är inloggad nu; välj ett lösenord så att du kan logga in nästa gång också.",
+        "verify_body_invited": "Tack för att du har skapat ett konto. Bekräfta din e-postadress, så kan du tacka ja till inbjudan.",  # Erhverv: an invited colleague (F-JE-10)
         "verify_body_privat_list": "Tack för att du har skapat ett konto. Bekräfta din e-post, så kan du öppna listan.",
         "verify_body_privat_neutral": "Tack för att du har skapat ett konto. Bekräfta din e-postadress, så kan du "
                                       "fortsätta i Dialogbot Privat.",

@@ -13,7 +13,8 @@
     "login": "Se connecter",
     "try": "Essayer",
     "menu": "Menu",
-    "close": "Fermer le menu"
+    "close": "Fermer le menu",
+    "signup": "Inscrivez-vous"
   },
   "hero": {
     "step": "Écoutez-le d'abord",
@@ -26,7 +27,8 @@
     "cta": "Essayez-le – il vous appelle",
     "watch": "Voir comment",
     "note": "2 minutes. Sans inscription, sans carte.",
-    "listen": "Voilà comment il sonne"
+    "listen": "Voilà comment il sonne",
+    "signupCta": "Inscrivez votre entreprise"
   },
   "phone": {
     "alt": "Exemple d'un appel que Dialogbot prend pour un menuisier : le client appelle, Dialogbot répond, trouve un créneau mardi à 9 h et le réserve.",

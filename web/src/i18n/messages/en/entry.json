@@ -13,7 +13,8 @@
     "login": "Log in",
     "try": "Try it",
     "menu": "Menu",
-    "close": "Close menu"
+    "close": "Close menu",
+    "signup": "Sign up"
   },
   "hero": {
     "step": "Hear it first",
@@ -26,7 +27,8 @@
     "cta": "Try it – it calls you",
     "watch": "See how",
     "note": "2 minutes. No sign-up, no card.",
-    "listen": "This is how it sounds"
+    "listen": "This is how it sounds",
+    "signupCta": "Sign up your business"
   },
   "phone": {
     "alt": "Example of a call Dialogbot takes for a carpenter: the customer calls, Dialogbot answers, finds a slot on Tuesday at 9 and books it.",

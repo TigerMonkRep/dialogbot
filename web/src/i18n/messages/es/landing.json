@@ -45,6 +45,8 @@
     "ctaTitle": "Escuche a Dialogbot atender el teléfono, en su propio teléfono",
     "ctaText": "Cuente al chat cómo se llama su empresa y a qué se dedica, y el asistente le llamará para mostrarle cómo atendería el teléfono por usted.",
     "callMe": "Llámeme ahora",
+    "signupCta": "Regístrate y empieza ya",
+    "ctaSignupText": "También puedes registrarte ya, las 24 horas, sin esperar una llamada.",
     "orWrite": "O escriba a ",
     "priceLine": ". {pMonthly}/mes · IVA no incluido. Sin permanencia."
   },

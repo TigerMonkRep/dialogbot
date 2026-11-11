@@ -13,7 +13,8 @@
     "login": "Iniciar sesión",
     "try": "Pruébelo",
     "menu": "Menú",
-    "close": "Cerrar el menú"
+    "close": "Cerrar el menú",
+    "signup": "Regístrate"
   },
   "hero": {
     "step": "Escúchelo primero",
@@ -26,7 +27,8 @@
     "cta": "Pruébelo – le llama a usted",
     "watch": "Vea cómo",
     "note": "2 minutos. Sin registro, sin tarjeta.",
-    "listen": "Así suena"
+    "listen": "Así suena",
+    "signupCta": "Registra tu empresa"
   },
   "phone": {
     "alt": "Ejemplo de una llamada que Dialogbot atiende para un carpintero: el cliente llama, Dialogbot responde, encuentra una hora el martes a las 9 y la reserva.",

@@ -22,7 +22,8 @@
     "knowledge": "Risorse",
     "byIndustry": "Receptionist AI per il suo settore",
     "skip": "Vai al contenuto",
-    "tagline": "La tua receptionist IA – in italiano, 24 ore su 24. Risponde al telefono, prenota appuntamenti e raccoglie richieste quando non puoi."
+    "tagline": "La tua receptionist IA – in italiano, 24 ore su 24. Risponde al telefono, prenota appuntamenti e raccoglie richieste quando non puoi.",
+    "signupCta": "Registrati"
   },
   "audience": {
     "business": "Per le aziende – Dialogbot Erhverv",

@@ -437,6 +437,16 @@ def run_schedules() -> None:
             db.rollback()
             log.warning("privat.birthdays_failed", error=f"{type(exc).__name__}: {exc}")
     with get_session_factory()() as db:
+        try:  # demo calls asked for outside the calling hours: Peter rings when they open
+            from app.modules.sales.service import place_due
+
+            n = place_due(db)
+            if n:
+                log.info("sales.demo_calls_placed_from_queue", count=n)
+        except Exception as exc:  # noqa: BLE001
+            db.rollback()
+            log.warning("sales.demo_queue_failed", error=f"{type(exc).__name__}: {exc}")
+    with get_session_factory()() as db:
         try:  # quiz-funnel drafts nobody verified within seven days
             from app.modules.funnel.service import purge_expired
 

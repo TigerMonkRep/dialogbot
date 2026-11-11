@@ -93,10 +93,10 @@ def test_web_request_calls_with_consent_and_limits(client, sales, db):
     # honeypot: same answer, nothing stored, nobody called
     assert _web(client, phone="21222324", website="http://spam").json() == {"status": "calling"}
     assert db.query(DemoCall).count() == 1 and len(sales["calls"]) == 1
-    # outside calling hours
+    # outside calling hours: queued for the next opening, never refused (tests/test_sales_demo_calls_24_7.py)
     sales["clock"][0] = MON_22
-    late = _web(client, phone="21222324")
-    assert late.status_code == 409 and late.json()["code"] == "demo_closed"
+    late = _web(client, phone="21222324", consent_version=service.CONSENT_VERSION_WEB_LATER)
+    assert late.status_code == 202 and late.json()["status"] == "scheduled" and len(sales["calls"]) == 1
 
 
 def test_do_not_call_is_kept_secret_and_global_cap(client, sales, db, monkeypatch):

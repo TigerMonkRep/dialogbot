@@ -14,7 +14,12 @@ workspace's inbound number is the public demo number. Numbers on its do-not-call
 "ring ikke igen" adds the number to it.
 
 Abuse limits for the public door: Danish numbers only (no premium-rate ranges), one web request per number per
-24 hours, a global cap per hour, and only inside the calling hours.
+24 hours and a global cap per hour.
+
+The calling hours (SALES_CALL_FROM/SALES_CALL_TO, Copenhagen time) only decide WHEN Peter rings, never whether the
+visitor gets anywhere: outside them a request is queued (status `scheduled`, `scheduled_for` = the next opening) with
+a consent text that says so, and the worker (`place_due`) dials the queue when the hours open. Sign-up never waits for
+a call (S0 «Erhverv døgnåbent»).
 """
 from __future__ import annotations
 
@@ -38,6 +43,7 @@ DK_NUMBER = re.compile(r"^\+45[2-9]\d{7}$")
 PREMIUM = re.compile(r"^\+4590")  # 90xx xxxx: overtakseret
 CONSENT_VERSION_WEB = "demo-call-web-v2"  # v2: names Peter as the caller
 CONSENT_VERSION_SELLER = "demo-call-seller-v2"
+CONSENT_VERSION_WEB_LATER = "demo-call-web-later-v1"  # outside the calling hours: Peter rings when they open
 CONSENT_TEXT_WEB = (f"Ja tak, {script.AGENT_NAME} fra Dialogbot, en digital assistent, må ringe mig op på dette nummer nu "
                     "og vise, hvordan Dialogbot tager telefonen. Opkaldet bliver skrevet ned, og en medarbejder fra "
                     "Dialogbot må kontakte mig bagefter om det, vi talte om.")
@@ -101,21 +107,56 @@ def problem(db: OrmSession) -> str | None:
     return None
 
 
+SIGNUP_PATH = "/signup?intent=reception"  # Erhverv self-service sign-up: open day and night, no call needed first
+SCHEDULED_STALE_AFTER = timedelta(hours=12)  # a queued call the worker could not place in time is dropped, not rung
+
+
 def hours() -> tuple[time, time]:
+    """The calling hours. A value that is not a time counts as 00:00, and from == to means always open – so a broken
+    or odd setting can make Peter ring at other times, but never closes anything."""
     s = get_settings()
-    return time.fromisoformat(s.sales_call_from), time.fromisoformat(s.sales_call_to)
+    try:
+        return time.fromisoformat((s.sales_call_from or "").strip()), time.fromisoformat((s.sales_call_to or "").strip())
+    except ValueError:
+        return time(0, 0), time(0, 0)
 
 
 def in_hours(now: datetime) -> bool:
     start, end = hours()
-    return start <= now.astimezone(TZ).time() < end
+    t = now.astimezone(TZ).time()
+    if start == end:
+        return True
+    if start < end:
+        return start <= t < end
+    return t >= start or t < end  # a window over midnight, e.g. 20:00–08:00
+
+
+def next_open(now: datetime) -> datetime:
+    """`now` when Peter may ring now, otherwise the next opening (Copenhagen time, DST-safe), in UTC."""
+    if in_hours(now):
+        return now
+    start, _ = hours()
+    local = now.astimezone(TZ)
+    day = local.date() if local.time() < start else local.date() + timedelta(days=1)
+    return datetime.combine(day, start, tzinfo=TZ).astimezone(UTC)
+
+
+def consent_text_later() -> str:
+    start, _ = hours()
+    return (f"Ja tak, {script.AGENT_NAME} fra Dialogbot, en digital assistent, må ringe mig op på dette nummer, når "
+            f"Dialogbot åbner for opkald igen (fra kl. {start:%H:%M}), og vise, hvordan Dialogbot tager telefonen. "
+            "Opkaldet bliver skrevet ned, og en medarbejder fra Dialogbot må kontakte mig bagefter om det, vi talte om.")
 
 
 def info(db: OrmSession) -> dict:
     start, end = hours()
-    return {"available": problem(db) is None, "demo_number": demo_number(db), "open_now": in_hours(_now()),
+    now = _now()
+    open_now = in_hours(now)
+    return {"available": problem(db) is None, "demo_number": demo_number(db), "open_now": open_now,
+            "next_open": None if open_now else next_open(now).isoformat(), "signup_url": SIGNUP_PATH,
             "hours": {"from": start.strftime("%H:%M"), "to": end.strftime("%H:%M")},
-            "consent_text": CONSENT_TEXT_WEB, "consent_version": CONSENT_VERSION_WEB,
+            "consent_text": CONSENT_TEXT_WEB if open_now else consent_text_later(),
+            "consent_version": CONSENT_VERSION_WEB if open_now else CONSENT_VERSION_WEB_LATER,
             "agent": script.AGENT_NAME,
             "voices": [{k: v[k] for k in ("key", "name", "gender", "image", "description", "sample")}
                        for v in _voices() if v["key"] == AGENT_VOICE],
@@ -225,25 +266,36 @@ def place(db: OrmSession, ws: Workspace, d: DemoCall) -> None:
 
 def request_web(db: OrmSession, *, phone: str, name: str, company: str, voice: str | None = None,
                 industry: str | None = None, industry_other: str | None = None,
-                context: str | None = None) -> DemoCall | None:
+                context: str | None = None, consent_version: str | None = None) -> DemoCall | None:
     """The public door. Returns None when the number must not be called (do-not-call): the answer to the visitor
     is the same, so the endpoint does not reveal who has opted out. `context` (quiz-funnel): documented facts about
-    the company – address, opening hours, what the visitor answered – that the manuscript may use in the role-play."""
+    the company – address, opening hours, what the visitor answered – that the manuscript may use in the role-play.
+
+    Outside the calling hours the call is queued (`scheduled`) for the next opening instead of refused.
+    `consent_version`: the box the visitor ticked on /proev (CONSENT_VERSION_WEB «nu» or CONSENT_VERSION_WEB_LATER);
+    None = the quiz-funnel, whose own gate consent is kept on the draft. A «nu» consent is never used for a later call:
+    409 `demo_consent_later` asks for the matching one (the page was loaded before closing)."""
     now = _now()
     phone = danish_number(phone)
     if problem(db) is not None:
         raise DemoUnavailable("Demo-opkald er ikke åbnet endnu. Skriv dig på ventelisten, så hører du fra os.")
     ws = sales_workspace(db)
-    if not in_hours(now):
-        start, end = hours()
-        raise Conflict(f"Vi ringer mellem kl. {start:%H:%M} og {end:%H:%M}. Prøv igen i det tidsrum.", code="demo_closed")
+    later = not in_hours(now)
+    if later and consent_version == CONSENT_VERSION_WEB:
+        start, _ = hours()
+        raise Conflict(f"Vi ringer først igen fra kl. {start:%H:%M}. Sæt kryds igen, hvis vi må ringe dig op der – "
+                       "du kan også oprette dig med det samme.", code="demo_consent_later")
     if db.scalar(select(DemoCall.id).where(DemoCall.phone == phone, DemoCall.source == "web",
                                            DemoCall.created_at > now - WEB_REPEAT_AFTER)):
         raise DemoRateLimited("Vi har allerede ringet til dette nummer i dag. Ring selv til demonummeret, hvis du vil "
                               "prøve igen.", code="demo_already_called")
     _global_cap(db, ws, now)
+    if consent_version == CONSENT_VERSION_WEB_LATER:
+        c_version, c_text = CONSENT_VERSION_WEB_LATER, consent_text_later()
+    else:
+        c_version, c_text = CONSENT_VERSION_WEB, CONSENT_TEXT_WEB
     d = DemoCall(workspace_id=ws.id, source="web", phone=phone, name=name.strip()[:200], company=company.strip()[:200],
-                 consent_version=CONSENT_VERSION_WEB, consent_text=CONSENT_TEXT_WEB, consented_at=now,
+                 consent_version=c_version, consent_text=c_text, consented_at=now,
                  voice_key=AGENT_VOICE, industry=industry if industry in script.INDUSTRIES else None,
                  industry_other=(script.clean_other(industry_other) or None) if industry not in script.INDUSTRIES else None,
                  context=(context or "").strip()[:4000] or None)
@@ -252,9 +304,41 @@ def request_web(db: OrmSession, *, phone: str, name: str, company: str, voice: s
         d.status, d.error = "skipped", "Nummeret står på spærrelisten"
         db.flush()
         return None
+    if later:
+        d.status, d.scheduled_for = "scheduled", next_open(now)
+        db.flush()
+        return d
     db.flush()
     place(db, ws, d)
     return d
+
+
+def place_due(db: OrmSession, limit: int = 5) -> int:
+    """The worker: dial queued web requests once the calling hours are open. A request that waited more than
+    SCHEDULED_STALE_AFTER past its time (the worker was down) is dropped rather than rung out of the blue; a number
+    that opted out meanwhile is skipped. Returns the number of calls placed."""
+    now = _now()
+    if not in_hours(now):
+        return 0
+    due = DemoCall.status == "scheduled", DemoCall.scheduled_for <= now
+    if db.scalar(select(DemoCall.id).where(*due).limit(1)) is None or problem(db) is not None:
+        return 0  # the common case (nothing queued) costs one indexed query per worker tick
+    ws = sales_workspace(db)
+    rows = list(db.scalars(select(DemoCall).where(*due)
+                           .order_by(DemoCall.scheduled_for).limit(limit).with_for_update(skip_locked=True)))
+    placed = 0
+    for d in rows:
+        if now - d.scheduled_for > SCHEDULED_STALE_AFTER:
+            d.status, d.error = "skipped", "Køen blev ikke nået i tide"
+        elif _blocked(db, ws, d.phone):
+            d.status, d.error = "skipped", "Nummeret står på spærrelisten"
+        else:
+            d.status = "calling"
+            db.flush()
+            place(db, ws, d)
+            placed += d.status == "calling"
+    db.commit()
+    return placed
 
 
 def request_seller(db: OrmSession, *, seller_id: uuid.UUID, phone: str, name: str, company: str, cvr: str | None,
@@ -327,6 +411,7 @@ def out(d: DemoCall) -> dict:
             "status": d.status, "outcome": d.outcome, "summary": d.summary, "error": d.error,
             "consent_version": d.consent_version, "consented_at": d.consented_at.isoformat(),
             "seller_user_id": str(d.seller_user_id) if d.seller_user_id else None, "note": d.note,
+            "scheduled_for": d.scheduled_for.isoformat() if d.scheduled_for else None,
             "lead_id": str(d.lead_id) if d.lead_id else None, "voice": d.voice_key, "industry": d.industry, "industry_other": d.industry_other, "created_at": d.created_at.isoformat() if d.created_at else None}
 
 
@@ -342,11 +427,28 @@ CHAT_INSTRUCTIONS = (
     "potentiel kunde, der overvejer Dialogbot til sin egen virksomhed. Svar kort (højst tre-fire sætninger), venligt "
     "og konkret på dansk, som en hjælpsom medarbejder. Stil højst ét spørgsmål ad gangen. Svar kun ud fra den "
     "godkendte viden og fakta herunder; opfind aldrig priser, funktioner, integrationer eller garantier. Hvis du ikke "
-    "ved det, så sig det, og tilbyd at en medarbejder ringer (93 70 34 33 eller info@dialogbot.dk). Når det er "
-    "naturligt, så tilbyd at ringe kunden op nu, så de kan høre dig tage telefonen – kunden trykker da på knappen "
-    "«Ja, ring til mig». Du kan ikke selv ringe, booke eller oprette noget fra chatten. Ingen emojis, ingen "
-    "punktopstillinger, ingen links ud over dialogbot.dk.\n\n"
+    "ved det, så sig det, og tilbyd at en medarbejder ringer (93 70 34 33 eller info@dialogbot.dk). Vil kunden "
+    "købe, oprette sig, kende prisen eller komme i gang, så sig, at de kan oprette sig selv med det samme – døgnet "
+    "rundt, uden at blive ringet op først – og giv dem linket {signup}. Under dit svar vises da en knap «Opret dig». "
+    "Et opkald fra dig er et tilbud, aldrig en betingelse: Når det er naturligt, så tilbyd også at ringe kunden op, "
+    "så de kan høre dig tage telefonen – kunden trykker da på knappen «Ja, ring til mig». Du kan ikke selv ringe, "
+    "booke eller oprette noget fra chatten. Ingen emojis, ingen punktopstillinger, ingen andre links end {signup} "
+    "og dialogbot.dk.\n\n"
 )
+# The visitor wants to buy, sign up, know the price or get started: the answer carries the sign-up link (a button).
+SIGNUP_INTENT = re.compile(
+    r"\b(køb\w*|købe|bestil\w*|opret\w*|tilmeld\w*|sign ?up|registrer\w*|konto|abonn\w*|pris\w*|koste\w*|"
+    r"betal\w*|i gang|starte?|begynde?)\b",
+    re.IGNORECASE)
+
+
+def signup_url() -> str:
+    base = (get_settings().frontend_base_url or "").rstrip("/")
+    return f"{base}{SIGNUP_PATH}" if base.startswith("https://") else f"https://dialogbot.app{SIGNUP_PATH}"
+
+
+def wants_signup(text: str) -> bool:
+    return bool(SIGNUP_INTENT.search(text or ""))
 
 
 def chat_reply(db: OrmSession, history: list[dict]) -> dict:
@@ -358,9 +460,12 @@ def chat_reply(db: OrmSession, history: list[dict]) -> dict:
 
     ws = sales_workspace(db)
     if ws is None or not knowledge.active_knowledge(db, ws.id):
-        raise ApiError("Chatten er ikke klar endnu – ring til os på 93 70 34 33.", code="demo_unavailable", status_code=503)
+        raise ApiError("Chatten er ikke klar endnu – ring til os på 93 70 34 33, eller opret dig med det samme på "
+                       f"{signup_url()}.", code="demo_unavailable", status_code=503)
     msgs = [{"role": m["role"], "content": m["content"][:CHAT_MAX_CHARS]} for m in history[-CHAT_MAX_TURNS:]]
     c, row = ai.complete_logged(db, ws, user_id=None, purpose="demo_chat", messages=msgs,
-                                extra_instructions=CHAT_INSTRUCTIONS + script.FEATURES)
+                                extra_instructions=CHAT_INSTRUCTIONS.format(signup=signup_url()) + script.FEATURES)
     db.commit()
-    return {"reply": ai.visible_reply(c), "refused": row.outcome == "refused"}
+    reply = ai.visible_reply(c)
+    link = wants_signup(msgs[-1]["content"]) or SIGNUP_PATH in reply or "/signup" in reply
+    return {"reply": reply, "refused": row.outcome == "refused", "signup_url": SIGNUP_PATH if link else None}

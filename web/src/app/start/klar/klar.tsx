@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useT } from "@/i18n/client";
+import { useLocale, useT } from "@/i18n/client";
+import { nextOpenLabel } from "@/lib/next-open";
 import { api, type ApiError } from "@/lib/client";
 import { PHONE_DISPLAY, PHONE_TEL } from "@/lib/contact";
 import { track } from "@/components/site-analytics";
@@ -23,6 +24,8 @@ const MAX_WAIT_MS = 150_000;
  *  only when the API gives an audio URL. */
 export function Klar() {
   const t = useT("site.funnel.erhverv.klar");
+  const tc = useT("site.proev.chat");
+  const locale = useLocale();
   const say = useFunnelError();
   const f = useFunnel();
   const [info, setInfo] = useState<Info | null>(null);
@@ -48,6 +51,7 @@ export function Klar() {
         // No call was placed (outside calling hours, already called today, not open yet …): stop polling, say so.
         if (!r.call && r.call_problem) { setProblem(r.call_problem); return; }
         setProblem(null);
+        if (r.call?.status === "scheduled") return; // queued for the next opening: nothing to wait for now
         if (isDone(r.call)) {
           if (!reported.current) { reported.current = true; track("funnel_call_done", { kind: "erhverv", step: 8, hook: f.hook, industry: draft.answers.industry ?? null, status: r.call?.status }); }
           return;
@@ -65,6 +69,8 @@ export function Klar() {
   }, [draft, f.api, f.hook]);
 
   const done = isDone(call);
+  const queued = call?.status === "scheduled" && call.scheduled_for
+    ? nextOpenLabel(call.scheduled_for, locale, { today: tc("whenToday"), tomorrow: tc("whenTomorrow") }) : null;
   const company = draft?.company?.name ?? draft?.answers.company_name ?? "";
   const hoursNote = info ? (info.open_now ? t("hours", { from: info.hours.from, to: info.hours.to }) : t("closed", { from: info.hours.from, to: info.hours.to })) : t("hoursFallback");
 
@@ -89,6 +95,13 @@ export function Klar() {
                 <section aria-label={t("statusAria")} aria-live="polite" data-call="none" className="rounded-[22px] border-2 border-ink p-5 flex flex-col gap-3 bg-white">
                   <p className="m-0 text-[16px] leading-normal text-ink" data-call-problem>{problem}</p>
                   <p className="m-0 text-[14px] text-ink-soft">{t("noCallBefore")}<a href={PHONE_TEL} className="font-semibold text-ink">{PHONE_DISPLAY}</a>{t("noCallAfter")}</p>
+                </section>
+              </>
+            ) : queued ? (
+              <>
+                <Question title={t("scheduledTitle", queued)} help={company ? t("lead", { company }) : undefined} />
+                <section aria-label={t("statusAria")} aria-live="polite" data-call="scheduled" className="rounded-[22px] border-2 border-ink p-5 flex flex-col gap-3 bg-white">
+                  <p className="m-0 text-[16px] leading-normal text-ink">{t("scheduledText")}</p>
                 </section>
               </>
             ) : (<>

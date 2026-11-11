@@ -37,7 +37,9 @@
       },
       "lead": "Ein KI-Rezeptionist, der rund um die Uhr auf Deutsch antwortet, Termine in Ihrem Kalender bucht und Sie über jeden Anruf informiert. Sie behalten Ihre Nummer. {pMonthly}/Monat zzgl. MwSt.",
       "cta": "Testen Sie ihn – er ruft Sie an",
-      "note": "2 Minuten, keine Anmeldung. Fragen Sie ihn, wie es ein Kunde tun würde."
+      "note": "2 Minuten, keine Anmeldung. Fragen Sie ihn, wie es ein Kunde tun würde.",
+      "signupCta": "Jetzt registrieren und loslegen",
+      "signupNote": "Rund um die Uhr geöffnet – registrieren Sie sich und wählen Sie Ihr Abo selbst. Ein Anruf vorab ist nicht nötig."
     },
     "how": {
       "eyebrow": "So funktioniert es",
@@ -114,7 +116,8 @@
           "Telefon, Buchung und Webchat – alles inklusive",
           "{pIncluded} Minuten pro Monat – ein- und ausgehende Anrufe",
           "Keine Bindung – monatlich kündbar"
-        ]
+        ],
+        "signupCta": "Registrieren und Abo wählen"
       },
       "campaign": {
         "name": "Ausgehende Kampagnenanrufe",
@@ -169,7 +172,13 @@
         "text": "Der Einrichtungsleitfaden zeigt Schritt für Schritt, was Sie brauchen und was passiert – ohne Technik, ohne Code.",
         "cta": "Einrichtungsleitfaden öffnen"
       },
-      "specialists": "Lieber einrichten lassen? Unsere Spezialisten richten ihn für {pSetup} zzgl. MwSt. ein, maßgeschneidert für Ihre Systeme."
+      "specialists": "Lieber einrichten lassen? Unsere Spezialisten richten ihn für {pSetup} zzgl. MwSt. ein, maßgeschneidert für Ihre Systeme.",
+      "signup": {
+        "badge": "Rund um die Uhr · ohne Anruf",
+        "title": "Selbst registrieren",
+        "text": "Konto anlegen, Abo wählen und Dialogbot in Ihrem eigenen Tempo einrichten – auch abends und am Wochenende. Wir rufen nur an, wenn Sie darum bitten.",
+        "cta": "Registrieren"
+      }
     },
     "ld": {
       "appDescription": "Dialogbot ist ein KI-Rezeptionist, der rund um die Uhr Telefon und Chat für Ihr Unternehmen übernimmt – in der Sprache Ihrer Kunden, auf Grundlage Ihres eigenen Wissens, mit Terminbuchung und gesammelten Anfragen. Wir begleiten Sie durch die gesamte Einrichtung.",
@@ -426,7 +435,6 @@
         "unavailable": "Gerade nicht"
       },
       "blockerInactive": "Der Testanruf wird in Kürze aktiviert – bis dahin rufen wir Sie innerhalb der Öffnungszeiten persönlich an. Rufen Sie uns unter {phone} an ({hours}), oder schicken Sie Ihre Nummer an {email}, dann rufen wir Sie an.",
-      "blockerClosed": "Ich rufe nur werktags zwischen {from} und {to} Uhr an. Kommen Sie dann wieder – oder schicken Sie Ihre Nummer an {email}, dann rufen wir Sie innerhalb der Öffnungszeiten an.",
       "blockerOwnNumber": " Sie können auch selbst meine Demonummer {number} anrufen.",
       "chipCall": "Ja, rufen Sie mich an",
       "chipWhat": "Was können Sie?",
@@ -479,7 +487,15 @@
         "Gehen Sie ran – fragen Sie wie ein Kunde",
         "Gefällt es Ihnen? Dann richten wir den echten ein"
       ],
-      "sideNote": "Derselbe Chat begleitet Sie weiter: Wenn Sie zusagen, führt er Sie durch die Einrichtung, bindet Ihren Kalender an und testet alles gemeinsam mit Ihnen."
+      "sideNote": "Derselbe Chat begleitet Sie weiter: Wenn Sie zusagen, führt er Sie durch die Einrichtung, bindet Ihren Kalender an und testet alles gemeinsam mit Ihnen.",
+      "signupCta": "Registrieren",
+      "signupLine": "Bereit loszulegen? Registrieren Sie sich selbst – rund um die Uhr.",
+      "closedAskCompany": "Gerade rufe ich nicht an – ich rufe {when} ab {time} Uhr an. Sie müssen nicht warten: Sie können sich sofort registrieren. Möchten Sie den Anruf trotzdem, schreiben Sie mir den Namen Ihres Unternehmens.",
+      "scheduled": "Danke. Ich rufe {number} {when} ab {time} Uhr an und stelle mich als Rezeption von {company} vor. Sie müssen nicht auf mich warten – Sie können sich hier sofort registrieren.",
+      "phoneScheduledTitle": "Peter ruft {when} ab {time} Uhr an",
+      "phoneScheduledText": "Sie können sich schon jetzt registrieren und loslegen – der Anruf kommt trotzdem.",
+      "whenToday": "heute",
+      "whenTomorrow": "morgen"
     }
   },
   "preview": {
@@ -799,8 +815,11 @@
         "notLoggedIn": "Melde dich an, um zu sehen, wie der Anruf lief.",
         "login": "Anmelden",
         "statusAria": "Status des Anrufs",
-        "noCallTitle": "Sie ruft gerade nicht an"
-      }
+        "noCallTitle": "Sie ruft gerade nicht an",
+        "scheduledTitle": "Sie ruft {when} ab {time} Uhr an",
+        "scheduledText": "Außerhalb der Anrufzeiten stellen wir den Anruf in die Warteschlange. Sie müssen nicht warten – machen Sie sie gleich zu Ihrer."
+      },
+      "signupDirect": "Quiz überspringen – direkt registrieren"
     }
   }
 }

@@ -13,7 +13,8 @@
     "login": "Anmelden",
     "try": "Ausprobieren",
     "menu": "Menü",
-    "close": "Menü schließen"
+    "close": "Menü schließen",
+    "signup": "Registrieren"
   },
   "hero": {
     "step": "Erst anhören",
@@ -26,7 +27,8 @@
     "cta": "Ausprobieren – er ruft Sie an",
     "watch": "So geht's",
     "note": "2 Minuten. Keine Anmeldung, keine Karte.",
-    "listen": "So klingt er"
+    "listen": "So klingt er",
+    "signupCta": "Unternehmen registrieren"
   },
   "phone": {
     "alt": "Beispiel für einen Anruf, den Dialogbot für einen Tischler annimmt: Der Kunde ruft an, Dialogbot antwortet, findet einen Termin am Dienstag um 9 Uhr und bucht ihn.",

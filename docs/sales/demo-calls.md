@@ -46,7 +46,12 @@ opkaldsmotoren.
   - kun danske numre (ikke 90-numre);
   - ét opkald pr. nummer pr. døgn;
   - højst `SALES_MAX_CALLS_PER_HOUR` opkald i timen i alt (standard 20);
-  - kun mellem `SALES_CALL_FROM` og `SALES_CALL_TO` (standard 08:00–20:00, dansk tid);
+  - Peter ringer kun mellem `SALES_CALL_FROM` og `SALES_CALL_TO` (standard 08:00–20:00, dansk tid). Uden for
+    tidsrummet bliver intet afvist: opkaldet sættes i kø (`status = scheduled`, `scheduled_for` = næste åbning) med
+    et samtykke, der siger hvornår (`demo-call-web-later-v1`), og workeren ringer, når tidsrummet åbner
+    (`sales.service.place_due`; et kø-opkald, der er mere end 12 timer forsinket, droppes). Chatten og siden henviser
+    samtidig til selvbetjent oprettelse på `/signup?intent=reception`, som er åben døgnet rundt. `from == to` betyder
+    altid åbent, et vindue over midnat (fx 20:00–08:00) virker, og en ugyldig værdi lukker aldrig noget;
   - honeypot-felt mod bots.
 
   Et nummer på spærrelisten får samme svar som alle andre, men der bliver ikke ringet. Siden afslører altså ikke,

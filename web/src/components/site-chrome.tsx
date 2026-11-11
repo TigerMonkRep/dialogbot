@@ -16,7 +16,7 @@ export type { Audience } from "./audience-switch";
  *  2 px ink rules, the logo mark, the two-door "path switch" (Prøv den | Byggevejledning) and the phone number.
  *  Server component; the floating chat is the only client part. */
 export { EMAIL, HOURS, PHONE_DISPLAY, PHONE_INTL, PHONE_TEL } from "@/lib/contact";
-import { EMAIL, PHONE_INTL, PHONE_TEL, PHONE_DISPLAY } from "@/lib/contact";
+import { EMAIL, PHONE_INTL, PHONE_TEL, PHONE_DISPLAY, SIGNUP_ERHVERV } from "@/lib/contact";
 
 export type Path = "proev" | "byggevejledning";
 
@@ -90,6 +90,8 @@ export async function SiteHeader({ current, nav, phone = true, badge, navAlways 
           <Link href="/priser" className="inline-flex items-center min-h-11 text-sm font-semibold text-ink no-underline hover:text-accent">{t("chrome.pricing")}</Link>
           <LanguageSwitcher compact />
           {phone && <a href={PHONE_TEL} className="hidden sm:inline-flex items-center min-h-11 text-sm font-semibold text-ink no-underline">{locale === "da" ? PHONE_DISPLAY : PHONE_INTL}</a>}
+          {/* Self-service sign-up, open day and night – no call needed first (S0 «Erhverv døgnåbent»). */}
+          <Link href={SIGNUP_ERHVERV} data-header-signup className="inline-flex items-center min-h-11 px-4 rounded-xl bg-accent hover:bg-accent-deep text-white text-sm font-semibold no-underline">{t("chrome.signupCta")}</Link>
         </div>
       </div>
     </header>

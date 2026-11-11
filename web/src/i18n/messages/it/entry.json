@@ -13,7 +13,8 @@
     "login": "Accedi",
     "try": "Provalo",
     "menu": "Menu",
-    "close": "Chiudi il menu"
+    "close": "Chiudi il menu",
+    "signup": "Registrati"
   },
   "hero": {
     "step": "Prima ascoltalo",
@@ -26,7 +27,8 @@
     "cta": "Provalo – ti chiama lui",
     "watch": "Guarda come",
     "note": "2 minuti. Nessuna registrazione, nessuna carta.",
-    "listen": "Ecco come suona"
+    "listen": "Ecco come suona",
+    "signupCta": "Registra la tua azienda"
   },
   "phone": {
     "alt": "Esempio di una chiamata che Dialogbot gestisce per un falegname: il cliente chiama, Dialogbot risponde, trova un orario martedì alle 9 e lo prenota.",

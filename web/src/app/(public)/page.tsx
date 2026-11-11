@@ -11,6 +11,7 @@ import { LogoMark } from "@/components/ui";
 import { CUSTOMER_QUOTES } from "@/lib/proof";
 import { TRIAL_DAYS } from "@/lib/privat/plans";
 import { market, schemaPrice } from "@/lib/markets";
+import { SIGNUP_ERHVERV } from "@/lib/contact";
 import { SITE_NAME, SITE_URL, alternatesFor, openGraphFor } from "@/lib/site";
 import { HTML_LANG } from "@/i18n/config";
 import { getLocale, getRaw, getT } from "@/i18n/server";
@@ -95,7 +96,8 @@ export default async function Entry() {
           <div className="ml-auto flex items-center gap-2">
             <span className="hidden lg:inline-flex"><LanguageSwitcher compact /></span>
             <Link href="/login" className="hidden lg:inline-flex items-center min-h-11 px-3.5 text-[15px] font-semibold text-ink no-underline hover:text-accent-deep">{t("nav.login")}</Link>
-            <Link href="/proev" className={`${btnPri} min-h-11 px-[18px] text-[15px] rounded-xl`}>{t("nav.try")}</Link>
+            <Link href="/proev" className="hidden sm:inline-flex items-center min-h-11 px-3.5 text-[15px] font-semibold text-ink no-underline hover:text-accent-deep">{t("nav.try")}</Link>
+            <Link href={SIGNUP_ERHVERV} className={`${btnPri} min-h-11 px-[18px] text-[15px] rounded-xl`} data-header-signup>{t("nav.signup")}</Link>
             <details className={`${s.menu} lg:hidden`}>
               <summary className="inline-flex items-center justify-center w-11 h-11 rounded-xl border-2 border-ink bg-white text-ink cursor-pointer" aria-label={t("nav.menu")}>
                 <span className={`${s.open} inline-flex`}><MenuIcon size={22} /></span><span className={s.close}><CloseIcon size={20} /></span>
@@ -125,7 +127,8 @@ export default async function Entry() {
               </h1>
               <p className={lead}>{t("hero.lead")}</p>
               <div className="flex flex-wrap items-center gap-3">
-                <Link href="/proev" className={`${btnPri} max-sm:w-full`}>{t("hero.cta")}</Link>
+                <Link href={SIGNUP_ERHVERV} className={`${btnPri} max-sm:w-full`} data-signup-cta>{t("hero.signupCta")}</Link>
+                <Link href="/proev" className={`${btn} bg-white border-ink text-ink hover:bg-panel max-sm:w-full`}>{t("hero.cta")}</Link>
                 <ExplainerVideo variant="button" ghost label={t("hero.watch")} />
               </div>
               <div className="flex items-center gap-3">
@@ -291,7 +294,10 @@ export default async function Entry() {
                 <ul className="m-0 p-0 list-none flex flex-col gap-2.5 text-[15px] text-ink-soft">
                   {bizPoints.map((p) => <li key={p} className="flex items-start gap-2.5"><span className={checkBox}><CheckIcon size={12} /></span><span>{p}</span></li>)}
                 </ul>
-                <Link href="/proev" className={`${btnPri} self-start mt-2`}>{t("pricing.business.cta")}</Link>
+                <div className="flex flex-wrap gap-3 mt-2">
+                  <Link href={SIGNUP_ERHVERV} className={btnPri}>{t("hero.signupCta")}</Link>
+                  <Link href="/proev" className={`${btn} bg-white border-ink text-ink hover:bg-panel`}>{t("pricing.business.cta")}</Link>
+                </div>
               </article>
               <article className="flex flex-col gap-[18px] p-7 sm:p-9 rounded-[28px] border-2 border-ink bg-[#FFFBF5]">
                 <h3 className="m-0 font-display font-extrabold text-[24px] tracking-[-0.02em]">{t("pricing.private.name")}</h3>
@@ -333,7 +339,8 @@ export default async function Entry() {
             <h2 className={`${h2} text-white max-w-[14em]`}>{t("band.title")}</h2>
             <p className="m-0 text-[18px] leading-[1.55] text-[#C9D3E3] max-w-[32em]">{t("band.text")}</p>
             <div className="flex flex-wrap gap-3">
-              <Link href="/proev" className={btnYel}>{t("band.primary")}</Link>
+              <Link href={SIGNUP_ERHVERV} className={btnYel}>{t("hero.signupCta")}</Link>
+              <Link href="/proev" className={btnInv}>{t("band.primary")}</Link>
               <Link href="/start" className={btnInv}>{t("band.secondary")}</Link>
             </div>
           </div>

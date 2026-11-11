@@ -647,7 +647,7 @@ def reveal(db: OrmSession, d: FunnelDraft, user: User) -> dict:
             dur = db.scalar(select(Call.duration_seconds).where(Call.provider_call_id == dc.provider_call_id)) \
                 if dc.provider_call_id else None
             call = {"status": dc.status, "outcome": dc.outcome, "summary": dc.summary or "", "duration_seconds": dur,
-                    "error": dc.error}
+                    "error": dc.error, "scheduled_for": dc.scheduled_for.isoformat() if dc.scheduled_for else None}
     problem = (d.build or {}).get("call") or {}
     knowledge = None
     if d.kind == "erhverv":

@@ -22,7 +22,8 @@
     "knowledge": "Kunnskap",
     "byIndustry": "AI-resepsjonist for din bransje",
     "skip": "Hopp til innhold",
-    "tagline": "Din AI-resepsjonist – på norsk, døgnet rundt. Tar telefonen, booker timer og samler henvendelser når dere ikke kan."
+    "tagline": "Din AI-resepsjonist – på norsk, døgnet rundt. Tar telefonen, booker timer og samler henvendelser når dere ikke kan.",
+    "signupCta": "Opprett konto"
   },
   "audience": {
     "business": "Til bedrifter – Dialogbot Erhverv",

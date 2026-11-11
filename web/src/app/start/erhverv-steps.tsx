@@ -2,6 +2,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useT } from "@/i18n/client";
+import Link from "@/i18n/link";
+import { SIGNUP_ERHVERV } from "@/lib/contact";
 import { BuildProgress, Choice, CodeStep, Estimate, FunnelShell, FunnelState, Gate, NextButton, PlaceSearch, Question, reachableStep, useFunnel, type BuildRow, type Option } from "@/components/funnel";
 import { HOOKS, INDUSTRIES, MISSED, WANTS, localEstimate, type BuildErhverv, type Industry, type Place } from "@/lib/funnel/api";
 
@@ -12,6 +14,7 @@ const ICON: Record<Industry, string> = { haandvaerker: "home", klinik: "stethosc
  *  draft and the URL moves on. A deep link past what the draft has answered is sent back to the right step. */
 export function ErhvervStep({ step }: { step: number }) {
   const f = useFunnel();
+  const t = useT("site.funnel.erhverv");
   const router = useRouter();
   useEffect(() => {
     if (f.status !== "ready") return;
@@ -23,6 +26,8 @@ export function ErhvervStep({ step }: { step: number }) {
     <FunnelShell>
       {f.status !== "ready" || !f.draft ? <FunnelState status={f.status === "error" ? "error" : "loading"} error={f.error} onRetry={() => void f.restart()} />
         : step === 1 ? <Step1 /> : step === 2 ? <Step2 /> : step === 3 ? <Step3 /> : step === 4 ? <Step4 /> : step === 5 ? <Step5 /> : step === 6 ? <Step6 /> : <Step7 />}
+      {/* The quiz is one way in, never the only one: sign-up is open day and night without it (S0). */}
+      {step < GATE && <Link href={SIGNUP_ERHVERV} data-signup-direct className="self-start mt-2 text-[15px] font-semibold text-ink underline underline-offset-4 inline-flex items-center min-h-11">{t("signupDirect")}</Link>}
     </FunnelShell>
   );
 }

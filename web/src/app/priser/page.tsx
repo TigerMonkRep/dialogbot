@@ -3,6 +3,7 @@ import Link from "@/i18n/link";
 import { getLocale, getRaw, getT } from "@/i18n/server";
 import { SeoPage, type SeoFaq } from "@/components/seo-page";
 import { alternatesFor, openGraphFor } from "@/lib/site";
+import { SIGNUP_ERHVERV } from "@/lib/contact";
 
 const PATH = "/priser";
 
@@ -41,7 +42,7 @@ export default async function Page() {
           <p>{s("outbound.p1a")}<strong>{s("outbound.p1Call")}</strong>{s("outbound.p1b")}<strong>{s("outbound.p1Minute")}</strong>{s("outbound.p1c")}</p>
           <p>{s("outbound.p2")}</p>
         </> },
-        { title: s("start.title"), body: <p>{s("start.a")}<Link href="/proev">{s("start.tryLink")}</Link>{s("start.b")}<Link href="/signup">{s("start.signupLink")}</Link>{s("start.c")}<Link href="/ai-receptionist">{s("start.receptionistLink")}</Link>{s("start.d")}</p> },
+        { title: s("start.title"), body: <p>{s("start.a")}<Link href="/proev">{s("start.tryLink")}</Link>{s("start.b")}<Link href={SIGNUP_ERHVERV}>{s("start.signupLink")}</Link>{s("start.c")}<Link href="/ai-receptionist">{s("start.receptionistLink")}</Link>{s("start.d")}</p> },
       ]}
       faq={raw<SeoFaq[]>("landing.pricing.faq")} />
   );

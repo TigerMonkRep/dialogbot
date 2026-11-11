@@ -53,6 +53,7 @@ test("C05 · spærring af et nummer efter import springer den ventende kontakt o
 });
 
 test("C05 · alle importerede kontakter kan ses (501 kontakter: tæller og liste stemmer)", async ({ page }, info) => {
+  test.fail(true, "F-E2C-10-C05: S3 new – Kampagnesiden viser højst 500 kontakter uden «vis flere»: ved 501 kontakter siger tælleren 501, …");
   const { wsId } = await campaignOwner(page, info);
   const c = await newCampaign(page.request, wsId, `QA-E2C C05 501 ${Date.now()}`);
   const rows = Array.from({ length: 501 }, (_, i) => `Kontakt ${i + 1};${String(30000000 + i)}`).join("\n");
@@ -66,6 +67,7 @@ test("C05 · alle importerede kontakter kan ses (501 kontakter: tæller og liste
 });
 
 test("C05 · krav: ret en ugyldig række og eksportér fejl (ikke bygget)", async ({ page }, info) => {
+  test.fail(true, "C05: not-implemented – ret ugyldig række og eksportér fejl");
   test.info().annotations.push({ type: "not-implemented", description: "C05: no correction of invalid rows, no error export; only the first 5 row numbers in a status line" });
   const { wsId } = await campaignOwner(page, info);
   const c = await newCampaign(page.request, wsId, `QA-E2C C05 eksport ${Date.now()}`);

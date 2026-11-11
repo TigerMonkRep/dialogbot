@@ -189,6 +189,7 @@ def test_c05_validation_counts_and_suppression(api, two_workspaces, db, monkeypa
     assert empty.status_code == 422
 
 
+@pytest.mark.xfail(strict=True, reason="F-E2C-09-C05: S3 new – «ugyldige numre (fx række N)» tæller ikke overskriftsrækken med: det ugyldige nummer på linje 3 i filen …")
 def test_c05_invalid_row_number_matches_the_file_line(api, two_workspaces, monkeypatch):
     """F-E2C-09: «ugyldige numre (fx række N)» – N must be the row the user sees in Excel/the file. With a header
     row, the invalid number on file line 3 is reported as «række 2» (the header is not counted); without a header
@@ -205,7 +206,6 @@ def test_c05_invalid_row_number_matches_the_file_line(api, two_workspaces, monke
 
 def test_c06_opening_always_discloses_ai_and_fills_known_variables(api, two_workspaces, db, monkeypatch, dial):
     t = two_workspaces
-    tok, ws = t["tok_a"], t["ws_a"]
     _ready(api, t, monkeypatch)
     c = _campaign(api, t, opening="Godmorgen {navn}, her er {virksomhed}.")
     _import(api, t, c["id"], "Mette Hansen;20304050")
@@ -215,6 +215,7 @@ def test_c06_opening_always_discloses_ai_and_fills_known_variables(api, two_work
     assert first.startswith("Godmorgen Mette, her er Fjord Gulvservice ApS.") and "digital assistent" in first
 
 
+@pytest.mark.xfail(strict=True, reason="F-E2C-04-C07: S2 new – Ukendte variabler i første replik ({fornavn}, {firma}, {Navn}) gemmes uden advarsel og læses højt for …")
 def test_c07_unknown_script_variable_is_rejected_not_spoken(api, two_workspaces, db, monkeypatch, dial):
     """F-E2C-04: «{fornavn}» (or a typo like «{Navn}») is not a known variable. It must be refused when saving (or at
     least before start), never read aloud as «krøllet parentes fornavn» to a customer."""

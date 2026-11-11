@@ -185,7 +185,7 @@
     },
     "label": "Terms",
     "title": "Subscription and sales terms",
-    "updated": "Version 1 · effective from 6 October 2026.",
+    "updated": "Version 2 · effective from 10 November 2026.",
     "intro": "These terms apply when a business creates an account and uses Dialogbot. Dialogbot is sold to businesses only. \"We\" are {name} (CVR no. {cvr}), {address}. \"You\" are the business that has created the workspace.",
     "sections": [
       {
@@ -203,8 +203,8 @@
             "type": "ul",
             "items": [
               [{ "b": "Subscription:" }, " from {pMonthly} per month. There is no price per enquiry."],
-              [{ "b": "Campaigns (outbound calls):" }, " {pCall} per outbound call plus {pMinute} per started minute of conversation. Every call placed counts, including a retry (at most 2 attempts and at most 3 minutes of conversation per contact). The highest possible price is shown before a campaign is started."],
-              [{ "b": "Inbound calls:" }, " a Danish phone number for the assistant and 300 started minutes of conversation per calendar month are included. Minutes beyond that cost {pExtraMinute} per started minute and are charged on the month's invoice. Usage can be followed continuously in Dialogbot."]
+              [{ "b": "Minute package:" }, " a Danish phone number for the assistant and 300 started minutes of conversation per calendar month are included. The minutes are one shared pool for both inbound calls and outbound campaign calls and are used in the order the calls happen. Inside the package there is no charge per call. In campaigns a contact is called at most twice and talks for at most 3 minutes, and the highest possible price is shown before a campaign is started."],
+              [{ "b": "Minutes beyond the package:" }, " {pExtraMinute} per started inbound minute. An outbound campaign call that starts after the package is used up costs {pCallAnswered} if the person answers, {pCallVoicemail} at a voicemail and {pCallNoAnswer} when unanswered, busy or of unknown outcome – plus {pMinute} per started minute of conversation. A call that crosses the limit only splits its minutes and gets no call price. They are charged on the month's invoice, and usage per call can be followed continuously in Dialogbot. Minutes are only credited when you complain about a specific call and we approve the complaint: if the month has not been invoiced, the minutes go back into the package; if it has, the amount is credited on the next invoice."]
             ]
           },
           { "type": "p", "text": "If you come via an ambassador, you get a 50 % discount on your first invoiced month. We may change the prices with at least 30 days' notice by email; the change applies from the first full month after the notice." }

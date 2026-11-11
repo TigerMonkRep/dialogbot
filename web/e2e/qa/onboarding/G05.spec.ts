@@ -24,6 +24,7 @@ test("G05 · /app/setup/readiness viderestiller; telefon-mål: blokerende mangle
 });
 
 test("G05 · webchat-mål uden hjemmeside: knappen er slukket OG der er et præcist link til at rette det", async ({ page }, info) => {
+  test.fail(true, "F-E2B-12-G05: S2 new – «Tænd webchatten» i trin 3 afvises med «Widgetten kan ikke slås til endnu» uden grund og uden …");
   const { wsId } = await freshOwner(page, info);
   await completeProfile(page, wsId, { website_url: null, manual_setup: true });
   await setGoals(page, wsId, { product_intent: "reception", inbound_phone: false, webchat: true, callback: true, booking: false });
@@ -36,6 +37,7 @@ test("G05 · webchat-mål uden hjemmeside: knappen er slukket OG der er et præc
 });
 
 test("G05 · webchat tændes (ét klik, dobbeltklik giver én version) og tjekket er ærligt om «ikke set på siden endnu»", async ({ page }, info) => {
+  test.fail(true, "F-E2B-12-G05: S2 new – «Tænd webchatten» i trin 3 afvises med «Widgetten kan ikke slås til endnu» uden grund og uden …");
   const { wsId } = await freshOwner(page, info);
   await completeProfile(page, wsId, { website_url: "https://fjordgulv.example", manual_setup: false });
   await setGoals(page, wsId, { product_intent: "reception", inbound_phone: false, webchat: true, callback: true, booking: false });

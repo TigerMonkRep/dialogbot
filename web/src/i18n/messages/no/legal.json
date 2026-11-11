@@ -185,7 +185,7 @@
     },
     "label": "Vilkår",
     "title": "Abonnements- og salgsvilkår",
-    "updated": "Versjon 1 · gjeldende fra 6. oktober 2026.",
+    "updated": "Versjon 2 · gjeldende fra 10. november 2026.",
     "intro": "Disse vilkårene gjelder når en bedrift oppretter en konto og bruker Dialogbot. Dialogbot selges bare til næringsdrivende. «Vi» er {name} (CVR-nr. {cvr}), {address}. «Dere» er bedriften som har opprettet arbeidsområdet.",
     "sections": [
       {
@@ -203,8 +203,8 @@
             "type": "ul",
             "items": [
               [{ "b": "Abonnement:" }, " fra {pMonthly} per måned. Det er ingen pris per henvendelse."],
-              [{ "b": "Kampanjer (utgående anrop):" }, " {pCall} per utgående anrop pluss {pMinute} per påbegynt samtaleminutt. Hvert anrop som ringes, teller, også et nytt forsøk (høyst 2 forsøk og høyst 3 samtaleminutter per kontakt). Høyest mulig pris vises før en kampanje startes."],
-              [{ "b": "Innkommende anrop:" }, " et dansk telefonnummer til assistenten og 300 påbegynte samtaleminutter per kalendermåned er inkludert. Minutter utover dette koster {pExtraMinute} per påbegynt minutt og avregnes på månedens faktura. Forbruket kan følges løpende i Dialogbot."]
+              [{ "b": "Minuttpakke:" }, " et dansk telefonnummer til assistenten og 300 påbegynte samtaleminutter per kalendermåned er inkludert. Minuttene er én felles pott for både innkommende anrop og utgående kampanjeanrop og brukes i den rekkefølgen anropene skjer. Innenfor pakken er det ingen pris per anrop. I kampanjer ringes en kontakt høyst 2 ganger og snakker høyst 3 minutter, og høyest mulig pris vises før en kampanje startes."],
+              [{ "b": "Minutter utover pakken:" }, " {pExtraMinute} per påbegynt innkommende minutt. Et utgående kampanjeanrop som starter etter at pakken er brukt opp, koster {pCallAnswered} hvis personen tar telefonen, {pCallVoicemail} ved telefonsvarer og {pCallNoAnswer} ved ubesvart, opptatt eller ukjent utfall – pluss {pMinute} per påbegynt samtaleminutt. Et anrop som krysser grensen, deler bare minuttene og får ingen anropspris. De avregnes på månedens faktura, og forbruket per anrop kan følges løpende i Dialogbot. Minutter krediteres bare når dere klager på et bestemt anrop og vi godkjenner klagen: er måneden ikke fakturert, går minuttene tilbake i pakken; er den fakturert, krediteres beløpet på neste faktura."]
             ]
           },
           { "type": "p", "text": "Kommer dere via en ambassadør, får dere 50 % rabatt på den første fakturerte måneden. Vi kan endre prisene med minst 30 dagers varsel på e-post; endringen gjelder fra den første hele måneden etter varselet." }

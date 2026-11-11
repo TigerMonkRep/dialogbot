@@ -130,22 +130,10 @@
       "title": "Vad ska den göra åt er?",
       "hint": "Välj det som passar. Det avgör vad steg 2 och 3 frågar om.",
       "cards": {
-        "phone": {
-          "title": "Svara i telefon",
-          "sub": "när ni inte kan – eller alltid"
-        },
-        "booking": {
-          "title": "Boka möten",
-          "sub": "direkt i er kalender"
-        },
-        "web": {
-          "title": "Svara på webbplatsen",
-          "sub": "webbchatt – en kodrad"
-        },
-        "outbound": {
-          "title": "Ringa upp kunder",
-          "sub": "kampanjer · {pCall} per samtal exkl. moms"
-        }
+        "phone": { "title": "Svara i telefon", "sub": "när ni inte kan – eller alltid" },
+        "booking": { "title": "Boka möten", "sub": "direkt i er kalender" },
+        "web": { "title": "Svara på webbplatsen", "sub": "webbchatt – en kodrad" },
+        "outbound": { "title": "Ringa upp kunder", "sub": "kampanjer · minuter från paketet" }
       },
       "langAria": "Språk",
       "speaks": "Den talar",
@@ -370,7 +358,7 @@
     "turningOn": "Slår på …",
     "turnOn": "Slå på Dialogbot",
     "managersOnly": "Endast ägare och administratörer kan slå på.",
-    "subscriptionNote": "Abonnemanget kostar från {pMonthly}/mån. exkl. moms, och utgående kampanjsamtal kostar {pCall} per samtal exkl. moms.",
+    "subscriptionNote": "Abonnemanget kostar från {pMonthly}/mån. exkl. moms med {pIncluded} minuter för in- och utgående samtal; därefter {pExtraMinute} per minut in, och utgående {pCallAnswered} per besvarat samtal + {pMinute} per minut.",
     "confirmSubscription": "Bekräfta abonnemang",
     "findAgain": "Du hittar allt igen under profilikonen → Alla inställningar.",
     "readerTitle": "Ägaren konfigurerar Dialogbot",

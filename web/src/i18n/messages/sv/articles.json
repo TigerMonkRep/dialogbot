@@ -73,7 +73,7 @@
     "faq": [
       ["Kan en AI-telefonsvarare ersätta telefonpassning?", "För de flesta standardärenden ja: den svarar, reder ut behovet och bokar. Komplexa ärenden skickas vidare till er."],
       ["Är en AI-telefonsvarare tillgänglig på natten?", "Ja, Dialogbot svarar i telefon dygnet runt."],
-      ["Vad är billigast: telefonpassning eller Dialogbot?", "Telefonpassning debiteras oftast per samtal eller per månad. Dialogbot är ett abonnemang för {pMonthly} i månaden exkl. moms med 300 minuter inkommande samtal och inget pris per ärende. Se även /viden/dialogbot-vs-vocalis."],
+      ["Vad är billigast: telefonpassning eller Dialogbot?", "Telefonpassning debiteras oftast per samtal eller per månad. Dialogbot är ett abonnemang för {pMonthly} i månaden exkl. moms med 300 minuter för in- och utgående samtal och inget pris per ärende. Se även /viden/dialogbot-vs-vocalis."],
       ["Kan jag behålla mitt nummer?", "Ja. Du vidarekopplar ditt nummer till Dialogbot när du är upptagen eller har stängt."]
     ]
   },
@@ -132,7 +132,7 @@
     "faq": [
       ["Kan Dialogbot också vara bara en chattbot?", "Ja. Webbchatten ingår i abonnemanget och använder samma godkända kunskap som telefonen. Det är en kodrad på webbplatsen."],
       ["Gissar Dialogbot om den inte vet svaret?", "Nej. Den svarar bara utifrån godkänd kunskap och tar ett meddelande åt er om den inte kan svara."],
-      ["Vad kostar det?", "{pMonthly} i månaden exkl. moms med 300 minuter inkommande samtal. Ingen bindningstid."]
+      ["Vad kostar det?", "{pMonthly} i månaden exkl. moms med 300 minuter för in- och utgående samtal. Ingen bindningstid."]
     ]
   },
   "dialogbot-vs-vocalis": {

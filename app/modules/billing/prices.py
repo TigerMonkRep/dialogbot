@@ -1,27 +1,41 @@
 """Dialogbot's list prices: the one place a price is written in code.
 
-There is ONE offer (excl. VAT):
-- the subscription, "Fra 2.495 kr./md." (whole øre below);
-- outbound campaign calls: 4 kr. per call that is dialled (retries included) + 2 kr. per started minute of
-  conversation, so an unanswered attempt costs 4 kr. and a 3-minute conversation 10 kr. – the minutes are what cost
-  us money (telephony, speech, voice and model);
-- inbound calls: 300 minutes a month are included in the subscription, every started minute above that costs 1,50 kr.;
+There is ONE offer (excl. VAT) – Fürster's decision 2026-11-10 (20:28, final; the public prices are the consumption
+prices of the DF offer):
+- the subscription, "Fra 2.495 kr./md." (whole øre below), with a package of 300 minutes a month that inbound calls
+  AND outbound campaign calls draw on together (one shared pool, used in the order the calls happen);
+- INSIDE the package there is no price per call: the minutes just come out of the package;
+- once the package is used up: an outbound campaign call that STARTS after that costs, by outcome, 4 kr. when the
+  person answers, 1 kr. at a voicemail and 0,25 kr. when unanswered/busy (an unknown outcome is the cheapest) – plus
+  2 kr. per started minute of conversation; inbound calls cost 1,50 kr. per started minute. A call that crosses the
+  limit only splits its minutes (no call price);
 - 5.000 kr. once for setup by Dialogbot's own specialists (tailored setup and integration with the customer's own
   systems); doing it yourself through the three-step building guide is included in the subscription.
-There is no fee per approved enquiry any more and no binding.
+There is no fee per approved enquiry any more and no binding. Minutes are only credited when the customer complains
+about a call (no automatic credit for failed calls).
 
 The website, the sales script, the social posts and the invoices all read these numbers (or are tested against them),
-so a price changes here first. Agreements snapshot the price they were made at, so an old agreement keeps its price.
+so a price changes here first. Agreements snapshot the price and the package they were made at, so an old agreement
+keeps its price; months invoiced before SHARED_POOL_FROM keep the model they were invoiced under (statement.py).
 """
 from __future__ import annotations
 
+from datetime import date
+
 SUBSCRIPTION_MONTHLY_NET_MINOR = 249_500  # 2.495 kr. per month, excl. VAT
-CAMPAIGN_CALL_NET_MINOR = 400             # 4 kr. per outbound campaign call dialled, excl. VAT
-CAMPAIGN_MINUTE_NET_MINOR = 200           # 2 kr. per started minute of conversation on a campaign call, excl. VAT
-INBOUND_INCLUDED_MINUTES = 300            # inbound call minutes included in the subscription each month
-INBOUND_EXTRA_MINUTE_NET_MINOR = 150      # 1,50 kr. per started inbound minute above the included ones, excl. VAT
+INCLUDED_MINUTES = 300                    # the package: minutes a month, inbound and outbound together
+INBOUND_INCLUDED_MINUTES = INCLUDED_MINUTES  # (name kept: offers and agreements store it under this name)
+INBOUND_EXTRA_MINUTE_NET_MINOR = 150      # 1,50 kr. per started inbound minute above the package, excl. VAT
+OUTBOUND_EXTRA_MINUTE_NET_MINOR = 200     # 2 kr. per started outbound (campaign) minute above the package, excl. VAT
+# Price per outbound call that starts after the package is used up, by outcome (campaigns/service.outcome_class)
+OUTBOUND_CALL_ANSWERED_NET_MINOR = 400    # 4 kr. – the person answered
+OUTBOUND_CALL_VOICEMAIL_NET_MINOR = 100   # 1 kr. – voicemail (Vapi voicemail detection; no message is left)
+OUTBOUND_CALL_NO_ANSWER_NET_MINOR = 25    # 0,25 kr. – unanswered, busy, failed to connect, or outcome unknown
 SPECIALIST_SETUP_NET_MINOR = 500_000      # 5.000 kr. once, setup by our specialists, excl. VAT (self-setup is included)
 TAX_BASIS_POINTS = 2500                   # 25 % Danish VAT
+# First month billed with the shared package (inbound + outbound). Earlier months keep
+# the model they were billed under: inbound-only package, campaign calls at 4 kr. + 2 kr./min snapshotted per call.
+SHARED_POOL_FROM = date(2026, 11, 1)
 
 
 def kr(minor: int) -> str:
@@ -29,12 +43,8 @@ def kr(minor: int) -> str:
     whole = f"{minor // 100:,}".replace(",", ".")
     return whole + (f",{minor % 100:02d}" if minor % 100 else "")
 
-# Outbound call price by outcome (Fürster's decision 2026-11-10; same names and values as on
-# qa/decisions-2026-11-10, where Erhverv bills them after the package). Excl. VAT. Dialogbot Privat's extra calls are
-# priced from these (markets.privat_extra_call): the same net price + 25 % moms (Fürster's decision 2026-11-11).
-OUTBOUND_CALL_ANSWERED_NET_MINOR = 400    # 4 kr. – the person answered
-OUTBOUND_CALL_VOICEMAIL_NET_MINOR = 100   # 1 kr. – voicemail (Vapi voicemail detection; no message is left)
-OUTBOUND_CALL_NO_ANSWER_NET_MINOR = 25    # 0,25 kr. – unanswered, busy or failed to connect
+# Dialogbot Privat's extra calls are priced from Erhverv's OUTBOUND_CALL_* and OUTBOUND_EXTRA_MINUTE_NET_MINOR above
+# (markets.privat_extra_call): the same net price + 25 % moms (Fürster's decision 2026-11-11).
 # Erhverv's honest maximum per contact (2 attempts answered + 3 started minutes = 14 kr. excl. VAT): the most one extra
 # Privat call can cost (17,50 kr. incl. VAT) and what is reserved before it is dialled.
 MAX_PER_CONTACT_ATTEMPTS = 2

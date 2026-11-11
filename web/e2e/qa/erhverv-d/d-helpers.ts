@@ -4,7 +4,9 @@ import { freshOwner, serve } from "../../helpers";
 /* Shared setup for QA wave 2 instance D (E2D). The customer's website is a fake site on its own port (4318), so it
  * never clashes with :4000 (helpers.CUSTOMER_SITE) or :4127 (erhverv-b). Only canonical demo data (Fjord Gulv). */
 export const CSRF = { "x-requested-with": "dialogbot" };
-export const SITE_PORT = 4318;
+// One port per Playwright worker (verifier, bølge 2): with --workers=2 two W-specs listened on :4318 at once →
+// EADDRINUSE. TEST_PARALLEL_INDEX is 0 with --workers=1, so single-worker runs keep :4318.
+export const SITE_PORT = 4318 + 100 * Number(process.env.TEST_PARALLEL_INDEX ?? 0);
 export const SITE = `http://localhost:${SITE_PORT}`;
 export const EVID = (id: string) => `../qa/evidence/${id}`;
 

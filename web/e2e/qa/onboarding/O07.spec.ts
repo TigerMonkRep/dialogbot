@@ -53,12 +53,21 @@ test("O07 · intet valgt i trin 1: «Tænd» må ikke love noget, der ikke er sa
   await setGoals(page, wsId, { product_intent: "reception", inbound_phone: false, webchat: false, callback: false, booking: false });
   await page.goto("/opsaetning/3");
   await expect(page.getByText(/I valgte ikke at tage telefonen/)).toBeVisible();
-  const btn = page.getByRole("button", { name: "Tænd Dialogbot" });
-  const enabled = await btn.isEnabled().catch(() => false);
+  // F-E2B-03 (rettet i 1b96c6e): intet at tænde → ingen «Tænd»/«Alt er klar», men en vej tilbage til trin 1
+  await expect(page.getByRole("heading", { name: "Vælg hvad Dialogbot skal gøre" })).toBeVisible();
   await snap(page, ID, info, "intet-valgt");
-  if (enabled) { await btn.click(); await page.waitForURL(/\/app/); await page.waitForTimeout(800); }
+  await expect(page.getByRole("button", { name: "Tænd Dialogbot" })).toHaveCount(0);
+  const main = await page.locator("main").innerText();
+  expect(main).not.toContain("Alt er klar – tænd Dialogbot");
+  expect(main, "intet er valgt, men siden siger at Dialogbot er tændt og tager telefonen").not.toContain("Den tager telefonen, næste gang kunderne ringer.");
+  const back = page.locator("main").getByRole("link", { name: "Ret valget" }).last();
+  await expect(back).toHaveAttribute("href", "/opsaetning/1");
+  await back.click();
+  await page.waitForURL(/\/opsaetning\/1/);
   await snap(page, ID, info, "intet-valgt-efter");
-  expect(await page.locator("main").innerText(), "intet er valgt, men siden siger at Dialogbot er tændt og tager telefonen").not.toContain("Den tager telefonen, næste gang kunderne ringer.");
+  // og I dag lover heller ikke noget
+  await page.goto("/app?taendt=1");
+  expect(await page.locator("main").innerText()).not.toContain("Den tager telefonen, næste gang kunderne ringer.");
 });
 
 test("O07 · læser i trin 3 må ikke se «Alt er klar», når telefonen ikke er sat op", async ({ page, browser }, info) => {

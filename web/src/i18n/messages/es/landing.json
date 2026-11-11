@@ -54,20 +54,20 @@
   "pricing": {
     "meta": {
       "title": "Precios – recepcionista con IA por {pMonthly} al mes",
-      "description": "Consulte el precio de Dialogbot: una suscripción de {pMonthly} al mes, IVA no incluido, con 300 minutos de llamadas entrantes. Teléfono, chat, reservas y configuración personal incluidos. Las llamadas salientes de campaña cuestan {pCall} por llamada.",
+      "description": "Consulte el precio de Dialogbot: una suscripción de {pMonthly} al mes, IVA no incluido, con 300 minutos para llamadas entrantes y salientes. Teléfono, chat, reservas y configuración personal incluidos. Dentro del paquete no hay precio por llamada; una vez agotado, una llamada saliente cuesta {pCallAnswered} (atendida), {pCallVoicemail} (buzón de voz) o {pCallNoAnswer} (sin respuesta) más {pMinute} por minuto.",
       "ogTitle": "Precios del recepcionista con IA | Dialogbot"
     },
     "kicker": "Precios",
     "title": "Una suscripción: {pMonthly} al mes",
     "lead": "Un precio, Dialogbot completo: recepcionista con IA al teléfono, chatbot en su web, reservas y un resumen de cada consulta. Todos los precios sin IVA.",
-    "points": ["{pMonthly} al mes: una sola suscripción", "Sin precio por contacto", "300 minutos de llamadas entrantes al mes incluidos", "Llamadas salientes de campaña: {pCall} por llamada + {pMinute} por minuto", "Sin permanencia", "Configuración por su cuenta incluida; configuración por especialistas {pSetup}"],
+    "points": ["{pMonthly} al mes: una sola suscripción", "Sin precio por contacto", "{pIncluded} minutos al mes incluidos – para llamadas entrantes y salientes", "Después {pExtraMinute} por minuto entrante; saliente {pCallAnswered} por llamada atendida + {pMinute} por minuto", "Sin permanencia", "Configuración por su cuenta incluida; configuración por especialistas {pSetup}"],
     "sections": {
       "subscription": {
         "title": "La suscripción",
         "p1Price": "{pMonthly} al mes",
         "p1a": ", IVA no incluido. No hay precio por contacto y ",
-        "p1Minutes": "se incluyen 300 minutos de llamadas entrantes al mes",
-        "p1b": ", suficiente para la mayoría de las pequeñas empresas. Si sus clientes hablan más con el asistente, cada minuto iniciado adicional cuesta {pExtraMinute}. Siempre puede consultar su consumo en Dialogbot.",
+        "p1Minutes": "se incluyen {pIncluded} minutos al mes, para llamadas entrantes y llamadas de campaña salientes",
+        "p1b": ": suficiente para la mayoría de las pequeñas empresas. Dentro del paquete no hay precio por llamada. Si usa más minutos, cada minuto entrante iniciado cuesta {pExtraMinute}; las llamadas de campaña salientes tras el paquete se describen abajo. Siempre puede ver su consumo por llamada en Dialogbot.",
         "p2": "El precio de un servicio de atención telefónica, pero con un recepcionista que además reserva las citas en su calendario y le avisa de cada llamada.",
         "p3a": "Ideal para empresas cuyo teléfono suena cuando están ocupadas: oficios, clínicas, salones, talleres y asesorías. Si quiere escucharlo antes, puede ",
         "p3Link": "dejar que Dialogbot le llame",
@@ -97,12 +97,12 @@
       },
       "outbound": {
         "title": "Llamadas salientes de campaña",
-        "p1a": "Si quiere que el asistente llame a contactos que han aceptado expresamente recibir llamadas, cuesta ",
-        "p1Call": "{pCall} por llamada saliente",
+        "p1a": "Si quiere que el asistente llame a contactos que han aceptado ser llamados, los minutos salen de los mismos minutos de la suscripción, sin precio por llamada. Agotado el paquete, cada llamada que empiece después cuesta ",
+        "p1Call": "{pCallAnswered} si la persona contesta, {pCallVoicemail} si salta el buzón de voz y {pCallNoAnswer} si no contesta o comunica",
         "p1b": " más ",
         "p1Minute": "{pMinute} por minuto de conversación iniciado",
-        "p1c": ", IVA no incluido, igual que una factura de teléfono.",
-        "p2": "Cada llamada realizada cuenta, también un nuevo intento. Una llamada sin respuesta cuesta {pCall}, y una conversación de 3 minutos, {pCall3Min}. A cada contacto se le llama como máximo 2 veces y se habla como máximo 3 minutos en total, y usted ve el precio máximo antes de pulsar Iniciar."
+        "p1c": ", sin IVA.",
+        "p2": "Una llamada que cruza el límite solo reparte sus minutos: no tiene precio por llamada. El paquete se comparte con las llamadas entrantes y se usa en el orden de las llamadas. A un contacto se le llama como máximo dos veces y habla como máximo 3 minutos, así que un contacto cuesta como máximo {pContactMax}, y verá el precio máximo antes de pulsar Iniciar."
       },
       "start": {
         "title": "Empezar",
@@ -117,11 +117,11 @@
     },
     "faq": [
       ["¿Hay permanencia?", "No. No hay permanencia. Puede cancelar con efecto al final del mes en curso."],
-      ["¿{pMonthly} es el precio total?", "Sí, es el precio total de la suscripción, IVA no incluido. Solo hay una suscripción y ningún coste adicional por contacto. Solo si usa más de 300 minutos entrantes al mes, cada minuto adicional cuesta {pExtraMinute}"],
+      ["¿{pMonthly} es el precio total?", "Sí, es el precio total de la suscripción, IVA no incluido. Solo hay una suscripción y ningún coste adicional por contacto. Solo si usa más de 300 minutos al mes (entrantes y salientes juntos), cada minuto adicional cuesta {pExtraMinute} entrante y {pMinute} saliente, y las llamadas salientes después del paquete cuestan además {pCallAnswered}/{pCallVoicemail}/{pCallNoAnswer} por llamada según el resultado."],
       ["¿Puedo probarlo antes de comprar?", "Sí. Dialogbot le llama y le atiende como si fuera un cliente: son dos minutos y no requiere registro. Y no hay permanencia."],
       ["¿Dónde quedan los datos de mis clientes?", "Lo explicamos en un texto breve y claro en la página sobre RGPD y datos: qué se guarda, dónde y cómo funciona el contrato de encargo del tratamiento."],
-      ["¿Cuánto cuestan las llamadas salientes de campaña?", "{pCall} por llamada saliente más {pMinute} por minuto de conversación iniciado, IVA no incluido. Una llamada sin respuesta cuesta {pCall}; una conversación de 3 minutos, {pCall3Min}. Los contactos deben haber aceptado previamente recibir llamadas, y una campaña solo empieza a llamar cuando usted pulsa Iniciar."],
-      ["¿Qué pasa si recibimos muchas llamadas entrantes?", "La suscripción incluye 300 minutos de llamadas entrantes al mes. A partir de ahí, cada minuto iniciado cuesta {pExtraMinute}, IVA no incluido: aparece en la factura como una línea aparte, y puede seguir el consumo en todo momento en Dialogbot."],
+      ["¿Cuánto cuestan las llamadas salientes de campaña?", "Dentro de los {pIncluded} minutos de la suscripción (compartidos con las llamadas entrantes) no hay precio por llamada. Agotado el paquete, una llamada saliente que empiece después cuesta {pCallAnswered} si la persona contesta, {pCallVoicemail} si salta el buzón de voz y {pCallNoAnswer} si no contesta o comunica, más {pMinute} por minuto de conversación iniciado, sin IVA. Como máximo {pContactMax} por contacto. Los contactos deben haber aceptado antes ser llamados, y una campaña solo llama cuando usted pulsa Iniciar."],
+      ["¿Qué pasa si recibimos muchas llamadas entrantes?", "La suscripción incluye {pIncluded} minutos al mes, para llamadas entrantes y salientes, sin precio por llamada dentro de ellos. Después, cada minuto entrante iniciado cuesta {pExtraMinute}; las llamadas salientes cuestan {pCallAnswered}/{pCallVoicemail}/{pCallNoAnswer} según el resultado más {pMinute} por minuto, sin IVA. Aparecen como líneas aparte en la factura y puede seguir el consumo por llamada en Dialogbot."],
       ["¿La configuración tiene coste?", "No si la hace usted mismo: los tres pasos de la guía están incluidos en la suscripción y llevan una media hora. La configuración por nuestros especialistas cuesta {pSetup}, IVA no incluido, en un único pago, y le ofrece una configuración a medida e integrada con sus propios sistemas y necesidades."]
     ]
   },
@@ -160,7 +160,7 @@
         "title": "Precio y configuración",
         "p1a": "Hay una sola suscripción: ",
         "p1Price": "{pMonthly} al mes",
-        "p1b": ", sin precio por contacto y con 300 minutos de llamadas entrantes al mes. Las llamadas salientes de campaña cuestan {pCall} por llamada más {pMinute} por minuto de conversación. Todos los precios sin IVA.",
+        "p1b": ", sin precio por contacto y con 300 minutos para llamadas entrantes y salientes al mes. Dentro del paquete no hay precio por llamada; una vez agotado, una llamada saliente cuesta {pCallAnswered} (atendida), {pCallVoicemail} (buzón de voz) o {pCallNoAnswer} (sin respuesta) más {pMinute} por minuto. Todos los precios sin IVA.",
         "p2a": "No necesita conocimientos técnicos. Usted mismo configura el asistente siguiendo los tres pasos de la guía en una media hora, y está incluido en la suscripción. Si tiene web, Dialogbot obtiene casi todo automáticamente, y puede probar el asistente antes de que atienda una sola llamada real. Si prefiere que se lo hagamos, nuestros propios especialistas lo configuran por {pSetup}, IVA no incluido, en un único pago: a medida e integrado con sus propios sistemas y necesidades. Lea también sobre ",
         "p2Phone": "el contestador con IA",
         "p2b": " y ",
@@ -169,7 +169,7 @@
       }
     },
     "faq": [
-      ["¿Cuánto cuesta un recepcionista con IA en Dialogbot?", "Una suscripción de {pMonthly} al mes, sin precio por contacto y con 300 minutos de llamadas entrantes al mes. Las llamadas salientes de campaña cuestan {pCall} por llamada más {pMinute} por minuto de conversación. Precios sin IVA."],
+      ["¿Cuánto cuesta un recepcionista con IA en Dialogbot?", "Una suscripción de {pMonthly} al mes, sin precio por contacto y con 300 minutos para llamadas entrantes y salientes al mes. Dentro del paquete no hay precio por llamada; una vez agotado, una llamada saliente cuesta {pCallAnswered} (atendida), {pCallVoicemail} (buzón de voz) o {pCallNoAnswer} (sin respuesta) más {pMinute} por minuto. Precios sin IVA."],
       ["¿Qué pasa con los datos de los clientes? ¿Cumple el RGPD?", "Las llamadas y los mensajes se tratan como encargado del tratamiento en su nombre, la base de datos está en la UE y recibe un contrato de encargo del tratamiento como parte de las condiciones. Léalo todo en lenguaje claro en la página sobre RGPD y datos: /gdpr."],
       ["¿Suena como un robot?", "Dialogbot habla de forma natural, en español o en el idioma de su cliente, con la voz que usted elija, por ejemplo Camilla o Peter. Siempre dice con honestidad que es un asistente digital si el cliente lo pregunta."],
       ["¿Puedo conservar mi número de teléfono?", "Sí. Desvía su número actual a Dialogbot cuando esté ocupado o haya cerrado, y mantiene su operador."],

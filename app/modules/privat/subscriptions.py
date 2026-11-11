@@ -386,8 +386,9 @@ def upsert_from_stripe_subscription(db: OrmSession, obj: dict, *, session_meta: 
             and _state(row, rules.now())[2]):
         # A SECOND live subscription for an account that already has one (two Checkouts opened before either was
         # completed – two tabs, the plan sheet and Konto …): one subscription per account, so the newcomer is
-        # cancelled at Stripe at once – nothing is charged after its trial – and the row keeps the first (F-PBQ-01,
-        # F-PK-01). Checkout itself refuses a second one once the first has arrived (PC-SUB-07).
+        # cancelled at Stripe at once – nothing is charged after its trial, a paid first invoice is refunded – and the
+        # row keeps the first (F-PBQ-01, F-PBQ-09, F-PK-01). Checkout itself refuses a second one once the first has
+        # arrived (PC-SUB-07).
         _cancel_duplicate(obj, ws_id, row.stripe_subscription_id)
         return "dup_canceled"  # ≤ 16 chars: webhook_events.outcome
     if plan is None and row.stripe_subscription_id != sid:
@@ -503,13 +504,13 @@ def _cancel_duplicate(obj: dict, ws_id: uuid.UUID, kept: str) -> None:
     import structlog
 
     log = structlog.get_logger("dialogbot.privat.subscriptions")
-    sid = str(obj.get("id") or "")
+    sid, trialing = str(obj.get("id") or ""), str(obj.get("status")) == "trialing"
     try:
         stripe_api.request("DELETE", f"/subscriptions/{sid}")
         log.warning("privat.duplicate_subscription_canceled", workspace_id=str(ws_id), canceled=sid, kept=kept)
     except Exception:  # noqa: BLE001 - already cancelled, or Stripe down: alert so a person cancels it
         log.error("privat.duplicate_subscription_not_canceled", workspace_id=str(ws_id), subscription=sid, kept=kept)
-    if str(obj.get("status")) == "trialing":
+    if trialing:
         return  # nothing was charged
     inv_id = obj.get("latest_invoice")
     if isinstance(inv_id, dict):

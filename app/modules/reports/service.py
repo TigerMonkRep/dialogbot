@@ -207,6 +207,29 @@ def _median(xs: list[float]) -> float | None:
     return xs[m] if len(xs) % 2 else (xs[m - 1] + xs[m]) / 2
 
 
+def _campaign_net(db: OrmSession, workspace_id: uuid.UUID, a: datetime, b: datetime, tz: str) -> int:
+    """What the week's campaign calls cost, as the monthly statement prices them: for months with the shared package
+    the minutes above the package (allocated over the whole month), before that the per-call snapshot."""
+    from app.modules.billing import customer_market, statement
+
+    total, month = 0, a.astimezone(ZoneInfo(tz)).date().replace(day=1)
+    while True:
+        m_start, m_end = statement.month_bounds(month, tz)
+        if m_start >= b:
+            return total
+        if statement.shared_pool(month):
+            ag = statement.agreement_at(db, workspace_id, m_end)
+            terms = statement.package_terms(ag, ag.currency if ag else customer_market.currency_of(db, workspace_id))
+            events = statement.usage_events(db, workspace_id, m_start, m_end)
+            statement.allocate(events, terms)
+            total += sum(e["net_minor"] for e in events if e["direction"] == "outbound" and a <= e["at"] < b)
+        else:
+            total += db.scalar(select(func.coalesce(func.sum(CampaignCall.net_minor + CampaignCall.minutes_net_minor), 0))
+                               .where(CampaignCall.workspace_id == workspace_id, CampaignCall.dialled_at >= max(a, m_start),
+                                      CampaignCall.dialled_at < min(b, m_end))) or 0
+        month = m_end.astimezone(ZoneInfo(tz)).date().replace(day=1)
+
+
 def week(db: OrmSession, workspace_id: uuid.UUID, start: date, tz: str) -> dict:
     """The week Monday..Sunday in the workspace's time zone: counts per day and the four headline numbers.
 
@@ -244,9 +267,9 @@ def week(db: OrmSession, workspace_id: uuid.UUID, start: date, tz: str) -> dict:
             elif role == "assistant" and "v" in slot:
                 slot.setdefault("a", at)
         gaps = [(s["a"] - s["v"]).total_seconds() for s in first.values() if "a" in s and "v" in s]
-    cc = db.execute(select(func.count(), func.coalesce(func.sum(CampaignCall.net_minor + CampaignCall.minutes_net_minor), 0))
-                    .where(CampaignCall.workspace_id == workspace_id, CampaignCall.dialled_at >= a,
-                           CampaignCall.dialled_at < b)).one()
+    cc = (db.scalar(select(func.count()).select_from(CampaignCall).where(
+        CampaignCall.workspace_id == workspace_id, CampaignCall.dialled_at >= a, CampaignCall.dialled_at < b)) or 0,
+          _campaign_net(db, workspace_id, a, b, tz))
     summary = feed.counts(list(items.values()))
     med = _median(gaps)
     return {

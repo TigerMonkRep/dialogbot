@@ -73,7 +73,7 @@
     "faq": [
       ["Una segreteria telefonica AI può sostituire un servizio di risposta?", "Per la maggior parte delle richieste ricorrenti sì: risponde, chiarisce l'esigenza e prenota. Le pratiche complesse vengono inoltrate a voi."],
       ["Una segreteria telefonica AI è disponibile di notte?", "Sì, Dialogbot risponde al telefono 24 ore su 24."],
-      ["Cosa costa meno: un servizio di risposta o Dialogbot?", "Il servizio di risposta si paga di solito a chiamata o a canone mensile. Dialogbot è un unico abbonamento da {pMonthly} al mese IVA esclusa, con 300 minuti di chiamate in entrata e nessun costo per contatto. Vedi anche /viden/dialogbot-vs-vocalis."],
+      ["Cosa costa meno: un servizio di risposta o Dialogbot?", "Il servizio di risposta si paga di solito a chiamata o a canone mensile. Dialogbot è un unico abbonamento da {pMonthly} al mese IVA esclusa, con 300 minuti per chiamate in entrata e in uscita e nessun costo per contatto. Vedi anche /viden/dialogbot-vs-vocalis."],
       ["Posso mantenere il mio numero?", "Sì. Inoltra il suo numero a Dialogbot quando è occupato o chiuso."]
     ]
   },
@@ -132,7 +132,7 @@
     "faq": [
       ["Dialogbot può essere anche solo un chatbot?", "Sì. La webchat è inclusa nell'abbonamento e usa le stesse conoscenze approvate del telefono. Basta una riga di codice sul sito web."],
       ["Dialogbot tira a indovinare se non conosce la risposta?", "No. Risponde solo in base a conoscenze approvate e prende un messaggio per voi se non sa rispondere."],
-      ["Quanto costa?", "{pMonthly} al mese IVA esclusa, con 300 minuti di chiamate in entrata. Nessun vincolo."]
+      ["Quanto costa?", "{pMonthly} al mese IVA esclusa, con 300 minuti per chiamate in entrata e in uscita. Nessun vincolo."]
     ]
   },
   "dialogbot-vs-vocalis": {

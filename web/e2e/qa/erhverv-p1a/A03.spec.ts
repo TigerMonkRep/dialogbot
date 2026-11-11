@@ -17,6 +17,7 @@ async function register(page: Page, email: string) {
 const verifyMails = async (page: Page) => (await mailbox(page)).filter((m) => /verify-email\?token=/.test(m.body_text)).length;
 
 test("A03 · afventer → send nyt link → bekræftet; tilstanden overlever genindlæsning", async ({ page }, info) => {
+  test.fail(true, "F-E2A-06-A03: S3 new – «Send nyt link» på /verify-email: dobbeltklik sender to mails, og uden login siger knappen «Din …");
   const email = mail("happy", info);
   await register(page, email);
   await page.goto("/verify-email");
@@ -77,6 +78,7 @@ test("A03 · linket åbnet på en anden enhed (ikke logget ind): bekræfter uden
 });
 
 test("A03 · udløbet link på en anden enhed: «Send nyt link» må ikke sige «Din session er udløbet»", async ({ page, browser }, info) => {
+  test.fail(true, "F-E2A-06-A03: S3 new – «Send nyt link» på /verify-email: dobbeltklik sender to mails, og uden login siger knappen «Din …");
   const email = mail("enhed-udloebet", info);
   await register(page, email);
   const link = await latestMailLink(page.request, /\/verify-email\?token=[\w-]+/);
@@ -103,6 +105,7 @@ test("A03 · serverfejl ved bekræftelse vises som fejl, ikke som «bekræftet»
 });
 
 test("A03 · ingen udviklertekst i kundens afventer-tilstand", async ({ page }, info) => {
+  test.fail(true, "F-E2A-05-A03: S3 new – Afventer-tilstanden på /verify-email viser udviklertekst til rigtige kunder: «I …");
   await register(page, mail("tekst", info));
   await page.goto("/verify-email");
   await expect(page.getByText(/Vi har sendt et bekræftelseslink/)).toBeVisible();

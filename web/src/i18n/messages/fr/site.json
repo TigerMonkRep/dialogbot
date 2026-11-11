@@ -2,7 +2,7 @@
   "prices": {
     "monthly": "{pMonthlyNum}",
     "setup": "{pSetupNum}",
-    "perCall": "{pCallNum}"
+    "perCall": "{pCallAnsweredNum}"
   },
   "demoCall": {
     "label": "Appel · Menuiserie (exemple)",
@@ -84,7 +84,7 @@
         },
         {
           "title": "Appelle vos clients",
-          "text": "Relance vos devis ou rappelle les entretiens – uniquement auprès des clients qui ont dit oui. {pCall} par appel + {pMinute} par minute."
+          "text": "Relance les devis ou rappelle l’entretien – uniquement aux clients qui ont dit oui. Les minutes sont prises sur le forfait ; ensuite {pCallAnswered} par appel décroché + {pMinute} par minute."
         }
       ],
       "note": "Tout ce qu’il dit repose sur des connaissances que vous avez validées – et il vous montre chaque modification d’abord : avant → après, « Valider ? »."
@@ -107,22 +107,22 @@
         "name": "Abonnement",
         "badge": "Recommandé",
         "unit": "{pCur}/mois",
-        "text": "Prix tout compris : téléphone, prise de rendez-vous et chat web – avec 300 minutes d’appels entrants par mois. Sans engagement. Configuration en autonomie incluse.",
+        "text": "Prix tout compris : téléphone, prise de rendez-vous et chat web – avec 300 minutes d’appels entrants et sortants par mois. Sans engagement. Configuration en autonomie incluse.",
         "compare": "Le prix d’une permanence téléphonique – mais un réceptionniste qui prend aussi les rendez-vous dans votre agenda.",
         "cta": "Choisir – écoutez-le d’abord",
         "points": [
           "Téléphone, réservation et chat web – tout inclus",
-          "300 minutes d'appels entrants par mois",
+          "{pIncluded} minutes par mois – appels entrants et sortants",
           "Sans engagement – résiliable chaque mois"
         ]
       },
       "campaign": {
         "name": "Appels sortants de campagne",
-        "unit": "{pCur} par appel + {pMinute} par minute",
-        "text": "Uniquement si vous voulez que Dialogbot passe des appels. Sans réponse : {pCall}. Trois minutes de conversation : {pCall3Min}. Vous voyez le prix maximal avant de lancer.",
+        "unit": "{pCur} par appel décroché + {pMinute}/min après le forfait",
+        "text": "Seulement si vous voulez que Dialogbot appelle. Les minutes sont prises sur les {pIncluded} minutes de l’abonnement, sans prix par appel. Une fois le forfait épuisé, un appel coûte {pCallAnswered} (décroché), {pCallVoicemail} (messagerie) ou {pCallNoAnswer} (sans réponse) plus {pMinute} par minute – au maximum {pContactMax} par contact. Vous voyez le prix maximum avant de démarrer.",
         "badge": "Option",
         "points": [
-          "Paiement à l'appel uniquement – pas d'abonnement en plus",
+          "Aucun prix par appel dans le forfait – pas d’abonnement en plus",
           "Vous validez le script avant tout appel",
           "Le prix maximum est affiché avant le lancement"
         ],
@@ -175,11 +175,11 @@
       "appDescription": "Dialogbot est un réceptionniste IA qui gère le téléphone et le chat de votre entreprise 24 h/24, dans la langue de vos clients – il répond à partir de vos propres connaissances, prend des rendez-vous et centralise les demandes. Nous vous accompagnons tout au long de la configuration.",
       "subscription": {
         "name": "Abonnement",
-        "description": "Par mois HT, avec 300 minutes d’appels entrants. Sans engagement."
+        "description": "Par mois HT, avec {pIncluded} minutes pour les appels entrants et sortants. Sans engagement."
       },
       "campaign": {
         "name": "Appels sortants de campagne",
-        "description": "Par appel sortant HT, plus {pMinute} par minute de conversation entamée"
+        "description": "Par appel sortant décroché après les {pIncluded} minutes de l’abonnement, HT, plus {pMinute} par minute entamée (messagerie {pCallVoicemail}, sans réponse {pCallNoAnswer})."
       },
       "setup": {
         "name": "Mise en service par les spécialistes de Dialogbot",
@@ -362,7 +362,7 @@
       },
       "campaign": {
         "name": "Appels sortants de campagne",
-        "unit": "{pCur} par appel sortant",
+        "unit": "{pCur} par appel décroché après le forfait",
         "points": [
           "Uniquement si vous voulez que Dialogbot passe des appels",
           "Les contacts ont eux-mêmes accepté d’être appelés",

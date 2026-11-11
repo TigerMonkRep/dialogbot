@@ -20,6 +20,7 @@ async function iphone(browser: Browser, info: TestInfo) {
 }
 
 test("iPhone: del en liste → «Send som SMS» åbner egen Beskeder-app med teksten; intet sendes af Dialogbot", async ({ browser }, info) => {
+  test.fail(true, "F-P2-05-X10: S3 new – Delingsarkets SMS-tekst («Send som SMS») indeholder «–» (tankestreg) to gange, som ikke er …");
   const page = await iphone(browser, info);
   await privatUser(page, info, "x10-share", "Mette Hansen");
   await startTrial(page);

@@ -7,6 +7,7 @@ Backend through the same endpoints the pages use (conversations/feed, conversati
 Vapi end-of-call reports and chats through the public widget API – offline, no call, no network."""
 from __future__ import annotations
 
+import pytest
 from sqlalchemy import select
 
 from app.models import Lead, Task
@@ -72,6 +73,7 @@ def test_i01_phone_and_webchat_in_one_list_with_filters_search_and_tenant_isolat
     assert api.get(t["tok_b"], f"/workspaces/{t['ws_b']}/leads/{phone['lead_id']}").status_code == 404
 
 
+@pytest.mark.xfail(strict=True, reason="F-V2-03-I01: S2 new – Hvert telefonopkald med nummervisning bliver til en henvendelse og en opgave «Ring tilbage til +45…». Det …")
 def test_i01_a_call_peter_fully_answered_is_not_put_on_the_to_you_list(client, api, live, configured, db):  # noqa: F811
     """feed.py: «done – Dialogbot handled it»; kundeapp-v2 §6.6: filter «Klaret af Dialogbot». A caller asks for the
     opening hours, gets the answer, says thanks and hangs up – nobody promised a call-back. Today every phone call with a

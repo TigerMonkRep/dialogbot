@@ -130,22 +130,10 @@
       "title": "¿Qué debe hacer por ustedes?",
       "hint": "Elija lo que corresponda. Determina lo que se pregunta en los pasos 2 y 3.",
       "cards": {
-        "phone": {
-          "title": "Atender el teléfono",
-          "sub": "cuando usted no pueda, o siempre"
-        },
-        "booking": {
-          "title": "Reservar citas",
-          "sub": "directamente en su calendario"
-        },
-        "web": {
-          "title": "Responder en su web",
-          "sub": "chat web: una línea de código"
-        },
-        "outbound": {
-          "title": "Llamar a clientes",
-          "sub": "campañas · {pCall} por llamada, IVA no incluido"
-        }
+        "phone": { "title": "Atender el teléfono", "sub": "cuando usted no pueda, o siempre" },
+        "booking": { "title": "Reservar citas", "sub": "directamente en su calendario" },
+        "web": { "title": "Responder en su web", "sub": "chat web: una línea de código" },
+        "outbound": { "title": "Llamar a clientes", "sub": "campañas · minutos del paquete" }
       },
       "langAria": "Idioma",
       "speaks": "Habla",
@@ -370,7 +358,7 @@
     "turningOn": "Activando…",
     "turnOn": "Activar Dialogbot",
     "managersOnly": "Solo los propietarios y administradores pueden activarlo.",
-    "subscriptionNote": "La suscripción es desde {pMonthly}/mes, IVA no incluido, y las llamadas salientes de campaña cuestan {pCall} por llamada, IVA no incluido.",
+    "subscriptionNote": "La suscripción es desde {pMonthly}/mes sin IVA con {pIncluded} minutos para llamadas entrantes y salientes; después {pExtraMinute} por minuto entrante y, en salientes, {pCallAnswered} por llamada atendida + {pMinute} por minuto.",
     "confirmSubscription": "Confirmar suscripción",
     "findAgain": "Lo encontrará todo de nuevo en el icono de perfil → Todos los ajustes.",
     "readerTitle": "El propietario configura Dialogbot",

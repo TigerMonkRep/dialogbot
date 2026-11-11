@@ -96,6 +96,7 @@ test("X03 · fuld vej: 7 trin → kode → reveal; leadet gemmes én gang; ingen
 });
 
 test("X03 · dybt link til et senere trin for en ny besøgende springer ikke spørgsmål 1 over", async ({ page }, info) => {
+  test.fail(true, "F-E2A-02-X03: S3 new – Dybt link til /start/4 for en ny besøgende lander på trin 2 – spørgsmål 1 (branche) springes over.");
   await page.goto("/start/4");
   // Nothing answered yet: question 1 (branche) must not be skipped (F-E2A-02; e2e/funnel.spec.ts expects the same).
   await page.waitForTimeout(1500);

@@ -182,7 +182,8 @@ def test_completed_setup_grants_14_days_plus_once(api, client, pv, stripe, db, p
     # the draft that waited for the plan is live now, paid by the plan
     db.expire_all()
     assert {t.status for t in db.query(PrivateTask).filter_by(workspace_id=pv.ws(tok))} == {"in_progress"}
-    # a second checkout is refused while the subscription runs (PC-SUB-07: one subscription per account) – so it can
-    # never carry a second trial either; the web sends the customer to the Billing Portal instead
-    r = api.post(tok, "/privat/subscription/checkout", {"plan": "plus", "interval": "month"})
-    assert r.status_code == 409 and r.json()["code"] == "subscription_exists", r.text
+    # a second checkout never carries a second trial – since F-PBQ-01 it is refused outright while the
+    # subscription runs (409 subscription_exists → Billing Portal), so no second subscription can start at all
+    r2 = api.post(tok, "/privat/subscription/checkout", {"plan": "plus", "interval": "month"})
+    assert r2.status_code == 409, r2.text
+    assert r2.json()["code"] == "subscription_exists" and r2.json().get("portal") is True

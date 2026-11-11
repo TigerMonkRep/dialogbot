@@ -185,7 +185,7 @@
     },
     "label": "Villkor",
     "title": "Abonnemangs- och köpvillkor",
-    "updated": "Version 1 · gäller från 6 oktober 2026.",
+    "updated": "Version 2 · gäller från 10 november 2026.",
     "intro": "Dessa villkor gäller när ett företag skapar ett konto och använder Dialogbot. Dialogbot säljs bara till näringsidkare. \"Vi\" är {name} (CVR-nr {cvr}), {address}. \"Ni\" är det företag som har skapat arbetsytan.",
     "sections": [
       {
@@ -203,8 +203,8 @@
             "type": "ul",
             "items": [
               [{ "b": "Abonnemang:" }, " från {pMonthly} per månad. Det finns inget pris per ärende."],
-              [{ "b": "Kampanjer (utgående samtal):" }, " {pCall} per utgående samtal plus {pMinute} per påbörjad samtalsminut. Varje samtal som rings räknas, även ett nytt försök (högst 2 försök och högst 3 samtalsminuter per kontakt). Det högsta möjliga priset visas innan en kampanj startas."],
-              [{ "b": "Inkommande samtal:" }, " ett danskt telefonnummer till assistenten och 300 påbörjade samtalsminuter per kalendermånad ingår. Minuter därutöver kostar {pExtraMinute} per påbörjad minut och debiteras på månadens faktura. Förbrukningen kan följas löpande i Dialogbot."]
+              [{ "b": "Minutpaket:" }, " ett danskt telefonnummer till assistenten och 300 påbörjade samtalsminuter per kalendermånad ingår. Minuterna är en gemensam pott för både inkommande samtal och utgående kampanjsamtal och används i den ordning samtalen sker. Inom paketet finns inget pris per samtal. I kampanjer rings en kontakt högst 2 gånger och pratar högst 3 minuter, och det högsta möjliga priset visas innan en kampanj startas."],
+              [{ "b": "Minuter utöver paketet:" }, " {pExtraMinute} per påbörjad inkommande minut. Ett utgående kampanjsamtal som startar efter att paketet är förbrukat kostar {pCallAnswered} om personen svarar, {pCallVoicemail} vid röstbrevlåda och {pCallNoAnswer} vid obesvarat, upptaget eller okänt utfall – plus {pMinute} per påbörjad samtalsminut. Ett samtal som korsar gränsen delar bara sina minuter och får inget samtalspris. De debiteras på månadens faktura, och förbrukningen per samtal kan följas löpande i Dialogbot. Minuter krediteras bara när ni klagar på ett visst samtal och vi godkänner klagomålet: är månaden inte fakturerad går minuterna tillbaka till paketet; är den fakturerad krediteras beloppet på nästa faktura."]
             ]
           },
           { "type": "p", "text": "Kommer ni via en ambassadör får ni 50 % rabatt på er första fakturerade månad. Vi kan ändra priserna med minst 30 dagars varsel via e-post; ändringen gäller från den första hela månaden efter varslet." }

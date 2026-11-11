@@ -73,7 +73,7 @@
     "faq": [
       ["Kan en AI-telefonsvarer erstatte telefonvakt?", "For de fleste faste henvendelser, ja: den svarer, avklarer behovet og booker. Komplekse saker sendes videre til dere."],
       ["Er en AI-telefonsvarer tilgjengelig om natten?", "Ja, Dialogbot tar telefonen døgnet rundt."],
-      ["Hva er billigst: telefonvakt eller Dialogbot?", "Telefonvakt faktureres som regel per anrop eller per måned. Dialogbot er ett abonnement til {pMonthly} i måneden eks. mva. med 300 minutter innkommende anrop og ingen pris per henvendelse. Se også /viden/dialogbot-vs-vocalis."],
+      ["Hva er billigst: telefonvakt eller Dialogbot?", "Telefonvakt faktureres som regel per anrop eller per måned. Dialogbot er ett abonnement til {pMonthly} i måneden eks. mva. med 300 minutter til inn- og utgående anrop og ingen pris per henvendelse. Se også /viden/dialogbot-vs-vocalis."],
       ["Kan jeg beholde nummeret mitt?", "Ja. Du viderekobler nummeret ditt til Dialogbot når du er opptatt eller har stengt."]
     ]
   },
@@ -132,7 +132,7 @@
     "faq": [
       ["Kan Dialogbot også bare være en chatbot?", "Ja. Nettchatten er inkludert i abonnementet, og den bruker den samme godkjente kunnskapen som telefonen. Det er én kodelinje på nettsiden."],
       ["Gjetter Dialogbot hvis den ikke vet svaret?", "Nei. Den svarer bare ut fra godkjent kunnskap og tar imot en beskjed til dere hvis den ikke kan svare."],
-      ["Hva koster det?", "{pMonthly} i måneden eks. mva. med 300 minutter innkommende anrop. Ingen bindingstid."]
+      ["Hva koster det?", "{pMonthly} i måneden eks. mva. med 300 minutter til inn- og utgående anrop. Ingen bindingstid."]
     ]
   },
   "dialogbot-vs-vocalis": {

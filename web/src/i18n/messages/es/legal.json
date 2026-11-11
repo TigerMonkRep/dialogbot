@@ -185,7 +185,7 @@
     },
     "label": "Condiciones",
     "title": "Condiciones de suscripción y de venta",
-    "updated": "Versión 1 · vigente desde el 6 de octubre de 2026.",
+    "updated": "Versión 2 · vigente desde el 10 de noviembre de 2026.",
     "intro": "Estas condiciones se aplican cuando una empresa crea una cuenta y utiliza Dialogbot. Dialogbot solo se vende a empresas y profesionales. \"Nosotros\" es {name} (N.º CVR {cvr}), {address}. \"Ustedes\" es la empresa que ha creado el espacio de trabajo.",
     "sections": [
       {
@@ -203,8 +203,8 @@
             "type": "ul",
             "items": [
               [{ "b": "Suscripción:" }, " desde {pMonthly} al mes. No hay precio por contacto."],
-              [{ "b": "Campañas (llamadas salientes):" }, " {pCall} por llamada saliente más {pMinute} por minuto de conversación iniciado. Cada llamada realizada cuenta, también un nuevo intento (máximo 2 intentos y máximo 3 minutos de conversación por contacto). El precio máximo posible se muestra antes de iniciar una campaña."],
-              [{ "b": "Llamadas entrantes:" }, " se incluyen un número de teléfono danés para el asistente y 300 minutos de conversación iniciados por mes natural. Los minutos adicionales cuestan {pExtraMinute} por minuto iniciado y se facturan en la factura del mes. El consumo puede seguirse en todo momento en Dialogbot."]
+              [{ "b": "Paquete de minutos:" }, " se incluyen un número de teléfono danés para el asistente y 300 minutos de conversación iniciados por mes natural. Los minutos son una bolsa común para las llamadas entrantes y las llamadas de campaña salientes y se consumen en el orden en que se producen las llamadas. Dentro del paquete no hay precio por llamada. En las campañas se llama a un contacto como máximo dos veces y habla como máximo 3 minutos, y el precio máximo posible se muestra antes de iniciar una campaña."],
+              [{ "b": "Minutos fuera del paquete:" }, " {pExtraMinute} por minuto entrante iniciado. Una llamada de campaña saliente que empiece después de agotar el paquete cuesta {pCallAnswered} si la persona contesta, {pCallVoicemail} si salta el buzón de voz y {pCallNoAnswer} si no contesta, comunica o el resultado es desconocido, más {pMinute} por minuto de conversación iniciado. Una llamada que cruza el límite solo reparte sus minutos y no tiene precio por llamada. Se facturan en la factura del mes y el consumo por llamada puede seguirse en todo momento en Dialogbot. Los minutos solo se abonan cuando ustedes reclaman por una llamada concreta y aprobamos la reclamación: si el mes no se ha facturado, los minutos vuelven al paquete; si ya se ha facturado, el importe se abona en la siguiente factura."]
             ]
           },
           { "type": "p", "text": "Si llegan a través de un embajador, obtienen un 50 % de descuento en su primer mes facturado. Podemos modificar los precios con un preaviso mínimo de 30 días por correo electrónico; el cambio se aplica a partir del primer mes completo posterior al preaviso." }

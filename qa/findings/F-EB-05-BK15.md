@@ -74,3 +74,11 @@ app/modules/integrations/connectors/calendar.py:304-311 – `_mirror_update`/`_m
 - Fejler testen uden rettelsen? ja – worktree 56f95ab (/home/claude/wt-before), db qa_verify_before: `action status='ok', text to caller='Aftalen er flyttet til tirsdag 10. november kl. 18.00. (simuleret)'; Dialogbot=…17:00, Google=…14:00`; `Peter is handed 'Booket: Besigtigelse …'`; E07-testen: `assert 'ok' == 'failed'`
 - Naboscenarier kørt: hele tests/qa + fuld `pytest` fra ren db qa_verify på c3bed12 (1610 passed, 18 xfailed, 5 skipped m. grund, 1 failed = F-VR-03, urelateret race); E07-inventar, test_booking_calendar_sync.py.
 - Dom: closed
+
+## Verifikation af beslutningsdelen (verifier, 2026-11-11, 631cecc/bc44fa9)
+- Gentest: tests/test_booking_calendar_sync.py 9/9 pass (6 nye: udbyder nede → «afventer bekræftelse» + opgave + intet event; bekræft → spejlet; konflikt 409 + bekræft alligevel; aflys lukker opgaven; book_tid/flyt_tid lover aldrig tiden; forbindelse i error gendannes). tests/qa/test_qa_voice_calendar_failure.py 3/3 og test_qa_w12_bk15.py 7 pass + 3 ældre strict-xfail. e2e web/e2e/qa/erhverv-b/BK15-pending.spec.ts pass på desktop-1440 og mobil-390 mod egen stak (API :8600, web :3600, db dialogbot_dec). Hele erhverv-b: 16/16.
+- Fejler testen uden rettelsen? ja: på 46a3c54 (db qa_verify3_before) fejler test_booking_calendar_sync 6 og test_qa_voice_calendar_failure 1 (test_bk15_busy_unreadable_booking_is_noted_not_confirmed).
+- Migration e7a2c5d9f1b3: downgrade og upgrade head ok, `alembic check` ren.
+- Åbne opfølgninger (står allerede i «Ikke ændret»): public API v1 Booking mangler `confirmation`, SalesMeeting.status og webchat-indbakkens «Booket». De er ikke genåbnet.
+- Ny verifier 2026-11-11: pytest-delen genkørt (rollback-kørsel: test_booking_calendar_sync 6 failed, test_qa_voice_calendar_failure 1 failed på main; fuld pytest på 631cecc grøn). e2e-delen (BK15-pending, erhverv-b 16/16) er forgængerens kørsel (/home/claude/verify3/e2e-erhverv-b.log) og er ikke genkørt.
+- Dom: closed (uændret)

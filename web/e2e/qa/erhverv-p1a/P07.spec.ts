@@ -19,6 +19,7 @@ test("P07 · oversigten har grupper og links til alle artikler; ingen døde link
 });
 
 test("P07 · artikelskabelon: én h1, brødkrumme tilbage til Viden, læsbar linjelængde, ingen vandret scroll", async ({ page }) => {
+  test.fail(true, "F-E2A-09-P07: S2 new – Vandret scroll på mobil (390 px): tre /viden-artikler (206 px) og de juridiske sider (5 px).");
   for (const a of ARTICLES) {
     expect((await page.goto(`/da/viden/${a}`))?.status(), a).toBe(200);
     await expect(page.locator("h1"), a).toHaveCount(1);

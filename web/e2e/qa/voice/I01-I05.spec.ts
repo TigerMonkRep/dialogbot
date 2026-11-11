@@ -68,6 +68,7 @@ test("I01–I05 · Opkald: listen, søgning, filter, detalje, henvendelse og opg
 });
 
 test("I03 · «I dag»-flisen «Henvendelser» og ukendte id'er giver ikke en serverfejl", async ({ page }, info) => {
+  test.fail(true, "F-V2-04-I03: S2 new – Flisen «Henvendelser» på I dag linker til `/app/opkald/henvendelser`, som giver HTTP 500 med en …");
   await freshOwner(page, info);
   // the tile on I dag links here (web/src/app/app/(admin)/page.tsx: href="/app/opkald/henvendelser")
   const list = await page.goto("/app/opkald/henvendelser");
@@ -80,6 +81,7 @@ test("I03 · «I dag»-flisen «Henvendelser» og ukendte id'er giver ikke en se
 });
 
 test("R04–R07 · gamle receptionsadresser fra kravene ender ikke på en 404", async ({ page }, info) => {
+  test.fail(true, "F-V2-07-R05: S3 new – Kravsruterne `/app/reception/widget`, `/app/reception/assistant`, `/app/reception/test` og …");
   await freshOwner(page, info);
   const dead: string[] = [];
   for (const p of ["/app/reception/widget", "/app/reception/assistant", "/app/reception/test", "/app/reception/routing"]) {

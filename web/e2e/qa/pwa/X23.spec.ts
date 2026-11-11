@@ -18,6 +18,7 @@ async function pixel(page: Page, src: string): Promise<[number, number, number]>
 }
 
 test("X23 · manifest pr. målgruppe: start_url, scope, ikoner (blå Erhverv / orange Privat)", async ({ page, request }) => {
+  test.fail(true, "F-M2-16-X23: S2 new – Erhvervs-manifestet har start_url `/app` uden for scope `/app/`: manifest-scopet bliver ugyldigt …");
   const erh = await (await request.get("/manifest.webmanifest")).json();
   const prv = await (await request.get("/privat/manifest.webmanifest")).json();
   expect([erh.id, erh.start_url, erh.scope, erh.display]).toEqual(["/app/", "/app", "/app/", "standalone"]);
@@ -124,6 +125,7 @@ test("X23 · ingen cachede logged-in sider efter log ud", async ({ page }, info)
 });
 
 test("X23 · installeret app starter offline på start_url /app", async ({ page, context }, info) => {
+  test.fail(true, "F-M2-16-X23: S2 new – Erhvervs-manifestet har start_url `/app` uden for scope `/app/`: manifest-scopet bliver ugyldigt …");
   await freshOwner(page, info);
   await page.goto("/app/konto");
   await page.evaluate(async () => {

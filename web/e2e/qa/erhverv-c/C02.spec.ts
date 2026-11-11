@@ -105,6 +105,7 @@ test("C02 · roller: medarbejder ser kampagner men kan ikke oprette; læser ser 
 });
 
 test("C02 · krav: sprogvalg for kampagnen (ikke bygget)", async ({ page }, info) => {
+  test.fail(true, "C02: not-implemented – sprogvalg for kampagnen");
   test.info().annotations.push({ type: "not-implemented", description: "C02 language choice: no field in UI (client.tsx NewCampaign/CampaignEditor) or API (CampaignIn)" });
   const { wsId } = await campaignOwner(page, info);
   const c = await newCampaign(page.request, wsId, `QA-E2C sprog ${Date.now()}`);

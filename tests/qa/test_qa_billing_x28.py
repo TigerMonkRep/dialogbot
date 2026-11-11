@@ -1,8 +1,10 @@
 """QA billing-qa · X28 – Erhverv usage pricing (independent expected values).
 
-Price rules (billing-qa agent definition, the source of truth):
-  outbound campaign call: 4 kr. per call + 2 kr. per STARTED conversation minute (excl. VAT)
-  inbound: 300 minutes/month included, then 1,50 kr. per started minute (excl. VAT)
+Price rules (billing-qa agent definition, the source of truth) for the months these tests use (before 2026-11, kept as
+invoiced): outbound campaign call: 4 kr. per call + 2 kr. per STARTED conversation minute (excl. VAT); inbound: 300
+minutes/month included, then 1,50 kr. per started minute (excl. VAT).
+From 2026-11 (Fürster 2026-11-10): one 300-minute package for inbound + outbound, no per-call fee, then 1,50 kr. in /
+2 kr. out per started minute – proven in tests/test_billing_statement.py (shared package tests).
   25 % VAT, minor units, calendar months in Europe/Copenhagen.
 
 Every expected number below is computed by hand in this file, never by calling the code under test.
@@ -152,9 +154,8 @@ def test_x28_price_snapshot_survives_a_list_price_change(api, two_workspaces, db
     db.commit()
     _report(db, ws, "x28_snap", 90)
     db.commit()
-    monkeypatch.setattr(prices, "CAMPAIGN_CALL_NET_MINOR", 999)
-    monkeypatch.setitem(markets.ERHVERV["DKK"], "call", 999)
-    monkeypatch.setitem(markets.ERHVERV["DKK"], "minute", 999)
+    monkeypatch.setattr(prices, "OUTBOUND_EXTRA_MINUTE_NET_MINOR", 999)
+    monkeypatch.setitem(markets.ERHVERV["DKK"], "outbound_extra_minute", 999)
     assert _line(_statement(api, two_workspaces["tok_a"], ws, "2026-09"), "campaign_calls")["net_minor"] == CALL + 2 * MIN
 
 
@@ -241,9 +242,10 @@ def test_x28_campaign_calls_never_count_as_inbound_minutes(api, two_workspaces, 
 # --------------------------------------------------------------------------- the prices the customer is shown
 
 def test_x28_agreement_plan_prices_are_in_the_workspace_currency(api, two_workspaces, db):
-    """/app/konto shows the subscription, call, minute and extra-minute prices from GET /agreement → plan, formatted in
-    the account's currency. A Swedish company is charged the SEK list prices (markets.ERHVERV['SEK']: 3.695 kr/md,
-    5,90 kr per call, 2,95 kr per minute, 2,20 kr per extra minute) and must be shown them – not the DKK numbers."""
+    """/app/konto shows the subscription and the minute prices from GET /agreement → plan, formatted in the account's
+    currency. A Swedish company is charged the SEK list prices (markets.ERHVERV['SEK']: 3.695 kr/md, no call price inside the package,
+    2,95 kr per outbound minute and 2,20 kr per inbound minute above the package, 5,90 kr per answered call after it) and
+    must be shown them."""
     from app.models import BusinessProfile
 
     tok, ws = two_workspaces["tok_a"], two_workspaces["ws_a"]
@@ -253,9 +255,9 @@ def test_x28_agreement_plan_prices_are_in_the_workspace_currency(api, two_worksp
     acc = api.get(tok, f"/workspaces/{ws}/billing/account").json()
     assert acc["currency"] == "SEK"
     plan = api.get(tok, f"/workspaces/{ws}/agreement").json()["plan"]
-    shown = (plan["monthly_net_minor"], plan["campaign_call_net_minor"], plan["campaign_minute_net_minor"],
-             plan["inbound_extra_minute_net_minor"])
-    assert shown == (369_500, 590, 295, 220), f"konto would show {shown} as SEK"
+    shown = (plan["monthly_net_minor"], plan["campaign_call_net_minor"], plan["outbound_extra_minute_net_minor"],
+             plan["inbound_extra_minute_net_minor"], plan["included_minutes"])
+    assert shown == (369_500, 590, 295, 220, 300), f"konto would show {shown} as SEK"  # 5,90 kr per answered call after the package
 
 
 def test_x28_konto_text_says_started_minute_for_campaign_calls_like_for_inbound():
@@ -264,5 +266,5 @@ def test_x28_konto_text_says_started_minute_for_campaign_calls_like_for_inbound(
     from pathlib import Path
 
     acc = json.loads((Path(__file__).resolve().parents[2] / "web/src/i18n/messages/da/app.json").read_text())["account"]["sub"]
-    assert "påbegyndt minut" in acc["inboundExtra"] and "påbegyndt minut" in acc["inboundPrice"]
+    assert "påbegyndte minutter" in acc["packageExtra"] and "påbegyndt minut" in acc["packagePrice"]
     assert "påbegyndt minut" in acc["campaignPrice"], acc["campaignPrice"]

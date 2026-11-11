@@ -7,6 +7,7 @@ import { api, completeProfile, snap } from "./e2b";
 const ID = "G02";
 
 test("G02 · /app/setup/plan: ingen 404 for gamle links; plan-data og UI-trin er enige om næste skridt", async ({ page }, info) => {
+  test.fail(true, "F-E2B-14-G02: S3 new – Kravruterne /app/setup/plan, /app/setup/tasks/:id, /app/setup/team og /app/setup/next giver 404, …");
   const { wsId } = await freshOwner(page, info);
   await completeProfile(page, wsId);
   const res = await page.goto("/app/setup/plan");

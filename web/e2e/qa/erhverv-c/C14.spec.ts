@@ -56,6 +56,7 @@ test("C14 · roller: medarbejder kan spærre et nummer men ikke fjerne en spærr
 });
 
 test("C14 · krav: kontaktside med historik, forsøg, tilladt udskrift og bevis (ikke bygget)", async ({ page }, info) => {
+  test.fail(true, "C14: not-implemented – kontaktside med historik, forsøg, udskrift og bevis");
   test.info().annotations.push({ type: "not-implemented", description: "C14: no /app/kampagner/[id]/[contact] route; conversation_id/next_attempt_at not in the UI; no link to transcript" });
   const { wsId } = await campaignOwner(page, info);
   const c = await newCampaign(page.request, wsId, `QA-E2C C14 side ${Date.now()}`);

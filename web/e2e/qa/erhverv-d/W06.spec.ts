@@ -20,6 +20,7 @@ async function request(chat: import("@playwright/test").FrameLocator, windowInde
 }
 
 test("W06 · bekræftelsen nævner det valgte tidsrum (ikke «hurtigst muligt», når kunden valgte et tidsrum)", async ({ page, browser }, info) => {
+  test.fail(true, "F-E2D-07-W06: S3 new – Bekræftelsen i widgetten siger «Virksomheden kontakter dig hurtigst muligt», også når kunden har …");
   w = await widgetWorkspace(page, info);
   const { v, chat, close } = await visitor(browser, page);
   const label = await request(chat, 2);
@@ -32,6 +33,7 @@ test("W06 · bekræftelsen nævner det valgte tidsrum (ikke «hurtigst muligt»,
 });
 
 test("W06 · kunden ændrer tidsrummet (ny besked efter reload): opgaven følger det nye tidsrum, ikke det gamle", async ({ page, browser }, info) => {
+  test.fail(true, "F-E2D-06-W06: S2 new – Ændrer kunden tidsrummet for opringning (ny «Bliv kontaktet» i samme samtale), flyttes …");
   w = await widgetWorkspace(page, info);
   const { v, chat, close } = await visitor(browser, page);
   const first = await request(chat, 2);
@@ -53,6 +55,7 @@ test("W06 · kunden ændrer tidsrummet (ny besked efter reload): opgaven følger
 });
 
 test("W06 · ikke bygget: bekræftet nummer (kode) og «Aflys opringning» i widgetten", async ({ page, browser }, info) => {
+  test.fail(true, "W06: not-implemented – bekræftet nummer og «Aflys opringning» i widgetten");
   w = await widgetWorkspace(page, info);
   const { chat, close } = await visitor(browser, page);
   await request(chat, 2);

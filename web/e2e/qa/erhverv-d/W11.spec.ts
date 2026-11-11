@@ -85,6 +85,7 @@ test("W11 · kalenderen kan ikke læses: tider fra åbningstiden, kunden får «
 });
 
 test("W11 · den besøgende kan nå alle ledige tider i bookinghorisonten (ikke kun de første 24 ≈ 2 dage)", async ({ page, browser }, info) => {
+  test.fail(true, "F-E2D-10-W11: S2 new – Widgetten viser kun de første 24 ledige tider (≈ 2 dage ved 08–20 og 60 min); resten af …");
   w = await widgetWorkspace(page, info, { booking: true });
   const s = await (await page.request.get(`/api/backend/workspaces/${w.wsId}/bookings/settings`)).json();
   expect((await page.request.put(`/api/backend/workspaces/${w.wsId}/bookings/settings`, { headers: CSRF, data: { expected_version: s.version, enabled: true, lead_time_hours: 0, horizon_days: 14, buffer_minutes: 0 } })).ok()).toBeTruthy();
@@ -101,6 +102,7 @@ test("W11 · den besøgende kan nå alle ledige tider i bookinghorisonten (ikke 
 });
 
 test("W11 · tidszonen står ved tiderne (virksomhedens lokale tid)", async ({ page, browser }, info) => {
+  test.fail(true, "F-E2D-05-W11: S3 new – Widgetten oplyser aldrig tidszonen: opringnings-tidsrum («I morgen formiddag (8–12)») og …");
   w = await widgetWorkspace(page, info, { booking: true });
   const { chat, close } = await visitor(browser, page);
   await chat.getByRole("button", { name: "Book en tid" }).click();

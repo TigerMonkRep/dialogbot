@@ -1,12 +1,12 @@
 # Priser – ét tilbud
 
-Gældende fra 30. oktober 2026 (kampagneminutter og inkluderede indgående minutter tilføjet; 28. oktober: specialist-opsætning). Alle priser er ekskl. moms (25 % lægges på fakturaen).
+Gældende fra november 2026 (Fürsters beslutninger 10. november 2026, endeligt kl. 20:28: én fælles minutpakke til ind- og udgående opkald; inden for pakken ingen pris pr. opkald; efter pakken opkaldspris efter udfald + minutpris; minutter krediteres kun ved klage over et opkald). Alle priser er ekskl. moms (25 % lægges på fakturaen).
 
 | | Pris |
 |---|---|
-| **Abonnement** | **Fra 2.495 kr./md.** – telefon, chat, booking, opsummering af hver henvendelse. Ingen pris pr. henvendelse. **300 påbegyndte minutters indgående opkald pr. kalendermåned er med.** |
-| **Indgående minutter ud over de 300** | **1,50 kr. pr. påbegyndt minut** – afregnes på månedens faktura som egen linje. Kampagne- og demo-opkald tæller ikke som indgående. |
-| **Udgående kampagneopkald** | **4 kr. pr. udgående opkald + 2 kr. pr. påbegyndt samtaleminut** – hvert opkald, der ringes, tæller, også et nyt forsøg; minutterne afregnes, når opkaldsrapporten kommer. Ubesvaret = 4 kr.; 3 minutters samtale = 10 kr. |
+| **Abonnement** | **Fra 2.495 kr./md.** – telefon, chat, booking, opsummering af hver henvendelse. Ingen pris pr. henvendelse. **300 påbegyndte minutter pr. kalendermåned er med – én pulje til både indgående opkald og udgående kampagneopkald**, brugt i den rækkefølge opkaldene sker. |
+| **Indgående minutter ud over pakken** | **1,50 kr. pr. påbegyndt minut** – afregnes på månedens faktura. Demo- og testopkald tæller aldrig. |
+| **Udgående kampagneopkald efter pakken** | Et opkald, der **starter** efter at pakken er brugt op: **4 kr.** hvis personen tager telefonen, **1 kr.** ved telefonsvarer, **0,25 kr.** ved ubesvaret/optaget (ukendt udfald = 0,25 kr.) – **plus 2 kr. pr. påbegyndt samtaleminut**. Et opkald, der krydser grænsen, deler kun minutterne (ingen opkaldspris). Inden for pakken ingen pris pr. opkald. Højst 2 forsøg og 3 minutter pr. kontakt = højst 14 kr. pr. kontakt. |
 | Opsætning – gør det selv | Med i abonnementet: byggevejledningens tre trin, cirka en halv time. |
 | **Opsætning fra vores specialister** | **5.000 kr.** én gang – skræddersyet opsætning og integration til kundens egne systemer og behov (kalender, CRM, bookingsystem, viden og priser, stemmetræning, test før tænd). Accepteres den via et salgstilbud, kommer den automatisk på første faktura (linjen `setup_fee`, måneden hvor aftalen blev oprettet); ellers faktureres den manuelt. `SPECIALIST_SETUP_NET_MINOR` i `prices.py` er tallet. |
 | Binding | Ingen. Opsigelse til udgangen af måneden. |
@@ -89,9 +89,16 @@ arbejdsrum). Kode: `app/modules/billing/discounts.py`.
 
 ## Hvor tallene bor
 
-- **Kode:** `app/modules/billing/prices.py` – `SUBSCRIPTION_MONTHLY_NET_MINOR` (249.500 øre), `CAMPAIGN_CALL_NET_MINOR`
-  (400 øre), `CAMPAIGN_MINUTE_NET_MINOR` (200 øre), `INBOUND_INCLUDED_MINUTES` (300), `INBOUND_EXTRA_MINUTE_NET_MINOR`
-  (150 øre) og `SPECIALIST_SETUP_NET_MINOR` (500.000 øre). Prisaftalen, kampagner, Peters salgsmanuskript og testene læser dem derfra.
+- **Kode:** `app/modules/billing/prices.py` – `SUBSCRIPTION_MONTHLY_NET_MINOR` (249.500 øre), `INCLUDED_MINUTES` (300),
+  `INBOUND_EXTRA_MINUTE_NET_MINOR` (150 øre), `OUTBOUND_EXTRA_MINUTE_NET_MINOR` (200 øre),
+  `OUTBOUND_CALL_ANSWERED_NET_MINOR` / `_VOICEMAIL_` / `_NO_ANSWER_` (400 / 100 / 25 øre) og `SPECIALIST_SETUP_NET_MINOR`
+  (500.000 øre). Prisaftalen, kampagner, Peters salgsmanuskript og testene læser dem derfra. Andre valutaer:
+  `app/modules/billing/markets.py` (`ERHVERV`), eksporteret til `web/src/lib/prices.json` (`scripts/export_prices.py`).
+- **Andre valutaer – faktorreglen og én bevidst undtagelse:** SEK/NOK/EUR = DKK-prisen × markedets faktor (SEK 1,475,
+  NOK 1,575, EUR 0,135), afrundet til 5 öre / 5 øre / 1 cent. **Undtagelse: besvaret udgående opkald i EUR er 0,55 €**,
+  ikke 0,54 € (400 × 0,135). 0,55 € er den afrundede listepris, som allerede stod i EUR-prislisten, migrationen
+  `c8e4a1f6d2b9` og docs/markets.md; den bevares bevidst (QA F-VR-07-X28, 2026-11-11). Alle andre EUR/SEK/NOK-beløb
+  følger reglen.
 - **Tekster** (skal rettes i hånden, når prisen ændres): `web/src/app/priser`, `byggevejledning`, forsiden
   (`(public)/page.tsx`, inkl. strukturerede data), `ai-receptionist`, `chatbot`, `ai-telefonsvarer`, `vilkaar`,
   `proev-chat.tsx`, `app/modules/assistant/guide.md` (assistenten i appen), `web/public/llms.txt`, `web/public/materiale/*.html`, `app/modules/social/topics.py`
@@ -102,15 +109,27 @@ arbejdsrum). Kode: `app/modules/billing/discounts.py`.
 
 1. **Aftale** (`reception_agreements`): ejeren bekræfter abonnementet; hver bekræftelse er en ny version, der gemmer
    prisen. Betaling pr. henvendelse kan ikke længere vælges (`422 plan_discontinued`).
-2. **Kampagneopkald:** når Vapi har accepteret et udgående opkald, skrives en række i `campaign_calls` med
-   opkaldsprisen (`net_minor`, 4 kr.). Når opkaldsrapporten kommer, sættes `connected_seconds` og
-   `minutes_net_minor` = påbegyndte minutter × kampagnens `minute_net_minor` (2 kr.); et ubesvaret opkald har 0
-   minutter. En kontakt ringes højst 2 gange og taler højst 180 sekunder; det begrænser prisen. Før start vises den
-   højeste pris (kontakter × forsøg × (4 kr. + 3 min × 2 kr.) = 10 kr. pr. forsøg), og ejeren skal acceptere den.
-3. **Indgående minutter:** `statement.inbound_minutes()` tæller påbegyndte minutter pr. opkald for alle `calls` i
-   måneden, der hverken er kampagne- eller demo-opkald. Linjen `inbound_minutes` viser forbrug, de 300 inkluderede og
-   eventuelle ekstra minutter à 1,50 kr. (0 kr., når forbruget er under 300). Måneder uden indgående opkald har ingen
-   linje.
+2. **Kampagneopkald:** når Vapi har accepteret et udgående opkald, skrives en række i `campaign_calls` (`net_minor`
+   0 for kundekampagner fra november 2026). Når opkaldsrapporten kommer, sættes `connected_seconds`; minutterne
+   prissættes af månedsoversigten. En kontakt ringes højst 2 gange og taler højst 180 sekunder. Før start vises den
+   højeste pris ærligt (`campaigns/service.max_cost`): højst kontakter × forsøg × 3 min; med de minutter, der er
+   tilbage i pakken nu, og som sand maksimumpris, hvis andre opkald bruger pakken først (minutter × 2 kr.) – ejeren
+   accepterer den sidste.
+2a. **Udfald → opkaldspris** (`campaigns/service.outcome_class`, gemt i `campaign_calls.outcome_class` fra
+   opkaldsrapporten): Vapi `endedReason` = `voicemail` (Vapis telefonsvarer-detektion, `voicemailDetection` er slået
+   til i kampagne-assistenten) → **telefonsvarer**; en samtale (kontakten sagde noget, og årsagen er ikke en
+   ubesvaret-årsag) → **besvaret**; alt andet (`customer-did-not-answer`, `customer-busy`, `*-failed-to-connect-call`,
+   taget men tavs) → **ubesvaret/optaget**. Opkald uden rapport endnu → ubesvaret (billigste); kommer rapporten efter
+   fakturaen, efterregistreres forskellen.
+3. **Minutpakken** (`statement.usage_events` + `allocate`): alle indgående opkald (efter start) og kampagneopkald
+   (efter opringning) i måneden sorteres; pakken (aftalens `inbound_included_minutes`, 300) bruges i den rækkefølge,
+   minutter derudover prissættes efter retning med aftalens snapshot (`inbound_extra_minute_net_minor`,
+   `outbound_extra_minute_net_minor`); et kampagneopkald, der starter, når pakken allerede er brugt, får desuden
+   opkaldsprisen for sit udfald (aftalens `outbound_call_{answered,voicemail,no_answer}_net_minor`) – egen linje
+   `campaign_call_fees` pr. kampagne. Oversigten har `package` (inkluderet/brugt/tilbage/over) og linjerne
+   `inbound_minutes` og `campaign_calls` med `package_minutes`/`extra_minutes`. Måneder før november 2026
+   (`prices.SHARED_POOL_FROM`) beregnes som de blev faktureret: 4 kr. pr. opkald + 2 kr./min og pakken kun indgående.
+   Forbrug rapporteret efter fakturaen kommer på næste faktura som «Efterregistreret forbrug» (QA F-BQ-012).
 4. **Månedsoversigt** (`billing/statement.py`): abonnementslinjen + én linje pr. kampagne ("N udgående opkald, M
    samtaleminutter") + indgående minutter. Fakturaen (Stripe) bygges af den samme oversigt.
 5. **Ambassadør-rabat** (50 % første måned) og bonusser regnes af fakturaens beløb og følger dermed den nye pris.

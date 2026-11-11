@@ -19,7 +19,7 @@ from sqlalchemy import select
 
 from app.config import get_settings
 from app.models import AuditLog, IntegrationConnection, OAuthState
-from app.modules.integrations import connectors, credentials, oauth
+from app.modules.integrations import credentials, oauth
 from app.modules.integrations.connectors import calendar as cal
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -170,6 +170,7 @@ def test_failed_reconnect_keeps_the_working_connection(api, client, two_workspac
     assert conn.status == "connected" and credentials.get_secret(conn)["access_token"] == "ya29.stub-1"
 
 
+@pytest.mark.xfail(strict=True, reason="F-M2-12-X27: S2 new – Afvist samtykke og manglende kalenderadgang i Google vises som rå fejlkode: «Google Kalender blev ikke …")
 def test_callback_errors_are_explained_in_words_not_codes():
     """UI'et (settings/integrationer/client.tsx) viser `errorNotice` med den rå kode: «Google Kalender blev ikke
     forbundet (oauth_scope_missing). Prøv igen …». API'ets forklaring («Giv Dialogbot lov til at oprette og se aftaler
@@ -260,6 +261,7 @@ def test_disconnect_revokes_at_google_and_deletes_tokens_even_if_google_is_down(
     assert db.scalar(select(IntegrationConnection)) is None
 
 
+@pytest.mark.xfail(strict=True, reason="F-M2-13-X27: S3 new – Forbinder ejeren Google Kalender igen (fx med en anden konto), overskrives den gamle nøgle uden at blive …")
 def test_reconnecting_with_another_account_revokes_the_old_grant(api, client, two_workspaces, google, db):
     """/privatliv: «Du kan afbryde forbindelsen når som helst … så tilbagekalder vi adgangen og sletter nøglerne».
     Forbinder ejeren igen (fx med en anden Google-konto), overskriver _upsert den gamle nøgle uden at tilbagekalde

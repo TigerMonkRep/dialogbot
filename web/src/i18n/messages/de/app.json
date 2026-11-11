@@ -129,7 +129,7 @@
     "noAppointments": "Keine anstehenden Termine.",
     "weekAppointments": "Termine der Woche ansehen",
     "campaigns": "Kampagnen",
-    "campaignsSub": "Rufen Sie Ihre eigenen Kunden an – {pCall} pro Anruf + {pMinute} pro Gesprächsminute zzgl. MwSt.",
+    "campaignsSub": "Rufen Sie Ihre eigenen Kunden an – die Minuten gehen von den {pIncluded} Minuten des Abonnements ab. Sind sie verbraucht, kostet ein angenommener Anruf {pCallAnswered} plus {pMinute} pro Minute zzgl. MwSt.",
     "openCampaigns": "Kampagnen öffnen",
     "allActivity": "Alle Aktivitäten der letzten 14 Tage",
     "power": {
@@ -288,7 +288,7 @@
       "title": "Das hat die Woche gekostet",
       "extra": "{amount} zusätzlich",
       "calls": "{n} Kampagnenanrufe",
-      "note": "300 Minuten eingehender Anrufe pro Monat sind im Abonnement enthalten. Kampagnenanrufe in dieser Woche: {n} ({pCall} pro ausgehendem Anruf + {pMinute} pro Gesprächsminute, zzgl. MwSt.).",
+      "note": "{pIncluded} Minuten pro Monat sind enthalten – für eingehende Anrufe und Kampagnenanrufe. Kampagnenanrufe in dieser Woche: {n}. Der Betrag ist, was die Kampagnenanrufe der Woche nach dem Paket kosten (Anrufpreis je nach Ergebnis + {pMinute} pro Minute), zzgl. MwSt.",
       "billing": "Abonnement und Rechnungen ansehen"
     }
   },
@@ -479,15 +479,15 @@
     "eyebrow": "Heute → Kampagnen",
     "enable": {
       "title": "Möchten Sie auch ausgehend anrufen?",
-      "body": "Dialogbot kann Ihre eigenen Kunden mit einer Botschaft anrufen – z. B. einem Angebot – und die Interessierten an Sie weiterleiten. Das kostet {price} pro ausgehendem Anruf zzgl. MwSt. Angerufen wird erst, wenn Sie es bestätigt haben.",
+      "body": "Dialogbot kann Ihre eigenen Kunden mit einer Botschaft anrufen – etwa einem Angebot – und die Interessierten an Sie weitergeben. Die Minuten gehen von den {included} Minuten des Abonnements ab, ohne Preis pro Anruf. Ist das Paket verbraucht, kostet ein Anruf {answered} (angenommen), {voicemail} (Mailbox) oder {noAnswer} (nicht angenommen) plus {price} pro angefangener Minute zzgl. MwSt. Angerufen wird erst, wenn Sie zugestimmt haben.",
       "onlyAdmins": "Nur Inhaber und Administratoren können ausgehende Anrufe einschalten.",
       "ask": "Sie können es auch dem Assistenten sagen.",
       "pending": "Wird eingeschaltet …",
       "button": "Ja, ausgehende Anrufe einschalten"
     },
-    "eyebrowPrice": "Heute → Kampagnen · ausgehende Anrufe · {price} pro Anruf zzgl. MwSt.",
+    "eyebrowPrice": "Heute → Kampagnen · ausgehende Anrufe · Minuten aus dem Paket, danach {answered} pro angenommenem Anruf + {price}/Min. zzgl. MwSt.",
     "title": "Rufen Sie Ihre Kunden an – eine Kampagne nach der anderen",
-    "intro": "Drei Schritte: Sie wählen, wen er anrufen soll, hören, was er sagt, und bestätigen den Preis, bevor der erste Anruf rausgeht. Der Preis beträgt {price} + MwSt. pro ausgehendem Anruf – jeder Anruf zählt, auch ein erneuter Versuch. Höchstens {attempts} Versuche und insgesamt {minutes} Minuten Gespräch pro Kontakt. Dialogbot ruft nie jemanden auf der Sperrliste an.",
+    "intro": "Drei Schritte: Sie wählen, wen er anrufen soll, hören, was er sagt, und bestätigen den Preis, bevor der erste Anruf rausgeht. Die Minuten gehen von den {included} Minuten des Abonnements ab (dieselben wie für eingehende Anrufe), ohne Preis pro Anruf. Ist das Paket verbraucht, kostet ein Anruf {answered} (angenommen), {voicemail} (Mailbox) oder {noAnswer} (nicht angenommen) plus {price} pro angefangener Minute, zzgl. MwSt. Höchstens {attempts} Versuche und insgesamt {minutes} Minuten Gespräch pro Kontakt – höchstens {contactMax} pro Kontakt. Dialogbot ruft nie jemanden auf der Sperrliste an.",
     "salesCalls": "Verkaufsanrufe: die KI anrufen lassen (nur Dialogbot)",
     "need": {
       "title": "Sie benötigen",
@@ -515,7 +515,7 @@
       "consent": "Einwilligung",
       "noConsent": "Einwilligung fehlt – wird nicht angerufen",
       "attempts": "{n} Versuche",
-      "priceNote": "{price} pro Anruf zzgl. MwSt. Sie zahlen nur für Anrufe, die tatsächlich rausgehen. Jederzeit stoppbar."
+      "priceNote": "Innerhalb des Pakets kein Preis pro Anruf. Danach {answered} (angenommen), {voicemail} (Mailbox) oder {noAnswer} (nicht angenommen) pro Anruf plus {price} pro Minute zzgl. MwSt. Jederzeit stoppbar."
     },
     "new": {
       "title": "Neue Kampagne",
@@ -573,7 +573,7 @@
       "before": "Bevor sie startet",
       "resumeTitle": "Kampagne fortsetzen",
       "heading": "{n} Kontakte · höchstens {max} zzgl. MwSt.",
-      "body": "{n} Kontakte warten. Höchstens {max} + MwSt. ({gross} inkl. MwSt.) – {call} + MwSt. pro ausgehendem Anruf und {minute} + MwSt. pro angefangener Gesprächsminute, höchstens {attempts} Versuche und {minutes} Minuten Gespräch pro Kontakt. Eine Zahlung startet niemals Anrufe.",
+      "body": "{n} Kontakte warten: höchstens {attempts} Versuche und {minutes} Gesprächsminuten pro Kontakt, insgesamt höchstens {maxMinutes} Minuten. Im Paket sind diesen Monat noch {remaining} von {included} Minuten übrig – damit kostet die Kampagne höchstens {withPackage} + MwSt. Im schlimmsten Fall (andere Anrufe verbrauchen das Paket zuerst und jeder Versuch wird angenommen – höchstens {contactMax} pro Kontakt) kostet sie höchstens {max} + MwSt. ({gross} inkl. MwSt.). Nach dem Paket kostet ein Anruf {answered} (angenommen), {voicemail} (Mailbox) oder {noAnswer} (nicht angenommen) plus {minute} pro angefangene Gesprächsminute. Eine Zahlung startet nie Anrufe.",
       "confirm": "Regeln für Anrufe bestätigen",
       "starting": "Wird gestartet …",
       "resume": "Fortsetzen",
@@ -800,16 +800,39 @@
       "confirmed": "Bestätigt · Vereinbarung v{v}. Einrichtung in Eigenregie ist inklusive.",
       "notConfirmed": "Einrichtung in Eigenregie ist inklusive. Noch nicht bestätigt.",
       "campaign": "Kampagnenanrufe",
-      "campaignPrice": "pro Anruf + {minute} pro angefangener Minute zzgl. MwSt.",
+      "campaignPrice": "pro angefangener Minute nach dem Paket + {answered}/{voicemail}/{noAnswer} pro Anruf (angenommen/Mailbox/nicht angenommen), zzgl. MwSt.",
       "campaignMonth": "Diesen Monat: {calls} Anrufe, {minutes} Gesprächsminuten · {amount} zzgl. MwSt.",
-      "inbound": "Eingehende Anrufe",
-      "inboundUsed": "von {n} inklusiven Minuten diesen Monat verbraucht",
-      "inboundExtra": "{n} Minuten über die inklusiven hinaus · {amount} zzgl. MwSt. ({price} pro angefangener Minute).",
-      "inboundPrice": "Minuten über die {n} hinaus kosten {price} pro angefangener Minute zzgl. MwSt.",
+      "package": "Minutenpaket – eingehende und ausgehende Anrufe",
+      "packageUsed": "von {n} Minuten in diesem Monat genutzt",
+      "packageExtra": "{n} angefangene Minuten über das Paket hinaus · {amount} zzgl. MwSt.",
+      "packagePrice": "Über die {n} Minuten hinaus: {inPrice} pro angefangener Minute eingehend und {outPrice} pro angefangener Minute ausgehend zzgl. MwSt.",
       "confirm": "Abonnement bestätigen",
       "ownerMustConfirm": "Der Inhaber muss das Abonnement bestätigen.",
       "older": "Ältere Vereinbarung – bestätigen Sie das Abonnement, um zum aktuellen Abonnement zu wechseln.",
       "note": "Preise zzgl. MwSt. Keine Mindestlaufzeit – sagen Sie es dem Assistenten oder schreiben Sie an info@dialogbot.dk, wenn Sie kündigen möchten. Eine Zahlung startet niemals Anrufe."
+    },
+    "usage": {
+      "title": "Verbrauch pro Anruf",
+      "intro": "Jeder Anruf, der zu den Minuten des Monats zählt. Gibt es einen Anruf, den Sie nicht bezahlen möchten, kann der Inhaber ihn beanstanden – Minuten werden nur nach einer Beanstandung gutgeschrieben.",
+      "prev": "Vorheriger Monat",
+      "next": "Nächster Monat",
+      "package": "Minutenpaket: {used} von {included} Minuten genutzt · {over} Minuten über das Paket hinaus.",
+      "invoiced": "Der Monat ist abgerechnet. Die Rechnungszeilen:",
+      "none": "Keine Anrufe in diesem Monat.",
+      "older": "Monate vor November 2026 werden nach der früheren Preisliste abgerechnet; Beanstandungen dazu bearbeitet der Support (info@dialogbot.dk).",
+      "inbound": "Eingehend",
+      "outbound": "Kampagne",
+      "minutes": "{n} Min.",
+      "extra": "{n} Min. über das Paket hinaus · {amount}",
+      "disputeOpen": "Beanstandung gesendet – Dialogbot bearbeitet sie.",
+      "disputeRejected": "Die Beanstandung wurde abgelehnt – der Anruf wird wie bisher abgerechnet.",
+      "creditedPool": "Die Beanstandung wurde anerkannt – die Minuten sind zurück im Paket.",
+      "creditedInvoice": "Die Beanstandung wurde anerkannt – {amount} wird auf der nächsten Rechnung gutgeschrieben.",
+      "creditedNothing": "Die Beanstandung wurde anerkannt – der Anruf lag im Paket, es gibt also keinen Betrag gutzuschreiben.",
+      "dispute": "Anruf beanstanden",
+      "reason": "Was war mit dem Anruf nicht in Ordnung?",
+      "send": "Beanstandung senden",
+      "cancel": "Abbrechen"
     },
     "pay": {
       "title": "Zahlung",
@@ -937,7 +960,7 @@
       },
       "billing": {
         "q": "Abrechnung",
-        "a": "Es gibt ein Abonnement ab {pMonthly} im Monat zzgl. MwSt., inkl. 300 Minuten eingehender Anrufe (danach {pExtraMinute} pro Minute). Ausgehende Kampagnenanrufe kosten {pCall} pro Anruf plus {pMinute} pro angefangener Gesprächsminute. Unter Konto sehen Sie die Vorschau des Monats."
+        "a": "Es gibt ein Abonnement ab {pMonthly} im Monat zzgl. MwSt., inkl. 300 Minuten für ein- und ausgehende Anrufe (danach {pExtraMinute} pro Minute eingehend und {pMinute} ausgehend). Innerhalb des Pakets gibt es keinen Preis pro Anruf; ist es verbraucht, kostet ein ausgehender Anruf {pCallAnswered} (angenommen), {pCallVoicemail} (Mailbox) oder {pCallNoAnswer} (nicht angenommen) plus {pMinute} pro Minute. Unter Konto sehen Sie die Vorschau des Monats."
       }
     },
     "team": {

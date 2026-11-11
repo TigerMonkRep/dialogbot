@@ -20,8 +20,11 @@ from app.modules.billing import stripe as stripe_api
 def test_every_currency_has_every_price_and_yearly_is_twelve_months():
     assert markets.CURRENCIES == ("DKK", "SEK", "NOK", "EUR")
     for cur in markets.CURRENCIES:
-        assert set(markets.ERHVERV[cur]) == {"monthly", "call", "minute", "extra_minute", "call_answered", "call_voicemail",
-                                             "call_no_answer", "setup"}
+        # no per-call price (2026-11-10): the package (same everywhere) and the minute above it per direction
+        assert set(markets.ERHVERV[cur]) == {"monthly", "extra_minute", "outbound_extra_minute", "call_answered",
+                                             "call_voicemail", "call_no_answer", "setup"}
+        e = markets.ERHVERV[cur]
+        assert e["call_answered"] > e["call_voicemail"] > e["call_no_answer"] > 0  # after the package, by outcome
         assert all(isinstance(v, int) and v > 0 for v in markets.ERHVERV[cur].values())
         assert set(markets.PRIVAT[cur]) == {"basis", "plus", "familie"}
         for plan, p in markets.PRIVAT[cur].items():
@@ -93,7 +96,8 @@ def test_agreement_takes_the_countrys_currency_and_keeps_it(api, two_workspaces,
     _country(db, ws, "SE")
     a = api.post(tok, f"/workspaces/{ws}/agreement", {"model": "A"}).json()
     assert a["currency"] == "SEK" and a["monthly"]["net_minor"] == markets.ERHVERV["SEK"]["monthly"]
-    assert a["campaign_call"]["net_minor"] == 590 and a["campaign_minute"]["currency"] == "SEK"
+    assert "campaign_call" not in a and a["included_minutes"] == 300
+    assert a["outbound_extra_minute"]["net_minor"] == 295 and a["outbound_extra_minute"]["currency"] == "SEK"
     assert a["inbound_extra_minute"]["net_minor"] == 220
     _country(db, ws, "DE")  # a later country change does not move the currency
     b = api.post(tok, f"/workspaces/{ws}/agreement", {"model": "A"}).json()
@@ -111,9 +115,10 @@ def test_customer_campaigns_snapshot_the_workspace_currency(api, two_workspaces,
     tok, ws = two_workspaces["tok_a"], two_workspaces["ws_a"]
     _country(db, ws, "NO")
     lst = api.get(tok, f"/workspaces/{ws}/campaigns").json()
-    assert lst["pricing"]["currency"] == "NOK" and lst["pricing"]["call_net_minor"] == 630
+    assert lst["pricing"]["currency"] == "NOK" and lst["pricing"]["call_net_minor"] == 630  # answered, after the package
     c = api.post(tok, f"/workspaces/{ws}/campaigns", {"name": "Vår"}).json()
-    assert c["pricing"] == c["pricing"] | {"currency": "NOK", "call_net_minor": 630, "minute_net_minor": 315}
+    assert c["pricing"] == c["pricing"] | {"currency": "NOK", "call_net_minor": 630, "minute_net_minor": 315,
+                                           "call_prices": {"answered": 630, "voicemail": 160, "no_answer": 40}}
     assert c["max_cost"]["currency"] == "NOK" and c["max_cost"]["tax_basis_points"] == 0  # outside the EU
     tok_b, ws_b = two_workspaces["tok_b"], two_workspaces["ws_b"]
     d = api.post(tok_b, f"/workspaces/{ws_b}/campaigns", {"name": "Forår"}).json()

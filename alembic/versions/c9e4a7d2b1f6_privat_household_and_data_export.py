@@ -1,7 +1,7 @@
 """privat: Familie household members and «Eksportér mine data»
 
 Revision ID: c9e4a7d2b1f6
-Revises: f3b8d1e6a4c2
+Revises: c8e4a1f6d2b9 (rebased onto main's head when origin/main was merged in)
 Create Date: 2026-11-10 22:30:00
 
 private_household_members: up to 4 people in a Familie subscriber's household (5 with the owner); rights are derived
@@ -14,7 +14,7 @@ from sqlalchemy.dialects import postgresql
 from alembic import op
 
 revision = 'c9e4a7d2b1f6'
-down_revision = 'f3b8d1e6a4c2'
+down_revision = 'c8e4a1f6d2b9'
 branch_labels = None
 depends_on = None
 

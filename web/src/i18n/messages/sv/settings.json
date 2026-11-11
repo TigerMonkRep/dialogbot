@@ -60,7 +60,7 @@
       "title": "Kampanjer",
       "sub": "Ring era egna kunder",
       "outbound": "Utgående samtal",
-      "chosen": "Valt – {pCall} per samtal + {pMinute} per minut exkl. moms",
+      "chosen": "Valt – minuter från paketet, därefter {pCallAnswered} per besvarat samtal + {pMinute} per minut exkl. moms",
       "notChosen": "Inte valt"
     },
     "systems": {

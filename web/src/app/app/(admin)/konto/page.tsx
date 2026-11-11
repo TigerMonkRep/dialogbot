@@ -9,6 +9,7 @@ import { PushSettings } from "@/components/push-ask";
 import { InvitationRow, InviteForm, MemberRow } from "./team";
 import { LogoutButton } from "./logout";
 import { LanguageSection } from "./language";
+import { UsagePerCall } from "./usage";
 import { getLocale, getT } from "@/i18n/server";
 import { HTML_LANG } from "@/i18n/config";
 import type { T } from "@/i18n/translate";
@@ -18,8 +19,8 @@ type Inv = { id: string; email: string; role: string; status: string; expires_at
 type Me = { id: string; email: string; display_name: string; email_verified: boolean; is_platform_operator?: boolean };
 type Session = { id: string; created_at: string; last_seen_at: string; user_agent: string | null; current: boolean };
 /** `currency` (DKK, SEK, NOK, EUR) is the agreement's/statement's own; older backends leave it out → DKK. */
-type Agreement = { current: { version: number; model: string; created_at: string; monthly: { net_minor: number } } | null; plan: { currency?: string; monthly_net_minor: number; campaign_call_net_minor: number; campaign_minute_net_minor: number; inbound_included_minutes: number; inbound_extra_minute_net_minor: number }; currency?: string };
-type Statement = { month: string; lines: { kind: string; calls?: number; minutes?: number; included_minutes?: number; extra_minutes?: number; net_minor: number }[]; totals: { net_minor: number; tax_minor: number; gross_minor: number }; currency?: string };
+type Agreement = { current: { version: number; model: string; created_at: string; currency?: string; monthly: { net_minor: number }; included_minutes?: number; inbound_extra_minute?: { net_minor: number }; outbound_extra_minute?: { net_minor: number }; outbound_call?: Record<"answered" | "voicemail" | "no_answer", { net_minor: number }> } | null; plan: { currency?: string; monthly_net_minor: number; campaign_minute_net_minor: number; included_minutes: number; inbound_included_minutes: number; inbound_extra_minute_net_minor: number; outbound_extra_minute_net_minor: number; outbound_call_net_minor: Record<"answered" | "voicemail" | "no_answer", number> }; currency?: string };
+type Statement = { month: string; package?: { included: number; used: number; remaining: number; over: number } | null; lines: { kind: string; calls?: number; minutes?: number; included_minutes?: number; extra_minutes?: number; net_minor: number }[]; totals: { net_minor: number; tax_minor: number; gross_minor: number }; currency?: string };
 type Vat = { kind: "domestic" | "reverse_charge" | "outside_eu" | "vat_number_required"; rate_bp: number; country: string | null; note: string | null };
 type Account = { configured: boolean; test_mode?: boolean; card: { brand: string; last4: string; exp: string | null } | null; can_manage: boolean;
   country?: string | null; currency?: string; vat_number?: string | null; vat?: Vat | null };
@@ -66,12 +67,27 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
   ]) : [null, null, null, null, null, null];
   const pending = invitations.filter((i) => i.status === "pending");
   const confirmed = !!agr?.current && agr.current.model !== "B";
+  // The customer's own agreement (its snapshot) once confirmed; the list price it would get otherwise
+  const cur = confirmed ? agr!.current! : null;
+  const terms = agr ? {
+    monthly: cur?.monthly.net_minor ?? agr.plan.monthly_net_minor,
+    included: cur?.included_minutes ?? agr.plan.included_minutes,
+    inbound: cur?.inbound_extra_minute?.net_minor ?? agr.plan.inbound_extra_minute_net_minor,
+    outbound: cur?.outbound_extra_minute?.net_minor ?? agr.plan.outbound_extra_minute_net_minor,
+    callAnswered: cur?.outbound_call?.answered.net_minor ?? agr.plan.outbound_call_net_minor.answered,
+    callVoicemail: cur?.outbound_call?.voicemail.net_minor ?? agr.plan.outbound_call_net_minor.voicemail,
+    callNoAnswer: cur?.outbound_call?.no_answer.net_minor ?? agr.plan.outbound_call_net_minor.no_answer,
+  } : null;
   const campaignCalls = st?.lines.filter((l) => l.kind === "campaign_calls").reduce((n, l) => n + (l.calls ?? 0), 0) ?? 0;
   const campaignNet = st?.lines.filter((l) => l.kind === "campaign_calls").reduce((n, l) => n + l.net_minor, 0) ?? 0;
   const campaignMinutes = st?.lines.filter((l) => l.kind === "campaign_calls").reduce((n, l) => n + (l.minutes ?? 0), 0) ?? 0;
   const inbound = st?.lines.find((l) => l.kind === "inbound_minutes");
+  // the shared package (inbound + outbound minutes); months before 2026-11 have none: inbound only
+  const pkgUsed = st?.package ? st.package.used : (inbound?.minutes ?? 0);
+  const overMinutes = st?.package ? st.package.over : (inbound?.extra_minutes ?? 0);
+  const overNet = (st?.lines.filter((l) => l.kind === "inbound_minutes" || (st?.package && l.kind === "campaign_calls")).reduce((n, l) => n + l.net_minor, 0)) ?? 0;
   // Amounts in the agreement's / statement's own currency (DKK when the backend does not say).
-  const kr = (minor: number) => krDa(minor, lang, agr?.plan.currency ?? agr?.currency ?? acc?.currency);
+  const kr = (minor: number) => krDa(minor, lang, cur?.currency ?? agr?.plan.currency ?? agr?.currency ?? acc?.currency);
   const krSt = (minor: number) => krDa(minor, lang, st?.currency ?? agr?.currency ?? acc?.currency);
   const country = (acc?.country ?? "").toUpperCase();
   const vatMode = acc?.vat?.kind === "vat_number_required" || (country && country !== "DK" && EU_COUNTRIES.includes(country)) ? "required"
@@ -109,18 +125,18 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1 rounded-xl border-[1.5px] border-ink bg-paper px-4 py-3.5">
                   <span className="eyebrow">{t("account.sub.fixed")}</span>
-                  <span className="font-display font-extrabold text-[22px] text-ink">{kr(agr.plan.monthly_net_minor)} <span className="text-[14px] font-semibold">{t("account.sub.perMonth")}</span></span>
+                  <span className="font-display font-extrabold text-[22px] text-ink">{kr(terms!.monthly)} <span className="text-[14px] font-semibold">{t("account.sub.perMonth")}</span></span>
                   <span className="text-[14px] text-ink-soft">{confirmed ? t("account.sub.confirmed", { v: agr.current!.version }) : t("account.sub.notConfirmed")}</span>
                 </div>
                 <div className="flex flex-col gap-1 rounded-xl border-[1.5px] border-ink bg-paper px-4 py-3.5">
                   <span className="eyebrow">{t("account.sub.campaign")}</span>
-                  <span className="font-display font-extrabold text-[22px] text-ink">{kr(agr.plan.campaign_call_net_minor)} <span className="text-[14px] font-semibold">{t("account.sub.campaignPrice", { minute: kr(agr.plan.campaign_minute_net_minor) })}</span></span>
+                  <span className="font-display font-extrabold text-[22px] text-ink">{kr(terms!.outbound)} <span className="text-[14px] font-semibold">{t("account.sub.campaignPrice", { answered: kr(terms!.callAnswered), voicemail: kr(terms!.callVoicemail), noAnswer: kr(terms!.callNoAnswer) })}</span></span>
                   <span className="text-[14px] text-ink-soft">{t("account.sub.campaignMonth", { calls: campaignCalls, minutes: campaignMinutes, amount: kr(campaignNet) })}</span>
                 </div>
                 <div className="flex flex-col gap-1 rounded-xl border-[1.5px] border-ink bg-paper px-4 py-3.5 md:col-span-2">
-                  <span className="eyebrow">{t("account.sub.inbound")}</span>
-                  <span className="font-display font-extrabold text-[22px] text-ink">{inbound?.minutes ?? 0} <span className="text-[14px] font-semibold">{t("account.sub.inboundUsed", { n: agr.plan.inbound_included_minutes })}</span></span>
-                  <span className="text-[14px] text-ink-soft">{inbound?.extra_minutes ? t("account.sub.inboundExtra", { n: inbound.extra_minutes, amount: kr(inbound.net_minor), price: kr(agr.plan.inbound_extra_minute_net_minor) }) : t("account.sub.inboundPrice", { n: agr.plan.inbound_included_minutes, price: kr(agr.plan.inbound_extra_minute_net_minor) })}</span>
+                  <span className="eyebrow">{t("account.sub.package")}</span>
+                  <span className="font-display font-extrabold text-[22px] text-ink">{pkgUsed} <span className="text-[14px] font-semibold">{t("account.sub.packageUsed", { n: st.package?.included ?? terms!.included })}</span></span>
+                  <span className="text-[14px] text-ink-soft">{overMinutes ? t("account.sub.packageExtra", { n: overMinutes, amount: kr(overNet) }) : t("account.sub.packagePrice", { n: st.package?.included ?? terms!.included, inPrice: kr(terms!.inbound), outPrice: kr(terms!.outbound) })}</span>
                 </div>
               </div>
               {!confirmed && (owner ? <ConfirmSubscription wsId={ws.id} label={t("account.sub.confirm")} /> : <p className="text-[14px] text-ink">{t("account.sub.ownerMustConfirm")}</p>)}
@@ -145,6 +161,12 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
                 ? <p className="rounded-xl bg-success-soft px-4 py-3 text-[14px] text-success">{discount.to_month ? t("account.discount.applied", { code: discount.code, text: discount.text ?? "", from: monthLabel(lang, discount.from_month!), to: monthLabel(lang, discount.to_month) }) : t("account.discount.appliedForever", { code: discount.code, text: discount.text ?? "", from: monthLabel(lang, discount.from_month!) })}</p>
                 : discount?.can_add && discount.can_manage && <DiscountCode wsId={ws.id} />}
               <p className="text-[13px] text-muted">{t("account.sub.note")}</p>
+            </section>
+
+            <section id="forbrug" className={BOX} aria-labelledby="konto-usage">
+              <h2 id="konto-usage" className="font-display font-extrabold text-[20px] text-ink">{t("account.usage.title")}</h2>
+              <p className="text-[14px] text-ink-soft">{t("account.usage.intro")}</p>
+              <UsagePerCall wsId={ws.id} month={st.month} currency={st.currency ?? agr.currency} tz="Europe/Copenhagen" canDispute={owner} />
             </section>
 
             <section id="fakturaer" className={BOX} aria-labelledby="konto-3">

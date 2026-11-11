@@ -31,7 +31,7 @@ from app.models import (
     PrivateTaskMember,
     User,
 )
-from app.modules.privat import addons, invites, rules, service, sharing
+from app.modules.privat import addons, invites, lookup_limits, rules, service, sharing
 
 MAX_MEMBERS = 100
 
@@ -316,7 +316,7 @@ def _code_hash(link_id, phone: str, code: str) -> str:
 
 
 def join(db: OrmSession, code: str, *, principal=None, name: str | None, phone: str | None,
-         sms_code: str | None) -> dict:
+         sms_code: str | None, ip: str = "unknown") -> dict:
     """Join a group by its link. Logged in: linked to the user id. Not logged in: the name, plus a number only once
     it is verified with an SMS code (first call sends the code, second call with `code` joins). Deduped by user id or
     number (and by exact name for name-only joins)."""
@@ -384,6 +384,7 @@ def join(db: OrmSession, code: str, *, principal=None, name: str | None, phone: 
         if per_link >= CODES_PER_LINK_HOUR or per_phone >= CODES_PER_PHONE_HOUR or per_owner >= CODES_PER_OWNER_HOUR:
             raise _rate_limited("Der er sendt for mange koder. Prøv igen senere.")
         rate_check()
+        lookup_limits.sms_budget(db, ip=ip, account=f"user:{g.owner_user_id}", per_account=CODES_PER_OWNER_HOUR)
         c = f"{secrets.randbelow(1_000_000):06d}"
         db.add(PrivatePhoneCode(purpose="group_join", ref_id=link.id, phone_e164=e164, code_hash=_code_hash(link.id, e164, c),
                                 expires_at=now + timedelta(minutes=10), created_at=now))
@@ -410,8 +411,9 @@ def join(db: OrmSession, code: str, *, principal=None, name: str | None, phone: 
 
 
 def _danish_mobile(raw: str | None) -> str:
-    """Codes go only to Danish numbers (+45, 8 digits, not premium 90xx) – what Privat supports and what the UI asks
-    for. Any other E.164 number would let a public link pump paid SMS abroad (F-PS-01)."""
+    """Codes go only to Danish numbers (+45, 8 digits, not premium 90xx) – what Privat's SMS path supports and what
+    the UI asks for («8 cifre»; the funnel has the same rule). Any other E.164 number would let a public link pump paid
+    SMS abroad (F-PS-01)."""
     from app.modules.sales.service import danish_number
 
     try:

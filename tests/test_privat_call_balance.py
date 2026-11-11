@@ -31,10 +31,10 @@ def test_extra_call_prices_are_erhvervs_net_prices_plus_moms():
                                                 "max": 1750}
     for cur in markets.CURRENCIES:  # every currency: the same factor (× 1,25) and rule on that market's net prices
         e, p = markets.ERHVERV[cur], markets.privat_extra_call(cur)
-        assert p["answered"] == prices.gross_minor(e["call_answered"]) and p["minute"] == prices.gross_minor(e["minute"])
+        assert p["answered"] == prices.gross_minor(e["call_answered"]) and p["minute"] == prices.gross_minor(e["outbound_extra_minute"])
         assert p["voicemail"] == prices.gross_minor(e["call_voicemail"])
         assert p["no_answer"] == prices.gross_minor(e["call_no_answer"])
-        assert p["max"] == prices.gross_minor(2 * e["call_answered"] + 3 * e["minute"])
+        assert p["max"] == prices.gross_minor(2 * e["call_answered"] + 3 * e["outbound_extra_minute"])
     assert markets.privat_extra_call("SEK")["answered"] == 738 and markets.privat_extra_call("EUR")["no_answer"] == 4
 
 

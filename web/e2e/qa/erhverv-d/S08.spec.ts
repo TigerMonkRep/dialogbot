@@ -29,6 +29,7 @@ test("S08 · grænsefladesprog gemmes på brugeren og følger med efter reload; 
 });
 
 test("S08 · anden enhed: sessionen vises, og den kan logges ud herfra; navnet kan rettes", async ({ page, browser }, info) => {
+  test.fail(true, "F-E2D-16-S08: S2 new – Profil (/app/settings/profile → /app/konto): navnet kan ikke rettes, og andre enheders sessioner …");
   const { email } = await freshOwner(page, info);
   const other = await browser.newContext({ userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Version/17.0 Mobile/15E148 Safari/604.1" });
   const op = await other.newPage();

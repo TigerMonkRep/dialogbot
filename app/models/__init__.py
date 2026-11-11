@@ -18,6 +18,7 @@ from app.models.domain import (  # noqa: F401
     BookingType,
     BusinessProfile,
     Call,
+    CallDispute,
     Campaign,
     CampaignCall,
     CampaignContact,

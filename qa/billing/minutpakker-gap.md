@@ -104,3 +104,15 @@ Antagelser indtil svar (fra prisreglerne, ikke gættet): ubrugte minutter overf�
 2. B05.4/B05.6 + M04.2 – synligt forbrug for kunde og operatør, S+M+S.
 3. B03.2/B04 – register, tvist og kreditnota, L samlet.
 4. P2/P3 efter Fürsters svar.
+
+## Opdatering 2026-11-10 aften (fix-engineer, efter Fürsters beslutninger)
+
+| # | Ny status | Evidens |
+|---|---|---|
+| P3 | **Ændret regel**: fra 2026-11 trækker udgående kampagneminutter på samme pakke (fælles pulje, kronologisk), intet opkaldsgebyr; 1,50 kr. ind / 2 kr. ud over pakken. Måneder før beregnes som faktureret. | `tests/test_billing_statement.py::test_shared_package_*`, `test_unanswered_campaign_calls_cost_nothing…` |
+| B05.2 | (a) rettet (F-BQ-011) + udgående overforbrugspris på aftalen | `test_mp_package_terms_are_snapshotted…`, `test_outbound_price_is_the_agreements_snapshot` |
+| B05.6 | (a) `GET /billing/invoices` har `lines`; Konto «Forbrug pr. opkald» viser den fakturerede måneds frosne linjer | `test_mp_customer_can_read_the_frozen_package_usage_of_an_invoiced_month` (xfail fjernet), `tests/test_billing_disputes.py` |
+| B03/B04 | (a) klage over ét opkald → godkend (åben måned: minutter tilbage i pakken; faktureret: kredit på næste faktura) / afvis; én pr. opkald, idempotent, audit | `tests/test_billing_disputes.py`, `test_mp_failed_call_minutes_can_be_disputed_or_credited`, `test_b04_complaint_records_endpoint…` |
+| C15.2 | omskrevet til pakkemodellen | `test_qa_c15.py::test_c15_c09_packages_checkout_and_refunds_exist` (xfail fjernet) |
+| C15.4 | (a) rettet (F-BQ-012) – efterregistrering på næste faktura | `test_mp_usage_reported_after_the_month_was_invoiced…`, `test_usage_reported_after_the_invoice_is_billed_once…` |
+| M04 | (a) `/operator/admin/billing` (aftale-snapshot, forbrug ind/ud, pakke brugt/tilbage, overforbrug, fakturaer, åbne klager), `/operator/admin/prices`, `/operator/admin/disputes` + afgørelse; kundedetalje har `agreement`/`usage`. Ordrer/refusioner findes ikke i pakkemodellen (xfail med ny begrundelse) | `test_qa_m04.py`, `test_operator_billing_overview_and_customer_detail` |

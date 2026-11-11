@@ -12,9 +12,12 @@ Beløbene er skrevet med `markets.fmt` (samme visning som på fakturalinjerne).
 | Erhverv (ekskl. moms) | DKK | SEK | NOK | EUR |
 |---|---|---|---|---|
 | Abonnement pr. md. | 2.495 kr. | 3 695 kr | 3 995 kr | €329 |
-| Kampagneopkald (pr. opkald) | 4 kr. | 5,90 kr | 6,30 kr | €0.55 |
-| Kampagne, pr. påbegyndt samtaleminut | 2 kr. | 2,95 kr | 3,15 kr | €0.27 |
-| Indgående minut ud over 300 | 1,50 kr. | 2,20 kr | 2,35 kr | €0.20 |
+| Minutpakke (ind + ud) pr. md. | 300 min | 300 min | 300 min | 300 min |
+| Udgående minut ud over pakken | 2 kr. | 2,95 kr | 3,15 kr | €0.27 |
+| Indgående minut ud over pakken | 1,50 kr. | 2,20 kr | 2,35 kr | €0.20 |
+| Udgående opkald efter pakken – besvaret | 4 kr. | 5,90 kr | 6,30 kr | €0.55 |
+| – telefonsvarer | 1 kr. | 1,50 kr | 1,60 kr | €0.14 |
+| – ubesvaret/optaget | 0,25 kr. | 0,35 kr | 0,40 kr | €0.03 |
 | Specialist-opsætning (én gang) | 5.000 kr. | 7 295 kr | 7 895 kr | €669 |
 
 | Privat (inkl. moms) | DKK | SEK | NOK | EUR |

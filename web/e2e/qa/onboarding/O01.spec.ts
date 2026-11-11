@@ -59,6 +59,7 @@ test("O01 · manuel opsætning: felter gemmes løbende, overlever reload, manual
 });
 
 test("O01 · tømt navn: siden må ikke sige «Gemt», når intet blev gemt", async ({ page }, info) => {
+  test.fail(true, "F-E2B-13-O01: S3 new – Tømmes «Navn» i trin 1, står der «Gemt», men intet er gemt (serveren har stadig det gamle navn).");
   const { wsId } = await freshOwner(page, info);
   await page.goto("/opsaetning/1");
   const name = page.getByLabel("Navn (som den siger det)");
@@ -74,6 +75,7 @@ test("O01 · tømt navn: siden må ikke sige «Gemt», når intet blev gemt", as
 });
 
 test("O01 · serverfejl (500) og versionskonflikt vises ærligt – ikke «Gemt»", async ({ page, context }, info) => {
+  test.fail(true, "F-E2B-08-O01: S2 new – Efter en versionskonflikt i trin 1 hjælper «Genindlæs» ikke: feltet viser stadig den gamle …");
   const { wsId } = await freshOwner(page, info);
   await page.goto("/opsaetning/1");
   await page.route(`**/api/backend/workspaces/${wsId}/profile`, (r) => (r.request().method() === "PUT" ? r.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ code: "internal", message: "Intern fejl (QA)" }) }) : r.continue()));
@@ -120,6 +122,7 @@ test("O01 · roller: læser kan se men ikke ændre (UI + API afviser); medarbejd
 });
 
 test("O01 · krav: flere/egne kategorier og dokumentupload findes i UI", async ({ page }, info) => {
+  test.fail(true, "O01: not-implemented – flere/egne kategorier og dokumentupload");
   await freshOwner(page, info);
   await page.goto("/opsaetning/1");
   const main = page.locator("main");
@@ -132,6 +135,7 @@ test("O01 · krav: flere/egne kategorier og dokumentupload findes i UI", async (
 });
 
 test("O01 · skriv og klik straks videre i trinlinjen: det skrevne må ikke gå tabt", async ({ page }, info) => {
+  test.fail(true, "F-E2B-09-O01: S2 new – Det man lige har skrevet i trin 1 går tabt, hvis man forlader siden inden for ca. 1 sekund (fx …");
   const { wsId } = await freshOwner(page, info);
   await page.goto("/opsaetning/1");
   await page.getByLabel("Hvad I laver – én sætning").fill("Tømrer og snedker i Silkeborg");

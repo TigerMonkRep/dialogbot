@@ -9,11 +9,14 @@ from __future__ import annotations
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
+import pytest
+
 from app.modules.telephony import vapi as vapi_mod
 from tests.qa.test_qa_voice_R02 import _active, no_network  # noqa: F401
 from tests.test_telephony import _post, _setup, configured  # noqa: F401
 from tests.test_telephony_platform import _hook, fake  # noqa: F401
-from tests.test_webchat import PUB, _start, fake as ai_fake, live  # noqa: F401
+from tests.test_webchat import PUB, _start, live  # noqa: F401
+from tests.test_webchat import fake as ai_fake  # noqa: F401
 
 TZ = ZoneInfo("Europe/Copenhagen")
 
@@ -141,6 +144,7 @@ def test_r07_peter_knows_todays_date_weekday_and_time_in_the_business_timezone(c
     assert (has_date and weekday in system.lower()) or has_template, "the inbound prompt has no date, weekday or time"
 
 
+@pytest.mark.xfail(strict=True, reason="F-V2-06-R07: S2 new – Når et aktivt nummer ikke længere har godkendt viden (sidste emne arkiveret), svarer assistant-request …")
 def test_r07_fallback_when_knowledge_is_withdrawn_from_a_live_number(client, api, two_workspaces, configured, db):  # noqa: F811
     """An active number whose last approved item is archived: the assistant-request answers {"error": <text>} and Vapi
     speaks that text to the caller. The text must be meant for a caller, not the business's admin."""

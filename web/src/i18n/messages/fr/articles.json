@@ -149,7 +149,7 @@
       ],
       [
         "Qu’est-ce qui coûte le moins cher : une permanence téléphonique ou Dialogbot ?",
-        "La permanence téléphonique est généralement facturée à l’appel ou au mois. Dialogbot est un abonnement unique à {pMonthly} par mois HT, avec 300 minutes d’appels entrants et aucun prix par demande. Voir aussi /viden/dialogbot-vs-vocalis."
+        "La permanence téléphonique est généralement facturée à l’appel ou au mois. Dialogbot est un abonnement unique à {pMonthly} par mois HT, avec 300 minutes d’appels entrants et sortants et aucun prix par demande. Voir aussi /viden/dialogbot-vs-vocalis."
       ],
       [
         "Puis-je garder mon numéro ?",
@@ -271,7 +271,7 @@
       ],
       [
         "Combien ça coûte ?",
-        "{pMonthly} par mois HT avec 300 minutes d’appels entrants. Sans engagement."
+        "{pMonthly} par mois HT avec 300 minutes d’appels entrants et sortants. Sans engagement."
       ]
     ]
   },

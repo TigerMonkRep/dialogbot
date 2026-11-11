@@ -2,7 +2,7 @@
   "prices": {
     "monthly": "{pMonthlyNum}",
     "setup": "{pSetupNum}",
-    "perCall": "{pCallNum}"
+    "perCall": "{pCallAnsweredNum}"
   },
   "demoCall": {
     "label": "Samtal · Snickerifirma (exempel)",
@@ -84,7 +84,7 @@
         },
         {
           "title": "Ringer upp kunder",
-          "text": "Följer upp offerter eller påminner om service – bara till kunder som har sagt ja. {pCall} per samtal + {pMinute} per minut."
+          "text": "Följer upp offerter eller påminner om service – bara till kunder som har sagt ja. Minuterna dras från paketet; därefter {pCallAnswered} per besvarat samtal + {pMinute} per minut."
         }
       ],
       "note": "Allt den säger bygger på kunskap ni själva har godkänt – och varje ändring visar den er först: före → efter, «Godkänna?»."
@@ -107,22 +107,22 @@
         "name": "Abonnemang",
         "badge": "Rekommenderas",
         "unit": "{pCur}/mån.",
-        "text": "Hela priset: telefon, bokning och webbchatt ingår – inkl. 300 minuter inkommande samtal per månad. Ingen bindningstid. Konfiguration på egen hand ingår.",
+        "text": "Hela priset: telefon, bokning och webbchatt ingår – inkl. 300 minuter för in- och utgående samtal per månad. Ingen bindningstid. Konfiguration på egen hand ingår.",
         "compare": "Priset för en telefonpassning – men en receptionist som också bokar tiderna i er kalender.",
         "cta": "Välj här – lyssna på den först",
         "points": [
           "Telefon, bokning och webbchatt – allt ingår",
-          "300 minuter inkommande samtal per månad",
+          "{pIncluded} minuter per månad – in- och utgående samtal",
           "Ingen bindning – uppsägning månad till månad"
         ]
       },
       "campaign": {
         "name": "Utgående kampanjsamtal",
-        "unit": "{pCur} per samtal + {pMinute} per minut",
-        "text": "Bara om ni vill att Dialogbot ska ringa ut. Obesvarat: {pCall}. Tre minuters samtal: {pCall3Min}. Ni ser det högsta priset innan ni startar.",
+        "unit": "{pCur} per besvarat samtal + {pMinute}/min efter paketet",
+        "text": "Bara om ni vill att Dialogbot ska ringa ut. Minuterna dras från abonnemangets {pIncluded} minuter utan pris per samtal. När paketet är förbrukat kostar ett samtal {pCallAnswered} (besvarat), {pCallVoicemail} (röstbrevlåda) eller {pCallNoAnswer} (obesvarat) plus {pMinute} per minut – högst {pContactMax} per kontakt. Ni ser det högsta priset innan ni startar.",
         "badge": "Tillval",
         "points": [
-          "Betalning endast per samtal – inget extra abonnemang",
+          "Inget pris per samtal inom paketet – inget extra abonnemang",
           "Ni godkänner manuset innan den ringer någon",
           "Maxpriset visas innan kampanjen startar"
         ],
@@ -175,11 +175,11 @@
       "appDescription": "Dialogbot är en AI-receptionist som svarar i telefon och chatt åt ditt företag dygnet runt – på svenska och på kundernas eget språk – utifrån er egen kunskap, bokar tider och samlar in ärenden. Vi guidar er genom hela konfigurationen.",
       "subscription": {
         "name": "Abonnemang",
-        "description": "Per månad exkl. moms, inkl. 300 minuter inkommande samtal. Ingen bindningstid."
+        "description": "Per månad exkl. moms, inkl. {pIncluded} minuter för in- och utgående samtal. Ingen bindningstid."
       },
       "campaign": {
         "name": "Utgående kampanjsamtal",
-        "description": "Per utgående samtal exkl. moms, plus {pMinute} per påbörjad samtalsminut"
+        "description": "Per besvarat utgående samtal efter abonnemangets {pIncluded} minuter, exkl. moms, plus {pMinute} per påbörjad minut (röstbrevlåda {pCallVoicemail}, obesvarat {pCallNoAnswer})."
       },
       "setup": {
         "name": "Konfiguration av Dialogbots specialister",
@@ -362,7 +362,7 @@
       },
       "campaign": {
         "name": "Utgående kampanjsamtal",
-        "unit": "{pCur} per utgående samtal",
+        "unit": "{pCur} per besvarat samtal efter paketet",
         "points": [
           "Bara om ni vill att Dialogbot ska ringa ut",
           "Kontakterna har själva sagt ja till att bli uppringda",

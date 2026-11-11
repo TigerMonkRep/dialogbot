@@ -9,6 +9,7 @@ import { freshOwner, shot } from "../../helpers";
 const CSRF = { "x-requested-with": "dialogbot" };
 
 test("E02 · mail-link til ny henvendelse lander i det rigtige arbejdsrum", async ({ page }, info) => {
+  test.fail(true, "F-M2-14-E02: S2 new – Ejer-mailen om en ny henvendelse linker til /app/leads/<id> uden arbejdsrum: er et andet …");
   const { wsId: wsA } = await freshOwner(page, info);
   const name = `Mette E02 ${Date.now()}`;
   // a customer books online (bookings/service.py → leads._notify_new_lead → email.new_lead to owner/admin)

@@ -204,7 +204,7 @@
       "unit": "{pCur}/mån exkl. moms",
       "points": [
         "Telefon, bokning och webbchatt – allt ingår",
-        "300 minuter inkommande samtal per månad",
+        "{pIncluded} minuter per månad för in- och utgående samtal",
         "Uppsägning månad för månad"
       ],
       "cta": "Hör den först"

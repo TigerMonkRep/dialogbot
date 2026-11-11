@@ -69,6 +69,7 @@ test("W02 · menneskelig overtagelse: medarbejderens svar når frem i widgetten,
 });
 
 test("W02 · sprog: arbejdsrum med engelsk slået til – en engelsk besøgende får widgetten på engelsk", async ({ page, browser }, info) => {
+  test.fail(true, "F-E2D-02-W02: S2 new – Widgetten er altid på dansk – også når arbejdsrummet har engelsk slået til og den besøgendes …");
   w = await widgetWorkspace(page, info);
   const langs = await (await page.request.get(`/api/backend/workspaces/${w.wsId}/languages`)).json();
   const r = await page.request.put(`/api/backend/workspaces/${w.wsId}/languages`, { headers: CSRF, data: { interface_language: langs.interface_language, default_conversation_language: "da", report_language: langs.report_language, enabled_conversation_languages: ["da", "en"], expected_version: langs.version } });

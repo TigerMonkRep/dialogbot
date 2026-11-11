@@ -29,7 +29,7 @@ export default async function Trin1({ searchParams }: { searchParams: Promise<{ 
     return (
       <SetupShell step={1} steps={["current", "todo", "todo"]} wide later>
         {head}
-        <CreateWorkspace verified={me.email_verified} defaultIntent={["reception", "campaigns", "both"].includes(me.signup_intent ?? "") ? me.signup_intent! : "reception"} referralLink={referral} />
+        <CreateWorkspace verified={me.email_verified} defaultIntent={me.signup_intent && me.signup_intent !== "privat" ? me.signup_intent : "reception"} referralLink={referral} />
       </SetupShell>
     );
   }

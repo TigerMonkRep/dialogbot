@@ -19,6 +19,7 @@ test("S09 · loggen viser hvem og hvornår, nyeste først, og tælleren passer m
 });
 
 test("S09 · det ændrede objekt står i loggen (fx hvilken kategori, hvilken side af profilen)", async ({ page }, info) => {
+  test.fail(true, "F-E2D-17-S09: S2 new – Aktivitetsloggen viser hvem og hvornår, men ikke hvad der blev ændret: «Kategori tilføjet · E2E …");
   const { wsId } = await freshOwner(page, info);
   await page.request.post(`/api/backend/workspaces/${wsId}/categories`, { headers: CSRF, data: { label: "Gulvafslibning", slug: null, is_primary: true } });
   const api = await (await page.request.get(`/api/backend/workspaces/${wsId}/audit?limit=5`)).json();

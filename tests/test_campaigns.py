@@ -43,7 +43,12 @@ def test_import_rules_and_do_not_call(api, two_workspaces):
     t = two_workspaces
     tok, ws = t["tok_a"], t["ws_a"]
     c = _campaign(api, t)
-    assert c["pricing"] == {"currency": "DKK", "call_net_minor": 400, "minute_net_minor": 200, "max_attempts": 2, "max_connected_seconds": 180}  # 4 kr. per call + 2 kr. per started minute
+    # inside the package no call price; after it 4/1/0,25 kr. per call by outcome + 2 kr. per started minute
+    assert c["pricing"] == {"currency": "DKK", "call_net_minor": 400, "minute_net_minor": 200, "max_attempts": 2,
+                            "max_connected_seconds": 180, "call_prices": {"answered": 400, "voicemail": 100, "no_answer": 25},
+                            "per_contact_max_net_minor": 1_400}
+    # the honest maximum: 1 contact × 2 attempts × 3 minutes once imported; nothing used of the package yet
+    assert c["package"] == {"included": 300, "remaining": 300} and c["max_cost_with_package"]["net_minor"] == 0
     assert api.post(tok, f"/workspaces/{ws}/do-not-call", {"phone": "21222324", "reason": "Bad os lade være"}).status_code == 201
     r = api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts/import", {"csv": CSV, "kind": "business", "consent_source": "Bad om opkald på messen, marts 2026"}).json()
     assert (r["added"], r["duplicates"], r["blocked"], r["invalid_count"]) == (1, 1, 1, 1)
@@ -56,7 +61,10 @@ def test_import_rules_and_do_not_call(api, two_workspaces):
     assert bad.status_code == 422
     ok = api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts/import",
                   {"csv": "Bo;22334455", "kind": "consumer", "consent_source": "Tilmelding på hjemmesiden, marts 2026"}).json()
-    assert ok["added"] == 1 and ok["campaign"]["max_cost"]["net_minor"] == 4000  # 2 contacts × 2 attempts × (4 kr. + 3 min × 2 kr.)
+    # the worst case: 2 contacts × (2 attempts answered after the package × 4 kr. + 3 min × 2 kr.) = 2 × 14 kr.; an
+    # answered call ends the contact, so 3 minutes per contact at most; with the 300 package minutes left it costs nothing
+    assert ok["added"] == 1 and ok["campaign"]["max_cost"]["net_minor"] == 2 * 1_400 and ok["campaign"]["max_minutes"] == 6
+    assert ok["campaign"]["max_cost_with_package"]["net_minor"] == 0
     items = api.get(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts").json()["items"]
     assert {x["kind"] for x in items} == {"business", "consumer"}
     # staff can read and block a number, but not create or start campaigns
@@ -147,13 +155,13 @@ def test_dialler_outcomes_and_billing(api, client, two_workspaces, db, monkeypat
             "call": {"id": call_id, "phoneNumberId": "pn_out", "type": "outboundPhoneCall", "customer": {"number": "+4520304050"}},
             "artifact": {"messages": messages}}}).json()
 
-    # no answer: this call is charged (4 kr.), a second attempt comes later and is charged too
+    # no answer: costs nothing (no price per call); a second attempt comes later
     assert report("out_1", [{"role": "bot", "message": "Hej Mette"}], reason="customer-did-not-answer", seconds=0)["outcome"] == "applied"
     mette = db.query(CampaignContact).filter_by(phone="+4520304050").one()
     db.refresh(mette)
     assert (mette.status, mette.attempts, mette.charged_net_minor) == ("pending", 1, None)  # no legacy package
     first = db.query(CampaignCall).filter_by(contact_id=mette.id).one()
-    assert (first.net_minor, first.connected_seconds, first.minutes_net_minor) == (400, 0, 0)  # unanswered: 4 kr., no minutes
+    assert (first.net_minor, first.connected_seconds, first.minutes_net_minor) == (0, 0, 0)  # unanswered: nothing
     assert db.query(Lead).filter(Lead.workspace_id == uuid.UUID(ws)).count() == 0  # not the inbound "ring tilbage" lead
     assert service.dispatch(db, now) == 1 and calls[-1]["customer"]["number"] == "+4521222324"  # Ole meanwhile
     assert report("out_2", [{"role": "bot", "message": "Hej Ole"}, {"role": "user", "message": "Nej tak, ring ikke igen."}])
@@ -179,11 +187,12 @@ def test_dialler_outcomes_and_billing(api, client, two_workspaces, db, monkeypat
     assert db.get(Campaign, uuid.UUID(c["id"])).status == "completed"
     st = statement(db, uuid.UUID(ws), date.today(), "Europe/Copenhagen")
     camp = [x for x in st["lines"] if x["kind"] == "campaign_calls"]
-    # 3 × 4 kr. for dialling + Ole 60 s (1 minute) + Mette 95 s (2 started minutes) at 2 kr. = 18 kr.
-    assert camp[0]["calls"] == 3 and camp[0]["minutes"] == 3 and camp[0]["net_minor"] == 1800
-    assert "3 udgående opkald, 3 samtaleminutter" in camp[0]["description"]
+    # Ole 60 s (1 minute) + Mette 95 s (2 started minutes) = 3 minutes, all from the package: nothing extra
+    assert (camp[0]["calls"], camp[0]["minutes"], camp[0]["package_minutes"], camp[0]["net_minor"]) == (3, 3, 3, 0)
+    assert "3 udgående opkald, 3 samtaleminutter (3 min fra pakken)" in camp[0]["description"]
+    assert st["package"]["used"] == 3 and st["package"]["remaining"] == 297
     by_call = {x.provider_call_id: (x.connected_seconds, x.minutes_net_minor) for x in db.query(CampaignCall)}
-    assert by_call == {"out_1": (0, 0), "out_2": (60, 200), "out_3": (95, 400)}
+    assert by_call == {"out_1": (0, 0), "out_2": (60, 0), "out_3": (95, 0)}  # priced by the statement, not per call
     assert not [x for x in st["lines"] if x["kind"] == "campaign"]  # no per-contact packages any more
     assert db.query(DoNotCall).filter_by(phone="+4521222324").one().source == "call"
     entry = api.get(tok, f"/workspaces/{ws}/do-not-call").json()["items"][0]
@@ -233,3 +242,17 @@ def test_create_call_never_dials_with_fake_telephony(monkeypatch):
         assert out["id"].startswith("fake-call-") and out["simulated"] is True
     finally:
         get_settings.cache_clear()
+
+
+def test_max_cost_is_the_worst_case_14_kr_per_contact(api, two_workspaces, db):
+    """A': every attempt answered after the package (4 kr.) + all minutes at 2 kr.: 2 × 4 + 3 × 2 = 14 kr. per contact
+    with the default 2 attempts and 3 minutes; with the package minutes left now it costs nothing."""
+    t = two_workspaces
+    tok, ws = t["tok_a"], t["ws_a"]
+    c = _campaign(api, t)
+    assert c["pricing"]["per_contact_max_net_minor"] == 1_400 and c["pricing"]["call_prices"] == {"answered": 400, "voicemail": 100, "no_answer": 25}
+    out = api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts/import",
+                   {"csv": "A;20304050\nB;21222324\nC;22334455", "kind": "business", "consent_source": "Tilmelding"}).json()["campaign"]
+    assert (out["max_minutes"], out["max_cost"]["net_minor"], out["max_cost_with_package"]["net_minor"]) == (9, 3 * 1_400, 0)
+    lst = api.get(tok, f"/workspaces/{ws}/campaigns").json()["pricing"]
+    assert lst["per_contact_max_net_minor"] == 1_400 and lst["call_net_minor"] == 400

@@ -60,7 +60,7 @@
       "title": "Kampanjer",
       "sub": "Ring deres egne kunder",
       "outbound": "Utgående anrop",
-      "chosen": "Valgt – {pCall} per anrop + {pMinute} per minutt eks. mva.",
+      "chosen": "Valgt – minutter fra pakken, deretter {pCallAnswered} per besvart anrop + {pMinute} per minutt eks. mva.",
       "notChosen": "Ikke valgt"
     },
     "systems": {

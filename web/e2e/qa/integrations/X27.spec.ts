@@ -7,6 +7,7 @@ import { freshOwner, shot } from "../../helpers";
 
 for (const code of ["oauth_denied", "oauth_scope_missing", "oauth_state_expired", "oauth_invalid_grant"]) {
   test(`X27 · callback-fejl ${code} vises i ord`, async ({ page }, info) => {
+    test.fail(true, "F-M2-12-X27: S2 new – Afvist samtykke og manglende kalenderadgang i Google vises som rå fejlkode: «Google Kalender …");
     await freshOwner(page, info);
     await page.goto(`/app/settings/integrationer?error=${code}&connector=google_calendar`);
     const alert = page.getByText(/Google Kalender blev ikke forbundet/);

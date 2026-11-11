@@ -40,6 +40,7 @@ FONT = "Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial
 HEAD_FONT = "Outfit,Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif"
 # The mark served by the website (the icon is the brand mark: blue rounded square with the chat bubble).
 LOGO_PATH = "/icons/icon-192.png"
+PRIVAT_LOGO_PATH = "/icons/privat-icon-192.png"
 
 # Dark mode (docs/brand.md has one surface colour, ink; the card is ink, the page one step darker).
 DARK_PAGE = "#0D1630"
@@ -95,8 +96,8 @@ class Email:
     preheader: str | None = None  # the preview line shown next to the subject in the inbox
     step: int | None = None  # set when the mail is a step in the set-up: a yellow step square above the heading
     rows: list[tuple[str, str]] = field(default_factory=list)  # label/value facts shown in a panel (the day's numbers)
-    lang: str = "da"
-    audience: str = "erhverv"  # "privat": the Privat orange (#C4461A) and «Dialogbot Privat» in the header  # the language of the layout's own words (greeting, button fallback, footer company line)
+    lang: str = "da"  # the language of the layout's own words (greeting, button fallback, footer company line)
+    audience: str = "erhverv"  # "privat": the Privat orange (#C4461A), the Privat icon and «Dialogbot Privat» in the header
 
     def text(self) -> str:
         lang = self.lang
@@ -114,7 +115,7 @@ class Email:
     def html(self) -> str:
         lang = normalize(self.lang)
         base = get_settings().frontend_base_url.rstrip("/")
-        logo = f"{base}{LOGO_PATH}"
+        logo = f"{base}{PRIVAT_LOGO_PATH if self.audience == 'privat' else LOGO_PATH}"
         e = html.escape
         accent = PRIVAT_ACCENT if self.audience == "privat" else ACCENT
         brand = "Dialogbot Privat" if self.audience == "privat" else "Dialogbot"
@@ -229,7 +230,7 @@ def verify(link: str, lang: str = "da", *, privat: bool = False) -> Email:
         paragraphs=[t(lang, "verify_body" + sfx)],
         button_label=t(lang, "verify_button"), button_url=link,
         note=t(lang, "verify_note"),
-        footer_reason=t(lang, "verify_footer"), lang=lang)
+        footer_reason=t(lang, "verify_footer"), lang=lang, audience="privat" if privat else "erhverv")
 
 
 def reset(link: str, lang: str = "da") -> Email:

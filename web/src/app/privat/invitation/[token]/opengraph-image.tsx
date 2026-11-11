@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { headers } from "next/headers";
 import { API_BASE_URL } from "@/lib/config";
-import { visitorIp } from "@/lib/visitor-ip";
+import { visitorIpHeaders } from "@/lib/visitor-ip";
 import { DEFAULT_LOCALE, isLocale } from "@/i18n/config";
 import { messagesFor } from "@/i18n/server";
 import { makeT } from "@/i18n/translate";
@@ -19,9 +19,8 @@ export default async function Image({ params }: { params: Promise<{ token: strin
   const { token } = await params;
   let p: Preview | null = null;
   try {
-    const ip = visitorIp(await headers());
     const r = await fetch(`${API_BASE_URL}/api/v1/privat/invites/${encodeURIComponent(token)}`,
-      { cache: "no-store", headers: ip ? { "x-forwarded-for": ip } : undefined });
+      { cache: "no-store", headers: visitorIpHeaders(await headers()) });
     if (r.ok) p = (await r.json()) as Preview;
   } catch { /* generic card */ }
   const name = p?.inviter_first_name ?? p?.owner_first_name;

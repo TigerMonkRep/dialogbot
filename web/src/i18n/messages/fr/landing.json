@@ -66,7 +66,7 @@
   "pricing": {
     "meta": {
       "title": "Tarifs – réceptionniste IA à {pMonthly} par mois",
-      "description": "Découvrez le tarif de Dialogbot : un seul abonnement à {pMonthly} par mois HT avec 300 minutes d’appels entrants. Téléphone, chat, prise de rendez-vous et configuration personnalisée inclus. Les appels sortants de campagne coûtent {pCall} par appel.",
+      "description": "Découvrez le tarif de Dialogbot : un seul abonnement à {pMonthly} par mois HT avec 300 minutes d’appels entrants et sortants. Téléphone, chat, prise de rendez-vous et configuration personnalisée inclus. Dans le forfait, aucun prix par appel ; une fois épuisé, un appel sortant coûte {pCallAnswered} (décroché), {pCallVoicemail} (messagerie) ou {pCallNoAnswer} (sans réponse) plus {pMinute} par minute.",
       "ogTitle": "Tarifs du réceptionniste IA | Dialogbot"
     },
     "kicker": "Tarifs",
@@ -75,8 +75,8 @@
     "points": [
       "{pMonthly} par mois – un seul abonnement",
       "Aucun prix par demande",
-      "300 minutes d’appels entrants par mois incluses",
-      "Appels sortants de campagne : {pCall} par appel + {pMinute} par minute",
+      "{pIncluded} minutes par mois incluses – pour les appels entrants et sortants",
+      "Puis {pExtraMinute} par minute entrante ; en sortant {pCallAnswered} par appel décroché + {pMinute} par minute",
       "Sans engagement",
       "Configuration en autonomie incluse – mise en service par un spécialiste {pSetup}"
     ],
@@ -85,8 +85,8 @@
         "title": "L’abonnement",
         "p1Price": "{pMonthly} par mois",
         "p1a": " HT. Aucun prix par demande, et ",
-        "p1Minutes": "300 minutes d’appels entrants par mois sont incluses",
-        "p1b": " – de quoi couvrir la plupart des petites entreprises. Si vos clients parlent davantage avec l’assistant, chaque minute entamée au-delà coûte {pExtraMinute}. Vous pouvez toujours suivre votre consommation dans Dialogbot.",
+        "p1Minutes": "{pIncluded} minutes par mois sont incluses – pour les appels entrants comme pour les appels de campagne sortants",
+        "p1b": " – assez pour la plupart des petites entreprises. Dans le forfait, aucun prix par appel. Au-delà, chaque minute entrante entamée coûte {pExtraMinute} ; les appels de campagne sortants après le forfait sont décrits ci-dessous. Vous voyez toujours votre consommation par appel dans Dialogbot.",
         "p2": "Le prix d’une permanence téléphonique – mais un réceptionniste qui prend aussi les rendez-vous dans votre agenda et vous envoie un message après chaque appel.",
         "p3a": "Idéal pour les entreprises dont le téléphone sonne quand on est débordé : artisans, cabinets, salons, ateliers et conseillers. Pour l’écouter d’abord, vous pouvez ",
         "p3Link": "laisser Dialogbot vous appeler",
@@ -122,12 +122,12 @@
       },
       "outbound": {
         "title": "Appels sortants de campagne",
-        "p1a": "Si vous voulez que l’assistant appelle des contacts qui ont eux-mêmes accepté d’être appelés, cela coûte ",
-        "p1Call": "{pCall} par appel sortant",
+        "p1a": "Si vous voulez que l’assistant appelle des contacts qui ont accepté d’être appelés, les minutes sont prises sur les mêmes minutes de l’abonnement – sans prix par appel. Une fois le forfait épuisé, chaque appel qui commence ensuite coûte ",
+        "p1Call": "{pCallAnswered} si la personne décroche, {pCallVoicemail} en cas de messagerie et {pCallNoAnswer} sans réponse ou occupé",
         "p1b": " plus ",
         "p1Minute": "{pMinute} par minute de conversation entamée",
-        "p1c": " HT – comme une facture de téléphone.",
-        "p2": "Chaque appel passé compte – y compris une nouvelle tentative. Un appel sans réponse coûte donc {pCall}, et une conversation de 3 minutes {pCall3Min}. Un contact est appelé 2 fois maximum et parle 3 minutes maximum au total, et vous voyez le prix maximal avant d’appuyer sur Démarrer."
+        "p1c": ", HT.",
+        "p2": "Un appel qui franchit la limite ne fait que partager ses minutes – il n’a pas de prix par appel. Le forfait est partagé avec les appels entrants et utilisé dans l’ordre des appels. Un contact est appelé au plus deux fois et parle au plus 3 minutes ; un contact coûte donc au maximum {pContactMax}, et vous voyez le prix maximum avant d’appuyer sur Démarrer."
       },
       "start": {
         "title": "Commencer",
@@ -147,7 +147,7 @@
       ],
       [
         "Les {pMonthly} correspondent-ils au prix total ?",
-        "Oui, c’est le prix total de l’abonnement, HT. Il n’y a qu’un seul abonnement et aucun supplément par demande. Ce n’est que si vous dépassez 300 minutes entrantes par mois que chaque minute supplémentaire coûte {pExtraMinute}"
+        "Oui, c’est le prix total de l’abonnement, HT. Il n’y a qu’un seul abonnement et aucun supplément par demande. Ce n’est que si vous dépassez 300 minutes par mois (entrants et sortants ensemble) que chaque minute supplémentaire coûte {pExtraMinute} en entrant et {pMinute} en sortant, et les appels sortants après le forfait coûtent en plus {pCallAnswered}/{pCallVoicemail}/{pCallNoAnswer} par appel selon l’issue."
       ],
       [
         "Puis-je l’essayer avant d’acheter ?",
@@ -159,11 +159,11 @@
       ],
       [
         "Combien coûtent les appels sortants de campagne ?",
-        "{pCall} par appel sortant plus {pMinute} par minute de conversation entamée, HT. Un appel sans réponse coûte {pCall}, une conversation de 3 minutes {pCall3Min}. Les contacts doivent avoir accepté au préalable d’être appelés, et une campagne ne démarre que lorsque vous appuyez vous-même sur Démarrer."
+        "Dans les {pIncluded} minutes de l’abonnement (partagées avec les appels entrants), aucun prix par appel. Une fois le forfait épuisé, un appel sortant qui commence ensuite coûte {pCallAnswered} si la personne décroche, {pCallVoicemail} en cas de messagerie et {pCallNoAnswer} sans réponse ou occupé – plus {pMinute} par minute de conversation entamée, HT. Au maximum {pContactMax} par contact. Les contacts doivent avoir accepté à l’avance d’être appelés, et une campagne n’appelle que lorsque vous appuyez vous-même sur Démarrer."
       ],
       [
         "Que se passe-t-il si nous recevons beaucoup d’appels entrants ?",
-        "300 minutes d’appels entrants par mois sont incluses dans l’abonnement. Au-delà, chaque minute entamée coûte {pExtraMinute}. HT – elle apparaît sur une ligne distincte de la facture, et vous pouvez suivre la consommation en continu dans Dialogbot."
+        "{pIncluded} minutes par mois sont incluses dans l’abonnement – pour les appels entrants et sortants, sans prix par appel. Au-delà, chaque minute entrante entamée coûte {pExtraMinute} ; les appels sortants coûtent {pCallAnswered}/{pCallVoicemail}/{pCallNoAnswer} selon l’issue plus {pMinute} par minute, HT. Cela figure sur des lignes séparées de la facture, et vous suivez la consommation par appel dans Dialogbot."
       ],
       [
         "La configuration est-elle payante ?",
@@ -227,7 +227,7 @@
         "title": "Tarif et configuration",
         "p1a": "Il n’y a qu’un seul abonnement : ",
         "p1Price": "{pMonthly} par mois",
-        "p1b": ", sans prix par demande et avec 300 minutes d’appels entrants par mois. Les appels sortants de campagne coûtent {pCall} par appel plus {pMinute} par minute de conversation. Tous les prix sont HT.",
+        "p1b": ", sans prix par demande et avec 300 minutes d’appels entrants et sortants par mois. Dans le forfait, aucun prix par appel ; une fois épuisé, un appel sortant coûte {pCallAnswered} (décroché), {pCallVoicemail} (messagerie) ou {pCallNoAnswer} (sans réponse) plus {pMinute} par minute. Tous les prix sont HT.",
         "p2a": "Aucune compétence technique n’est nécessaire. Vous configurez vous-même l’assistant en suivant les trois étapes du guide, en une demi-heure environ – c’est inclus dans l’abonnement. Si vous avez un site web, Dialogbot récupère l’essentiel automatiquement, et vous pouvez tester l’assistant avant qu’il ne prenne un seul vrai appel. Si vous préférez qu’on s’en charge, nos propres spécialistes le configurent pour {pSetup}. HT, une seule fois – sur mesure et intégré à vos propres outils et besoins. Découvrez aussi le ",
         "p2Phone": "répondeur IA",
         "p2b": " et le ",
@@ -238,7 +238,7 @@
     "faq": [
       [
         "Combien coûte un réceptionniste IA chez Dialogbot ?",
-        "Un seul abonnement à {pMonthly} par mois, sans prix par demande et avec 300 minutes d’appels entrants par mois. Les appels sortants de campagne coûtent {pCall} par appel plus {pMinute} par minute de conversation. Les prix sont HT."
+        "Un seul abonnement à {pMonthly} par mois, sans prix par demande et avec 300 minutes d’appels entrants et sortants par mois. Dans le forfait, aucun prix par appel ; une fois épuisé, un appel sortant coûte {pCallAnswered} (décroché), {pCallVoicemail} (messagerie) ou {pCallNoAnswer} (sans réponse) plus {pMinute} par minute. Les prix sont HT."
       ],
       [
         "Que deviennent les données des clients – est-ce conforme au RGPD ?",

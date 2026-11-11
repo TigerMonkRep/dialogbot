@@ -144,7 +144,7 @@
         },
         "outbound": {
           "title": "Appeler vos clients",
-          "sub": "campagnes · {pCall} par appel HT"
+          "sub": "campagnes · minutes du forfait"
         }
       },
       "langAria": "Langue",
@@ -370,7 +370,7 @@
     "turningOn": "Activation …",
     "turnOn": "Activer Dialogbot",
     "managersOnly": "Seuls les propriétaires et administrateurs peuvent l’activer.",
-    "subscriptionNote": "L’abonnement démarre à {pMonthly}/mois HT, et les appels sortants de campagne coûtent {pCall} par appel HT.",
+    "subscriptionNote": "L’abonnement est à partir de {pMonthly}/mois HT avec {pIncluded} minutes pour les appels entrants et sortants ; puis {pExtraMinute} par minute entrante et, en sortant, {pCallAnswered} par appel décroché + {pMinute} par minute.",
     "confirmSubscription": "Confirmer l’abonnement",
     "findAgain": "Vous retrouverez tout via l’icône de profil → Tous les paramètres.",
     "readerTitle": "Le propriétaire configure Dialogbot",

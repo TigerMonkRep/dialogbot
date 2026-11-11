@@ -47,7 +47,10 @@ test("C12 · kørende kampagne: status, fremdrift = API, fejl vises, manuskript 
 
 test("C12 · F-E2C-03: kontakter kan ikke tilføjes til en kørende kampagne uden ny bekræftelse", async ({ page }, info) => {
   const { wsId, c } = await runningCampaign(page, info);
-  const before = (await getCampaign(page.request, wsId, c.id)).counts.by_status.pending as number; // Ole + Bo, confirmed at start
+  const started = await getCampaign(page.request, wsId, c.id);
+  // verifier: uden en kørende kampagne beviser testen intet (bestod tomt på en stak hvor kampagnen blev i «draft»)
+  expect(started.status, "forudsætning: kampagnen kører").toBe("running");
+  const before = started.counts.by_status.pending as number; // Ole + Bo, confirmed at start
   await page.goto(`/app/kampagner/${c.id}`);
   await page.screenshot({ path: evid("C12", info, "tilfoej-mens-koerer"), fullPage: true });
   const form = page.getByRole("button", { name: "Tilføj kontakter" });
@@ -65,6 +68,7 @@ test("C12 · F-E2C-03: kontakter kan ikke tilføjes til en kørende kampagne ude
 });
 
 test("C12 · krav: kommende opkald, live-opdatering uden reload og «annullér resten» (ikke bygget)", async ({ page }, info) => {
+  test.fail(true, "C12: not-implemented – kommende opkald, live-opdatering, «annullér resten»");
   test.info().annotations.push({ type: "not-implemented", description: "C12: next_attempt_at is not in the UI type/Contact; page is server-rendered without polling; no cancel-remaining action/API" });
   const { c } = await runningCampaign(page, info);
   await page.goto(`/app/kampagner/${c.id}`);

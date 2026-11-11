@@ -522,7 +522,26 @@ def _user_wrote(turn: Turn, phone_e164: str) -> bool:
     texts = [turn.text] + [m.text for m in turn.db.scalars(
         select(PrivateMessage).where(PrivateMessage.workspace_id == turn.ctx.ws_id, PrivateMessage.role == "user")
         .order_by(PrivateMessage.created_at.desc()).limit(HISTORY))]
-    return any(national in _digits(t) for t in texts)
+    return any(national in _phone_numbers(t) for t in texts)
+
+
+_PHONE_RUN = re.compile(r"(?<![\d])(?:\+|00)?[\d][\d \-.]{6,18}[\d](?![\d])")
+
+
+def _phone_numbers(text: str | None) -> set[str]:
+    """The 8-digit national numbers written as a number on their own («20 30 40 50», «+45 20304050», «0045-2030
+    4050») – never 8 digits taken from inside a longer run such as an order or account number (F-PX-01)."""
+    out = set()
+    for m in _PHONE_RUN.finditer(text or ""):
+        d = _digits(m.group(0))
+        if d.startswith("0045"):
+            d = d[4:]
+        elif d.startswith("45") and len(d) == 10:
+            d = d[2:]
+        if len(d) == 8:
+            out.add(d)
+        out |= {tok for tok in re.findall(r"\d+", m.group(0)) if len(tok) == 8}  # «86123456 20304050»
+    return out
 
 
 LOCATION_OPTIONS = [

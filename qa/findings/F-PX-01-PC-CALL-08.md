@@ -3,7 +3,7 @@ id: F-PX-01-PC-CALL-08
 scenario: PC-CALL-08
 reported_by: voice-qa (PX)
 severity: S2
-status: new
+status: fixed
 owner_fix: fix-engineer
 related: []
 ---
@@ -30,4 +30,8 @@ Match med regex på ord-/ciffergrænser, fx `(?<!\d)(?:\+?45[\s-]?)?(\d{2}[\s-]?
 
 ## Rodårsag (udfyldes af fix-engineer)
 ## Rettelse (udfyldes af fix-engineer)
-## Verifikation (udfyldes af verifier)
+- Rodårsag: chat._user_wrote fjernede alle ikke-cifre fra beskeden og søgte 8 cifre som delstreng.
+- Rettelse: chat._phone_numbers finder kun selvstændige telefonnumre (8 cifre, evt. med +45/0045, mellemrum, bindestreg eller punktum) og aldrig cifre inde i et længere ciffer-løb (ordre-/kontonumre). Flere numre adskilt af mellemrum genkendes hver for sig.
+- Filer: app/modules/privat/chat.py
+- Test: tests/qa/test_qa_pd_x.py::test_px_call_08_invented_number_inside_other_digits (grøn)
+- Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)

@@ -5,6 +5,7 @@ languages – Fürster's decisions 2026-11-11 on F-VF-06-PC-TERMS and F-PQ-03-X0
    top-up within 14 days (the right of withdrawal, terms point 7) – never stricter than the terms.
 2. Website booking: the terms say «fair use» without a number; the code keeps its hidden cap (30). No user text names it.
 3. The top-up sheet (buy.note): the saldo does not expire as long as the account exists – not «in the pilot».
+4. The simulated sponsor spot is gone: no sponsor texts, no sponsor sheet, no sponsor call in the web.
 """
 from __future__ import annotations
 
@@ -79,3 +80,14 @@ def test_website_booking_cap_is_fair_use_in_words_and_never_a_number():
         for path, text in _strings(_load(lang, "privat.json")["browser"]):
             assert not cap.search(text), (lang, f"browser{path}", text)
 
+
+def test_no_sponsor_spot_left_in_texts_or_web_code():
+    for lang in LANGS:
+        p = _load(lang, "privat.json")
+        assert "sponsor" not in p and "sponsor" not in p["paywall"], lang
+        hits = [(path, t) for path, t in _strings(p) if re.search(r"(?i)sponsor", t) and path != ".travel.sponsored"]
+        assert hits == [], (lang, hits)
+    for rel in ("web/src/lib/privat/api.ts", "web/src/lib/privat/fake.ts", "web/src/components/privat/sheets.tsx",
+                "web/src/components/privat/store.tsx"):
+        src = (ROOT / rel).read_text(encoding="utf-8")
+        assert not re.search(r"sponsorClaim|sponsor_left_today|sponsor/claim|SponsorSheet|\"sponsor\"", src), rel

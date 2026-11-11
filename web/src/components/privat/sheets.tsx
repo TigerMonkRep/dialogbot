@@ -58,7 +58,6 @@ export function Sheets() {
     : k === "mic" ? <MicSheet onClose={closeSheet} />
     : k === "paywall" ? <PaywallSheet onClose={closeSheet} />
     : k === "buy" ? <BuySheet onClose={closeSheet} />
-    : k === "sponsor" ? <SponsorSheet onClose={closeSheet} />
     : k === "share" ? <ShareSheet onClose={closeSheet} />
     : k === "addon" ? <AddonSheet onClose={closeSheet} />
     : k === "addonOff" ? <AddonOffSheet onClose={closeSheet} />
@@ -104,8 +103,8 @@ function MicSheet({ onClose }: { onClose: () => void }) {
   );
 }
 
-/** Without a trial yet (status «none»): the trial first – one tap to the checkout, card first, no balance or sponsor
- *  spots on the way round it. After the trial: the plan path («Vælg plan»), then 3 kr. from the Opkaldssaldo for a
+/** Without a trial yet (status «none»): the trial first – one tap to the checkout, card first, no balance on the way
+ *  round it. After the trial: the plan path («Vælg plan»), then 3 kr. from the Opkaldssaldo for a
  *  task. With a plan whose month is used up: fill up the Opkaldssaldo for extra calls, or change plan. */
 function PaywallSheet({ onClose }: { onClose: () => void }) {
   const t = useT("privat");
@@ -145,7 +144,6 @@ function PaywallSheet({ onClose }: { onClose: () => void }) {
       {/* «Ring for mig» without a plan: the Opkaldssaldo cannot pay instead (decision 2026-11-11) – extra calls only on top of a plan */}
       {(!call || p.entitled) && <Button variant={quotaUsed ? "primary" : "outline"} className={`${quotaUsed ? BIG : "border-2"} rounded-full`} onClick={() => openSheet({ kind: "buy", taskId: sheet?.taskId })}>{t("plan.paywallBuy")} · {t("paywall.buy")}</Button>}
       {quotaUsed && <Button variant="outline" className="border-2 rounded-full" onClick={choosePlan}>{t("plan.change")}</Button>}
-      {!call && <Button variant="outline" className="border-2 rounded-full" disabled={(balance?.sponsor_left_today ?? 0) < 1} onClick={() => openSheet({ kind: "sponsor", taskId: sheet?.taskId })}>{t("paywall.sponsor", { n: balance?.sponsor_left_today ?? 0 })}</Button>}
       <button type="button" className={`${LINK} self-center`} onClick={later}>{t("paywall.later")}</button>
     </Sheet>
   );
@@ -188,25 +186,6 @@ function BuySheet({ onClose }: { onClose: () => void }) {
       </div>
       <Button className={BIG} onClick={pay} disabled={busy || mode === "demo"}>{simulated ? <>{t("buy.pay", { amount: sd.fmt(amount) })} <Sim label={t("buy.simulatedBuy")} /></> : busy ? t("buy.redirecting") : t("buy.payReal", { amount: sd.fmt(amount) })}</Button>
       <button type="button" className={`${LINK} self-center`} onClick={() => (sheet?.taskId ? openSheet({ kind: "paywall", taskId: sheet.taskId }) : onClose())}>{t("buy.back")}</button>
-    </Sheet>
-  );
-}
-
-function SponsorSheet({ onClose }: { onClose: () => void }) {
-  const t = useT("privat");
-  const { sheet, run, openSheet } = usePrivat();
-  return (
-    <Sheet title={t("sponsor.title")} onClose={onClose}>
-      <div className="border-2 border-ink rounded-2xl overflow-hidden">
-        <div className="bg-panel px-3 py-2 flex justify-between items-center"><span className="eyebrow text-[11px]">{t("sponsor.label")}</span><Sim /></div>
-        <div className="px-3.5 py-[18px] flex flex-col gap-1.5 min-h-[120px] justify-center text-center">
-          <span className="font-display font-bold text-[20px]">{t("sponsor.placeholder")}</span>
-          <span className="text-[13px] text-muted">{t("sponsor.fictive")}</span>
-        </div>
-      </div>
-      <p className="m-0 text-[14px] text-ink-soft">{t("sponsor.text")}</p>
-      <Button className={BIG} onClick={async () => { const r = await run((a) => a.sponsorClaim(sheet!.taskId!)); if (r) onClose(); }}>{t("sponsor.watched")}</Button>
-      <button type="button" className={`${LINK} self-center`} onClick={() => openSheet({ kind: "paywall", taskId: sheet?.taskId })}>{t("sponsor.later")}</button>
     </Sheet>
   );
 }

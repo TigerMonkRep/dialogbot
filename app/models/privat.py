@@ -95,7 +95,7 @@ class PrivateTask(Base):
     reminder_version: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
     who: Mapped[str] = mapped_column(String(200), nullable=False, default="")
     usage_text: Mapped[str] = mapped_column(String(200), nullable=False, default="")
-    # free (one of the month's 10) | balance (3 kr. from the Opkaldssaldo) | sponsor | none (draft, not paid yet) |
+    # free (one of the month's 10) | balance (3 kr. from the Opkaldssaldo) | sponsor (history only, F-PQ-03) | none (draft, not paid yet) |
     # call (paid with the call: a plan call or an extra call from the Opkaldssaldo) | plan
     # | plan (included in the trial or a subscription: never counts against the free quota)
     paid_by: Mapped[str] = mapped_column(String(16), nullable=False, default="none")

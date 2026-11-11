@@ -13,7 +13,6 @@ FREE_LIMIT = prices.PRIVAT_FREE_TASKS_PER_MONTH
 WELCOME_BONUS_MINOR = prices.PRIVAT_WELCOME_BONUS_MINOR  # Opkaldssaldo amounts in øre (DKK; other currencies: markets.PRIVAT_BALANCE)
 EXTRA_TASK_MINOR = prices.PRIVAT_EXTRA_TASK_MINOR
 BROWSER_BOOKINGS_PER_MONTH = prices.PRIVAT_BROWSER_BOOKINGS_PER_MONTH  # fair use, hidden: never a price
-SPONSOR_PER_DAY = 2
 CALL_FROM, CALL_TO = time(8, 0), time(18, 0)  # weekdays, Copenhagen time
 CALLBACK_DAYS = 14
 INVITE_DAYS = 30

@@ -4,8 +4,9 @@ Rules:
 - With the trial or a plan (subscriptions.entitlements → entitled) lists and reminders are unlimited (paid_by 'plan').
 - Otherwise 10 new digital tasks (lists, reminders) per calendar month, Europe/Copenhagen. Editing, ticking, reading
   and clarifying are free; a shared list is ONE task for its owner, whatever its members do.
-- Task #11 in a month is saved as a draft until activated with 3 kr. from the Opkaldssaldo (spend:<task_id>) or a
-  sponsor spot (max 2 a day, sponsor:<task_id>). A draft reminder never fires.
+- Task #11 in a month is saved as a draft until activated with 3 kr. from the Opkaldssaldo (spend:<task_id>) – the only
+  way without a plan (decision Fürster 2026-11-11, F-PQ-03: the simulated sponsor spot is gone; old 'sponsor' ledger
+  rows stay as history). A draft reminder never fires.
 - A reminder is one outbox event (privat.reminder) due at remind_at; moving it cancels the old event and creates
   exactly one new one (dedupe key includes reminder_version).
 """
@@ -66,7 +67,6 @@ def balance_out(db: OrmSession, ctx) -> dict:
     return {"free_used": free_used(db, ctx.ws_id), "free_limit": rules.FREE_LIMIT,
             # the Opkaldssaldo (ledger.summary): balance_minor, held_minor, currency, extra_call prices, topups
             **ledger.summary(db, ctx.ws_id),
-            "sponsor_left_today": max(0, rules.SPONSOR_PER_DAY - ledger.sponsor_used_today(db, ctx.ws_id)),
             "phone_display": rules.phone_display(p.phone_e164) if p.phone_verified_at else None,
             "phone_verified": p.phone_verified_at is not None, "push_enabled": _push_enabled(db, ctx.user_id),
             "location_city": p.location_city, "assistant_name": naming.of(p),
@@ -298,33 +298,33 @@ def activate_drafts_with_plan(db: OrmSession, ws_id: uuid.UUID) -> int:
 
 
 def activate(db: OrmSession, ctx, task: PrivateTask, method: str) -> PrivateTask:
-    """Draft → active, paid with 3 kr. from the Opkaldssaldo or a sponsor spot. Repeating it on an active task changes
-    nothing."""
+    """Draft → active, paid with 3 kr. from the Opkaldssaldo – also without a plan, and the only way (decision Fürster
+    2026-11-11, F-PQ-03). Too little on the saldo: 409 insufficient_balance «Fyld op» (+ «Vælg en plan» without a plan).
+    Repeating it on an active task changes nothing."""
+    from app.modules.privat import subscriptions
+
     if task.workspace_id != ctx.ws_id:
         raise NotFound("Opgaven findes ikke")
+    if method != "balance":
+        raise ValidationFailed("Betal med opkaldssaldoen", field_errors=[{"field": "method"}])
     _lock_profile(db, ctx.ws_id)
     db.refresh(task)
     if task.status != "draft":
         return task
-    if method == "balance":
-        cur = ledger.currency(db, ctx.ws_id)
-        price = markets.privat_balance_amount(cur, "extra_task")
-        if (have := ledger.balance(db, ctx.ws_id)) < price:
-            raise Conflict(f"Fyld op: en ekstra opgave koster {markets.fmt(price, cur)}, og du har "
-                           f"{markets.fmt(have, cur)} på din opkaldssaldo.", code="insufficient_balance",
-                           extra={"balance_minor": have, "needed_minor": price, "currency": cur,
-                                  "cta": {"label": "Fyld op", "href": "/privat/konto#saldo"}})
-        ledger.add(db, ctx.ws_id, kind="spend", amount=-price, source_ref=f"spend:{task.id}", task_id=task.id,
-                   text="Ny opgave efter månedsgrænsen")
-        task.paid_by, task.usage_text = "balance", f"Ekstra opgave · {markets.fmt(price, cur)}"
-    elif method == "sponsor":
-        if ledger.sponsor_used_today(db, ctx.ws_id) >= rules.SPONSOR_PER_DAY:
-            raise Conflict("Du har set dagens 2 sponsorindslag", code="sponsor_limit")
-        ledger.add(db, ctx.ws_id, kind="sponsor", amount=0, source_ref=f"sponsor:{task.id}", task_id=task.id,
-                   text="Sponsorindslag set – 1 ekstra opgave")
-        task.paid_by, task.usage_text = "sponsor", "Sponsorindslag (+1 opgave)"
-    else:
-        raise ValidationFailed("Vælg saldo eller sponsor", field_errors=[{"field": "method"}])
+    cur = ledger.currency(db, ctx.ws_id)
+    price = markets.privat_balance_amount(cur, "extra_task")
+    if (have := ledger.balance(db, ctx.ws_id)) < price:
+        no_plan = not subscriptions.entitlements(db, ctx.ws_id)["entitled"]
+        extra = {"balance_minor": have, "needed_minor": price, "currency": cur,
+                 "cta": {"label": "Fyld op", "href": "/privat/konto#saldo"}}
+        if no_plan:
+            extra["plan_cta"] = {"label": "Vælg en plan", "href": "/privat/konto"}
+        raise Conflict(f"Fyld op: en ekstra opgave koster {markets.fmt(price, cur)}, og du har "
+                       f"{markets.fmt(have, cur)} på din opkaldssaldo." + (" Eller vælg en plan." if no_plan else ""),
+                       code="insufficient_balance", extra=extra)
+    ledger.add(db, ctx.ws_id, kind="spend", amount=-price, source_ref=f"spend:{task.id}", task_id=task.id,
+               text="Ny opgave efter månedsgrænsen")
+    task.paid_by, task.usage_text = "balance", f"Ekstra opgave · {markets.fmt(price, cur)}"
     task.status, task.pending_status = task.pending_status or "planned", None
     if task.kind == "reminder" and task.remind_at:
         task.next_step = "Påmindelse " + rules.lower_first(rules.when_text(task.remind_at))

@@ -17,7 +17,6 @@ F-PDEC-02; a run started before that releases its old reservation when it ends):
 from __future__ import annotations
 
 import uuid
-from datetime import timedelta
 
 from sqlalchemy import and_, func, select
 from sqlalchemy.exc import IntegrityError
@@ -25,8 +24,13 @@ from sqlalchemy.orm import Session as OrmSession
 from sqlalchemy.orm import aliased
 
 from app.models import CreditLedger, PrivateSubscription
+from app.models.privat import CREDIT_KINDS
 from app.modules.billing import markets
 from app.modules.privat import rules
+
+# Every kind the table allows (models.CREDIT_KINDS) except 'sponsor': the simulated sponsor spot was removed
+# (decision Fürster 2026-11-11, F-PQ-03); its old rows stay in the ledger and keep counting in the balance (amount 0).
+WRITABLE_KINDS = frozenset(CREDIT_KINDS) - {"sponsor"}
 
 
 def currency(db: OrmSession, ws_id: uuid.UUID) -> str:
@@ -38,6 +42,8 @@ def add(db: OrmSession, ws_id: uuid.UUID, *, kind: str, amount: int, source_ref:
         task_id: uuid.UUID | None = None, cur: str | None = None) -> bool:
     """Insert one movement (øre, in the account's currency unless `cur`). False (and nothing written) when
     `source_ref` already exists."""
+    if kind not in WRITABLE_KINDS:  # 'sponsor' is history only (F-PQ-03): old rows stay, no new ones
+        raise ValueError(f"ledger kind {kind!r} can no longer be written")
     if db.scalar(select(CreditLedger.id).where(CreditLedger.source_ref == source_ref)) is not None:
         return False
     try:
@@ -121,13 +127,6 @@ def adopt_currency(db: OrmSession, ws_id: uuid.UUID, new: str) -> None:
            text=f"Saldo flyttet til {new}"):
         add(db, ws_id, kind="convert", amount=moved, source_ref=f"{ref}:in", cur=new,
             text=f"Saldo fra {markets.fmt(old, 'DKK')}")
-
-
-def sponsor_used_today(db: OrmSession, ws_id: uuid.UUID) -> int:
-    start_local = rules.local().replace(hour=0, minute=0, second=0, microsecond=0)
-    return int(db.scalar(select(func.count()).select_from(CreditLedger).where(
-        CreditLedger.workspace_id == ws_id, CreditLedger.kind == "sponsor",
-        CreditLedger.created_at >= start_local, CreditLedger.created_at < start_local + timedelta(days=1))) or 0)
 
 
 def rows(db: OrmSession, ws_id: uuid.UUID, limit: int = 200) -> list[CreditLedger]:

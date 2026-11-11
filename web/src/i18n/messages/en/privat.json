@@ -571,12 +571,11 @@
     "titleCall": "Top up for an extra call",
     "titleTrial": "This needs a plan",
     "draft": "Draft",
-    "textDigital": "The task is saved as a draft. Choose a plan, pay {pExtraTask} from your call balance or watch an optional sponsor clip.",
+    "textDigital": "The task is saved as a draft. Choose a plan or pay {pExtraTask} from your call balance.",
     "textCall": "An extra call holds {pXMax} on your call balance when you approve it. You have {have}.",
     "textTrial": "Try Dialogbot Privat free for 14 days. You sign up with a card, and it is only charged once the trial ends – cancel before, and you pay nothing. The task is saved as a draft until you have chosen.",
     "trialNote": "Plus · {pPlus}/month after the trial · cancel any time",
     "buy": "{pTopup1}, {pTopup2} or {pTopup3}",
-    "sponsor": "Watch a sponsored clip · +1 task ({n} left today)",
     "later": "Later – keep the draft",
     "laterNote": "The draft is under «Waiting for your answer». You can continue whenever you like.",
     "useBalance": "Pay {pExtraTask} from your balance · you have {have}"
@@ -593,15 +592,6 @@
     "back": "Back",
     "have": "You have {have} on your call balance.",
     "prices": "Extra call: {pXAnswered} answered, {pXVoicemail} voicemail, {pXNoAnswer} unanswered + {pXMinute} per started minute, at most {pXMax}."
-  },
-  "sponsor": {
-    "title": "Voluntary sponsored clip",
-    "label": "Sponsored clip",
-    "placeholder": "[The advertiser's clip, 15 sec.]",
-    "fictive": "Fictitious advertiser in the pilot",
-    "text": "You get 1 extra task when the clip has been watched. At most 2 per day. The advertiser learns nothing about your conversations or tasks.",
-    "watched": "I have watched the clip – give me the task",
-    "later": "Later"
   },
   "login": {
     "title": "Save your task",

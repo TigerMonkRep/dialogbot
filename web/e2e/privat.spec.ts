@@ -219,11 +219,11 @@ for (const width of [375, 1440]) {
       await expect(chip(page)).toHaveAttribute("data-status", "none");
       await gotoTab(page, "Samtale");
       await say(page, "Lav en liste med kaffe og te");
-      // The trial first – no balance, no sponsor spot around the card.
+      // The trial first – no balance around the card (and no sponsor spot anywhere: removed, F-PQ-03).
       const trial = page.getByRole("dialog", { name: "Det kræver en plan" });
       await expect(trial).toBeVisible();
       await expect(trial.getByRole("button", { name: /fra saldoen/ })).toHaveCount(0);
-      await expect(trial.getByRole("button", { name: /sponsorindslag/ })).toHaveCount(0);
+      await expect(trial.getByRole("button", { name: /sponsor/i })).toHaveCount(0);
       await trial.getByTestId("paywall-trial").click();
       // Back from the (simulated) checkout: the trial runs and the draft is live, paid by it.
       await expect(page).toHaveURL(/\/privat\/konto/);
@@ -244,7 +244,8 @@ for (const width of [375, 1440]) {
       await say(page, "Lav en liste med kaffe og te");
       const sheet = page.getByRole("dialog", { name: "Det kræver en plan" });
       await expect(sheet).toBeVisible();
-      await expect(sheet.getByRole("button", { name: /Se et sponsorindslag/ })).toBeVisible();
+      await expect(sheet.getByRole("button", { name: /sponsor/i })).toHaveCount(0);  // removed (F-PQ-03): the saldo is the only way
+      await expect(sheet).not.toContainText(/sponsor/i);
       await expect(sheet.getByRole("button", { name: "Vælg plan" })).toBeVisible();
       await sheet.getByRole("button", { name: "Betal 3 kr. fra saldoen · du har 10 kr." }).click();
       await expect(sheet).toBeHidden();

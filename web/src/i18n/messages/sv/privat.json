@@ -571,12 +571,11 @@
     "titleCall": "Fyll på för ett extra samtal",
     "titleTrial": "Det kräver en plan",
     "draft": "Utkast",
-    "textDigital": "Uppgiften är sparad som utkast. Välj en plan, betala {pExtraTask} från ditt saldo eller titta på ett frivilligt sponsorinslag.",
+    "textDigital": "Uppgiften är sparad som utkast. Välj en plan eller betala {pExtraTask} från ditt saldo.",
     "textCall": "Ett extra samtal reserverar {pXMax} på ditt samtalssaldo när du godkänner. Du har {have}.",
     "textTrial": "Prova Dialogbot Privat gratis i 14 dagar. Du registrerar dig med kort, och det dras först när provperioden är slut – säg upp innan, så betalar du inget. Uppgiften är sparad som utkast tills du har valt.",
     "trialNote": "Plus · {pPlus}/mån efter provperioden · säg upp när som helst",
     "buy": "{pTopup1}, {pTopup2} eller {pTopup3}",
-    "sponsor": "Se ett sponsrat inslag · +1 uppgift ({n} kvar i dag)",
     "later": "Senare – behåll utkastet",
     "laterNote": "Utkastet ligger under «Väntar på ditt svar». Du kan fortsätta när du vill.",
     "useBalance": "Betala {pExtraTask} från saldot · du har {have}"
@@ -593,15 +592,6 @@
     "back": "Tillbaka",
     "have": "Du har {have} i samtalssaldo.",
     "prices": "Extra samtal: {pXAnswered} besvarat, {pXVoicemail} röstbrevlåda, {pXNoAnswer} obesvarat + {pXMinute} per påbörjad minut, högst {pXMax}."
-  },
-  "sponsor": {
-    "title": "Frivilligt sponsrat inslag",
-    "label": "Sponsrat inslag",
-    "placeholder": "[Annonsörens inslag, 15 sek.]",
-    "fictive": "Fiktiv annonsör i piloten",
-    "text": "Du får 1 extra uppgift när inslaget är sett. Högst 2 per dag. Annonsören får inte veta något om dina samtal eller uppgifter.",
-    "watched": "Jag har sett inslaget – ge mig uppgiften",
-    "later": "Senare"
   },
   "login": {
     "title": "Spara din uppgift",

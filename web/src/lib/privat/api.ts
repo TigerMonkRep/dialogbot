@@ -104,7 +104,7 @@ export type Task = {
   appointment?: { id: string; when_text: string; ics_path: string } | null;
 };
 export type Balance = {
-  free_used: number; free_limit: number; sponsor_left_today: number;
+  free_used: number; free_limit: number;
   /** The Opkaldssaldo (øre, incl. VAT, in `currency`): what is on it, what open reservations hold, and the prices. */
   balance_minor: number; held_minor: number; currency: string;
   extra_call?: { answered: number; voicemail: number; no_answer: number; minute: number; max: number };
@@ -252,7 +252,8 @@ export interface PrivatApi {
   tasks(status?: TaskStatus): Promise<Task[]>;
   task(id: string): Promise<Task>;
   toggleItem(taskId: string, itemId: string): Promise<Task>;
-  activate(taskId: string, method: "balance" | "sponsor"): Promise<Task>;
+  /** Draft → active for 3 kr. from the Opkaldssaldo – the only way without a plan (F-PQ-03). */
+  activate(taskId: string, method: "balance"): Promise<Task>;
   messages(taskId?: string): Promise<ChatMessage[]>;
   send(text: string, aboutTaskId?: string | null): Promise<SendResult>;
   pickOption(messageId: string, optionId: string): Promise<SendResult>;
@@ -276,7 +277,6 @@ export interface PrivatApi {
   subscriptionCheckout(body: { plan: PlanKey; interval: BillingInterval; code?: string; locale?: string; app?: string }): Promise<{ url: string }>;
   /** Stripe Billing Portal (501 not_configured when Stripe is missing). */
   subscriptionPortal(): Promise<{ url: string }>;
-  sponsorClaim(taskId: string): Promise<Task>;
   // Shared lists
   sharedTasks(): Promise<Task[]>;
   addItem(taskId: string, body: { text: string; note?: string; link?: string }): Promise<Task>;
@@ -490,7 +490,6 @@ export const realPrivat: PrivatApi = {
     }
   },
   subscriptionPortal: () => api(`${P}/subscription/portal`, json({})),
-  sponsorClaim: (taskId) => api(`${P}/sponsor/claim`, json({ task_id: taskId })),
   sharedTasks: () => api(`${P}/tasks?shared=1`),
   addItem: (taskId, body) => api(`${P}/tasks/${enc(taskId)}/items`, json(body)),
   deleteItem: (taskId, itemId) => api(`${P}/tasks/${enc(taskId)}/items/${enc(itemId)}`, { method: "DELETE" }),
@@ -604,7 +603,7 @@ export const isDemoPlace = (id: string) => id.startsWith("place:demo");
 export const isShortCode = (s: string) => /^[A-HJ-NP-Z2-9]{8}$/.test(s);
 
 /** 409 codes from POST /calls/{id}/approve and /tasks/{id}/activate. */
-export const CONFLICT = { needsPhone: "needs_phone", insufficientBalance: "insufficient_balance", outsideHours: "outside_hours", sponsorLimit: "sponsor_limit", addonDisabled: "addon_disabled", comingSoon: "coming_soon",
+export const CONFLICT = { needsPhone: "needs_phone", insufficientBalance: "insufficient_balance", outsideHours: "outside_hours", addonDisabled: "addon_disabled", comingSoon: "coming_soon",
   demoBusiness: "demo_business", sharingPaused: "sharing_paused", accountMissing: "privat_account_missing",
   emailNotVerified: "email_not_verified", viewAsNotAllowed: "view_as_not_allowed",
   needsBusinessPhone: "needs_business_phone", businessClosed: "business_closed", confirmBusiness: "confirm_business",

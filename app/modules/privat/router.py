@@ -55,12 +55,7 @@ class ApproveIn(BaseModel):
 
 
 class ActivateIn(BaseModel):
-    method: str = Field(pattern="^(balance|sponsor)$",
-                        description="balance = 3 kr. fra opkaldssaldoen, sponsor = et frivilligt sponsorindslag")
-
-
-class SponsorIn(BaseModel):
-    task_id: uuid.UUID
+    method: str = Field(pattern="^balance$", description="balance = 3 kr. fra opkaldssaldoen (den eneste vej uden plan)")
 
 
 class PhoneStartIn(BaseModel):
@@ -265,15 +260,6 @@ def activate(task_id: uuid.UUID, body: ActivateIn, ctx: PrivateCtx = Depends(pri
              db: OrmSession = Depends(get_db)):
     t, m = sharing.access(db, task_id, ctx.user_id, min_role="owner")
     service.activate(db, ctx, t, body.method)
-    db.commit()
-    return service.task_out(db, t, ctx.user_id)
-
-
-@router.post("/sponsor/claim")
-def sponsor_claim(body: SponsorIn, ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
-    """Pilot: a simulated, voluntary sponsor spot (max 2 a day) activates one draft task."""
-    t, m = sharing.access(db, body.task_id, ctx.user_id, min_role="owner")
-    service.activate(db, ctx, t, "sponsor")
     db.commit()
     return service.task_out(db, t, ctx.user_id)
 

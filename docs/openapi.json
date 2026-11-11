@@ -19,8 +19,8 @@
       "ActivateIn": {
         "properties": {
           "method": {
-            "description": "balance = 3 kr. fra opkaldssaldoen, sponsor = et frivilligt sponsorindslag",
-            "pattern": "^(balance|sponsor)$",
+            "description": "balance = 3 kr. fra opkaldssaldoen (den eneste vej uden plan)",
+            "pattern": "^balance$",
             "title": "Method",
             "type": "string"
           }
@@ -4828,20 +4828,6 @@
           "script_id"
         ],
         "title": "SimulateIn",
-        "type": "object"
-      },
-      "SponsorIn": {
-        "properties": {
-          "task_id": {
-            "format": "uuid",
-            "title": "Task Id",
-            "type": "string"
-          }
-        },
-        "required": [
-          "task_id"
-        ],
-        "title": "SponsorIn",
         "type": "object"
       },
       "SubscriptionCheckoutIn": {
@@ -22888,64 +22874,6 @@
           }
         },
         "summary": "Referral Link",
-        "tags": [
-          "privat"
-        ]
-      }
-    },
-    "/api/v1/privat/sponsor/claim": {
-      "post": {
-        "description": "Pilot: a simulated, voluntary sponsor spot (max 2 a day) activates one draft task.",
-        "operationId": "sponsor_claim_api_v1_privat_sponsor_claim_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SponsorIn"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Sponsor Claim",
         "tags": [
           "privat"
         ]

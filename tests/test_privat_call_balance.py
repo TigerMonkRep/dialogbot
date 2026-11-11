@@ -184,13 +184,14 @@ def test_openapi_has_no_credits():
     assert "creditscheckoutin" not in spec
 
 
-def test_extra_task_costs_3_kr_and_sponsor_stays(api, pv, db):
+def test_extra_task_costs_3_kr_and_the_saldo_is_the_only_way(api, pv, db):
     tok = pv.account("mette@testmail.dk")
     pv.expire_trial(tok)
     d1, d2 = (next(m for m in pv.say(tok, f"Lav en liste med x{i}")["messages"] if m["kind"] == "draft")["task_id"]
               for i in range(2))
     assert api.post(tok, f"/privat/tasks/{d1}/activate", {"method": "balance"}).json()["status"] != "draft"
-    assert api.post(tok, f"/privat/tasks/{d2}/activate", {"method": "sponsor"}).json()["status"] != "draft"
+    assert api.post(tok, f"/privat/tasks/{d2}/activate", {"method": "sponsor"}).status_code == 422  # F-PQ-03: removed
+    assert pv.task(tok, d2).json()["status"] == "draft"
     assert pv.me(tok)["balance_minor"] == 700
     db.add(CreditLedger(workspace_id=pv.ws(tok), kind="spend", amount=-600, source_ref="test:drain", text="t"))
     db.commit()

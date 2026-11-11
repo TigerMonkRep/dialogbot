@@ -571,12 +571,11 @@
     "titleCall": "Recarga para una llamada extra",
     "titleTrial": "Esto necesita un plan",
     "draft": "Borrador",
-    "textDigital": "La tarea se ha guardado como borrador. Elige un plan, paga {pExtraTask} con tu saldo o mira un anuncio voluntario.",
+    "textDigital": "La tarea se ha guardado como borrador. Elige un plan o paga {pExtraTask} con tu saldo.",
     "textCall": "Una llamada extra reserva {pXMax} de tu saldo cuando la apruebas. Tienes {have}.",
     "textTrial": "Prueba Dialogbot Privat gratis 14 días. Te registras con tarjeta y solo se cobra cuando termina la prueba – cancela antes y no pagas nada. La tarea queda como borrador hasta que elijas.",
     "trialNote": "Plus · {pPlus}/mes tras la prueba · cancela cuando quieras",
     "buy": "{pTopup1}, {pTopup2} o {pTopup3}",
-    "sponsor": "Ver un anuncio patrocinado · +1 tarea ({n} hoy)",
     "later": "Más tarde: guardar el borrador",
     "laterNote": "El borrador está en «Espera tu respuesta». Puedes continuar cuando quieras.",
     "useBalance": "Pagar {pExtraTask} con el saldo · tienes {have}"
@@ -593,15 +592,6 @@
     "back": "Volver",
     "have": "Tienes {have} de saldo de llamadas.",
     "prices": "Llamada extra: {pXAnswered} contestada, {pXVoicemail} buzón de voz, {pXNoAnswer} sin respuesta + {pXMinute} por minuto iniciado, como máximo {pXMax}."
-  },
-  "sponsor": {
-    "title": "Anuncio patrocinado voluntario",
-    "label": "Anuncio patrocinado",
-    "placeholder": "[Anuncio del patrocinador, 15 s]",
-    "fictive": "Anunciante ficticio en el piloto",
-    "text": "Recibes 1 tarea extra cuando has visto el anuncio. Máximo 2 al día. El anunciante no sabe nada de tus conversaciones ni tareas.",
-    "watched": "He visto el anuncio: dame la tarea",
-    "later": "Más tarde"
   },
   "login": {
     "title": "Guarda tu tarea",

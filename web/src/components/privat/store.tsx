@@ -14,7 +14,7 @@ import { currencyFor, currencyOr, formatPrice, type Currency } from "@/lib/marke
  *  example data (creating something asks for login); real = the Privat API. */
 export type Mode = "loading" | "fake" | "demo" | "real";
 /** needsPlan: «Med i Plus – start 14 dage gratis / Vælg plan» (an app or a call needs trial/Plus/Familie). */
-export type SheetKind = "login" | "mic" | "paywall" | "buy" | "sponsor" | "share" | "addon" | "addonOff" | "needsPlan";
+export type SheetKind = "login" | "mic" | "paywall" | "buy" | "share" | "addon" | "addonOff" | "needsPlan";
 export type Sheet = { kind: SheetKind; taskId?: string | null; addonKey?: string; groupId?: string } | null;
 /** "store" = Butikken (/privat/butik); "addons" is kept as an alias for the old name. */
 export type Screen = "day" | "chat" | "tasks" | "task" | "account" | "store" | "addons" | "people" | "apps" | "app" | "storeItem";

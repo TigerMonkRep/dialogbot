@@ -15,8 +15,9 @@ import uuid
 import pytest
 from sqlalchemy import select
 
-from app.models import OutboxEvent, PrivateCall, PrivateTask
+from app.models import CreditLedger, OutboxEvent, PrivateCall, PrivateTask
 from app.modules.campaigns import service as campaigns
+from app.modules.privat import ledger
 from app.worker import runner
 
 
@@ -184,19 +185,44 @@ def test_shared_link_preview_is_public_but_shows_no_wishes_or_reservations(api, 
         assert api.c.get(path).status_code == 401
 
 
-@pytest.mark.xfail(strict=True, reason="F-PQ-03-X09: needs-decision – open finding (status new), not fixed in c3bed12")
-def test_recipient_without_subscription_cannot_make_own_tasks_live_through_the_api(api, pv, db):
-    """The web hides «Brug 3 kr. fra saldoen» and «Se et sponsorindslag» from an account without a plan (status none) and says
-    «Uden plan kan du se og reservere på lister, andre deler med dig – egne opgaver, lister og opkald kræver en plan»
-    (privat.json account.freeNote / plan.noteNone). The API must hold the same line, or the paywall is a UI-only gate."""
+def test_recipient_without_subscription_pays_an_own_task_only_from_the_saldo_and_there_is_no_sponsor(api, pv, db, app):
+    """F-PQ-03-X09, decided by Fürster 2026-11-11: an account without a plan (status none) MAY make an own draft live for
+    3 kr. from the Opkaldssaldo – the approved price, and the only way. Without enough on the saldo: 409
+    insufficient_balance with «Fyld op» and «Vælg en plan». The simulated sponsor spot is gone (endpoint, method, field);
+    old 'sponsor' ledger rows stay as history."""
     _mette, ole, _anna, _tid, _other, _inv = _setup(api, pv)
-    out = pv.say(ole, "Lav en liste med kaffe og te")
-    d1 = next(m["task_id"] for m in out["messages"] if m.get("task_id"))
-    out = pv.say(ole, "Lav en liste med mælk")
-    d2 = next(m["task_id"] for m in out["messages"] if m.get("task_id"))
-    r1 = api.post(ole, f"/privat/tasks/{d1}/activate", {"method": "balance"})
-    r2 = api.post(ole, "/privat/sponsor/claim", {"task_id": d2})
+    me = pv.me(ole)
+    assert (me["entitled"], me["plan_status"]) == (False, "none") and "sponsor_left_today" not in me
+    ws = pv.ws(ole)
+    d1, d2 = (next(m["task_id"] for m in pv.say(ole, x)["messages"] if m.get("task_id"))
+              for x in ("Lav en liste med kaffe og te", "Lav en liste med mælk"))
+    # no saldo: the welcome bonus spent elsewhere
+    db.add(CreditLedger(workspace_id=ws, kind="spend", amount=-me["balance_minor"], source_ref="x09:drain", text="t"))
+    db.commit()
+    r = api.post(ole, f"/privat/tasks/{d1}/activate", {"method": "balance"})
+    assert r.status_code in (402, 409) and r.json()["code"] == "insufficient_balance", r.text
+    body = r.json()
+    assert r.json()["message"].startswith("Fyld op") and "vælg en plan" in body["message"].lower()
+    assert body["cta"] == {"label": "Fyld op", "href": "/privat/konto#saldo"}
+    assert body["plan_cta"] == {"label": "Vælg en plan", "href": "/privat/konto"}
+    # the sponsor spot no longer exists: no endpoint, no method, nothing in the contract
+    assert api.post(ole, "/privat/sponsor/claim", {"task_id": d2}).status_code in (404, 405)
+    assert api.post(ole, f"/privat/tasks/{d2}/activate", {"method": "sponsor"}).status_code == 422
+    spec = json.dumps(app.openapi(), ensure_ascii=False).lower()
+    assert "/privat/sponsor" not in spec and "sponsor_left_today" not in spec and "sponsorin" not in spec
     db.expire_all()
-    live = db.query(PrivateTask).filter(PrivateTask.workspace_id == pv.ws(ole), PrivateTask.status != "draft").count()
-    assert (r1.status_code, r2.status_code, live) == (409, 409, 0), \
-        f"balance → {r1.status_code} {r1.json().get('usage_text')}; sponsor → {r2.status_code} {r2.json().get('usage_text')}"
+    assert db.query(PrivateTask).filter(PrivateTask.workspace_id == ws, PrivateTask.status != "draft").count() == 0
+    # 3 kr. on the saldo: it works, for exactly 3 kr.
+    db.add(CreditLedger(workspace_id=ws, kind="grant", amount=300, source_ref="x09:topup", text="t"))
+    db.commit()
+    r = api.post(ole, f"/privat/tasks/{d1}/activate", {"method": "balance"})
+    assert r.status_code == 200 and r.json()["status"] != "draft" and r.json()["usage_text"] == "Ekstra opgave · 3\u00a0kr."
+    assert pv.me(ole)["balance_minor"] == 0
+    db.expire_all()
+    assert db.query(PrivateTask).filter(PrivateTask.workspace_id == ws, PrivateTask.status != "draft").count() == 1
+    # an old 'sponsor' row is history: it stays readable, but no new one can be written
+    db.add(CreditLedger(workspace_id=ws, kind="sponsor", amount=0, source_ref="x09:old-sponsor", text="Sponsorindslag set"))
+    db.commit()
+    assert any(r["kind"] == "sponsor" for r in api.get(ole, "/privat/ledger").json())
+    with pytest.raises(ValueError):
+        ledger.add(db, ws, kind="sponsor", amount=0, source_ref="x09:new-sponsor", text="t")

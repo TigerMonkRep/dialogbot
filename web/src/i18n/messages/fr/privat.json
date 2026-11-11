@@ -571,12 +571,11 @@
     "titleCall": "Rechargez pour un appel supplémentaire",
     "titleTrial": "Il faut un forfait",
     "draft": "Brouillon",
-    "textDigital": "La tâche est enregistrée en brouillon. Choisissez une formule, payez {pExtraTask} avec votre solde ou regardez un spot sponsor facultatif.",
+    "textDigital": "La tâche est enregistrée en brouillon. Choisissez une formule ou payez {pExtraTask} avec votre solde.",
     "textCall": "Un appel supplémentaire réserve {pXMax} sur votre solde quand vous l'approuvez. Vous avez {have}.",
     "textTrial": "Essayez Dialogbot Privat gratuitement pendant 14 jours. Vous vous inscrivez avec une carte, débitée seulement à la fin de l'essai – résiliez avant, et vous ne payez rien. La tâche reste en brouillon jusqu'à votre choix.",
     "trialNote": "Plus · {pPlus}/mois après l'essai · résiliable à tout moment",
     "buy": "{pTopup1}, {pTopup2} ou {pTopup3}",
-    "sponsor": "Voir une annonce sponsorisée · +1 tâche ({n} restantes aujourd'hui)",
     "later": "Plus tard – garder le brouillon",
     "laterNote": "Le brouillon se trouve sous « Attend votre réponse ». Vous pouvez continuer quand vous voulez.",
     "useBalance": "Payer {pExtraTask} avec le solde · vous avez {have}"
@@ -593,15 +592,6 @@
     "back": "Retour",
     "have": "Vous avez {have} sur votre solde d'appels.",
     "prices": "Appel supplémentaire : {pXAnswered} décroché, {pXVoicemail} messagerie, {pXNoAnswer} sans réponse + {pXMinute} par minute entamée, au plus {pXMax}."
-  },
-  "sponsor": {
-    "title": "Annonce sponsorisée facultative",
-    "label": "Contenu sponsorisé",
-    "placeholder": "[Annonce de l'annonceur, 15 s]",
-    "fictive": "Annonceur fictif pendant le pilote",
-    "text": "Vous obtenez 1 tâche supplémentaire après avoir regardé l'annonce. 2 maximum par jour. L'annonceur ne sait rien de vos conversations ni de vos tâches.",
-    "watched": "J'ai regardé l'annonce – donnez-moi la tâche",
-    "later": "Plus tard"
   },
   "login": {
     "title": "Enregistrer votre tâche",

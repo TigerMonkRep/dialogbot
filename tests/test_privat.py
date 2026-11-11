@@ -39,7 +39,7 @@ def test_account_is_personal_idempotent_and_flagged(api, pv, db, monkeypatch):
     assert api.get(tok, "/workspaces").json() == []  # never listed as a business workspace
     assert api.get(tok, f"/workspaces/{ws.id}/business-profile").status_code == 404
     # a fresh account is the free tier: no rights until the 14-day trial starts at Stripe Checkout, with a card
-    assert pv.me(tok) == {"free_used": 0, "free_limit": 0, "sponsor_left_today": 2,
+    assert pv.me(tok) == {"free_used": 0, "free_limit": 0,
                           # the Opkaldssaldo (F-PDEC-01): 10 kr. welcome bonus, extra-call prices and top-ups in øre
                           "balance_minor": 1000, "held_minor": 0, "currency": "DKK",
                           "extra_call": {"answered": 500, "voicemail": 125, "no_answer": 31, "minute": 250, "max": 1750},
@@ -135,14 +135,13 @@ def test_free_task_11(api, pv, db):
     ws = pv.ws(tok)
     assert [r for r in _ledger(db, ws) if r[0] == "spend"] == [("spend", -300, f"spend:{t11['id']}")]
     assert pv.me(tok)["balance_minor"] == 700
-    # sponsor: at most 2 a day
+    # no sponsor spot any more (decision 2026-11-11, F-PQ-03): the saldo is the only way – the drafts stay drafts
     drafts = [next(m for m in pv.say(tok, f"Lav en liste med x{i}")["messages"] if m["kind"] == "draft")["task_id"]
               for i in range(3)]
-    assert api.post(tok, "/privat/sponsor/claim", {"task_id": drafts[0]}).json()["usage_text"] == "Sponsorindslag (+1 opgave)"
-    assert api.post(tok, f"/privat/tasks/{drafts[1]}/activate", {"method": "sponsor"}).status_code == 200
-    r = api.post(tok, f"/privat/tasks/{drafts[2]}/activate", {"method": "sponsor"})
-    assert r.status_code == 409 and r.json()["code"] == "sponsor_limit"
-    assert pv.me(tok)["sponsor_left_today"] == 0
+    assert api.post(tok, "/privat/sponsor/claim", {"task_id": drafts[0]}).status_code in (404, 405)
+    assert api.post(tok, f"/privat/tasks/{drafts[1]}/activate", {"method": "sponsor"}).status_code == 422
+    assert all(pv.task(tok, d).json()["status"] == "draft" for d in drafts)
+    assert "sponsor_left_today" not in pv.me(tok)
     # the trial (card at Stripe) activates every draft that waited for it
     pv.clock.at = datetime(2026, 12, 1, 9, 0, tzinfo=UTC)
     pv.start_trial(tok)

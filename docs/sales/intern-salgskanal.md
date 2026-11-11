@@ -767,7 +767,7 @@ virksomhedens egen hjemmeside og AI.
    med talere, udfald `opt_out`, delaccepter, og at nummeret nu står i spærrelisten (forhåndsvisning → BLOCK).
    Lyd: "ikke optaget" (fase 4 ikke bygget).
 9. **Testtilbud (fase 3):** på virksomhedens side → "Opret tilbud" (specialist) → "Send link" til din egen e-mail →
-   åbn linket: pris ekskl. moms, moms, 5.000 kr., 4 kr./opkald, opsigelse. Accepter med en test-konto på staging →
+   åbn linket: pris ekskl. moms, moms, 5.000 kr., 300 min/md. ind og ud, efter pakken 4 kr. (besvaret) / 1 kr. (telefonsvarer) / 0,25 kr. (ubesvaret) pr. opkald + 2 kr. pr. påbegyndt minut, opsigelse. Accepter med en test-konto på staging →
    status går `sent` → `accepted`; "betalende kunde" først når Stripe-testfakturaen er betalt. *Stripe i testmode.*
 10. **Statistik:** Overblik viser 1 fundet, 1 kontaktbar (før frabedelse), 1 opkald, 0 møder, 1 tilbud, 0 betalende –
     og simulationen tælles ikke med.

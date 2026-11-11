@@ -57,7 +57,8 @@ ERHVERV: dict[Currency, dict[str, int]] = {
     # extra_minute = inbound minute above the package, outbound_extra_minute = campaign minute above it; call_* = the
     # price of an outbound call that starts after the package is used up, by outcome. The package (INCLUDED_MINUTES)
     # is the same everywhere. Other markets: the DKK price × the market's factor (SEK 1,475, NOK 1,575, EUR 0,135 –
-    # the factors of the minute prices), rounded to 5 öre / 5 øre / 1 cent.
+    # the factors of the minute prices), rounded to 5 öre / 5 øre / 1 cent. One deliberate exception: EUR call_answered
+    # is the rounded list price €0.55, not 400 × 0,135 = €0.54 (docs/pricing.md, QA F-VR-07-X28).
     "DKK": {"monthly": prices.SUBSCRIPTION_MONTHLY_NET_MINOR, "extra_minute": prices.INBOUND_EXTRA_MINUTE_NET_MINOR,
             "outbound_extra_minute": prices.OUTBOUND_EXTRA_MINUTE_NET_MINOR,
             "call_answered": prices.OUTBOUND_CALL_ANSWERED_NET_MINOR, "call_voicemail": prices.OUTBOUND_CALL_VOICEMAIL_NET_MINOR,

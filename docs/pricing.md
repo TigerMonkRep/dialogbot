@@ -64,9 +64,16 @@ arbejdsrum). Kode: `app/modules/billing/discounts.py`.
 
 ## Hvor tallene bor
 
-- **Kode:** `app/modules/billing/prices.py` – `SUBSCRIPTION_MONTHLY_NET_MINOR` (249.500 øre), `CAMPAIGN_CALL_NET_MINOR`
-  (400 øre), `CAMPAIGN_MINUTE_NET_MINOR` (200 øre), `INBOUND_INCLUDED_MINUTES` (300), `INBOUND_EXTRA_MINUTE_NET_MINOR`
-  (150 øre) og `SPECIALIST_SETUP_NET_MINOR` (500.000 øre). Prisaftalen, kampagner, Peters salgsmanuskript og testene læser dem derfra.
+- **Kode:** `app/modules/billing/prices.py` – `SUBSCRIPTION_MONTHLY_NET_MINOR` (249.500 øre), `INCLUDED_MINUTES` (300),
+  `INBOUND_EXTRA_MINUTE_NET_MINOR` (150 øre), `OUTBOUND_EXTRA_MINUTE_NET_MINOR` (200 øre),
+  `OUTBOUND_CALL_ANSWERED_NET_MINOR` / `_VOICEMAIL_` / `_NO_ANSWER_` (400 / 100 / 25 øre) og `SPECIALIST_SETUP_NET_MINOR`
+  (500.000 øre). Prisaftalen, kampagner, Peters salgsmanuskript og testene læser dem derfra. Andre valutaer:
+  `app/modules/billing/markets.py` (`ERHVERV`), eksporteret til `web/src/lib/prices.json` (`scripts/export_prices.py`).
+- **Andre valutaer – faktorreglen og én bevidst undtagelse:** SEK/NOK/EUR = DKK-prisen × markedets faktor (SEK 1,475,
+  NOK 1,575, EUR 0,135), afrundet til 5 öre / 5 øre / 1 cent. **Undtagelse: besvaret udgående opkald i EUR er 0,55 €**,
+  ikke 0,54 € (400 × 0,135). 0,55 € er den afrundede listepris, som allerede stod i EUR-prislisten, migrationen
+  `c8e4a1f6d2b9` og docs/markets.md; den bevares bevidst (QA F-VR-07-X28, 2026-11-11). Alle andre EUR/SEK/NOK-beløb
+  følger reglen.
 - **Tekster** (skal rettes i hånden, når prisen ændres): `web/src/app/priser`, `byggevejledning`, forsiden
   (`(public)/page.tsx`, inkl. strukturerede data), `ai-receptionist`, `chatbot`, `ai-telefonsvarer`, `vilkaar`,
   `proev-chat.tsx`, `app/modules/assistant/guide.md` (assistenten i appen), `web/public/llms.txt`, `web/public/materiale/*.html`, `app/modules/social/topics.py`

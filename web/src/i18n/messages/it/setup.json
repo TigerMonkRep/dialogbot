@@ -102,7 +102,11 @@
       "theSite": "il sito",
       "approveAll": "Approva tutti e {n}",
       "fixYellow": "Correggi gli elementi in giallo",
-      "allApproved": "Tutto è approvato e ora viene usato da Dialogbot."
+      "allApproved": "Tutto è approvato e ora viene usato da Dialogbot.",
+      "siteLabel": "Sito web",
+      "fileLabel": "Carica file",
+      "textLabel": "Incolla testo",
+      "docsReview": "{n} suggerimenti da file e testo · approva o correggi"
     },
     "b": {
       "title": "Su di voi",
@@ -124,7 +128,12 @@
       "address": "Indirizzo",
       "postalCode": "CAP",
       "city": "Città",
-      "cvrLooked": "Verificato: {note}"
+      "cvrLooked": "Verificato: {note}",
+      "categories": "Settori (uno o più)",
+      "categoryAdd": "Aggiungi un settore",
+      "categoryPlaceholder": "Es. Levigatura pavimenti",
+      "categoryAddButton": "Aggiungi",
+      "categoryRemove": "Rimuovi {label}"
     },
     "c": {
       "title": "Cosa deve fare per voi?",

@@ -102,7 +102,11 @@
       "theSite": "la página",
       "approveAll": "Aprobar los {n}",
       "fixYellow": "Corregir lo amarillo",
-      "allApproved": "Todo está aprobado y Dialogbot ya lo usa."
+      "allApproved": "Todo está aprobado y Dialogbot ya lo usa.",
+      "siteLabel": "Sitio web",
+      "fileLabel": "Subir archivo",
+      "textLabel": "Pegar texto",
+      "docsReview": "{n} sugerencias de archivos y texto · aprueba o corrige"
     },
     "b": {
       "title": "Sobre ustedes",
@@ -124,7 +128,12 @@
       "address": "Dirección",
       "postalCode": "Código postal",
       "city": "Ciudad",
-      "cvrLooked": "Consultado: {note}"
+      "cvrLooked": "Consultado: {note}",
+      "categories": "Sectores (uno o varios)",
+      "categoryAdd": "Añadir un sector",
+      "categoryPlaceholder": "P. ej. Pulido de suelos",
+      "categoryAddButton": "Añadir",
+      "categoryRemove": "Quitar {label}"
     },
     "c": {
       "title": "¿Qué debe hacer por ustedes?",

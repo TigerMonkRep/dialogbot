@@ -201,6 +201,9 @@ class KnowledgeVersion(Base):
     approved_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     superseded_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # For the reviewer only (never in a prompt): how an imported suggestion relates to existing knowledge –
+    # {"import_id", "relation": "new"|"update", "category", "source", "conflict": str|None, "conflicts": [...]}.
+    review_note: Mapped[dict | None] = mapped_column(JSONB)
     created_at: Mapped[datetime] = ts_now()
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
@@ -699,12 +702,18 @@ class SourceImport(Base):
     __tablename__ = "source_imports"
     __table_args__ = (
         CheckConstraint("status in ('running','done','failed')", name="ck_source_imports_status"),
+        CheckConstraint("source_type in ('website','file','text')", name="ck_source_imports_source_type"),
         Index("ix_source_imports_workspace_created", "workspace_id", "created_at"),
     )
 
     id: Mapped[uuid.UUID] = uuid_pk()
     workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
-    url: Mapped[str] = mapped_column(String(500), nullable=False)
+    # website (url set), file (source_name = file name) or text (pasted). The file/text itself is never stored.
+    source_type: Mapped[str] = mapped_column(String(16), nullable=False, default="website", server_default="website")
+    source_name: Mapped[str | None] = mapped_column(String(200))
+    url: Mapped[str | None] = mapped_column(String(500))
+    # Counts for the owner: found per kind/category, new, updates, duplicates, conflicts …
+    summary: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict, server_default="{}")
     status: Mapped[str] = mapped_column(String(16), nullable=False, default="running")
     pages: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
     created_items: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)

@@ -102,7 +102,11 @@
       "theSite": "siden",
       "approveAll": "Godkjenn alle {n}",
       "fixYellow": "Rett det gule",
-      "allApproved": "Alt er godkjent og brukes nå av Dialogbot."
+      "allApproved": "Alt er godkjent og brukes nå av Dialogbot.",
+      "siteLabel": "Nettside",
+      "fileLabel": "Last opp fil",
+      "textLabel": "Lim inn tekst",
+      "docsReview": "{n} forslag fra filer og tekst · godkjenn eller rett"
     },
     "b": {
       "title": "Om dere",
@@ -124,7 +128,12 @@
       "address": "Adresse",
       "postalCode": "Postnummer",
       "city": "Sted",
-      "cvrLooked": "Slått opp: {note}"
+      "cvrLooked": "Slått opp: {note}",
+      "categories": "Bransjer (én eller flere)",
+      "categoryAdd": "Legg til en bransje",
+      "categoryPlaceholder": "F.eks. Gulvsliping",
+      "categoryAddButton": "Legg til",
+      "categoryRemove": "Fjern {label}"
     },
     "c": {
       "title": "Hva skal den gjøre for dere?",

@@ -9,6 +9,9 @@ import { useRaw, useT } from "@/i18n/client";
 import { LOCALES, LOCALE_NAMES, isLocale } from "@/i18n/config";
 import { cardsFromGoals, goalsFromCards, hoursText, originOf, parseHours, parseZones, zonesText, type Cards, type DayVocab, type WeeklyRange } from "@/lib/setup";
 import { MobileActionBar } from "@/components/mobile-action-bar";
+import { FileDrop, ImportStatus, PasteText, ReviewGroups, useImport, type Import } from "@/components/knowledge-import";
+import { DraftCard } from "@/app/app/(admin)/viden/client";
+import type { Item } from "@/app/app/(admin)/viden/types";
 
 export type Profile = { version: number; legal_name: string; description: string; website_url: string | null; manual_setup: boolean; cvr: string | null; address_line: string | null; postal_code: string | null; city: string | null; country: string; timezone: string; phone: string | null };
 export type Goals = { version: number; product_intent: string; guidance_mode: string; inbound_phone: boolean; webchat: boolean; callback: boolean; booking: boolean; conversation_goals: string[] };
@@ -27,7 +30,7 @@ const labelCls = "text-[13px] font-semibold text-ink";
 type Save = "idle" | "saving" | "saved" | "error";
 
 /** Trin 1 – Virksomhed. One page, three parts, saved as you type. */
-export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, goals, languages, facts }: { wsId: string; canEdit: boolean; canApprove: boolean; aiReady: boolean; cvrReady: boolean; profile: Profile; goals: Goals; languages: Languages; facts: Fact[] }) {
+export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, goals, languages, facts, review = [] }: { wsId: string; canEdit: boolean; canApprove: boolean; aiReady: boolean; cvrReady: boolean; profile: Profile; goals: Goals; languages: Languages; facts: Fact[]; review?: Item[] }) {
   const router = useRouter();
   const t = useT("setup.step1");
   const raw = useRaw();
@@ -144,6 +147,7 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
 
   // --- categories follow "hvad I laver" (no search field): the first time there is a description and no category yet ---
   const catDone = useRef(false);
+  const [catTick, setCatTick] = useState(0);
   const deriveCategory = useCallback(async () => {
     if (catDone.current || !latest.current.p.description.trim()) return;
     catDone.current = true;
@@ -154,7 +158,7 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
       const text = latest.current.p.description.toLowerCase();
       const hit = sugg.find((s) => s.label.toLowerCase().split(/[\s&,]+/).some((w) => w.length >= 5 && text.includes(w.slice(0, 5))));
       const label = hit?.label ?? latest.current.p.description.split(/[,.]| og /)[0].trim().slice(0, 60);
-      if (label) await api(`/workspaces/${wsId}/categories`, { method: "POST", body: JSON.stringify({ label, slug: hit?.slug ?? null, is_primary: true }) });
+      if (label) { await api(`/workspaces/${wsId}/categories`, { method: "POST", body: JSON.stringify({ label, slug: hit?.slug ?? null, is_primary: true }) }); setCatTick((n) => n + 1); }
     } catch { /* a category is never the reason a save fails */ }
   }, [wsId]);
 
@@ -206,6 +210,10 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
     } catch (e) { setSite((s) => s && { ...s, busy: false, error: (e as ApiError).message }); }
   };
   const yellow = site?.tags.filter((tg) => !tg.ok).length ?? 0;
+  // --- A (also): a file or pasted text → drafts, reviewed right here per category ---
+  const [docImp, setDocImp] = useImport(wsId, null, () => router.refresh());
+  const docRunning = docImp?.status === "running" || !!site?.busy;
+
   const [cvrNote, setCvrNote] = useState<string | null>(null);
   const cvrLookup = async () => {
     const n = (p.cvr ?? "").replace(/\D/g, "");
@@ -229,10 +237,30 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
     <div className="flex flex-col gap-6">
       {!canEdit && <p role="status" className="rounded-xl bg-highlight px-4 py-3 text-[14px] text-ink">{t("readOnly")}</p>}
       <Part letter="A" title={t("a.title")} hint={aiReady ? t("a.hintAi") : t("a.hintNoAi")}>
-        <div className="flex flex-col sm:flex-row gap-2">
-          <input aria-label={t("a.urlAria")} className={`${inputCls} flex-1`} placeholder={t("a.urlPlaceholder")} inputMode="url" autoCapitalize="none" value={p.website_url ?? ""} onChange={field("website_url")} disabled={!canEdit} />
-          {aiReady && canEdit && <button type="button" onClick={fetchSite} disabled={site?.busy || !(p.website_url ?? "").trim()} className="min-h-[46px] px-5 rounded-xl bg-ink text-paper font-semibold disabled:opacity-60 inline-flex items-center justify-center gap-1.5">{site?.busy && !site.tags.length ? t("a.reading") : <>{t("a.fetch")}<Icon name="arrow_forward" size={16} /></>}</button>}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+          <div className="flex flex-col gap-2 rounded-xl border-[1.5px] border-ink p-3">
+            <span className="eyebrow">{t("a.siteLabel")}</span>
+            <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-2">
+              <input aria-label={t("a.urlAria")} className={`${inputCls} flex-1 min-w-0`} placeholder={t("a.urlPlaceholder")} inputMode="url" autoCapitalize="none" value={p.website_url ?? ""} onChange={field("website_url")} disabled={!canEdit} />
+              {aiReady && canEdit && <button type="button" onClick={fetchSite} disabled={site?.busy || docRunning || !(p.website_url ?? "").trim()} className="min-h-[46px] px-5 rounded-xl bg-ink text-paper font-semibold disabled:opacity-60 inline-flex items-center justify-center gap-1.5">{site?.busy && !site.tags.length ? t("a.reading") : <>{t("a.fetch")}<Icon name="arrow_forward" size={16} /></>}</button>}
+            </div>
+          </div>
+          <div className="flex flex-col gap-2 rounded-xl border-[1.5px] border-ink p-3">
+            <span className="eyebrow">{t("a.fileLabel")}</span>
+            {aiReady && canEdit ? <FileDrop wsId={wsId} id="s1-file" disabled={docRunning} onStarted={(i: Import) => setDocImp(i)} /> : <p className="text-[13px] text-muted">{t("a.hintNoAi")}</p>}
+          </div>
+          <div className="flex flex-col gap-2 rounded-xl border-[1.5px] border-ink p-3">
+            <span className="eyebrow">{t("a.textLabel")}</span>
+            {aiReady && canEdit ? <PasteText wsId={wsId} id="s1-text" disabled={docRunning} onStarted={(i: Import) => setDocImp(i)} /> : <p className="text-[13px] text-muted">{t("a.hintNoAi")}</p>}
+          </div>
         </div>
+        <div aria-live="polite"><ImportStatus imp={docImp} /></div>
+        {review.length > 0 && (
+          <div className="flex flex-col gap-3" data-testid="s1-review">
+            <span className="eyebrow">{t("a.docsReview", { n: review.length })}</span>
+            <ReviewGroups wsId={wsId} items={review} canApprove={canApprove} card={(i) => <DraftCard wsId={wsId} item={i} canApprove={canApprove} canDraft={canEdit} />} />
+          </div>
+        )}
         {site?.error && <p role="alert" className="text-[14px] text-danger">{site.error}</p>}
         {site && site.tags.length > 0 && (
           <div className="rounded-2xl border-[1.5px] border-ink bg-panel p-4 flex flex-col gap-3" aria-live="polite">
@@ -255,6 +283,7 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
           <label className="flex flex-col gap-1.5"><span className={labelCls}>{t("b.phone")}</span><input className={inputCls} value={p.phone ?? ""} onChange={field("phone")} disabled={!canEdit} inputMode="tel" autoComplete="tel" placeholder={t("b.phonePlaceholder")} /></label>
         </div>
         <label className="flex flex-col gap-1.5"><span className={labelCls}>{t("b.description")}</span><input className={inputCls} value={p.description} maxLength={400} onChange={(e) => { field("description")(e); catDone.current = false; }} onBlur={() => void deriveCategory()} disabled={!canEdit} placeholder={t("b.descriptionPlaceholder")} /></label>
+        <Categories wsId={wsId} canEdit={canEdit} tick={catTick} />
         <label className="flex flex-col gap-1.5"><span className={labelCls}>{t("b.customerLanguage")}</span>
           <select className={inputCls} value={primary} onChange={(e) => choosePrimary(e.target.value)} disabled={!canEdit}>
             {!isLocale(primary) && <option value={primary}>{primary}</option>}
@@ -342,5 +371,49 @@ export function CreateWorkspace({ verified, defaultIntent, referralLink }: { ver
       {error && <p role="alert" className="text-[14px] text-danger">{error}</p>}
       <button disabled={busy || !verified || name.trim().length < 2} className="min-h-[52px] px-6 rounded-xl bg-accent text-white font-semibold text-[16px] hover:bg-accent-deep disabled:opacity-60 inline-flex items-center justify-center gap-2">{busy ? t("creating") : <>{t("next")}<Icon name="arrow_forward" size={18} /></>}</button>
     </form>
+  );
+}
+
+type Category = { id: string; slug: string; label: string; is_primary: boolean };
+
+/** «Brancher»: one or more categories – picked from the suggestions or typed (O01: multiple and custom categories). */
+function Categories({ wsId, canEdit, tick }: { wsId: string; canEdit: boolean; tick: number }) {
+  const t = useT("setup.step1");
+  const [list, setList] = useState<Category[]>([]);
+  const [sugg, setSugg] = useState<{ slug: string; label: string }[]>([]);
+  const [text, setText] = useState("");
+  const [err, setErr] = useState<string | null>(null);
+  const load = useCallback(async () => { try { setList(await api<Category[]>(`/workspaces/${wsId}/categories`)); } catch { /* shown empty */ } }, [wsId]);
+  useEffect(() => { void load(); }, [load, tick]);
+  useEffect(() => { void api<{ items: { slug: string; label: string }[] }>(`/workspaces/${wsId}/categories/suggested`).then((r) => setSugg(r.items)).catch(() => undefined); }, [wsId]);
+  const add = async (label: string, slug: string | null = null) => {
+    if (!label.trim()) return;
+    setErr(null);
+    try { await api(`/workspaces/${wsId}/categories`, { method: "POST", body: JSON.stringify({ label: label.trim(), slug, is_primary: list.length === 0 }) }); setText(""); await load(); }
+    catch (e) { setErr((e as ApiError).message ?? t("saveFailed")); }
+  };
+  const remove = async (c: Category) => { try { await api(`/workspaces/${wsId}/categories/${c.id}`, { method: "DELETE" }); await load(); } catch (e) { setErr((e as ApiError).message ?? t("saveFailed")); } };
+  const have = new Set(list.map((c) => c.slug));
+  const listId = `cat-suggestions-${wsId}`;
+  return (
+    <div className="flex flex-col gap-1.5" role="group" aria-labelledby="s1-cat-label">
+      <span id="s1-cat-label" className={labelCls}>{t("b.categories")}</span>
+      <ul className="flex flex-wrap gap-2">
+        {list.map((c) => (
+          <li key={c.id} className="inline-flex items-center gap-1 pl-3 pr-1 min-h-[44px] rounded-full border-[1.5px] border-ink bg-panel text-[14px] font-semibold text-ink">
+            {c.label}
+            {canEdit && <button type="button" className="inline-flex w-9 h-9 items-center justify-center rounded-full hover:bg-paper" aria-label={t("b.categoryRemove", { label: c.label })} onClick={() => void remove(c)}><Icon name="close" size={16} /></button>}
+          </li>
+        ))}
+      </ul>
+      {canEdit && (
+        <form className="flex flex-col sm:flex-row gap-2" onSubmit={(e) => { e.preventDefault(); const hit = sugg.find((x) => x.label.toLowerCase() === text.trim().toLowerCase()); void add(hit?.label ?? text, hit?.slug ?? null); }}>
+          <input aria-label={t("b.categoryAdd")} list={listId} className={`${inputCls} flex-1`} value={text} maxLength={120} onChange={(e) => setText(e.target.value)} placeholder={t("b.categoryPlaceholder")} />
+          <datalist id={listId}>{sugg.filter((x) => !have.has(x.slug)).map((x) => <option key={x.slug} value={x.label} />)}</datalist>
+          <button type="submit" disabled={!text.trim()} className="min-h-[44px] px-4 rounded-xl bg-paper border-2 border-ink font-semibold hover:bg-panel disabled:opacity-50">{t("b.categoryAddButton")}</button>
+        </form>
+      )}
+      {err && <p role="alert" className="text-[13px] text-danger">{err}</p>}
+    </div>
   );
 }

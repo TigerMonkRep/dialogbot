@@ -122,7 +122,6 @@ test("O01 · roller: læser kan se men ikke ændre (UI + API afviser); medarbejd
 });
 
 test("O01 · krav: flere/egne kategorier og dokumentupload findes i UI", async ({ page }, info) => {
-  test.fail(true, "O01: not-implemented – flere/egne kategorier og dokumentupload");
   await freshOwner(page, info);
   await page.goto("/opsaetning/1");
   const main = page.locator("main");

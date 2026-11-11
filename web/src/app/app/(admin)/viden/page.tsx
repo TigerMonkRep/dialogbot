@@ -1,6 +1,6 @@
 import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
-import { AddItem, AddService, DraftCard, Edit, Hear, ImportFromSite, ItemEditor, More, ProfileEdit, Remove } from "./client";
+import { AddItem, AddService, DraftCard, Edit, Hear, ItemEditor, More, ProfileEdit, Remove, ReviewQueue, Sources } from "./client";
 import { kr, summarize as sum, type Fmt } from "./format";
 import { getLocale, getRaw, getT } from "@/i18n/server";
 import { HTML_LANG } from "@/i18n/config";
@@ -33,7 +33,11 @@ export default async function VidenPage({ searchParams }: { searchParams: Promis
   const all = items.items;
   const of = (...kinds: string[]) => all.filter((i) => kinds.includes(i.kind));
   const live = (i: Item) => i.approved_version;
-  const drafts = (...kinds: string[]) => of(...kinds).filter((i) => i.open_draft);
+  // Imported suggestions (website, file, pasted text) are reviewed together in «Forslag til gennemgang»; the boxes
+  // below show the other open changes (typed by a colleague, waiting for an owner).
+  const imported = (i: Item) => i.open_draft?.source_type === "extraction";
+  const review = all.filter(imported);
+  const drafts = (...kinds: string[]) => of(...kinds).filter((i) => i.open_draft && !imported(i));
   const hours = of("opening_hours")[0], area = of("coverage_area")[0];
   const services = of("service").filter((i) => live(i) || i.open_draft);
   const offers = of("offer"), facts = of("fact");
@@ -52,8 +56,15 @@ export default async function VidenPage({ searchParams }: { searchParams: Promis
           <h1 className="font-display font-extrabold text-[26px] sm:text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("knowledge.title")}</h1>
           <p className="text-[15px] leading-relaxed text-ink-soft max-w-[620px]">{t("knowledge.intro")} <b className="text-ink">{t("knowledge.revision", { n: active.items.length, rev: active.knowledge_revision })}</b>.</p>
         </div>
-        {canDraft && <ImportFromSite wsId={ws.id} defaultUrl={profile.website_url ?? ""} initial={latest.import} aiReady={importReady} openByDefault={imp === "1"} />}
+        {canDraft && <Sources wsId={ws.id} defaultUrl={profile.website_url ?? ""} initial={latest.import} aiReady={importReady} openWith={imp === "1" ? "site" : imp === "fil" ? "file" : imp === "tekst" ? "text" : null} />}
       </div>
+
+      {review.length > 0 && (
+        <section className={`${BOX} shadow-[8px_8px_0_#14213D]`} aria-labelledby="viden-0" id="gennemgang">
+          <Head n={<span className="material-symbols-outlined" style={{ fontSize: 22 }}>fact_check</span>} id="viden-0" title={t("knowledge.review.title")} sub={`${t("knowledge.pendingSuggestions", { n: review.length })} · ${t("knowledge.review.sub")}`} />
+          <ReviewQueue wsId={ws.id} items={review} canApprove={canApprove} canDraft={canDraft} />
+        </section>
+      )}
 
       {/* 1 · Om jer */}
       <section className={BOX} aria-labelledby="viden-1">
@@ -157,7 +168,7 @@ export default async function VidenPage({ searchParams }: { searchParams: Promis
   );
 }
 
-function Head({ n, id, title, sub, dark = false }: { n: number; id: string; title: string; sub: string; dark?: boolean }) {
+function Head({ n, id, title, sub, dark = false }: { n: React.ReactNode; id: string; title: string; sub: string; dark?: boolean }) {
   return (
     <div className="flex flex-wrap items-center gap-3">
       <span className={`inline-flex w-10 h-10 rounded-[10px] items-center justify-center font-display font-extrabold text-[20px] ${dark ? "bg-ink text-paper" : "bg-highlight text-ink"}`} aria-hidden>{n}</span>

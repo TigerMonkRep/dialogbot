@@ -10,7 +10,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session as OrmSession
 
 from app.core.auth import WorkspaceContext, get_scoped, get_workspace_context, require_capability
-from app.core.errors import ValidationFailed
+from app.core.errors import NotFound, ValidationFailed
 from app.core.idempotency import IdempotencyGuard, scope_for
 from app.core.pagination import PageParams, page
 from app.db import get_db
@@ -37,6 +37,7 @@ class VersionOut(BaseModel):
     approved_by: uuid.UUID | None
     approved_at: datetime | None
     superseded_at: datetime | None
+    review_note: dict | None = None
 
 
 class ItemOut(BaseModel):
@@ -239,3 +240,73 @@ def latest_import(ctx: WorkspaceContext = Depends(require_capability("knowledge.
     imp = db.scalar(select(SourceImport).where(SourceImport.workspace_id == ctx.workspace.id)
                     .order_by(SourceImport.created_at.desc()).limit(1))
     return {"import": importer.import_out(imp)}
+
+
+# --- File / pasted text (same pipeline: drafts in the review queue, nothing live before approval) -----------------
+
+
+async def _read_capped(request: Request, cap: int) -> bytes:
+    """The request body, refused as soon as it exceeds `cap` (never buffered beyond it)."""
+    declared = request.headers.get("content-length")
+    if declared and declared.isdigit() and int(declared) > cap:
+        raise ValidationFailed("Filen er for stor. Højst 10 MB.", field_errors=[{"field": "file"}])
+    buf = bytearray()
+    async for part in request.stream():
+        buf += part
+        if len(buf) > cap:
+            raise ValidationFailed("Filen er for stor. Højst 10 MB.", field_errors=[{"field": "file"}])
+    return bytes(buf)
+
+
+@router.post("/knowledge/import/file", status_code=status.HTTP_202_ACCEPTED)
+async def import_file(request: Request, background: BackgroundTasks, name: str = Query(min_length=1, max_length=255),
+                      ctx: WorkspaceContext = Depends(require_capability("knowledge.draft")),
+                      db: OrmSession = Depends(get_db)):
+    """Upload one document (raw bytes; `name` = file name): PDF, DOCX, XLSX, CSV, TXT/MD, ≤ 10 MB / 200 pages.
+    The type is checked from the bytes now; the text is read and analysed in the background. The file is never
+    stored: the bytes are dropped when the text has been read."""
+    from app.modules.knowledge import doc_import, documents
+
+    data = await _read_capped(request, documents.MAX_FILE_BYTES)
+    fname = documents.safe_name(name)
+    kind = documents.sniff(data, fname)  # 422 at once for a wrong/oversized/macro/zip-bomb file
+    imp = doc_import.start(db, ctx.workspace, ctx.user_id, "file", fname)
+    background.add_task(doc_import.run, imp.id, data=data, kind=kind)
+    return importer.import_out(imp)
+
+
+class TextImportIn(BaseModel):
+    text: str = Field(min_length=20, max_length=200_000)
+    title: str | None = Field(default=None, max_length=120)
+
+
+@router.post("/knowledge/import/text", status_code=status.HTTP_202_ACCEPTED)
+def import_text(body: TextImportIn, background: BackgroundTasks,
+                ctx: WorkspaceContext = Depends(require_capability("knowledge.draft")),
+                db: OrmSession = Depends(get_db)):
+    """Paste up to 200 000 characters; analysed and sorted into drafts in the background. The text is not stored."""
+    from app.modules.knowledge import doc_import
+
+    imp = doc_import.start(db, ctx.workspace, ctx.user_id, "text", (body.title or "Indsat tekst").strip() or "Indsat tekst")
+    background.add_task(doc_import.run, imp.id, text=body.text)
+    return importer.import_out(imp)
+
+
+class BatchApproveIn(BaseModel):
+    version_ids: list[uuid.UUID] = Field(min_length=1, max_length=200)
+
+
+@router.post("/knowledge/versions/approve-batch")
+def approve_batch(body: BatchApproveIn, request: Request,
+                  ctx: WorkspaceContext = Depends(require_capability("knowledge.approve")),
+                  db: OrmSession = Depends(get_db)):
+    """«Godkend alle (i kategorien)»: approve several drafts in one transaction – all or nothing. Every version must
+    belong to this workspace; approving an already approved one is a no-op (safe to repeat)."""
+    ids = list(dict.fromkeys(body.version_ids))
+    found = set(db.scalars(select(KnowledgeVersion.id).where(KnowledgeVersion.id.in_(ids),
+                                                             KnowledgeVersion.workspace_id == ctx.workspace.id)))
+    if len(found) != len(ids):
+        raise NotFound("En eller flere versioner findes ikke")
+    out = [v_out(service.approve(db, ctx, vid, request.state.request_id)).model_dump(mode="json") for vid in ids]
+    db.commit()
+    return {"approved": len(out), "items": out, "knowledge_revision": ctx.workspace.knowledge_revision}

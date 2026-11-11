@@ -277,7 +277,8 @@
     "earlier": "Oppgave: {title}. Åpne oppgaven",
     "googleData": "Data fra Google",
     "demoData": "Demodata – fiktive bedrifter, ikke fra Google",
-    "typing": "Peter skriver …"
+    "typing": "Peter skriver …",
+    "deleteMessage": "Slett melding"
   },
   "list": {
     "count": "{n|1 punkt|# punkter} · {done} fullført",
@@ -393,7 +394,11 @@
     "isBusinessHint": "Nummeret ser ut som et mobilnummer. Jeg ringer bare bedrifter.",
     "demoBusiness": "Dette er en demobedrift som ikke kan ringes. Velg en ekte bedrift.",
     "needsPlan": "Krever en plan",
-    "needsPlanText": "Samtaler er med i alle planer. Uten en plan kan det ikke ringes – heller ikke med kreditter."
+    "needsPlanText": "Samtaler er med i alle planer. Uten en plan kan det ikke ringes – heller ikke med kreditter.",
+    "delete": "Slett samtalen",
+    "deleteQ": "Slette samtalen og sammendraget? Det kan ikke angres.",
+    "deleteYes": "Ja, slett",
+    "deleteNo": "Behold"
   },
   "draft": {
     "label": "Utkast · klart til å lagres",

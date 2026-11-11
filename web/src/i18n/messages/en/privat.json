@@ -277,7 +277,8 @@
     "earlier": "Task: {title}. Open the task",
     "googleData": "Data from Google",
     "demoData": "Demo data – fictitious businesses, not from Google",
-    "typing": "Peter is typing …"
+    "typing": "Peter is typing …",
+    "deleteMessage": "Delete message"
   },
   "list": {
     "count": "{n|1 item|# items} · {done} done",
@@ -393,7 +394,11 @@
     "isBusinessHint": "The number looks like a mobile number. I only call businesses.",
     "demoBusiness": "This is a demo business that cannot be called. Choose a real business.",
     "needsPlan": "Requires a plan",
-    "needsPlanText": "Calls are included in every plan. Without a plan no calls can be made – not with credits either."
+    "needsPlanText": "Calls are included in every plan. Without a plan no calls can be made – not with credits either.",
+    "delete": "Delete the call",
+    "deleteQ": "Delete the call and its summary? This cannot be undone.",
+    "deleteYes": "Yes, delete",
+    "deleteNo": "Keep"
   },
   "draft": {
     "label": "Draft · ready to save",

@@ -277,7 +277,8 @@
     "earlier": "Aufgabe: {title}. Aufgabe öffnen",
     "googleData": "Daten von Google",
     "demoData": "Demodaten – fiktive Unternehmen, nicht von Google",
-    "typing": "Peter schreibt …"
+    "typing": "Peter schreibt …",
+    "deleteMessage": "Nachricht löschen"
   },
   "list": {
     "count": "{n|1 Punkt|# Punkte} · {done} erledigt",
@@ -393,7 +394,11 @@
     "isBusinessHint": "Die Nummer sieht wie eine Handynummer aus. Ich rufe nur Unternehmen an.",
     "demoBusiness": "Das ist ein Demo-Unternehmen, das nicht angerufen werden kann. Wähle ein echtes Unternehmen.",
     "needsPlan": "Erfordert einen Plan",
-    "needsPlanText": "Anrufe sind in jedem Plan enthalten. Ohne Plan kann nicht angerufen werden – auch nicht mit Credits."
+    "needsPlanText": "Anrufe sind in jedem Plan enthalten. Ohne Plan kann nicht angerufen werden – auch nicht mit Credits.",
+    "delete": "Anruf löschen",
+    "deleteQ": "Anruf und Zusammenfassung löschen? Das kann nicht rückgängig gemacht werden.",
+    "deleteYes": "Ja, löschen",
+    "deleteNo": "Behalten"
   },
   "draft": {
     "label": "Entwurf · bereit zum Speichern",

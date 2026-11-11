@@ -135,6 +135,24 @@ export function TaskDetail({ id }: { id: string }) {
           ))}
         </ol>
       </details>}
+      {!guest && x.kind === "call" && !x.is_example && x.status !== "in_progress" && x.status !== "planned" && <DeleteCall id={x.id} />}
+    </div>
+  );
+}
+
+/** «Slet opkaldet»: the call and its summary go (kept until then – GDPR, decision 2026-11-11). Asks once. */
+function DeleteCall({ id }: { id: string }) {
+  const t = useT("privat");
+  const { run, go, busy } = usePrivat();
+  const [ask, setAsk] = useState(false);
+  if (!ask) return <button type="button" className={`${LINK} self-start text-danger`} onClick={() => setAsk(true)} data-testid="delete-call">{t("call.delete")}</button>;
+  return (
+    <div role="alertdialog" aria-label={t("call.delete")} className="rounded-xl border-2 border-ink bg-paper p-3 flex flex-col gap-2">
+      <p className="m-0 text-[15px] font-semibold">{t("call.deleteQ")}</p>
+      <div className="flex gap-2 flex-wrap">
+        <Button disabled={busy} onClick={async () => { const r = await run(async (a) => { await a.deleteCall(id); return true; }); if (r) go("tasks"); }}>{t("call.deleteYes")}</Button>
+        <Button variant="outline" onClick={() => setAsk(false)}>{t("call.deleteNo")}</Button>
+      </div>
     </div>
   );
 }

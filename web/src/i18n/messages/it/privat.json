@@ -277,7 +277,8 @@
     "earlier": "Attività: {title}. Apri l'attività",
     "googleData": "Dati da Google",
     "demoData": "Dati dimostrativi – aziende fittizie, non da Google",
-    "typing": "Peter sta scrivendo …"
+    "typing": "Peter sta scrivendo …",
+    "deleteMessage": "Elimina messaggio"
   },
   "list": {
     "count": "{n|1 voce|# voci} · {done} fatte",
@@ -393,7 +394,11 @@
     "isBusinessHint": "Il numero sembra un cellulare. Chiamo solo aziende.",
     "demoBusiness": "È un'azienda dimostrativa che non si può chiamare. Scegli un'azienda reale.",
     "needsPlan": "Richiede un piano",
-    "needsPlanText": "Le chiamate sono incluse in tutti i piani. Senza un piano non si può chiamare, nemmeno con i crediti."
+    "needsPlanText": "Le chiamate sono incluse in tutti i piani. Senza un piano non si può chiamare, nemmeno con i crediti.",
+    "delete": "Elimina la chiamata",
+    "deleteQ": "Eliminare la chiamata e il riepilogo? Non si può annullare.",
+    "deleteYes": "Sì, elimina",
+    "deleteNo": "Mantieni"
   },
   "draft": {
     "label": "Bozza · pronta da salvare",

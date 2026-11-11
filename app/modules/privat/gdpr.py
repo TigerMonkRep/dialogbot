@@ -29,6 +29,17 @@ DELETE. POST /privat/account/delete with the e-mail typed again. In this order, 
 7. One audit row WITHOUT personal data: action privat.account_deleted, counts and flags only.
 The legal texts (legal.json: privatlivspolitikken) promise the right to deletion and data portability but no period for
 Privat; deletion is therefore immediate. (The 30 days in the terms are for business customers' data on termination.)
+Connected Google/Outlook calendars of the Privat workspace are revoked at the provider first (best effort, logged,
+never blocking; Microsoft has no revocation endpoint – the token is deleted with the workspace).
+
+RETENTION (decision Fürster 2026-11-11, privatlivspolitikken «Dialogbot Privat»):
+- Chats and call summaries (business_reply, confirmed_text, price) are kept as long as the account exists. The user
+  can delete one message (DELETE /privat/messages/{id}) or one finished call with its summary (DELETE
+  /privat/calls/{task_id}) at any time.
+- Raw transcripts are deleted after TRANSCRIPT_DAYS (purge_transcripts, daily in the worker): Privat keeps no full
+  transcript itself, only the lead-pitch excerpt (pitch_transcript_excerpt), which is cleared; Vapi's copy of the
+  call (outbound and call-backs) is deleted through its API.
+- The export link works for EXPORT_DAYS (7) days.
 """
 from __future__ import annotations
 
@@ -88,6 +99,8 @@ log = structlog.get_logger("dialogbot.privat.gdpr")
 
 EXPORT_DAYS = 7
 EXPORTS_PER_DAY = 3
+TRANSCRIPT_DAYS = 90
+RUNNING_CALL = ("approved", "scheduled", "dialling", "in_progress", "unknown")
 EVENT = "privat.data_export"
 
 
@@ -373,7 +386,106 @@ def purge_expired(db: OrmSession, *, user_id: uuid.UUID | None = None) -> int:
     return r.rowcount or 0
 
 
+# --------------------------------------------------------------------------- one message / one call, raw transcripts
+
+def delete_message(db: OrmSession, ctx, message_id: uuid.UUID) -> None:
+    """One chat line, the user's own or the assistant's, in the caller's own workspace. 404 otherwise."""
+    m = db.get(PrivateMessage, message_id)
+    if m is None or m.workspace_id != ctx.ws_id:
+        raise NotFound("Beskeden findes ikke")
+    db.delete(m)
+    db.flush()
+
+
+def delete_call(db: OrmSession, ctx, task_id: uuid.UUID) -> None:
+    """A call the user no longer wants kept: the task, every call attempt with its summary, its history and the chat
+    lines about it, and Vapi's copy. Owner only (404 otherwise); not while the call is approved or running (409).
+    Credit movements stay (bookkeeping; they hold no summary) and an appointment it created stays in the calendar."""
+    from app.modules.privat import sharing
+    from app.modules.sales.recordings import delete_at_vapi
+
+    task, m = sharing.access(db, task_id, ctx.user_id, lock=True)
+    if task.kind != "call" or m.role != "owner" or task.workspace_id != ctx.ws_id:
+        raise NotFound("Opkaldet findes ikke")
+    rows = list(db.scalars(select(PrivateCall).where(PrivateCall.task_id == task.id).with_for_update()))
+    if any(c.status in RUNNING_CALL for c in rows):
+        raise Conflict("Opkaldet er i gang eller planlagt. Annullér det først, eller vent til det er slut.",
+                       code="call_running")
+    for c in rows:
+        if c.vapi_call_id:
+            delete_at_vapi(c.vapi_call_id)
+    db.execute(delete(PrivateMessage).where(PrivateMessage.workspace_id == ctx.ws_id, or_(
+        PrivateMessage.task_id == task.id, PrivateMessage.about_task_id == task.id)))
+    db.delete(task)  # calls, events, items and members go with it (ON DELETE CASCADE)
+    db.flush()
+    log.info("privat.call_deleted", attempts=len(rows))
+
+
+def purge_transcripts(db: OrmSession, now: datetime | None = None) -> dict:
+    """Worker, daily: raw call transcripts older than TRANSCRIPT_DAYS. Our own excerpt is cleared; Vapi is asked to
+    delete its copy of every Privat call (outbound by private_calls.vapi_call_id, call-backs by their webhook row).
+    A Vapi failure is logged and tried again the next day; summaries are never touched."""
+    from app.modules.sales.recordings import delete_at_vapi
+
+    now = now or rules.now()
+    cutoff = now - timedelta(days=TRANSCRIPT_DAYS)
+    done = {"excerpts": 0, "provider": 0, "provider_failed": 0}
+    old = func.coalesce(PrivateCall.ended_at, PrivateCall.dialled_at, PrivateCall.created_at) < cutoff
+    done["excerpts"] = db.execute(update(PrivateCall).where(PrivateCall.pitch_transcript_excerpt.is_not(None), old)
+                                  .values(pitch_transcript_excerpt=None)).rowcount or 0
+    no_provider = not get_settings().vapi_api_key
+    calls = list(db.scalars(select(PrivateCall).where(PrivateCall.vapi_call_id.is_not(None), old)))
+    events = list(db.scalars(select(WebhookEvent).where(
+        WebhookEvent.provider == "vapi", WebhookEvent.received_at < cutoff,
+        WebhookEvent.payload["privat"].as_boolean().is_(True),
+        WebhookEvent.payload["transcript_deleted"].as_boolean().is_not(True))))
+    ids = {c.vapi_call_id for c in calls} | {str(e.payload.get("call_id") or "") for e in events}
+    gone = set()
+    for vid in sorted(i for i in ids if i):
+        if no_provider or delete_at_vapi(vid):
+            gone.add(vid)
+            done["provider"] += 0 if no_provider else 1
+        else:
+            done["provider_failed"] += 1
+    for c in calls:
+        if c.vapi_call_id in gone:
+            c.vapi_call_id = None
+    for e in events:
+        if not e.payload.get("call_id") or str(e.payload.get("call_id")) in gone:
+            e.payload = {**e.payload, "transcript_deleted": True}
+    db.commit()
+    if any(done.values()):
+        log.info("privat.transcripts_purged", **done)
+    return done
+
+
 # --------------------------------------------------------------------------- delete
+
+def _revoke_calendars(db: OrmSession, ws_id: uuid.UUID) -> dict:
+    """Google/Outlook access of the PRIVAT workspace (never a business workspace's): revoked at the provider, best
+    effort. Never raises – the deletion goes on whatever happens; the outcome is logged (no personal data)."""
+    from app.modules.integrations import credentials, oauth
+    from app.modules.privat.appointments import PROVIDER_CONNECTOR
+
+    out: dict = {}
+    for provider, key in PROVIDER_CONNECTOR.items():
+        try:
+            conn = credentials.connection(db, ws_id, key)
+            if conn is None:
+                continue
+            if conn.auth_kind != "oauth" or conn.simulated:
+                out[provider] = "simulated"
+                continue
+            secret = credentials.get_secret(conn) or {}
+            tok = secret.get("refresh_token") or secret.get("access_token")
+            out[provider] = oauth.revoke(oauth.provider_for(provider), tok) if tok else "no_token"
+        except Exception as e:  # noqa: BLE001 – best effort: never blocks the deletion
+            out[provider] = "failed"
+            log.warning("privat.calendar_revoke_failed", provider=provider, error=type(e).__name__)
+    for provider, outcome in out.items():
+        log.info("privat.calendar_revoke", provider=provider, outcome=outcome)
+    return out
+
 
 def _keeps_login(db: OrmSession, user: User, ws_id: uuid.UUID) -> bool:
     """Whether the login is used for something outside Privat that must survive (see module docstring, step 6)."""
@@ -463,7 +575,8 @@ def delete_account(db: OrmSession, ctx, confirm_email: str) -> dict:
     db.execute(update(WebhookEvent).where(or_(cast(WebhookEvent.payload, Text).contains(str(ws)),
                                               cast(WebhookEvent.payload, Text).contains(quoted)))
                .values(payload={"scrubbed": "privat_account_deleted"}))
-    # 3. the workspace and everything in it, and its files
+    # 3. calendar access revoked at Google/Microsoft (best effort), then the workspace and everything in it, and its files
+    revoked = _revoke_calendars(db, ws)
     files.delete_workspace(ws)
     keep = _keeps_login(db, user, ws)
     db.execute(delete(Workspace).where(Workspace.id == ws))
@@ -477,7 +590,7 @@ def delete_account(db: OrmSession, ctx, confirm_email: str) -> dict:
     db.add(AuditLog(workspace_id=None, actor_user_id=None, action="privat.account_deleted", object_type="private_account",
                     object_id=None, before=None,
                     after={"login_kept": keep, "subscription_cancelled": had_sub, "household_role": hh["role"],
-                           **counts}))
+                           "calendar_revoke": revoked, **counts}))
     db.flush()
     db.expunge_all()
     log.info("privat.account_deleted", login_kept=keep, subscription_cancelled=had_sub)

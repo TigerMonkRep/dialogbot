@@ -277,7 +277,8 @@
     "earlier": "Tâche : {title}. Ouvrir la tâche",
     "googleData": "Données de Google",
     "demoData": "Données de démonstration – entreprises fictives, pas de Google",
-    "typing": "Peter écrit …"
+    "typing": "Peter écrit …",
+    "deleteMessage": "Supprimer le message"
   },
   "list": {
     "count": "{n|1 élément|# éléments} · {done} fait(s)",
@@ -393,7 +394,11 @@
     "isBusinessHint": "Le numéro ressemble à un portable. Je n'appelle que des entreprises.",
     "demoBusiness": "C'est une entreprise de démonstration qu'on ne peut pas appeler. Choisissez une vraie entreprise.",
     "needsPlan": "Nécessite un forfait",
-    "needsPlanText": "Les appels sont inclus dans tous les forfaits. Sans forfait, aucun appel n'est possible – pas non plus avec des crédits."
+    "needsPlanText": "Les appels sont inclus dans tous les forfaits. Sans forfait, aucun appel n'est possible – pas non plus avec des crédits.",
+    "delete": "Supprimer l'appel",
+    "deleteQ": "Supprimer l'appel et son résumé ? Cette action est définitive.",
+    "deleteYes": "Oui, supprimer",
+    "deleteNo": "Garder"
   },
   "draft": {
     "label": "Brouillon · prêt à enregistrer",

@@ -401,6 +401,14 @@ def run_schedules() -> None:
             from app.modules.privat.gdpr import purge_expired as purge_exports
 
             purge_exports(db)  # «Eksportér mine data»: expired links lose their content
+            from app.modules.privat import rules as privat_rules
+
+            today = privat_rules.local(privat_rules.now()).date()
+            if _RETENTION_RAN.get("privat_transcripts") != today:
+                from app.modules.privat.gdpr import purge_transcripts
+
+                purge_transcripts(db)  # raw call transcripts after 90 days (ours and Vapi's copy), once a day
+                _RETENTION_RAN["privat_transcripts"] = today
             from app.modules.browser.lookup import scrub_expired
             from app.modules.privat.places import scrub_cached
 

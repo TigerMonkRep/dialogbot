@@ -277,7 +277,8 @@
     "earlier": "Tarea: {title}. Abrir la tarea",
     "googleData": "Datos de Google",
     "demoData": "Datos de demostración: empresas ficticias, no de Google",
-    "typing": "Peter está escribiendo …"
+    "typing": "Peter está escribiendo …",
+    "deleteMessage": "Eliminar mensaje"
   },
   "list": {
     "count": "{n|1 elemento|# elementos} · {done} hechos",
@@ -393,7 +394,11 @@
     "isBusinessHint": "El número parece de móvil. Solo llamo a empresas.",
     "demoBusiness": "Es una empresa de demostración a la que no se puede llamar. Elige una empresa real.",
     "needsPlan": "Requiere un plan",
-    "needsPlanText": "Las llamadas están incluidas en todos los planes. Sin un plan no se puede llamar, tampoco con créditos."
+    "needsPlanText": "Las llamadas están incluidas en todos los planes. Sin un plan no se puede llamar, tampoco con créditos.",
+    "delete": "Eliminar la llamada",
+    "deleteQ": "¿Eliminar la llamada y su resumen? No se puede deshacer.",
+    "deleteYes": "Sí, eliminar",
+    "deleteNo": "Conservar"
   },
   "draft": {
     "label": "Borrador · listo para guardar",

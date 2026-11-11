@@ -19525,6 +19525,59 @@
         ]
       }
     },
+    "/api/v1/privat/calls/{task_id}": {
+      "delete": {
+        "description": "Delete one finished (or never approved) call with its summary and the chat lines about it. 409 call_running\nwhile it is approved, planned or running.",
+        "operationId": "delete_call_api_v1_privat_calls__task_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "task_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Task Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Call",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
     "/api/v1/privat/calls/{task_id}/approve": {
       "post": {
         "operationId": "approve_call_api_v1_privat_calls__task_id__approve_post",
@@ -21651,6 +21704,59 @@
           }
         },
         "summary": "Post Message",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
+    "/api/v1/privat/messages/{message_id}": {
+      "delete": {
+        "description": "Delete one chat line (chats are kept as long as the account exists unless the user deletes them).",
+        "operationId": "delete_message_api_v1_privat_messages__message_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "message_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Message Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Message",
         "tags": [
           "privat"
         ]

@@ -641,6 +641,16 @@ def post_message(body: MessageIn, response: Response, ctx: PrivateCtx = Depends(
     return out
 
 
+@router.delete("/messages/{message_id}", status_code=204)
+def delete_message(message_id: uuid.UUID, ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
+    """Delete one chat line (chats are kept as long as the account exists unless the user deletes them)."""
+    from app.modules.privat import gdpr
+
+    gdpr.delete_message(db, ctx, message_id)
+    db.commit()
+    return Response(status_code=204)
+
+
 @router.post("/messages/{message_id}/options/{option_id}")
 def answer_option(message_id: uuid.UUID, option_id: str, ctx: PrivateCtx = Depends(private_ctx),
                   db: OrmSession = Depends(get_db)):
@@ -680,6 +690,17 @@ def retry_call(task_id: uuid.UUID, ctx: PrivateCtx = Depends(private_ctx), db: O
     t = calls.retry(db, ctx, task_id)
     db.commit()
     return service.task_out(db, t, ctx.user_id)
+
+
+@router.delete("/calls/{task_id}", status_code=204)
+def delete_call(task_id: uuid.UUID, ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
+    """Delete one finished (or never approved) call with its summary and the chat lines about it. 409 call_running
+    while it is approved, planned or running."""
+    from app.modules.privat import gdpr
+
+    gdpr.delete_call(db, ctx, task_id)
+    db.commit()
+    return Response(status_code=204)
 
 
 # --------------------------------------------------------------------------- business search and location

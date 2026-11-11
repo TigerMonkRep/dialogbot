@@ -252,6 +252,10 @@ export interface PrivatApi {
   approveCall(taskId: string, body: ApproveBody): Promise<Task>;
   declineCall(taskId: string): Promise<Task>;
   retryCall(taskId: string): Promise<Task>;
+  /** DELETE: one finished call with its summary and the chat lines about it (409 call_running while it runs). */
+  deleteCall(taskId: string): Promise<void>;
+  /** DELETE: one chat line. */
+  deleteMessage(messageId: string): Promise<void>;
   phoneStart(phone: string): Promise<{ sent: true }>;
   phoneVerify(code: string): Promise<Balance>;
   /** Credit pack checkout; `locale` picks the market's price (da → DKK, sv → SEK, no → NOK, others → EUR). */
@@ -458,6 +462,8 @@ export const realPrivat: PrivatApi = {
   approveCall: (taskId, body) => api(`${P}/calls/${enc(taskId)}/approve`, idem(json(body))),
   declineCall: (taskId) => api(`${P}/calls/${enc(taskId)}/decline`, json({})),
   retryCall: (taskId) => api(`${P}/calls/${enc(taskId)}/retry`, json({})),
+  deleteCall: (taskId) => api(`${P}/calls/${enc(taskId)}`, { method: "DELETE" }),
+  deleteMessage: (messageId) => api(`${P}/messages/${enc(messageId)}`, { method: "DELETE" }),
   phoneStart: (phone) => api(`${P}/phone/start`, json({ phone })),
   phoneVerify: (code) => api(`${P}/phone/verify`, json({ code })),
   checkout: (body) => api(`${P}/credits/checkout`, json(body ?? {})),

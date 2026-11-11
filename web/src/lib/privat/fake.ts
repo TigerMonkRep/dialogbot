@@ -696,6 +696,15 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       s.msgs.push(msg({ kind: "call_proposal", task_id: t.id, text: `Skal jeg ringe til ${t.call!.business_name} igen?` }));
       return done(t);
     },
+    async deleteCall(taskId) {
+      await wait();
+      const t = find(taskId);
+      if (t.status === "in_progress" || t.status === "planned") fail(409, "call_running", "Opkaldet er i gang eller planlagt");
+      s.tasks = s.tasks.filter((x) => x.id !== taskId);
+      s.msgs = s.msgs.filter((m) => m.task_id !== taskId && m.about_task_id !== taskId);
+      save();
+    },
+    async deleteMessage(messageId) { await wait(); s.msgs = s.msgs.filter((m) => m.id !== messageId); save(); },
     async phoneStart(phone) {
       await wait();
       const digits = phone.replace(/[^\d+]/g, "");

@@ -173,7 +173,10 @@ jobs:
           P1_API_LOG: ${{ github.workspace }}/api.log
           # X23 offline page: lets Playwright route/observe requests made by the service worker (context.setOffline).
           PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS: "1"
-        run: npx playwright test e2e/qa --shard=${{ matrix.shard }}/4
+        # Playwright stops itself before the job's 45-minute timeout. A cancelled job makes the whole E2E run
+        # "cancelled", and Render's checksPass then never deploys (main 215b75f, 11/11). A failed job is
+        # absorbed by continue-on-error; a cancelled one is not.
+        run: npx playwright test e2e/qa --shard=${{ matrix.shard }}/4 --global-timeout=1920000
       - name: Upload screenshots and report
         if: always()
         uses: actions/upload-artifact@v4

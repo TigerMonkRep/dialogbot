@@ -112,8 +112,10 @@ jobs:
           pip install -r requirements.lock -r browser_worker/requirements.lock
       - name: Install Chromium (with ffmpeg for video)
         run: |
+          getent hosts azure.archive.ubuntu.com >/dev/null || { echo "azure apt mirror unresolvable – using archive.ubuntu.com"; sudo sed -i "s#azure.archive.ubuntu.com#archive.ubuntu.com#g" /etc/apt/apt-mirrors.txt /etc/apt/sources.list /etc/apt/sources.list.d/* 2>/dev/null || true; }  # GitHub's Azure apt mirror outage 11/11
           playwright install --with-deps chromium
           playwright install ffmpeg
+          getent hosts azure.archive.ubuntu.com >/dev/null || { echo "azure apt mirror unresolvable – using archive.ubuntu.com"; sudo sed -i "s#azure.archive.ubuntu.com#archive.ubuntu.com#g" /etc/apt/apt-mirrors.txt /etc/apt/sources.list /etc/apt/sources.list.d/* 2>/dev/null || true; }  # GitHub's Azure apt mirror outage 11/11
           sudo apt-get install -y --no-install-recommends ffmpeg   # the video is cut with ffmpeg before it is uploaded
       - name: Browser worker tests (session, playbook, engine detection)
         run: pytest -p no:cacheprovider -c /dev/null --rootdir . browser_worker/tests

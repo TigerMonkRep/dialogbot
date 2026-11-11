@@ -1,9 +1,11 @@
 import { expect, test, type Page } from "@playwright/test";
+import { unlock } from "../erhverv-p1a/p1a-helpers";
 import { noHorizontalScroll, shot } from "./p2-helpers";
 
 /** X06 (P1): Privat-landing tydeligt anderledes end Erhverv (orange), samme logo, header-vælger Erhverv/Privat der virker
  *  og husker valget (cookie db_aud; "/" sender til den valgte dør; "/?aud=reset" viser indgangen igen). Public pages only
- *  – no backend needed beyond Next. */
+ *  – no backend needed beyond Next. /, /erhverv and /signup sit behind the preview gate (PREVIEW_GATE=on on CI): unlock
+ *  first, like the other public-page specs. */
 
 async function logo(page: Page) {
   // the mark in the header: same shape (radius 28 %, white speech bubble path), colour from --color-accent
@@ -27,6 +29,7 @@ test("Privat er orange, Erhverv er blå; logoet har samme form og ordmærke", as
   await noHorizontalScroll(page);
   await shot(page, info, "X06", "privat");
 
+  await unlock(page);
   await page.goto("/da/erhverv");
   await expect(page.locator("[data-theme=privat]")).toHaveCount(0);
   const erhverv = await logo(page);
@@ -42,6 +45,7 @@ test("Privat er orange, Erhverv er blå; logoet har samme form og ordmærke", as
 
 test("vælgeren i headeren: Privat aktiv på /privat, Erhverv aktiv på /erhverv, og valget huskes på /", async ({ page }) => {
   await page.context().clearCookies();
+  await unlock(page);
   await page.goto("/?aud=reset");
   await expect(page).not.toHaveURL(/\/privat$|\/erhverv$/);
 
@@ -78,6 +82,7 @@ test("vælgeren i headeren: Privat aktiv på /privat, Erhverv aktiv på /erhverv
 
 test("«Prøv gratis i 14 dage» går til checkout-vejen (signup → konto?plan=plus)", async ({ page }) => {
   await page.context().clearCookies();
+  await unlock(page);
   await page.goto("/privat");
   const href = await page.getByRole("link", { name: "Prøv gratis i 14 dage" }).first().getAttribute("href");
   expect(href).toBe("/privat/konto?plan=plus&interval=month");

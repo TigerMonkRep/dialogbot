@@ -76,7 +76,7 @@ test("S03 · en kalender i fejl tilbyder «Forbind igen» (reconnect), ikke kun 
     const g = card(page, "google_calendar");
     await expect(g).toContainText("Fejl");
     await page.screenshot({ path: `${EVID("S03")}/${info.project.name}-fejl.png`, fullPage: true });
-    await expect(g.getByRole("button", { name: /Forbind igen|Genforbind/ })).toBeVisible();
+    await expect(g.getByRole("button", { name: /Forbind igen|Genforbind/ })).toBeVisible({ timeout: 5_000 }); // known: fail fast
   } finally {
     await page.request.post(`/api/backend/dev/fake-calendar/busy-down?workspace_id=${wsId}&down=false`, { headers: CSRF });
   }

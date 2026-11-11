@@ -58,7 +58,7 @@ test("K04 · tilbud uden datoer: fejlbeskeden er forståelig dansk (ikke feltnav
   const err = page.locator("main [role=alert]").first();
   await expect(err).toBeVisible();
   await page.screenshot({ path: evid("K04", info, "uden-datoer"), fullPage: true });
-  await expect(err).not.toContainText(/starts_on|ends_on|ISO/);
+  await expect(err).not.toContainText(/starts_on|ends_on|ISO/, { timeout: 5_000 }); // known: fail fast
   expect((await (await page.request.get(`/api/backend/workspaces/${wsId}/knowledge/items?kind=offer`)).json()).items).toHaveLength(0);
 });
 
@@ -71,7 +71,7 @@ test("K04 · tilstande: udløbet tilbud vises som udløbet, ikke som aktivt", as
   const row = page.locator("div.flex-wrap").filter({ hasText: "Sommerrabat" }).last();
   await expect(row).toBeVisible();
   await page.screenshot({ path: evid("K04", info, "udloebet-tilbud"), fullPage: true });
-  await expect(row).toContainText(/udløbet/i);
+  await expect(row).toContainText(/udløbet/i, { timeout: 5_000 }); // known: fail fast
 });
 
 test("K04 · medarbejder foreslår tilbud → kladde venter, er ikke i assistentens viden; ejer kan genoprette fjernet tilbud med samme navn", async ({ page }, info) => {

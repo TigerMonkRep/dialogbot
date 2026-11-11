@@ -105,6 +105,6 @@ test("W11 · tidszonen står ved tiderne (virksomhedens lokale tid)", async ({ p
   const { chat, close } = await visitor(browser, page);
   await chat.getByRole("button", { name: "Book en tid" }).click();
   // Requirement W11: «Date/slots/timezone». Labels are «tirsdag 10. november kl. 14.00» with no zone anywhere.
-  await expect(chat.locator("form.book")).toContainText(/dansk tid|Europe\/Copenhagen|tidszone|lokal tid|CET|CEST/i);
+  await expect(chat.locator("form.book")).toContainText(/dansk tid|Europe\/Copenhagen|tidszone|lokal tid|CET|CEST/i, { timeout: 5_000 }); // known: fail fast
   await close();
 });

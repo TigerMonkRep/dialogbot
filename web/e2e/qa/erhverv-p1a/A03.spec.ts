@@ -90,7 +90,7 @@ test("A03 · udløbet link på en anden enhed: «Send nyt link» må ikke sige �
   await phone.waitForTimeout(2500);
   await phone.screenshot({ path: `../qa/evidence/${ID}/${info.project.name}-anden-enhed-send-nyt.png`, fullPage: true });
   // This visitor never had a session here – telling them it «expired» is wrong (F-E2A-06).
-  await expect(phone.getByText("Din session er udløbet. Log ind igen for at fortsætte.")).toHaveCount(0);
+  await expect(phone.getByText("Din session er udløbet. Log ind igen for at fortsætte.")).toHaveCount(0, { timeout: 5_000 }); // known: fail fast
   await phone.close();
 });
 
@@ -110,5 +110,5 @@ test("A03 · ingen udviklertekst i kundens afventer-tilstand", async ({ page }, 
   await page.goto("/verify-email");
   await expect(page.getByText(/Vi har sendt et bekræftelseslink/)).toBeVisible();
   // «I udviklingsmiljøet findes mailen i den simulerede postkasse.» is the same string in production (F-E2A-05).
-  await expect(page.getByText(/udviklingsmiljøet|simulerede postkasse/)).toHaveCount(0);
+  await expect(page.getByText(/udviklingsmiljøet|simulerede postkasse/)).toHaveCount(0, { timeout: 5_000 }); // known: fail fast
 });

@@ -24,7 +24,7 @@ test("W05 · tidszonen forklares for den besøgende (tidsrummene er i virksomhed
   const { chat, close } = await visitor(browser, page);
   await chat.getByRole("button", { name: "Bliv kontaktet af en medarbejder" }).click();
   // Requirement W05: «local time-zone explanation». callback-windows returns `timezone`, frame.js never shows it.
-  await expect(chat.locator("form.contact")).toContainText(/dansk tid|Europe\/Copenhagen|tidszone|lokal tid/i);
+  await expect(chat.locator("form.contact")).toContainText(/dansk tid|Europe\/Copenhagen|tidszone|lokal tid/i, { timeout: 5_000 }); // known: fail fast
   await close();
 });
 

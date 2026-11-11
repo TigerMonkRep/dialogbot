@@ -111,5 +111,5 @@ test("C02 · krav: sprogvalg for kampagnen (ikke bygget)", async ({ page }, info
   const c = await newCampaign(page.request, wsId, `QA-E2C sprog ${Date.now()}`);
   await page.goto(`/app/kampagner/${c.id}`);
   await page.screenshot({ path: evid("C02", info, "intet-sprogvalg"), fullPage: true });
-  await expect(page.getByLabel(/sprog/i)).toHaveCount(1);
+  await expect(page.getByLabel(/sprog/i)).toHaveCount(1, { timeout: 5_000 }); // known: fail fast
 });

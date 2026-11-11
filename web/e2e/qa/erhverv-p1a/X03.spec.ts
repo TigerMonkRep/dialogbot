@@ -101,7 +101,7 @@ test("X03 · dybt link til et senere trin for en ny besøgende springer ikke sp�
   // Nothing answered yet: question 1 (branche) must not be skipped (F-E2A-02; e2e/funnel.spec.ts expects the same).
   await page.waitForTimeout(1500);
   await snap(page, info, ID, "dybt-link");
-  await expect(page).toHaveURL(/\/start\/1$/);
+  await expect(page).toHaveURL(/\/start\/1$/, { timeout: 5_000 }); // known: fail fast
 });
 
 test("X03 · tilbage og genindlæs midt i: svarene står der stadig; gaten kan ikke nås før spørgsmålene", async ({ page }, info) => {

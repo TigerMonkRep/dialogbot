@@ -44,5 +44,5 @@ test("E02 · mail-link til ny henvendelse lander i det rigtige arbejdsrum", asyn
 
   await page.goto(new URL(link).pathname + new URL(link).search);
   await shot(page, info, "e02-deeplink-aktivt-andet-arbejdsrum");
-  await expect(page.getByRole("heading", { name })).toBeVisible();
+  await expect(page.getByRole("heading", { name })).toBeVisible({ timeout: 5_000 }); // known: fail fast
 });

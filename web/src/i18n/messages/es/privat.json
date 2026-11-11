@@ -1590,5 +1590,14 @@
     "all": "Todas ({n})",
     "stripStep": "Paso {n} de {total} – continuar la configuración",
     "accountLine": "{n|1 app activada|# apps activadas}"
+  },
+  "problem": {
+    "notFoundTitle": "Esta página no existe",
+    "notFoundText": "Puede que el enlace sea antiguo o esté mal escrito.",
+    "errorTitle": "Algo ha salido mal",
+    "errorText": "No se pudo mostrar la página. Inténtalo de nuevo en un momento.",
+    "retry": "Reintentar",
+    "toDay": "A Mi día",
+    "toHome": "A la página de inicio"
   }
 }

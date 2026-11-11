@@ -14,7 +14,7 @@ from app.config import get_settings
 from app.modules.billing import stripe as stripe_api
 
 CHECKOUT_API_VERSION = "2025-09-30.clover"
-ACCENT = "#E0521A"
+ACCENT = "#C4461A"  # the accessible Privat orange (globals.css, white text >= 4.5:1) – F-JP-12
 PAPER = "#FFFBF5"
 ICON_PATH = "/icons/privat-icon-512.png"
 DISPLAY_NAME = "Dialogbot Privat"

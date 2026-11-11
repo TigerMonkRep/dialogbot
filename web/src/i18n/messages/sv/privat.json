@@ -1590,5 +1590,14 @@
     "all": "Alla {n}",
     "stripStep": "Steg {n} av {total} – fortsätt inställningen",
     "accountLine": "{n|1 app på|# appar på}"
+  },
+  "problem": {
+    "notFoundTitle": "Sidan finns inte",
+    "notFoundText": "Länken kan vara gammal eller felskriven.",
+    "errorTitle": "Något gick fel",
+    "errorText": "Sidan kunde inte visas. Försök igen om en stund.",
+    "retry": "Försök igen",
+    "toDay": "Till Min dag",
+    "toHome": "Till startsidan"
   }
 }

@@ -499,8 +499,6 @@ def test_jp10_privat_banner_links_to_privat_verify_page():
 
 # --------------------------------------------------------------------------- F-JP-11  404 / error pages
 
-@pytest.mark.xfail(strict=True, reason="F-JP-11: no not-found/error page at all – an unknown /privat/… URL shows Next's "
-                                       "default English 404, no Privat theme, no way back")
 def test_jp11_privat_has_its_own_404_and_error_page():
     have = [p for p in ("privat/not-found.tsx", "not-found.tsx") if (WEB_APP / p).exists()]
     err = [p for p in ("privat/error.tsx", "error.tsx", "global-error.tsx") if (WEB_APP / p).exists()]
@@ -520,8 +518,6 @@ def test_jp11_privat_has_its_own_404_and_error_page():
 
 # --------------------------------------------------------------------------- F-JP-12  Stripe Checkout colour
 
-@pytest.mark.xfail(strict=True, reason="F-JP-12: the Privat Checkout button is #E0521A (white text 3.9:1), not the "
-                                       "accessible #C4461A used everywhere else in the app")
 def test_jp12_checkout_button_is_the_accessible_orange():
     from app.modules.privat import branding
 

@@ -1590,5 +1590,14 @@
     "all": "Alle {n}",
     "stripStep": "Trinn {n} av {total} – fortsett oppsettet",
     "accountLine": "{n|1 app slått på|# apper slått på}"
+  },
+  "problem": {
+    "notFoundTitle": "Siden finnes ikke",
+    "notFoundText": "Lenken er kanskje gammel eller skrevet feil.",
+    "errorTitle": "Noe gikk galt",
+    "errorText": "Siden kunne ikke vises. Prøv igjen om litt.",
+    "retry": "Prøv igjen",
+    "toDay": "Til Min dag",
+    "toHome": "Til forsiden"
   }
 }

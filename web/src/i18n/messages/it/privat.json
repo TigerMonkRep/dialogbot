@@ -1590,5 +1590,14 @@
     "all": "Tutte ({n})",
     "stripStep": "Passo {n} di {total} – continua la configurazione",
     "accountLine": "{n|1 app attiva|# app attive}"
+  },
+  "problem": {
+    "notFoundTitle": "Questa pagina non esiste",
+    "notFoundText": "Il link potrebbe essere vecchio o scritto male.",
+    "errorTitle": "Qualcosa è andato storto",
+    "errorText": "Non è stato possibile mostrare la pagina. Riprova tra poco.",
+    "retry": "Riprova",
+    "toDay": "Alla mia giornata",
+    "toHome": "Alla home page"
   }
 }

@@ -1590,5 +1590,14 @@
     "all": "All {n}",
     "stripStep": "Step {n} of {total} – continue the setup",
     "accountLine": "{n|1 app on|# apps on}"
+  },
+  "problem": {
+    "notFoundTitle": "This page does not exist",
+    "notFoundText": "The link may be old or mistyped.",
+    "errorTitle": "Something went wrong",
+    "errorText": "The page could not be shown. Please try again in a moment.",
+    "retry": "Try again",
+    "toDay": "To My day",
+    "toHome": "To the front page"
   }
 }

@@ -75,12 +75,105 @@ jobs:
           for i in $(seq 1 30); do curl -sf -o /dev/null localhost:3000/login && break; sleep 1; done
       - name: Playwright journeys (1440 + 390 px)
         working-directory: web
+        env:
+          PW_SKIP_QA: "1"  # e2e/qa/** runs in the qa-catalog job below
         run: npx playwright test
       - name: Upload screenshots and report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: e2e-${{ github.sha }}
+          path: |
+            web/e2e-screens
+            web/playwright-report
+            web/test-results
+            api.log
+            worker.log
+            web.log
+          retention-days: 14
+
+  # The QA team's scenario catalogue (web/e2e/qa, several hundred specs per audience and viewport), sharded so it fits
+  # in the time box. Decision 11/11: it runs on every push but does not block deploys (continue-on-error) until the
+  # specs that still assume local QA stacks/log paths are made CI-ready; the journeys job above is the deploy gate.
+  qa-catalog:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: dialogbot_e2e
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      APP_ENV: test
+      ENABLE_DEV_TOOLS: "true"
+      EMAIL_ADAPTER: simulated
+      VAPI_SERVER_SECRET: e2e-only-vapi-secret-0123456789  # test value; journey 14 posts a signed end-of-call report
+      AI_PROVIDER: fake        # deterministic test double; the R06 journey never calls a real model
+      TTS_ENGINE: fake         # voice library: labelled test tone, never shown as real speech
+      TELEPHONY_PROVIDER: fake # platform telephony: simulated Twilio/Vapi, nothing is bought (journey 14)
+      CONNECTORS_PROVIDER: fake # actions: simulated calendar/SMS/webhook, every result marked simulated
+      ALLOW_PRIVATE_FETCH: "true" # app/core/safe_fetch: the journeys import knowledge from a site on 127.0.0.1:4000
+      CREDENTIALS_KEY: "0123456789abcdefghijklmnopqrstuvwxyzABCDEF0"  # test-only key so API and worker decrypt alike
+      TELEPHONY_VERIFY_NUMBER_ID: vapi-verify-e2e
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@localhost:5432/dialogbot_e2e
+      FRONTEND_BASE_URL: http://localhost:3000
+      SEED_DEMO_PASSWORD: E2e-Demo-Password-2026
+      API_BASE_URL: http://localhost:8000
+      BASE_URL: http://localhost:3000
+      # Test-only values for the P00 preview gate (not used by any deployed environment).
+      PREVIEW_GATE: "on"
+      PREVIEW_ACCESS_CODES: E2E-PREVIEW-2026
+      PREVIEW_COOKIE_SECRET: e2e-only-preview-cookie-secret-0123456789
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Backend dependencies, migrations, seed
+        run: |
+          pip install -r requirements.lock
+          alembic upgrade head
+          python -m scripts.seed
+      - name: Start API and worker
+        run: |
+          nohup uvicorn app.main:app --port 8000 > api.log 2>&1 &
+          nohup python -m app.worker.runner > worker.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf localhost:8000/health/ready && break; sleep 1; done
+      - name: Build and start web
+        working-directory: web
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          npm run build
+          nohup npm run start -- -p 3000 > ../web.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf -o /dev/null localhost:3000/login && break; sleep 1; done
+      - name: Playwright QA catalogue (shard ${{ matrix.shard }}/4)
+        working-directory: web
+        run: npx playwright test e2e/qa --shard=${{ matrix.shard }}/4
+      - name: Upload screenshots and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-qa-${{ matrix.shard }}-${{ github.sha }}
           path: |
             web/e2e-screens
             web/playwright-report

@@ -38,9 +38,14 @@ def get_agreement(ctx: WorkspaceContext = Depends(require_capability("agreements
     cur = currency_of(db, ctx.workspace.id)
     return {"current": agreements.out(agreements.current(db, ctx.workspace.id)), "currency": cur,
             "plan": {"currency": cur, "monthly_net_minor": markets.erhverv_price(cur, "monthly"), "lead_fee_net_minor": 0,
-                     "campaign_call_net_minor": markets.erhverv_price(cur, "call"),
-                     "campaign_minute_net_minor": markets.erhverv_price(cur, "minute"),
+                     # one package for inbound and outbound minutes; after it, outbound calls by outcome + minutes
+                     "campaign_call_net_minor": markets.erhverv_price(cur, "call_answered"),
+                     "outbound_call_net_minor": {k: markets.erhverv_price(cur, f"call_{k}")
+                                                 for k in ("answered", "voicemail", "no_answer")},
+                     "campaign_minute_net_minor": markets.erhverv_price(cur, "outbound_extra_minute"),
+                     "included_minutes": prices.INCLUDED_MINUTES,
                      "inbound_included_minutes": prices.INBOUND_INCLUDED_MINUTES,
+                     "outbound_extra_minute_net_minor": markets.erhverv_price(cur, "outbound_extra_minute"),
                      "inbound_extra_minute_net_minor": markets.erhverv_price(cur, "extra_minute")}}
 
 

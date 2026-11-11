@@ -14,6 +14,7 @@ import { Ico } from "./icons";
 import { Sheets } from "./sheets";
 import { InstallCapture } from "@/components/install-app";
 import { SwUpdate } from "@/components/sw-update";
+import { clearSwPages } from "@/lib/sw-register";
 import { StandaloneBack, StandaloneChrome } from "@/components/standalone";
 import { APP_SCREENS, PrivatProvider, initials, usePlan, usePrivat, type Screen, type Session } from "./store";
 import { TaskDetail, TasksPane } from "./tasks";
@@ -170,6 +171,7 @@ function AccountMenu({ session }: { session: Session }) {
   };
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST", headers: { "x-requested-with": "dialogbot" } }).catch(() => {});
+    await clearSwPages().catch(() => {});
     try { sessionStorage.removeItem("dialogbot-privat-fake-login"); } catch { /* ignore */ }
     window.location.href = "/privat";
   };

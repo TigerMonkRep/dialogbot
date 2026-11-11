@@ -60,7 +60,7 @@
       "title": "Campaigns",
       "sub": "Call your own customers",
       "outbound": "Outbound calls",
-      "chosen": "Selected – {pCall} per call + {pMinute} per minute excl. VAT",
+      "chosen": "Selected – minutes from the package, then {pCallAnswered} per answered call + {pMinute} per minute excl. VAT",
       "notChosen": "Not selected"
     },
     "systems": {
@@ -640,5 +640,30 @@
     "back": "Back to voices",
     "notice": "Your own voice is made from a short recording. Likeness to the speaker may vary, especially for voices far from the model's training voices. Full likeness requires training on the standard script, which Dialogbot will offer later.",
     "previous": "Previous recordings"
+  },
+  "apiKeys": {
+    "title": "API keys",
+    "intro": "For your own systems (CRM, Zapier, your own code) via Dialogbot's API. Give each key a name and only the permissions it needs.",
+    "name": "Name",
+    "namePlaceholder": "E.g. CRM sync",
+    "scopes": "Permissions",
+    "write": "can change data",
+    "create": "Create key",
+    "creating": "Creating…",
+    "onceTitle": "The key «{name}» – copy it now",
+    "onceNote": "It is shown only this once. If you lose it, revoke it and create a new one.",
+    "copy": "Copy",
+    "copied": "Copied",
+    "saved": "I have saved it",
+    "listTitle": "Your keys",
+    "none": "No keys yet.",
+    "created": "created {date}",
+    "lastUsed": "last used {date}",
+    "neverUsed": "never used",
+    "revoke": "Revoke",
+    "revokeConfirm": "Revoke «{name}»? Systems using it lose access immediately.",
+    "revoked": "revoked {date}",
+    "expired": "expired",
+    "docs": "How to use the key: send it as «Authorization: Bearer <key>» to Dialogbot's API (https://api.dialogbot.app/v1)."
   }
 }

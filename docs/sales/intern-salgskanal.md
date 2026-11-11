@@ -37,8 +37,8 @@ samlet salgs-admin med statistik, og (8) lydoptagelser, retention og indsigt/sle
 
 **Den konflikt om opsætningsprisen, som opgaven nævner, er løst.** `/priser` siger i dag "Gør-det-selv-opsætning er
 med – specialist-opsætning 5.000 kr." (PR #74/#77, 28.–29. oktober), og `app/modules/billing/prices.py` har
-`SPECIALIST_SETUP_NET_MINOR = 500_000`. Det godkendte tilbud er derfor: 2.495 kr./md. ekskl. moms, 4 kr. pr. udgående
-kampagneopkald, 5.000 kr. én gang for specialist-opsætning (gør-det-selv er med i abonnementet), ingen binding.
+`SPECIALIST_SETUP_NET_MINOR = 500_000`. Det godkendte tilbud er derfor (prisbeslutning 10/11-2026): 2.495 kr./md. ekskl. moms med 300 minutter til ind- og
+udgående opkald, derefter 1,50 kr./min ind og 2 kr./min ud (ingen pris pr. opkald), 5.000 kr. én gang for specialist-opsætning (gør-det-selv er med i abonnementet), ingen binding.
 Opgavens observation stammer fra før den ændring.
 
 **Realistisk første testforløb (research + simulation) kan bygges uden eksterne adgange.** Et internt testopkald
@@ -615,7 +615,7 @@ det, og tilbyder afklaring. Et klart nej afslutter samtalen med tak.
 - `POST /operator/salg/offers` (fra `prices.py`; `setup_kind`), `POST …/{id}/send` (kun efter registreret anmodning
   fra kunden eller operatørens eget valg med kanal + destination fra kontakten), `GET …/{id}`.
 - Offentlig side `web/src/app/tilbud/[token]/page.tsx` + `GET /public/offers/{token}` (token hashes; udløber med
-  `valid_until`): viser pakke, månedspris ekskl. moms, moms, engangsbeløb, 4 kr. pr. kampagneopkald, opsigelse, vilkår-
+  `valid_until`): viser pakke, månedspris ekskl. moms, moms, engangsbeløb, minutpakken og prisen pr. minut ud over den, opsigelse, vilkår-
   version og knappen "Accepter og opret konto". Accept kræver login/signup (eksisterende flow), opretter arbejdsrum
   hvis nyt, kalder `agreements.create()` med tilbuddets snapshot og `offer_id`, sætter `sales_offers.status=accepted`,
   auditerer, og sender videre til `card_checkout()`. Hook i `stripe.process_event` sætter `first_invoice_paid`
@@ -767,7 +767,7 @@ virksomhedens egen hjemmeside og AI.
    med talere, udfald `opt_out`, delaccepter, og at nummeret nu står i spærrelisten (forhåndsvisning → BLOCK).
    Lyd: "ikke optaget" (fase 4 ikke bygget).
 9. **Testtilbud (fase 3):** på virksomhedens side → "Opret tilbud" (specialist) → "Send link" til din egen e-mail →
-   åbn linket: pris ekskl. moms, moms, 5.000 kr., 4 kr./opkald, opsigelse. Accepter med en test-konto på staging →
+   åbn linket: pris ekskl. moms, moms, 5.000 kr., 300 min/md. ind og ud, efter pakken 4 kr. (besvaret) / 1 kr. (telefonsvarer) / 0,25 kr. (ubesvaret) pr. opkald + 2 kr. pr. påbegyndt minut, opsigelse. Accepter med en test-konto på staging →
    status går `sent` → `accepted`; "betalende kunde" først når Stripe-testfakturaen er betalt. *Stripe i testmode.*
 10. **Statistik:** Overblik viser 1 fundet, 1 kontaktbar (før frabedelse), 1 opkald, 0 møder, 1 tilbud, 0 betalende –
     og simulationen tælles ikke med.

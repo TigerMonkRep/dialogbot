@@ -2,9 +2,9 @@
  "counts": {
   "anonymous": 54,
   "public_api": 25,
-  "user": 27,
-  "workspace": 161,
-  "operator": 132,
+  "user": 28,
+  "workspace": 165,
+  "operator": 136,
   "privat": 105,
   "excluded": 1
  },
@@ -586,6 +586,18 @@
    "class": "workspace"
   },
   {
+   "route": "GET /api/v1/workspaces/{workspace_id}/billing/usage",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/billing/disputes",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/billing/disputes",
+   "class": "workspace"
+  },
+  {
    "route": "GET /api/v1/workspaces/{workspace_id}/billing/account",
    "class": "workspace"
   },
@@ -671,6 +683,10 @@
   },
   {
    "route": "POST /api/v1/workspaces/{workspace_id}/bookings",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/bookings/{booking_id}/confirm",
    "class": "workspace"
   },
   {
@@ -2014,6 +2030,22 @@
    "class": "user"
   },
   {
+   "route": "GET /api/v1/operator/admin/billing",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/admin/prices",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/admin/disputes",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/admin/disputes/{dispute_id}/decision",
+   "class": "operator"
+  },
+  {
    "route": "GET /api/v1/dev/mailbox",
    "class": "user"
   },
@@ -2027,6 +2059,10 @@
   },
   {
    "route": "GET /api/v1/dev/telephony/verification-code",
+   "class": "user"
+  },
+  {
+   "route": "POST /api/v1/dev/fake-calendar/busy-down",
    "class": "user"
   }
  ]

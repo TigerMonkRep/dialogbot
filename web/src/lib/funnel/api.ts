@@ -38,7 +38,8 @@ export type GateBody = { name: string; email: string; phone: string; consent: tr
 export type GateResult = { status: "code_sent"; phone_display: string };
 export type VerifyResult = { status: "ok"; next: string };
 export type Call = { status: string; summary: string | null; duration_seconds: number | null; audio_url?: string | null };
-export type Reveal = { call: Call | null; workspace_id: string | null };
+/** `call_problem`: why no call was placed (call is null) – the page must say so, never «hun ringer nu» (F-E2A-03-X03). */
+export type Reveal = { call: Call | null; call_problem?: string | null; workspace_id: string | null };
 
 export type FunnelApi = {
   create(body: { kind: FunnelKind; hook?: string | null; industry?: string | null; utm?: Utm }): Promise<Draft>;

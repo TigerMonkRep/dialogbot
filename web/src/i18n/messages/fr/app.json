@@ -129,7 +129,7 @@
     "noAppointments": "Aucun rendez-vous à venir.",
     "weekAppointments": "Voir les rendez-vous de la semaine",
     "campaigns": "Campagnes",
-    "campaignsSub": "Appelez vos propres clients – {pCall} par appel + {pMinute} par minute de conversation HT.",
+    "campaignsSub": "Appelez vos propres clients – les minutes sont prises sur les {pIncluded} minutes de l’abonnement. Une fois épuisées, un appel décroché coûte {pCallAnswered} plus {pMinute} par minute HT.",
     "openCampaigns": "Ouvrir les campagnes",
     "allActivity": "Toute l’activité des 14 derniers jours",
     "power": {
@@ -288,7 +288,7 @@
       "title": "Coût de la semaine",
       "extra": "{amount} en supplément",
       "calls": "{n} appels de campagne",
-      "note": "300 minutes d’appels entrants par mois sont incluses dans l’abonnement. Appels de campagne cette semaine : {n} ({pCall} par appel sortant + {pMinute} par minute de conversation, HT).",
+      "note": "{pIncluded} minutes par mois sont incluses – pour les appels entrants comme pour les campagnes. Appels de campagne cette semaine : {n}. Le montant est ce que coûtent les appels de campagne de la semaine après le forfait (prix par appel selon l’issue + {pMinute} par minute), HT.",
       "billing": "Voir l’abonnement et les factures"
     }
   },
@@ -305,7 +305,12 @@
       "lead": "Demande",
       "cancel": "Annuler",
       "syncFailed": "Absent de l’agenda",
-      "syncFailedDetail": "Le rendez-vous n’a pas pu être écrit dans l’agenda connecté : {error}"
+      "syncFailedDetail": "Le rendez-vous n’a pas pu être écrit dans l’agenda connecté : {error}",
+      "pending": "En attente de confirmation",
+      "pendingDetail": "L’agenda n’a pas pu être lu au moment de la réservation. Le client a été informé qu’un collaborateur confirmera l’heure. Vérifiez l’agenda, puis confirmez ou annulez.",
+      "confirm": "Confirmer",
+      "confirming": "Confirmation…",
+      "confirmAnyway": "Confirmer quand même"
     },
     "book": {
       "noSlotsError": "Aucun créneau disponible. Vérifiez les horaires d’ouverture et l’agenda.",
@@ -318,7 +323,8 @@
       "booked": "Réservé : {label}.",
       "booking": "Réservation…",
       "submit": "Réserver",
-      "note": "Le client ne reçoit pas encore de SMS – envoyez-lui vous-même une confirmation. « Premier créneau libre » prend le prochain horaire permis par les horaires d’ouverture et l’agenda."
+      "note": "Le client ne reçoit pas encore de SMS – envoyez-lui vous-même une confirmation. « Premier créneau libre » prend le prochain horaire permis par les horaires d’ouverture et l’agenda.",
+      "pending": "Noté : {label} – en attente de confirmation, car l’agenda n’a pas pu être lu."
     },
     "calendar": {
       "reading": "Lecture…",
@@ -339,7 +345,8 @@
       "provider": {
         "google_calendar": "Google Agenda",
         "microsoft_calendar": "Agenda Outlook (Microsoft 365)"
-      }
+      },
+      "pendingN": "{n} rendez-vous sont en attente de confirmation – l’agenda n’a pas pu être lu lors de leur réservation."
     },
     "staffOnly": "Les rendez-vous sont visibles par les collaborateurs, administrateurs et propriétaires.",
     "eyebrow": "Aujourd’hui → Rendez-vous",
@@ -472,15 +479,15 @@
     "eyebrow": "Aujourd’hui → Campagnes",
     "enable": {
       "title": "Vous voulez aussi passer des appels ?",
-      "body": "Dialogbot peut appeler vos propres clients avec un message – par exemple une offre – et vous transmettre les personnes intéressées. Cela coûte {price} par appel sortant HT. Aucun appel n’est passé avant votre validation.",
+      "body": "Dialogbot peut appeler vos propres clients avec un message – par exemple une offre – et vous transmettre les personnes intéressées. Les minutes sont prises sur les {included} minutes de l’abonnement, sans prix par appel. Une fois le forfait épuisé, un appel coûte {answered} (décroché), {voicemail} (messagerie) ou {noAnswer} (sans réponse) plus {price} par minute entamée HT. Aucun appel ne part avant votre accord.",
       "onlyAdmins": "Seuls les propriétaires et administrateurs peuvent activer les appels sortants.",
       "ask": "Vous pouvez aussi le demander à l’assistant.",
       "pending": "Activation…",
       "button": "Oui, activer les appels sortants"
     },
-    "eyebrowPrice": "Aujourd’hui → Campagnes · appels sortants · {price} par appel HT",
+    "eyebrowPrice": "Aujourd’hui → Campagnes · appels sortants · minutes du forfait, puis {answered} par appel décroché + {price}/min HT",
     "title": "Appelez vos clients – une campagne à la fois",
-    "intro": "Trois étapes : vous choisissez qui appeler, écoutez ce qu’il dira, et validez le prix avant le premier appel. Le prix est de {price} + TVA par appel sortant – chaque appel compte, y compris une nouvelle tentative. {attempts} tentatives maximum et {minutes} minutes de conversation au total par contact. Dialogbot n’appelle jamais une personne inscrite sur la liste d’opposition.",
+    "intro": "Trois étapes : vous choisissez qui appeler, écoutez ce qu’il dit et approuvez le prix avant le premier appel. Les minutes sont prises sur les {included} minutes de l’abonnement (partagées avec les appels entrants), sans prix par appel. Une fois le forfait épuisé, un appel coûte {answered} (décroché), {voicemail} (messagerie) ou {noAnswer} (sans réponse) plus {price} par minute entamée, HT. Au maximum {attempts} tentatives et {minutes} minutes de conversation par contact – au maximum {contactMax} par contact. Dialogbot n’appelle jamais personne de la liste d’opposition.",
     "salesCalls": "Appels commerciaux : laisser l’IA appeler (Dialogbot uniquement)",
     "need": {
       "title": "Il vous faut",
@@ -508,7 +515,7 @@
       "consent": "consentement",
       "noConsent": "Consentement manquant – ne sera pas appelé",
       "attempts": "{n} tentatives",
-      "priceNote": "{price} par appel HT. Vous ne payez que les appels passés. Arrêtez à tout moment."
+      "priceNote": "Aucun prix par appel dans le forfait. Ensuite, {answered} (décroché), {voicemail} (messagerie) ou {noAnswer} (sans réponse) par appel plus {price} par minute HT. Arrêtez quand vous voulez."
     },
     "new": {
       "title": "Nouvelle campagne",
@@ -556,7 +563,8 @@
       "consent": "Où et quand ont-ils accepté d’être appelés ?",
       "consentHint": "L’assistant appelle sans humain au bout du fil. Selon l’article 10 de la loi danoise sur les pratiques commerciales (markedsføringsloven), le contact doit l’avoir demandé au préalable – y compris lorsqu’il s’agit d’une entreprise. Il ne suffit pas qu’il ne figure pas sur la liste Robinson ou qu’il ne soit pas protégé contre la prospection dans le registre CVR.",
       "consentPlaceholder": "Inscription sur le site web, mars 2026",
-      "importing": "Importation…"
+      "importing": "Importation…",
+      "pauseFirst": "La campagne est en cours. Mettez-la en pause pour ajouter des contacts – au redémarrage, vous confirmez le nouveau nombre."
     },
     "start": {
       "completed": "La campagne est terminée : tous les contacts ont été appelés.",
@@ -565,7 +573,7 @@
       "before": "Avant le lancement",
       "resumeTitle": "Reprendre la campagne",
       "heading": "{n} contacts · {max} HT maximum",
-      "body": "{n} contacts en attente. {max} + TVA maximum ({gross} TTC) – {call} + TVA par appel sortant et {minute} + TVA par minute de conversation entamée, {attempts} tentatives et {minutes} minutes de conversation maximum par contact. Le paiement ne déclenche jamais d’appel.",
+      "body": "{n} contacts en attente : au maximum {attempts} tentatives et {minutes} minutes de conversation par contact, {maxMinutes} minutes au total au maximum. Il reste {remaining} des {included} minutes du forfait ce mois-ci – avec elles, la campagne coûte au maximum {withPackage} HT. Dans le pire des cas (d’autres appels épuisent d’abord le forfait et chaque tentative est décrochée – au maximum {contactMax} par contact), le prix est au maximum {max} HT ({gross} TTC). Après le forfait, un appel coûte {answered} (décroché), {voicemail} (messagerie) ou {noAnswer} (sans réponse), plus {minute} par minute de conversation entamée. Un paiement ne lance jamais d’appels.",
       "confirm": "Confirmer les règles d’appel",
       "starting": "Lancement…",
       "resume": "Reprendre",
@@ -792,16 +800,39 @@
       "confirmed": "Confirmé · contrat v{v}. Configuration en autonomie incluse.",
       "notConfirmed": "Configuration en autonomie incluse. Pas encore confirmé.",
       "campaign": "Appels de campagne",
-      "campaignPrice": "par appel + {minute} par minute entamée HT",
+      "campaignPrice": "par minute entamée après le forfait + {answered}/{voicemail}/{noAnswer} par appel (décroché/messagerie/sans réponse), HT",
       "campaignMonth": "Ce mois-ci : {calls} appels, {minutes} minutes de conversation · {amount} HT",
-      "inbound": "Appels entrants",
-      "inboundUsed": "sur {n} minutes incluses utilisées ce mois-ci",
-      "inboundExtra": "{n} minutes au-delà du forfait inclus · {amount} HT ({price} par minute entamée).",
-      "inboundPrice": "Les minutes au-delà des {n} coûtent {price} par minute entamée HT.",
+      "package": "Forfait de minutes – appels entrants et sortants",
+      "packageUsed": "sur {n} minutes utilisées ce mois-ci",
+      "packageExtra": "{n} minutes entamées au-delà du forfait · {amount} HT.",
+      "packagePrice": "Au-delà des {n} minutes : {inPrice} par minute entamée en entrant et {outPrice} par minute entamée en sortant HT.",
       "confirm": "Confirmer l’abonnement",
       "ownerMustConfirm": "Le propriétaire doit confirmer l’abonnement.",
       "older": "Ancien contrat – confirmez l’abonnement pour passer à l’abonnement actuel.",
       "note": "Les prix sont HT. Sans engagement – dites-le à l’assistant ou écrivez à info@dialogbot.dk si vous souhaitez résilier. Le paiement ne déclenche jamais d’appel."
+    },
+    "usage": {
+      "title": "Consommation par appel",
+      "intro": "Chaque appel qui compte dans les minutes du mois. Si vous estimez ne pas devoir payer un appel, le propriétaire peut le contester – les minutes ne sont créditées qu’après une réclamation.",
+      "prev": "Mois précédent",
+      "next": "Mois suivant",
+      "package": "Forfait de minutes : {used} sur {included} minutes utilisées · {over} minutes au-delà du forfait.",
+      "invoiced": "Le mois est facturé. Lignes de la facture :",
+      "none": "Aucun appel ce mois-ci.",
+      "older": "Les mois antérieurs à novembre 2026 sont facturés selon l’ancienne grille tarifaire ; les réclamations les concernant sont traitées par le support (info@dialogbot.dk).",
+      "inbound": "Entrant",
+      "outbound": "Campagne",
+      "minutes": "{n} min",
+      "extra": "{n} min au-delà du forfait · {amount}",
+      "disputeOpen": "Réclamation envoyée – Dialogbot la traite.",
+      "disputeRejected": "La réclamation a été refusée – l’appel est facturé comme avant.",
+      "creditedPool": "La réclamation a été acceptée – les minutes sont revenues dans le forfait.",
+      "creditedInvoice": "La réclamation a été acceptée – {amount} sera crédité sur la prochaine facture.",
+      "creditedNothing": "La réclamation a été acceptée – l’appel était dans le forfait, il n’y a donc aucun montant à créditer.",
+      "dispute": "Contester l’appel",
+      "reason": "Qu’est-ce qui n’allait pas avec l’appel ?",
+      "send": "Envoyer la réclamation",
+      "cancel": "Annuler"
     },
     "pay": {
       "title": "Paiement",
@@ -929,7 +960,7 @@
       },
       "billing": {
         "q": "Facturation",
-        "a": "Il y a un seul abonnement à partir de {pMonthly} par mois HT, avec 300 minutes d’appels entrants (puis {pExtraMinute} par minute). Les appels sortants de campagne coûtent {pCall} par appel plus {pMinute} par minute de conversation entamée. La page Compte affiche l’aperçu du mois."
+        "a": "Il y a un seul abonnement à partir de {pMonthly} par mois HT, avec 300 minutes d’appels entrants et sortants (puis {pExtraMinute} par minute entrante et {pMinute} par minute sortante). Dans le forfait, aucun prix par appel ; une fois épuisé, un appel sortant coûte {pCallAnswered} (décroché), {pCallVoicemail} (messagerie) ou {pCallNoAnswer} (sans réponse) plus {pMinute} par minute. La page Compte affiche l’aperçu du mois."
       }
     },
     "team": {

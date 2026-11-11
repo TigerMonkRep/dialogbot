@@ -60,7 +60,7 @@
       "title": "Kampanjer",
       "sub": "Ring era egna kunder",
       "outbound": "Utgående samtal",
-      "chosen": "Valt – {pCall} per samtal + {pMinute} per minut exkl. moms",
+      "chosen": "Valt – minuter från paketet, därefter {pCallAnswered} per besvarat samtal + {pMinute} per minut exkl. moms",
       "notChosen": "Inte valt"
     },
     "systems": {
@@ -640,5 +640,30 @@
     "back": "Tillbaka till röster",
     "notice": "Egen röst skapas utifrån en kort inspelning. Likheten med inläsaren kan variera, särskilt för röster som skiljer sig mycket från modellens träningsröster. Full likhet kräver träning på standardmanuset, som Dialogbot erbjuder senare.",
     "previous": "Tidigare inspelningar"
+  },
+  "apiKeys": {
+    "title": "API-nycklar",
+    "intro": "För era egna system (CRM, Zapier, egen kod) via Dialogbots API. Ge varje nyckel ett namn och bara de behörigheter den behöver.",
+    "name": "Namn",
+    "namePlaceholder": "T.ex. CRM-synk",
+    "scopes": "Behörigheter",
+    "write": "kan ändra data",
+    "create": "Skapa nyckel",
+    "creating": "Skapar…",
+    "onceTitle": "Nyckeln «{name}» – kopiera den nu",
+    "onceNote": "Den visas bara denna enda gång. Tappar ni bort den, återkalla den och skapa en ny.",
+    "copy": "Kopiera",
+    "copied": "Kopierad",
+    "saved": "Jag har sparat den",
+    "listTitle": "Era nycklar",
+    "none": "Inga nycklar ännu.",
+    "created": "skapad {date}",
+    "lastUsed": "senast använd {date}",
+    "neverUsed": "aldrig använd",
+    "revoke": "Återkalla",
+    "revokeConfirm": "Återkalla «{name}»? System som använder den förlorar åtkomst direkt.",
+    "revoked": "återkallad {date}",
+    "expired": "utgången",
+    "docs": "Så används nyckeln: skicka den som «Authorization: Bearer <nyckel>» till Dialogbots API (https://api.dialogbot.app/v1)."
   }
 }

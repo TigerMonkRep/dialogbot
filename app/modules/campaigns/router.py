@@ -34,22 +34,42 @@ def _own(db: OrmSession, campaign_id, ws_id) -> Campaign:
 
 
 def _pricing(db: OrmSession, ws_id) -> tuple[str, int, int]:
-    """(currency, call, minute) for a new customer campaign: the workspace's currency (the agreement's, else the
-    country's) and the list prices in it (markets.ERHVERV), snapshotted on the campaign."""
+    """(currency, call, minute) for a new customer campaign: the answered-call price and the outbound minute after the
+    package – the agreement's snapshot, else the list price in the workspace's currency (markets.ERHVERV). Inside the
+    package there is no call price (billing/statement.py)."""
+    from app.modules.billing import agreements
+
     currency = customer_market.currency_of(db, ws_id)
-    return currency, markets.erhverv_price(currency, "call"), markets.erhverv_price(currency, "minute")
+    a = agreements.current(db, ws_id)
+    minute = a.outbound_extra_minute_net_minor if a is not None else markets.erhverv_price(currency, "outbound_extra_minute")
+    call = a.outbound_call_answered_net_minor if a is not None else markets.erhverv_price(currency, "call_answered")
+    return currency, call, minute
+
+
+def _call_prices(db: OrmSession, ws_id, currency: str) -> dict:
+    """The call prices after the package by outcome: the agreement's snapshot, else the list."""
+    from app.modules.billing import agreements, statement
+
+    return statement.package_terms(agreements.current(db, ws_id), currency)["call"]
 
 
 def campaign_out(db: OrmSession, c: Campaign, currency: str | None = None) -> dict:
     currency = currency or customer_market.currency_of(db, c.workspace_id)
     vat_bp = customer_market.vat_of(db, c.workspace_id)["rate_bp"]
+    cost = service.max_cost(db, c)
     return {"id": str(c.id), "name": c.name, "status": c.status, "version": c.version, "purpose": c.purpose,
             "opening": c.opening, "questions": list(c.questions or []), "success": c.success,
             "phone_number_id": str(c.phone_number_id) if c.phone_number_id else None,
             "call_days": list(c.call_days or []), "call_from": c.call_from, "call_to": c.call_to,
-            "pricing": {"currency": currency, "call_net_minor": c.call_net_minor, "minute_net_minor": c.minute_net_minor,
+            "pricing": {"currency": currency, "call_net_minor": cost["call_prices"]["answered"],
+                        "call_prices": cost["call_prices"], "minute_net_minor": cost["minute_net_minor"],
+                        "per_contact_max_net_minor": cost["per_contact_net_minor"],
                         "max_attempts": c.max_attempts, "max_connected_seconds": c.max_connected_seconds},
-            "counts": service.counts(db, c), "max_cost": Money(currency, service.max_cost_net_minor(db, c), vat_bp).snapshot(),
+            "counts": service.counts(db, c), "max_cost": Money(currency, cost["net_minor"], vat_bp).snapshot(),
+            # the honest maximum: minutes first use what is left of the shared package now (inbound calls use it too)
+            "max_minutes": cost["minutes"], "package": {"included": cost["package_included"],
+                                                         "remaining": cost["package_remaining"]},
+            "max_cost_with_package": Money(currency, cost["with_package_net_minor"], vat_bp).snapshot(),
             "outbound_problem": service.outbound_problem(db, c), "legal_confirmation": c.legal_confirmation,
             "created_at": c.created_at.isoformat(), "started_at": c.started_at.isoformat() if c.started_at else None,
             "completed_at": c.completed_at.isoformat() if c.completed_at else None}
@@ -91,6 +111,9 @@ def list_campaigns(ctx: WorkspaceContext = Depends(require_capability("campaigns
     currency, call, minute = _pricing(db, ctx.workspace.id)
     return {"items": [campaign_out(db, c, currency) for c in rows],
             "pricing": {"currency": currency, "call_net_minor": call, "minute_net_minor": minute,
+                        "call_prices": _call_prices(db, ctx.workspace.id, currency),
+                        "per_contact_max_net_minor": service.MAX_ATTEMPTS * call
+                        + service.started_minutes(service.MAX_CONNECTED_SECONDS) * minute,
                         "max_attempts": service.MAX_ATTEMPTS, "max_connected_seconds": service.MAX_CONNECTED_SECONDS},
             "legal_checklist": list(service.LEGAL_CHECKLIST)}
 
@@ -177,7 +200,7 @@ def start_campaign(campaign_id: uuid.UUID, body: StartIn, request: Request,
         raise ValidationFailed("Skriv formålet med opkaldet", field_errors=[{"field": "purpose"}])
     if not service.counts(db, c)["by_status"].get("pending"):
         raise ValidationFailed("Tilføj kontakter, der kan ringes op", field_errors=[{"field": "contacts"}])
-    maximum = service.max_cost_net_minor(db, c)
+    maximum = service.max_cost(db, c)["net_minor"]
     if body.accept_max_net_minor < maximum:
         raise Conflict("Prisen er ændret, siden du så den. Genindlæs og bekræft igen.", code="price_changed",
                        extra={"max_net_minor": maximum})
@@ -219,6 +242,12 @@ def import_contacts(campaign_id: uuid.UUID, body: ImportIn, request: Request,
     c = _own(db, campaign_id, ctx.workspace.id)
     if c.status == "completed":
         raise Conflict("Kampagnen er afsluttet", code="campaign_state")
+    if c.status == "running":
+        # The admin confirmed the rules and the maximum for the contacts that were there at the start. New contacts must
+        # not go straight into the dialling queue: pause, add, and start again (start asks for the confirmation again,
+        # with the new total) – F-E2C-03-C12.
+        raise Conflict("Sæt kampagnen på pause, før du tilføjer kontakter. Når du starter igen, bekræfter du det nye antal.",
+                       code="campaign_running")
     out = service.import_contacts(db, c, body.csv, kind=body.kind, consent_source=body.consent_source)
     record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="campaigns.contacts_imported",
                  object_type="campaign", object_id=c.id, after={k: out[k] for k in ("added", "duplicates", "blocked")},

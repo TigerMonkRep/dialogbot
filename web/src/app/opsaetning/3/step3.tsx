@@ -298,10 +298,10 @@ function Chat({ wsId, w, canManage, website }: { wsId: string; w: Webchat; canMa
 /* ---------------------------------------------------------------- Tænd */
 
 export function Step3(props: {
-  wsId: string; canManage: boolean; goals: { inbound_phone: boolean; webchat: boolean; product_intent: string };
-  voices: VoicesData; t: Telephony | null; webchat: Webchat | null; company: string; cvr: string; address: string; phone: string; website: string;
+  wsId: string; canManage: boolean; reader?: boolean; goals: { inbound_phone: boolean; webchat: boolean; product_intent: string };
+  voices: VoicesData | null; t: Telephony | null; webchat: Webchat | null; company: string; cvr: string; address: string; phone: string; website: string;
 }) {
-  const { wsId, canManage, goals, voices, t, webchat, company, cvr, address, phone, website } = props;
+  const { wsId, canManage, reader = false, goals, voices, t, webchat, company, cvr, address, phone, website } = props;
   const router = useRouter();
   const tr = useT("setup.step3");
   const [err, setErr] = useState<string | null>(null);
@@ -316,6 +316,10 @@ export function Step3(props: {
   }
   if (goals.webchat && webchat && !webchat.enabled && !phoneOn) needs.push(tr("needs.turnOnChat"));
   const ready = needs.length === 0;
+  // Nothing to switch on (only «Ringe kunder op», or nothing chosen in trin 1): no «Tænd» and no «Alt er klar» – the
+  // one next action is the first campaign, or choosing something (F-E2B-03-O07).
+  const noChannel = !goals.inbound_phone && !goals.webchat;
+  const outbound = goals.product_intent !== "reception";
   const alreadyOn = phoneOn ? t!.active : Boolean(webchat?.enabled);
 
   const turnOn = useCallback(async () => {
@@ -328,15 +332,27 @@ export function Step3(props: {
 
   return (
     <div className="flex flex-col gap-6">
-      <Voice wsId={wsId} data={voices} canManage={canManage} company={company} />
+      {voices && <Voice wsId={wsId} data={voices} canManage={canManage} company={company} />}
       {phoneOn && <Phone wsId={wsId} t={t!} canManage={canManage} profilePhone={phone} company={company} cvr={cvr} address={address} />}
       {goals.webchat && webchat && <Chat wsId={wsId} w={webchat} canManage={canManage} website={website} />}
-      {!phoneOn && !goals.webchat && <p className="rounded-2xl border-[1.5px] border-dashed border-ink px-4 py-3 text-[14px] text-ink-soft">{tr("noChannels")} <Link href="/opsaetning/1" className="underline font-semibold text-ink">{tr("changeChoice")}</Link></p>}
+      {!goals.inbound_phone && !goals.webchat && <p className="rounded-2xl border-[1.5px] border-dashed border-ink px-4 py-3 text-[14px] text-ink-soft">{tr("noChannels")} <Link href="/opsaetning/1" className="underline font-semibold text-ink">{tr("changeChoice")}</Link></p>}
 
+      {noChannel ? (
       <section className="rounded-[20px] bg-ink text-paper p-5 md:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4" aria-labelledby="taend-h">
         <div>
-          <h2 id="taend-h" className="font-display font-extrabold text-[24px] leading-tight">{alreadyOn ? tr("isOn") : ready ? tr("allReady") : tr("almost")}</h2>
-          <p className="text-[14px] text-line mt-1">{alreadyOn ? tr("pauseNote") : ready ? (phoneOn ? tr("readyPhone") : tr("readyNoPhone")) : tr("missing", { list: needs.join(", ") })}</p>
+          <h2 id="taend-h" className="font-display font-extrabold text-[24px] leading-tight">{outbound ? tr("campaignsTitle") : tr("nothingTitle")}</h2>
+          <p className="text-[14px] text-line mt-1">{outbound ? tr("campaignsText") : tr("nothingText")}</p>
+        </div>
+        {outbound
+          ? <Link href="/app/kampagner" className={`${btn} bg-highlight text-ink min-h-[52px] px-6 text-[16px]`}>{tr("campaignsCta")}</Link>
+          : <Link href="/opsaetning/1" className={`${btn} bg-highlight text-ink min-h-[52px] px-6 text-[16px]`}>{tr("changeChoice")}</Link>}
+      </section>
+      ) : (
+      <section className="rounded-[20px] bg-ink text-paper p-5 md:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4" aria-labelledby="taend-h">
+        <div>
+          {/* A reader cannot see the phone's status (telephony.read is staff+): no «Alt er klar»/«tændt» guesses. */}
+          <h2 id="taend-h" className="font-display font-extrabold text-[24px] leading-tight">{reader ? tr("readerTitle") : alreadyOn ? tr("isOn") : ready ? tr("allReady") : tr("almost")}</h2>
+          {!reader && <p className="text-[14px] text-line mt-1">{alreadyOn ? tr("pauseNote") : ready ? (phoneOn ? tr("readyPhone") : tr("readyNoPhone")) : tr("missing", { list: needs.join(", ") })}</p>}
           {err && <p role="alert" className="text-[14px] text-highlight mt-1">{err}</p>}
         </div>
         {canManage ? (
@@ -344,6 +360,7 @@ export function Step3(props: {
             : <button type="button" onClick={turnOn} disabled={!ready || busy} className={`${btn} bg-highlight text-ink min-h-[52px] px-6 text-[16px]`}><Icon name="power_settings_new" size={20} />{busy ? tr("turningOn") : tr("turnOn")}</button>
         ) : <p className="text-[14px] text-line">{tr("managersOnly")}</p>}
       </section>
+      )}
       {needs.includes(tr("needs.confirmSubscription")) && <p className="text-[14px] text-ink-soft">{tr("subscriptionNote")} <Link href="/app/konto/abonnement" className="underline font-semibold text-ink">{tr("confirmSubscription")}</Link></p>}
       <p className="text-[13px] text-muted">{tr("findAgain")} <SetupLater /></p>
     </div>

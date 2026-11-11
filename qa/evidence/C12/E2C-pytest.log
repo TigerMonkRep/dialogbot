@@ -1,0 +1,342 @@
+.F..F.F.F............FF                                                  [100%]
+=================================== FAILURES ===================================
+_ test_c12_contacts_added_while_running_are_not_dialled_without_new_confirmation _
+
+api = <tests.conftest.Api object at 0x7f8ab6b0d810>
+two_workspaces = {'tok_a': 'WaHIce4m4yBaoprXwX58hx9Z7rCLzkFEVz3UyowthfU', 'ws_a': '65bd551f-12fa-49bb-8d63-ef7171ed16a0', 'tok_b': 'RF0jQxRI-vTtaFLgQs6ja-xTgjdOU6kpHcbiGeTY25M', 'ws_b': 'bbb5486d-784c-40e8-91c3-b3faf627c7e9'}
+db = <sqlalchemy.orm.session.Session object at 0x7f8ab6dcdf40>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8abe77df30>
+dial = [{'phoneNumberId': 'pn_qa_e2c', 'customer': {'number': '+4520304050', 'name': 'Mette Hansen'}, 'assistant': {'firstMes...age': 'da', 'numerals': True, ...}, ...}, 'metadata': {'campaign_contact_id': 'cbd21797-0cff-479e-8bfc-a7bce9ea40e1'}}]
+
+    def test_c12_contacts_added_while_running_are_not_dialled_without_new_confirmation(api, two_workspaces, db, monkeypatch, dial):
+        """F-E2C-02: the admin confirmed the legal checklist and the maximum for ONE contact. Contacts imported while the
+        campaign runs must not be dialled until the admin confirms again (pause + start), otherwise people the admin
+        never confirmed are called (C08 'snapshot selection', DB-008 'paid status does not launch')."""
+        t = two_workspaces
+        tok, ws = t["tok_a"], t["ws_a"]
+        _ready(api, t, monkeypatch)
+        c = _campaign(api, t)
+        _import(api, t, c["id"], "Mette Hansen;20304050")
+        started = _start(api, t, c["id"])
+        confirmed_max = started["legal_confirmation"]["accepted_max_net_minor"]
+        assert service.dispatch(db, NOW) == 1
+        _report(api.c, "qa_e2c_1", "+4520304050", [{"role": "bot", "message": "Hej"}, {"role": "user", "message": "Ja, jeg er interesseret"}])
+        # while running, 3 more contacts are imported (the UI shows «Tilføj kontakter» for running campaigns too)
+        imp = api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts/import",
+                       {"csv": "Ole Berg;21222324\nBo Lund;22334455\nJens Juul;23344556", "kind": "business", "consent_source": CONSENT})
+        now_max = api.get(tok, f"/workspaces/{ws}/campaigns/{c['id']}").json()["max_cost"]["net_minor"]
+        dialled_new = 0
+        for _ in range(3):
+            dialled_new += service.dispatch(db, NOW)
+            if dial:
+                n = dial[-1]["customer"]["number"]
+                if n != "+4520304050":
+                    _report(api.c, f"qa_e2c_{len(dial)}", n, [{"role": "bot", "message": "Hej"}, {"role": "user", "message": "Måske"}])
+>       assert imp.status_code == 409 or dialled_new == 0, (
+            f"{dialled_new} new contacts were dialled although the admin only confirmed 1 contact "
+            f"(confirmed max {confirmed_max}, max for the remaining contacts now {now_max}); import status {imp.status_code}")
+E       AssertionError: 3 new contacts were dialled although the admin only confirmed 1 contact (confirmed max 2000, max for the remaining contacts now 6000); import status 200
+E       assert (200 == 409 or 3 == 0)
+E        +  where 200 = <Response [200 OK]>.status_code
+
+tests/qa/test_qa_e2c_campaigns.py:136: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+______________ test_c05_invalid_row_number_matches_the_file_line _______________
+
+api = <tests.conftest.Api object at 0x7f8ab6d8d940>
+two_workspaces = {'tok_a': 'McKDg-iHZ601NNUmM2r_clDewaCovcpXzo1EFGGNfNE', 'ws_a': '2eac55f3-8738-4456-a0e8-84e4230e0937', 'tok_b': 'tQvfeWTpN9wn4LTk0vk9bOWJ4FnWmZsUznKBw3mKPfg', 'ws_b': '3fb5e2f3-e3ff-4b7f-9a90-04f5b7cacfd1'}
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8ab6d3a470>
+
+    def test_c05_invalid_row_number_matches_the_file_line(api, two_workspaces, monkeypatch):
+        """F-E2C-06: «ugyldige numre (fx række N)» – N must be the row the user sees in Excel/the file. With a header
+        row, the invalid number on file line 3 is reported as «række 2» (the header is not counted); without a header
+        the same data on line 3 is «række 3». The UI cannot tell the user which one it means."""
+        t = two_workspaces
+        _ready(api, t, monkeypatch)
+        c = _campaign(api, t)
+        with_header = _import(api, t, c["id"], "Navn;Telefon\nMette Hansen;20304050\nForkert;123\n")
+        # file line 3 holds "123"
+>       assert with_header["invalid"][0]["row"] == 3, with_header["invalid"]
+E       AssertionError: [{'row': 2, 'value': '123', 'reason': 'Ugyldigt telefonnummer'}]
+E       assert 2 == 3
+
+tests/qa/test_qa_e2c_campaigns.py:201: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+___________ test_c07_unknown_script_variable_is_rejected_not_spoken ____________
+
+api = <tests.conftest.Api object at 0x7f8abca048d0>
+two_workspaces = {'tok_a': 'GCpEwRebCrtB4frvyu5Y9WnO_ZSDna1SQmOr1g7cN2k', 'ws_a': 'a17fef98-e423-44d8-8ffd-beed05f1f2e2', 'tok_b': 'Cz3S0Y9ptbs3SxnPgitzFitlNo7D6_B7IyeraSdR2v4', 'ws_b': '44446a0a-ae7b-47f3-b2d4-ce266bfeed7a'}
+db = <sqlalchemy.orm.session.Session object at 0x7f8ab6b95400>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8abcaa1d50>
+dial = [{'phoneNumberId': 'pn_qa_e2c', 'customer': {'number': '+4520304050', 'name': 'Mette Hansen'}, 'assistant': {'firstMes...age': 'da', 'numerals': True, ...}, ...}, 'metadata': {'campaign_contact_id': 'e0c89a13-61e1-40ef-9786-4eaf23f78863'}}]
+
+    def test_c07_unknown_script_variable_is_rejected_not_spoken(api, two_workspaces, db, monkeypatch, dial):
+        """F-E2C-03: «{fornavn}» (or a typo like «{Navn}») is not a known variable. It must be refused when saving (or at
+        least before start), never read aloud as «krøllet parentes fornavn» to a customer."""
+        t = two_workspaces
+        tok, ws = t["tok_a"], t["ws_a"]
+        _ready(api, t, monkeypatch)
+        c = _campaign(api, t)
+        r = api.put(tok, f"/workspaces/{ws}/campaigns/{c['id']}",
+                    {"name": c["name"], "purpose": c["purpose"], "opening": "Hej {fornavn}, det er den digitale assistent fra {firma}.",
+                     "phone_number_id": c["phone_number_id"], "call_days": list(service.DAYS), "call_from": "00:00", "call_to": "23:59",
+                     "expected_version": c["version"]})
+        if r.status_code == 422:
+            return  # refused at save: fine
+        _import(api, t, c["id"], "Mette Hansen;20304050")
+        _start(api, t, c["id"])
+        assert service.dispatch(db, NOW) == 1
+        first = dial[0]["assistant"]["firstMessage"]
+>       assert "{" not in first, f"spoken to the customer: {first!r}"
+E       AssertionError: spoken to the customer: 'Hej {fornavn}, det er den digitale assistent fra {firma}. Du taler med en digital assistent fra Fjord Gulvservice ApS.'
+E       assert '{' not in 'Hej {fornav...service ApS.'
+E         
+E         '{' is contained here:
+E           Hej {fornavn}, det er den digitale assistent fra {firma}. Du taler med en digital assistent fra Fjord Gulvservice ApS.
+E         ?     +
+
+tests/qa/test_qa_e2c_campaigns.py:235: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+______________ test_c14_nej_tak_is_never_called_again_as_promised ______________
+
+api = <tests.conftest.Api object at 0x7f8abcaa1b50>
+two_workspaces = {'tok_a': 'lhDiJSAk11hDpolF7r_fREOQD3SFEhOyGc-Ox8cz82w', 'ws_a': 'da863b5b-7905-4fb3-a652-933bc8ad7488', 'tok_b': 'ZCi9JoAyynVGw1T6HctuFh_TWBlUdYGMccHRSflSGIg', 'ws_b': '179b2048-e916-4ae3-a4db-8640afaa176c'}
+db = <sqlalchemy.orm.session.Session object at 0x7f8ab6b4be30>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8ab6b4ab70>
+dial = [{'phoneNumberId': 'pn_qa_e2c', 'customer': {'number': '+4520304050', 'name': 'Mette Hansen'}, 'assistant': {'firstMes...age': 'da', 'numerals': True, ...}, ...}, 'metadata': {'campaign_contact_id': '5eb31ffa-1345-402c-bb73-61f60f51e0fb'}}]
+
+    def test_c14_nej_tak_is_never_called_again_as_promised(api, two_workspaces, db, monkeypatch, dial):
+        """F-E2C-01: the campaign prompt tells the assistant: «Hvis personen siger nej eller ikke vil ringes op igen, så
+        ... bekræft at de ikke bliver ringet op igen» (campaigns/service.py:247) and the editor tells the owner «Siger de
+        nej, kommer de på spærrelisten» (da/app.json campaigns.editor.whenSub). A plain «Nej tak» (outcome
+        not_interested) must therefore suppress future calls. It does not: the number can be imported and dialled in the
+        next campaign."""
+        t = two_workspaces
+        tok, ws = t["tok_a"], t["ws_a"]
+        _ready(api, t, monkeypatch)
+        prompt_rule = "Hvis personen siger nej eller ikke vil ringes op igen"
+        a = _campaign(api, t, name="Forår")
+        _import(api, t, a["id"], "Mette Hansen;20304050")
+        _start(api, t, a["id"])
+        assert service.dispatch(db, NOW) == 1
+        assert prompt_rule in dial[0]["assistant"]["model"]["messages"][0]["content"]
+        _report(api.c, "qa_e2c_1", "+4520304050", [{"role": "bot", "message": "Hej Mette"}, {"role": "user", "message": "Nej tak."}])
+        mette = api.get(tok, f"/workspaces/{ws}/campaigns/{a['id']}/contacts").json()["items"][0]
+        assert mette["outcome"] == "not_interested"
+        b = _campaign(api, t, name="Efterår")
+        imp = _import(api, t, b["id"], "Mette Hansen;20304050")
+        on_list = db.query(DoNotCall).filter_by(workspace_id=uuid.UUID(ws), phone="+4520304050").count()
+>       assert on_list == 1 and imp["added"] == 0, (
+            f"Mette said «Nej tak» and was told she will not be called again; on do-not-call list: {on_list}, "
+            f"added to the next campaign: {imp['added']}")
+E       AssertionError: Mette said «Nej tak» and was told she will not be called again; on do-not-call list: 0, added to the next campaign: 1
+E       assert (0 == 1)
+
+tests/qa/test_qa_e2c_campaigns.py:280: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+____________________ test_k04_discount_percent_is_validated ____________________
+
+api = <tests.conftest.Api object at 0x7f8abcac04d0>
+two_workspaces = {'tok_a': 'HftllDNsEmAlzYdVD91h1Mc0ZkFEhmqF_dNzd_xasc4', 'ws_a': '38ba8db0-db7b-42ca-915e-5bd1a70b2eca', 'tok_b': 'hMhtkYPcLrHzcDyDZirWAbnqAWD7SO0dAWc_cAXsjyg', 'ws_b': '65ab22d8-32fb-4383-abae-1ae84161b567'}
+
+    def test_k04_discount_percent_is_validated(api, two_workspaces):
+        """F-E2C-05: validate_content checks operator, threshold and dates but not the discount. An approved offer with
+        150 % or -10 % reaches the assistant (the UI field has min=1 max=100, the API does not)."""
+        t = two_workspaces
+        tok, ws = t["tok_a"], t["ws_a"]
+        results = {}
+        for pct in (150, -10, "femten"):
+            r = api.post(tok, f"/workspaces/{ws}/knowledge/items", {"kind": "offer", "title": f"x{pct}", "content": OFFER | {"discount_percent": pct}})
+            results[pct] = r.status_code
+>       assert all(s == 422 for s in results.values()), results
+E       AssertionError: {150: 201, -10: 201, 'femten': 201}
+E       assert False
+E        +  where False = all(<generator object test_k04_discount_percent_is_validated.<locals>.<genexpr> at 0x7f8abc978450>)
+
+tests/qa/test_qa_e2c_k04.py:74: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+_____________ test_k04_expired_offer_is_not_given_to_the_assistant _____________
+
+api = <tests.conftest.Api object at 0x7f8ab6be1d50>
+two_workspaces = {'tok_a': '-4EAUcHS6vLJObNo1FkSVUbqgqNtjwNDVCiwvk7-kNg', 'ws_a': '8f295792-79b1-4b22-921e-49ee712d0cd0', 'tok_b': 'vabEKHBfm6BCrXUrPPSybMNceUWrXWaL_sE9y46rv_g', 'ws_b': '669c74ba-a56d-4e93-9d71-598d13dcba4b'}
+db = <sqlalchemy.orm.session.Session object at 0x7f8ab6dcfb60>
+
+    def test_k04_expired_offer_is_not_given_to_the_assistant(api, two_workspaces, db):
+        """F-E2C-04: DB-005 "1 Dec expired; same condition in editor and assistant answer". An offer whose
+        ends_on_inclusive has passed stays in <godkendt_viden> as raw JSON, and the prompt contains no today's date, so
+        the assistant cannot know the offer has expired and may promise the discount."""
+        t = two_workspaces
+        tok, ws = t["tok_a"], t["ws_a"]
+        yesterday = (date.today() - timedelta(days=1)).isoformat()
+        _approved_offer(api, tok, ws, OFFER | {"starts_on": "2026-01-01", "ends_on_inclusive": yesterday}, title="Udløbet sommerrabat")
+        _approved_offer(api, tok, ws, title="Aktiv rabat") if date.today() <= date(2026, 11, 30) else None
+        prompt, _ = build_system_prompt(db, db.get(Workspace, __import__("uuid").UUID(ws)))
+        has_today = date.today().isoformat() in prompt or date.today().strftime("%d.%m.%Y") in prompt
+>       assert "Udløbet sommerrabat" not in prompt or has_today, (
+            "expired offer is in the assistant's approved knowledge and the prompt has no current date")
+E       AssertionError: expired offer is in the assistant's approved knowledge and the prompt has no current date
+E       assert ('Udløbet sommerrabat' not in 'Du er den d...kendt_viden>'
+E         
+E         'Udløbet sommerrabat' is contained here:
+E           }
+E           offer · Udløbet sommerrabat: {"condition":{"area_operator":"gte","area_threshold_m2":40},"starts_on":"2026-01-01","discount_percent":15,"ends_on_inclusive":"2026-11-09"}
+E         ?         +++++++++++++++++++
+E           </godkendt_viden> or False)
+
+tests/qa/test_qa_e2c_k04.py:88: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+==================================== PASSES ====================================
+__________________ test_c02_draft_never_dials_and_role_rules ___________________
+---------------------------- Captured stdout setup -----------------------------
+---------------------------- Captured stderr setup -----------------------------
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 94af55693109, stage1 foundation
+INFO  [alembic.runtime.migration] Running upgrade 94af55693109 -> 773ead23336e, resend webhook events and provider delivery status
+INFO  [alembic.runtime.migration] Running upgrade 773ead23336e -> 43c189532412, ai usage log
+INFO  [alembic.runtime.migration] Running upgrade 43c189532412 -> c432350c7efd, waitlist signups
+INFO  [alembic.runtime.migration] Running upgrade c432350c7efd -> 501a6eb0eaeb, webchat conversations
+INFO  [alembic.runtime.migration] Running upgrade 501a6eb0eaeb -> 477adf47202c, leads tasks agreements
+INFO  [alembic.runtime.migration] Running upgrade 477adf47202c -> 5a2d1bff4ed7, daily reports
+INFO  [alembic.runtime.migration] Running upgrade 5a2d1bff4ed7 -> 46c794fe9e35, phone numbers and calls
+INFO  [alembic.runtime.migration] Running upgrade 46c794fe9e35 -> 19a35ecb7df3, conversation mode and staff author
+INFO  [alembic.runtime.migration] Running upgrade 19a35ecb7df3 -> c89e73f71c6d, lead callback window
+INFO  [alembic.runtime.migration] Running upgrade c89e73f71c6d -> 24414f5bd46b, phone number voice settings
+INFO  [alembic.runtime.migration] Running upgrade 24414f5bd46b -> f4681fd5e00d, source imports
+INFO  [alembic.runtime.migration] Running upgrade f4681fd5e00d -> c9febc48ca3b, source import profile suggestion
+INFO  [alembic.runtime.migration] Running upgrade c9febc48ca3b -> 299f641c5b3f, reception script
+INFO  [alembic.runtime.migration] Running upgrade 299f641c5b3f -> 5c59c508ecf8, notification reads
+INFO  [alembic.runtime.migration] Running upgrade 5c59c508ecf8 -> 06fa18c2fcfa, bookings
+INFO  [alembic.runtime.migration] Running upgrade 06fa18c2fcfa -> f8c8153ccbb0, campaigns
+INFO  [alembic.runtime.migration] Running upgrade f8c8153ccbb0 -> 7769c9d94fe1, billing_stripe
+INFO  [alembic.runtime.migration] Running upgrade 7769c9d94fe1 -> a8a4f6f5ffaf, voice_library
+INFO  [alembic.runtime.migration] Running upgrade a8a4f6f5ffaf -> 527c5e36aced, voice designed and origin, own voice recordings
+INFO  [alembic.runtime.migration] Running upgrade 527c5e36aced -> e668ed509035, platform managed telephony
+INFO  [alembic.runtime.migration] Running upgrade e668ed509035 -> 94e8251b64e2, demo calls
+INFO  [alembic.runtime.migration] Running upgrade 94e8251b64e2 -> 6abbbb75fde5, integration connections, oauth states, action runs
+INFO  [alembic.runtime.migration] Running upgrade 6abbbb75fde5 -> 3c1d29602dcc, ambassador programme
+INFO  [alembic.runtime.migration] Running upgrade 3c1d29602dcc -> bcc6a80d2f06, standard voice per workspace
+INFO  [alembic.runtime.migration] Running upgrade bcc6a80d2f06 -> a7d3c1e9b2f4, demo calls: chosen voice and industry
+INFO  [alembic.runtime.migration] Running upgrade a7d3c1e9b2f4 -> b3e8f0a4c6d2, demo calls: the visitor's own industry text
+INFO  [alembic.runtime.migration] Running upgrade b3e8f0a4c6d2 -> 6f6d583caceb, social media posts
+INFO  [alembic.runtime.migration] Running upgrade 6f6d583caceb -> 3da6b0abc2dc, social account snapshots and post metrics
+INFO  [alembic.runtime.migration] Running upgrade 3da6b0abc2dc -> 793d6de4d9bb, social prospects
+INFO  [alembic.runtime.migration] Running upgrade 793d6de4d9bb -> 2944b6976e59, social posts extra flag
+INFO  [alembic.runtime.migration] Running upgrade 2944b6976e59 -> 1e8e65047603, campaign calls priced per call
+INFO  [alembic.runtime.migration] Running upgrade 1e8e65047603 -> 64a2ddcb9a74, social post design version and reminder
+INFO  [alembic.runtime.migration] Running upgrade 64a2ddcb9a74 -> 5b7e1c9a3d42, session impersonator for read only view as
+INFO  [alembic.runtime.migration] Running upgrade 5b7e1c9a3d42 -> 7c4e9b1a5d30, assistant proposals
+INFO  [alembic.runtime.migration] Running upgrade 7c4e9b1a5d30 -> a1b2c3d4e5f6, site documents
+INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> b7d2e4f6a8c0, campaign calls priced per call plus started minute
+INFO  [alembic.runtime.migration] Running upgrade b7d2e4f6a8c0 -> b3c5d7e9f1a2, sales channel phase 1
+INFO  [alembic.runtime.migration] Running upgrade b3c5d7e9f1a2 -> c4d6e8f0a2b4, sales channel phase 2
+INFO  [alembic.runtime.migration] Running upgrade c4d6e8f0a2b4 -> d5e7f9a1b3c6, sales channel phase 3
+INFO  [alembic.runtime.migration] Running upgrade d5e7f9a1b3c6 -> e6f8a0b2c4d7, sales channel phase 4
+INFO  [alembic.runtime.migration] Running upgrade e6f8a0b2c4d7 -> a7c3e9d1f5b2, stemmetest runs
+INFO  [alembic.runtime.migration] Running upgrade a7c3e9d1f5b2 -> b8d4f0a2c6e1, calls.recording_url: the provider's recording of the call (Vapi end-of-call report)
+INFO  [alembic.runtime.migration] Running upgrade b8d4f0a2c6e1 -> c3e5a7f9b1d4, assistant requests («ønsker»)
+INFO  [alembic.runtime.migration] Running upgrade c3e5a7f9b1d4 -> d4f6b8a0c2e7, dialogbot privat
+INFO  [alembic.runtime.migration] Running upgrade d4f6b8a0c2e7 -> e7c9a1b3d5f2, privat: lookup rate limits, business search, opening-hours scheduling, web push
+INFO  [alembic.runtime.migration] Running upgrade e7c9a1b3d5f2 -> e5a7c9d1b3f6, privat subscriptions
+INFO  [alembic.runtime.migration] Running upgrade e5a7c9d1b3f6 -> f1a2b3c4d5e6, quiz-funnel drafts
+INFO  [alembic.runtime.migration] Running upgrade f1a2b3c4d5e6 -> a3d7e1f9c2b4, discount codes
+INFO  [alembic.runtime.migration] Running upgrade a3d7e1f9c2b4 -> b4e8f2a6c1d3, privat: the trial starts at Stripe with a card; accounts begin without rights
+INFO  [alembic.runtime.migration] Running upgrade b4e8f2a6c1d3 -> b7c1d4e8f2a3, browser runs and booking profiles
+INFO  [alembic.runtime.migration] Running upgrade b7c1d4e8f2a3 -> c2d6e9f1a4b8, chat message kind booking_proposal
+INFO  [alembic.runtime.migration] Running upgrade c2d6e9f1a4b8 -> d3e7a2b5c9f1, external business contacts
+INFO  [alembic.runtime.migration] Running upgrade d3e7a2b5c9f1 -> e4f8b1c6d2a9, lead pitch
+INFO  [alembic.runtime.migration] Running upgrade e4f8b1c6d2a9 -> f5a9c2d7e3b1, private appointments
+INFO  [alembic.runtime.migration] Running upgrade f5a9c2d7e3b1 -> a7c3e9f2b4d6, private birthdays
+INFO  [alembic.runtime.migration] Running upgrade a7c3e9f2b4d6 -> b8d4f1a6c2e7, private bills
+INFO  [alembic.runtime.migration] Running upgrade b8d4f1a6c2e7 -> c9e5a2b7d3f8, private app data
+INFO  [alembic.runtime.migration] Running upgrade c9e5a2b7d3f8 -> d1f6b3a8e4c9, private business referrals and assistant name
+INFO  [alembic.runtime.migration] Running upgrade d1f6b3a8e4c9 -> e2a7c4d9f1b3, assistant pronoun
+INFO  [alembic.runtime.migration] Running upgrade e2a7c4d9f1b3 -> f3a9c1d5e7b2, public api: api keys, webhook endpoints, push subscription audience
+INFO  [alembic.runtime.migration] Running upgrade f3a9c1d5e7b2 -> c7d2e9a4b1f6, markets: the company's VAT number, the Privat subscription's currency, the invoice's tax source
+INFO  [alembic.runtime.migration] Running upgrade c7d2e9a4b1f6 -> d8e4a1c6f2b9, wishes: product details on wishlist items, group gifts («Deles om en gave») and a design per wishlist
+INFO  [alembic.runtime.migration] Running upgrade d8e4a1c6f2b9 -> e3b7c9d1a5f4, privat apps: per-app state for «Mine apps» (setup progress, switched off with data kept, «Giv mig besked»)
+INFO  [alembic.runtime.migration] Running upgrade e3b7c9d1a5f4 -> a7c3e9f1b2d4, telephony: customers choose per number whether calls are recorded, and for how long the audio is kept
+INFO  [alembic.runtime.migration] Running upgrade a7c3e9f1b2d4 -> b4d8e2f6a1c3, bookings: honest calendar sync state for bookings mirrored to a connected Google/Microsoft calendar
+INFO  [alembic.runtime.migration] Running upgrade b4d8e2f6a1c3 -> c5e9f3a7b2d4, billing: remember the refunds and credit notes seen per invoice, so commission is reduced by the delta once
+INFO  [alembic.runtime.migration] Running upgrade c5e9f3a7b2d4 -> d6f1a4b8c3e5, identity: «Se som kunde» sessions are scoped to one workspace and die with the operator
+INFO  [alembic.runtime.migration] Running upgrade d6f1a4b8c3e5 -> e7a2c5d9f1b3, bookings: «afventer bekræftelse» when the connected calendar's busy time could not be read
+INFO  [alembic.runtime.migration] Running upgrade e7a2c5d9f1b3 -> f3b8d1e6a4c2, reception_agreements: snapshot of the package (included inbound minutes + inbound overage price)
+----------------------------- Captured stdout call -----------------------------
+________ test_c12_pause_stops_dialling_and_resume_requires_confirmation ________
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+__________________ test_c05_validation_counts_and_suppression __________________
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+________ test_c06_opening_always_discloses_ai_and_fills_known_variables ________
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+________________ test_c14_opt_out_suppresses_in_every_campaign _________________
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+________________ test_c13_results_follow_up_lead_and_completion ________________
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+____ test_k04_eligibility_rule_gte_40_inclusive_dates[39-2026-11-10-False] _____
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+___ test_k04_eligibility_rule_gte_40_inclusive_dates[39.99-2026-11-10-False] ___
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+_____ test_k04_eligibility_rule_gte_40_inclusive_dates[40-2026-11-10-True] _____
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+_____ test_k04_eligibility_rule_gte_40_inclusive_dates[41-2026-11-10-True] _____
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+_____ test_k04_eligibility_rule_gte_40_inclusive_dates[40-2026-10-01-True] _____
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+_____ test_k04_eligibility_rule_gte_40_inclusive_dates[40-2026-11-30-True] _____
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+____ test_k04_eligibility_rule_gte_40_inclusive_dates[40-2026-12-01-False] _____
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+____ test_k04_eligibility_rule_gte_40_inclusive_dates[40-2026-09-30-False] _____
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+___ test_k04_eligibility_rule_gte_40_inclusive_dates[None-2026-11-10-False] ____
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+_________ test_k04_draft_is_never_evaluated_or_given_to_the_assistant __________
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+_________ test_k04_validation_rejects_inverted_dates_and_bad_operator __________
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+=========================== short test summary info ============================
+PASSED tests/qa/test_qa_e2c_campaigns.py::test_c02_draft_never_dials_and_role_rules
+PASSED tests/qa/test_qa_e2c_campaigns.py::test_c12_pause_stops_dialling_and_resume_requires_confirmation
+PASSED tests/qa/test_qa_e2c_campaigns.py::test_c05_validation_counts_and_suppression
+PASSED tests/qa/test_qa_e2c_campaigns.py::test_c06_opening_always_discloses_ai_and_fills_known_variables
+PASSED tests/qa/test_qa_e2c_campaigns.py::test_c14_opt_out_suppresses_in_every_campaign
+PASSED tests/qa/test_qa_e2c_campaigns.py::test_c13_results_follow_up_lead_and_completion
+PASSED tests/qa/test_qa_e2c_k04.py::test_k04_eligibility_rule_gte_40_inclusive_dates[39-2026-11-10-False]
+PASSED tests/qa/test_qa_e2c_k04.py::test_k04_eligibility_rule_gte_40_inclusive_dates[39.99-2026-11-10-False]
+PASSED tests/qa/test_qa_e2c_k04.py::test_k04_eligibility_rule_gte_40_inclusive_dates[40-2026-11-10-True]
+PASSED tests/qa/test_qa_e2c_k04.py::test_k04_eligibility_rule_gte_40_inclusive_dates[41-2026-11-10-True]
+PASSED tests/qa/test_qa_e2c_k04.py::test_k04_eligibility_rule_gte_40_inclusive_dates[40-2026-10-01-True]
+PASSED tests/qa/test_qa_e2c_k04.py::test_k04_eligibility_rule_gte_40_inclusive_dates[40-2026-11-30-True]
+PASSED tests/qa/test_qa_e2c_k04.py::test_k04_eligibility_rule_gte_40_inclusive_dates[40-2026-12-01-False]
+PASSED tests/qa/test_qa_e2c_k04.py::test_k04_eligibility_rule_gte_40_inclusive_dates[40-2026-09-30-False]
+PASSED tests/qa/test_qa_e2c_k04.py::test_k04_eligibility_rule_gte_40_inclusive_dates[None-2026-11-10-False]
+PASSED tests/qa/test_qa_e2c_k04.py::test_k04_draft_is_never_evaluated_or_given_to_the_assistant
+PASSED tests/qa/test_qa_e2c_k04.py::test_k04_validation_rejects_inverted_dates_and_bad_operator
+FAILED tests/qa/test_qa_e2c_campaigns.py::test_c12_contacts_added_while_running_are_not_dialled_without_new_confirmation
+FAILED tests/qa/test_qa_e2c_campaigns.py::test_c05_invalid_row_number_matches_the_file_line
+FAILED tests/qa/test_qa_e2c_campaigns.py::test_c07_unknown_script_variable_is_rejected_not_spoken
+FAILED tests/qa/test_qa_e2c_campaigns.py::test_c14_nej_tak_is_never_called_again_as_promised
+FAILED tests/qa/test_qa_e2c_k04.py::test_k04_discount_percent_is_validated - ...
+FAILED tests/qa/test_qa_e2c_k04.py::test_k04_expired_offer_is_not_given_to_the_assistant

@@ -40,8 +40,8 @@ export default async function KnowledgePage() {
           <h2 className="font-display font-bold text-[18px]">Prisliste ({k.prices.terms_version})</h2>
           <ul className="flex flex-col gap-1 mt-1">
             <li>Abonnement: {kr(k.prices.monthly_net_minor)} om måneden ekskl. moms, uden binding</li>
-            <li>Indgående opkald: {k.prices.inbound_included_minutes} minutter om måneden er med, derefter {kr(k.prices.inbound_extra_minute_net_minor)} pr. påbegyndt minut ekskl. moms</li>
-            <li>Udgående kampagneopkald: {kr(k.prices.campaign_call_net_minor)} pr. opkald + {kr(k.prices.campaign_minute_net_minor)} pr. påbegyndt samtaleminut ekskl. moms</li>
+            <li>Minutpakke: {k.prices.inbound_included_minutes} minutter om måneden til indgående og udgående opkald tilsammen</li>
+            <li>Derefter {kr(k.prices.inbound_extra_minute_net_minor)} pr. påbegyndt minut ind og {kr(k.prices.campaign_minute_net_minor)} pr. påbegyndt minut ud ekskl. moms – ingen pris pr. opkald</li>
             <li>Specialist-opsætning: {kr(k.prices.specialist_setup_net_minor)} én gang ekskl. moms (gør-det-selv er med i abonnementet)</li>
             <li>Moms: {k.prices.tax_basis_points / 100} %</li>
           </ul>

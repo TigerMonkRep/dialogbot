@@ -2,7 +2,7 @@
   "prices": {
     "monthly": "{pMonthly}",
     "setup": "{pSetup}",
-    "perCall": "{pCall}"
+    "perCall": "{pCallAnswered}"
   },
   "demoCall": {
     "label": "Call · Carpentry firm (example)",
@@ -84,7 +84,7 @@
         },
         {
           "title": "Calls customers",
-          "text": "Follows up on quotes or sends service reminders – only to customers who have said yes. {pCall} per call + {pMinute} per minute."
+          "text": "Follows up on quotes or sends service reminders – only to customers who have said yes. The minutes come out of the package; then {pCallAnswered} per answered call + {pMinute} per minute."
         }
       ],
       "note": "Everything it says is based on knowledge you have approved – and it shows you every change first: before → after, “Approve?”."
@@ -107,22 +107,22 @@
         "name": "Subscription",
         "badge": "Recommended",
         "unit": "/month",
-        "text": "The full price: phone, booking and web chat included – with 300 minutes of incoming calls a month. No lock-in. Do-it-yourself setup included.",
+        "text": "The full price: phone, booking and web chat included – with 300 minutes for inbound and outbound calls a month. No lock-in. Do-it-yourself setup included.",
         "compare": "The price of a call-answering service – but a receptionist that also books appointments in your calendar.",
         "cta": "Choose this – hear it first",
         "points": [
           "Phone, booking and web chat – all included",
-          "300 minutes of incoming calls a month",
+          "{pIncluded} minutes a month – incoming and outgoing calls",
           "No lock-in – cancel month to month"
         ]
       },
       "campaign": {
         "name": "Outbound campaign calls",
-        "unit": "per call + {pMinute} per minute",
-        "text": "Only if you want Dialogbot to make calls. Unanswered: {pCall}. A three-minute conversation: {pCall3Min}. You see the maximum price before you start.",
+        "unit": "per answered call + {pMinute}/min after the package",
+        "text": "Only if you want Dialogbot to make calls. The minutes come out of the subscription's {pIncluded} minutes with no charge per call. Once the package is used, a call costs {pCallAnswered} (answered), {pCallVoicemail} (voicemail) or {pCallNoAnswer} (unanswered) plus {pMinute} per minute – at most {pContactMax} per contact. You see the maximum price before you start.",
         "badge": "Add-on",
         "points": [
-          "Pay per call only – no extra subscription",
+          "No charge per call inside the package – no extra subscription",
           "You approve the script before it calls anyone",
           "The maximum price is shown before the campaign starts"
         ],
@@ -175,11 +175,11 @@
       "appDescription": "Dialogbot is an AI receptionist from Denmark that answers the phone and the chat for your business around the clock – replying from your own knowledge, booking appointments and collecting enquiries. We guide you through the whole setup.",
       "subscription": {
         "name": "Subscription",
-        "description": "Per month excl. VAT, including 300 minutes of incoming calls. No lock-in."
+        "description": "Per month excl. VAT, including {pIncluded} minutes for incoming and outgoing calls. No lock-in."
       },
       "campaign": {
         "name": "Outbound campaign calls",
-        "description": "Per outbound call excl. VAT, plus {pMinute} per started minute of conversation"
+        "description": "Per answered outbound call after the subscription's {pIncluded} minutes, excl. VAT, plus {pMinute} per started minute (voicemail {pCallVoicemail}, unanswered {pCallNoAnswer})."
       },
       "setup": {
         "name": "Setup by Dialogbot's specialists",
@@ -362,7 +362,7 @@
       },
       "campaign": {
         "name": "Outbound campaign calls",
-        "unit": "per outbound call",
+        "unit": "per answered call after the package",
         "points": [
           "Only if you want Dialogbot to make calls",
           "Contacts have agreed to be called",
@@ -798,7 +798,8 @@
         "startOver": "Start over",
         "notLoggedIn": "Log in to see how the call went.",
         "login": "Log in",
-        "statusAria": "Call status"
+        "statusAria": "Call status",
+        "noCallTitle": "She isn't calling right now"
       }
     }
   }

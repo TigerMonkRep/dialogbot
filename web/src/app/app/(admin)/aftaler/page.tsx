@@ -91,6 +91,7 @@ export default async function AftalerPage({ searchParams }: { searchParams: Prom
                 {cal.status === "error" ? t("bookings.calendar.linkedError", { name: calName, error: cal.error ?? "–" }) : t("bookings.calendar.linked", { name: calName })}
               </p>
               {cal.sync_failed > 0 && <p role="status" className="text-[14px] font-semibold text-danger">{t("bookings.calendar.syncFailedN", { n: cal.sync_failed })}</p>}
+              {cal.pending_confirmation > 0 && <p role="status" className="text-[14px] font-semibold text-ink">{t("bookings.calendar.pendingN", { n: cal.pending_confirmation })}</p>}
             </>
           ) : (
             <>

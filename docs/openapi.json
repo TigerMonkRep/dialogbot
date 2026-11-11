@@ -1276,6 +1276,17 @@
         "title": "CompanyIn",
         "type": "object"
       },
+      "ConfirmIn": {
+        "properties": {
+          "override_conflict": {
+            "default": false,
+            "title": "Override Conflict",
+            "type": "boolean"
+          }
+        },
+        "title": "ConfirmIn",
+        "type": "object"
+      },
       "ConnectIn": {
         "properties": {
           "config": {
@@ -1476,24 +1487,6 @@
           }
         },
         "title": "DecideIn",
-        "type": "object"
-      },
-      "DecisionIn": {
-        "properties": {
-          "reason": {
-            "anyOf": [
-              {
-                "maxLength": 500,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Reason"
-          }
-        },
-        "title": "DecisionIn",
         "type": "object"
       },
       "DesignBody": {
@@ -1863,6 +1856,33 @@
           }
         },
         "title": "DiscoverIn",
+        "type": "object"
+      },
+      "DisputeIn": {
+        "properties": {
+          "call_id": {
+            "format": "uuid",
+            "title": "Call Id",
+            "type": "string"
+          },
+          "kind": {
+            "pattern": "^(inbound|outbound)$",
+            "title": "Kind",
+            "type": "string"
+          },
+          "reason": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "call_id",
+          "reason"
+        ],
+        "title": "DisputeIn",
         "type": "object"
       },
       "DncIn": {
@@ -6511,6 +6531,26 @@
         "title": "CodeIn",
         "type": "object"
       },
+      "app__modules__billing__operator_router__DecisionIn": {
+        "properties": {
+          "decision": {
+            "pattern": "^(approve|reject)$",
+            "title": "Decision",
+            "type": "string"
+          },
+          "note": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "Note",
+            "type": "string"
+          }
+        },
+        "required": [
+          "decision"
+        ],
+        "title": "DecisionIn",
+        "type": "object"
+      },
       "app__modules__bookings__router__SettingsIn": {
         "properties": {
           "buffer_minutes": {
@@ -6762,6 +6802,24 @@
           }
         },
         "title": "ImportIn",
+        "type": "object"
+      },
+      "app__modules__leads__router__DecisionIn": {
+        "properties": {
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "title": "DecisionIn",
         "type": "object"
       },
       "app__modules__privat__router__MessageIn": {
@@ -9331,6 +9389,66 @@
         ]
       }
     },
+    "/api/v1/operator/admin/billing": {
+      "get": {
+        "description": "Every business customer: agreement (package snapshot), this month's usage, last invoices and open complaints.",
+        "operationId": "billing_overview_api_v1_operator_admin_billing_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Billing Overview",
+        "tags": [
+          "admin-operator"
+        ]
+      }
+    },
     "/api/v1/operator/admin/customers": {
       "get": {
         "operationId": "customers_api_v1_operator_admin_customers_get",
@@ -9458,6 +9576,139 @@
         ]
       }
     },
+    "/api/v1/operator/admin/disputes": {
+      "get": {
+        "operationId": "list_disputes_api_v1_operator_admin_disputes_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "pattern": "^(open|approved|rejected|all)$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "open",
+              "title": "Status"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Disputes",
+        "tags": [
+          "admin-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/admin/disputes/{dispute_id}/decision": {
+      "post": {
+        "description": "Approve (minutes back in the package, or a credit on the next invoice when the month is invoiced) or reject.",
+        "operationId": "decide_dispute_api_v1_operator_admin_disputes__dispute_id__decision_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dispute_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Dispute Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__billing__operator_router__DecisionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Decide Dispute",
+        "tags": [
+          "admin-operator"
+        ]
+      }
+    },
     "/api/v1/operator/admin/operations": {
       "get": {
         "operationId": "operations_api_v1_operator_admin_operations_get",
@@ -9548,6 +9799,54 @@
           }
         },
         "summary": "Overview",
+        "tags": [
+          "admin-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/admin/prices": {
+      "get": {
+        "description": "The list prices per market (read-only; a price changes in app/modules/billing/prices.py / markets.py).",
+        "operationId": "list_prices_api_v1_operator_admin_prices_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Prices",
         "tags": [
           "admin-operator"
         ]
@@ -27134,6 +27433,129 @@
         ]
       }
     },
+    "/api/v1/workspaces/{workspace_id}/billing/disputes": {
+      "get": {
+        "operationId": "list_disputes_api_v1_workspaces__workspace_id__billing_disputes_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Disputes",
+        "tags": [
+          "billing"
+        ]
+      },
+      "post": {
+        "description": "Complain about one billed call. One complaint per call: asking again returns the first one (200).",
+        "operationId": "create_dispute_api_v1_workspaces__workspace_id__billing_disputes_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DisputeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Dispute",
+        "tags": [
+          "billing"
+        ]
+      }
+    },
     "/api/v1/workspaces/{workspace_id}/billing/invoices": {
       "get": {
         "operationId": "list_invoices_api_v1_workspaces__workspace_id__billing_invoices_get",
@@ -27328,6 +27750,82 @@
           }
         },
         "summary": "Get Statement",
+        "tags": [
+          "billing"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/billing/usage": {
+      "get": {
+        "description": "Every billed call of the month with its minutes, how the package covered it and any complaint about it; for an\ninvoiced month also the invoice's frozen lines.",
+        "operationId": "get_usage_api_v1_workspaces__workspace_id__billing_usage_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "YYYY-MM; default: current month",
+            "in": "query",
+            "name": "month",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "YYYY-MM; default: current month",
+              "title": "Month"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Usage",
         "tags": [
           "billing"
         ]
@@ -28032,6 +28530,91 @@
           }
         },
         "summary": "Cancel",
+        "tags": [
+          "bookings"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/bookings/{booking_id}/confirm": {
+      "post": {
+        "description": "A staff member confirms a booking «afventer bekræftelse» (made while the connected calendar could not be read).\nIt is then written to the calendar through the shared mirror path; a write failure shows as «Ikke i kalenderen».",
+        "operationId": "confirm_api_v1_workspaces__workspace_id__bookings__booking_id__confirm_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "booking_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Booking Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ConfirmIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Confirm",
         "tags": [
           "bookings"
         ]
@@ -32646,7 +33229,7 @@
               "schema": {
                 "anyOf": [
                   {
-                    "$ref": "#/components/schemas/DecisionIn"
+                    "$ref": "#/components/schemas/app__modules__leads__router__DecisionIn"
                   },
                   {
                     "type": "null"
@@ -32744,7 +33327,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DecisionIn"
+                "$ref": "#/components/schemas/app__modules__leads__router__DecisionIn"
               }
             }
           },

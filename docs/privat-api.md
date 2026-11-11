@@ -184,15 +184,17 @@ Konto-siden viser «Inviter venner» med optjente credits og et delelink til Dia
 ## Tilføjelse 4: Grupper («Mine folk») – del med mange på én gang
 Brugeren gemmer grupper i Dialogbot (Familien, Fodboldforældrene, Kollegerne). Deling med en gruppe = ét tryk.
 - private_groups (id, owner_user_id, name, created_at) og private_group_members (id, group_id, name, phone_e164|null, user_id|null,
-  joined_via_invite_id|null). Kun ejeren ser gruppen. Numrene bruges KUN til at brugeren selv kan sende fra sin egen telefon og til at
-  genkende, når personen allerede er på Dialogbot – vi kontakter dem aldrig selv, ingen markedsføring, slettes med gruppen/kontoen.
+  joined_via_invite_id|null). Kun ejeren ser gruppen. Numrene bruges KUN til at brugeren selv kan sende fra sin egen telefon – et tastet
+  nummer slås ALDRIG op mod Dialogbots brugere (F-P2-02-X10: ville afsløre om/hvem nummeret er og melde fremmede ind uden
+  samtykke) – vi kontakter dem aldrig selv, ingen markedsføring, slettes med gruppen/kontoen.
 - Smart opbygning: (1) «Folk du har delt med» – personer der har accepteret brugerens invitationer foreslås automatisk (med navn);
   (2) vælg fra kontakter (Android Contact Picker) – kun de valgte gemmes, efter et klart «Gem i gruppen»; (3) skriv navn + nummer;
   (4) indsæt flere numre på én gang (komma/linjeskift, normaliseres til +45); (5) i chatten: «Del ønskelisten med familien»
   → bruger gruppen; findes den ikke: «Skal jeg lave gruppen Familien med Anna, Peter og Mor?» (forslag, kræver ja).
 - Når der deles med en gruppe:
-  * medlemmer der allerede har Dialogbot (user_id kendt eller verificeret telefon matcher) tilføjes DIREKTE til listen og får besked i
-    appen (+ push senere) – ingen SMS nødvendig;
+  * medlemmer med kendt user_id – dvs. personer der SELV har sagt ja til brugeren før (accepteret en invitation → «Folk du har delt
+    med», et personligt link fra gruppen, eller gruppe-linket) – tilføjes DIREKTE til listen og får besked i appen (+ push) – ingen SMS;
+    `has_dialogbot` er kun sand for dem;
   * resten får SMS fra brugerens EGEN telefon: Dialogbot forbereder det hele. To valg:
     - «Én samlet SMS» (gruppebesked): sms-link med alle numre + tekst – ét tryk på Send. Ét fælles link.
     - «En ad gangen» (anbefalet når man vil se hvem der er med): en kø med en personlig tekst + personligt kort-link pr. person
@@ -267,8 +269,8 @@ Alt ovenfor er implementeret. Afvigelser er bagudkompatible (kun ekstra felter/e
 - **Konto via telefon (quiz-funnelen `/privat/start`, docs/funnel-api.md):** ved verify af SMS-koden sættes `users.phone_verified_at`, og
   `deps.ensure_account` accepterer det som bevis i stedet for e-mailen. Kontoen oprettes med en tilfældig adgangskode og en velkomstmail
   med «Vælg adgangskode»-link; e-mailen forbliver uverificeret, til brugeren selv bekræfter den. Profilens `phone_e164`/`phone_verified_at`
-  sættes fra funnelen, så `needs_phone` ikke rammer ved det første opkald. Findes e-mailen allerede, logges den eksisterende bruger ind
-  (audit `user.funnel_login`).
+  sættes fra funnelen, så `needs_phone` ikke rammer ved det første opkald. Findes e-mailen allerede, åbnes kontoen IKKE:
+  `409 account_exists` uden session (audit `funnel.account_exists`; hotfix #177).
 - «Se som kunde» (operatør-sessioner) kan ALDRIG se private data: 403 `view_as_not_allowed`.
 - Isolation: et privat arbejdsrum (`workspaces.kind='personal'`) kan aldrig nås via `/workspaces/{id}/…` (404), vises ikke i
   `GET /workspaces`, admin-kundelister/-tal, daglige rapporter eller fakturering. Opgaver nås KUN via `private_task_members`.

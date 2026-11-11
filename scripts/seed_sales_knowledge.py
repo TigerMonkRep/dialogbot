@@ -44,10 +44,14 @@ ITEMS: list[tuple[str, str, str, str]] = [
      f"{prices.kr(prices.SPECIALIST_SETUP_NET_MINOR)} kr. én gang ekskl. moms.", "public"),
     ("fact", "Priser",
      f"Abonnementet koster {prices.kr(prices.SUBSCRIPTION_MONTHLY_NET_MINOR)} kr. om måneden ekskl. moms, uden binding "
-     f"og uden pris pr. henvendelse. {prices.INBOUND_INCLUDED_MINUTES} minutters indgående opkald om måneden er med; "
-     f"derefter {prices.kr(prices.INBOUND_EXTRA_MINUTE_NET_MINOR)} kr. pr. påbegyndt minut. Udgående kampagneopkald "
-     f"koster {prices.kr(prices.CAMPAIGN_CALL_NET_MINOR)} kr. pr. opkald plus {prices.kr(prices.CAMPAIGN_MINUTE_NET_MINOR)} "
-     "kr. pr. påbegyndt samtaleminut, alt ekskl. moms.", "public"),
+     f"og uden pris pr. henvendelse. {prices.INCLUDED_MINUTES} minutter om måneden er med – både indgående opkald og "
+     "udgående kampagneopkald, brugt i den rækkefølge opkaldene sker. "
+     f"Inden for pakken er der ingen pris pr. opkald. Er pakken brugt op, koster et udgående kampagneopkald "
+     f"{prices.kr(prices.OUTBOUND_CALL_ANSWERED_NET_MINOR)} kr., hvis personen tager telefonen, "
+     f"{prices.kr(prices.OUTBOUND_CALL_VOICEMAIL_NET_MINOR)} kr. ved telefonsvarer og "
+     f"{prices.kr(prices.OUTBOUND_CALL_NO_ANSWER_NET_MINOR)} kr. ved ubesvaret eller optaget – plus "
+     f"{prices.kr(prices.OUTBOUND_EXTRA_MINUTE_NET_MINOR)} kr. pr. påbegyndt samtaleminut; indgående opkald koster "
+     f"{prices.kr(prices.INBOUND_EXTRA_MINUTE_NET_MINOR)} kr. pr. påbegyndt minut. Alt ekskl. moms.", "public"),
     ("fact", "Samtaler og opsummeringer for kunder",
      "Kunder ser deres samtaler og opsummeringer i indbakken i Dialogbot.", "customer_docs"),
 ]

@@ -60,7 +60,7 @@
       "title": "Kampagnen",
       "sub": "Rufen Sie Ihre eigenen Kunden an",
       "outbound": "Ausgehende Anrufe",
-      "chosen": "Gewählt – {pCall} pro Anruf + {pMinute} pro Minute zzgl. MwSt.",
+      "chosen": "Gewählt – Minuten aus dem Paket, danach {pCallAnswered} pro angenommenem Anruf + {pMinute} pro Minute zzgl. MwSt.",
       "notChosen": "Nicht gewählt"
     },
     "systems": {
@@ -640,5 +640,30 @@
     "back": "Zurück zu den Stimmen",
     "notice": "Eine eigene Stimme wird aus einer kurzen Aufnahme erstellt. Die Ähnlichkeit mit der sprechenden Person kann variieren, besonders bei Stimmen, die sich stark von den Trainingsstimmen des Modells unterscheiden. Volle Ähnlichkeit erfordert ein Training mit dem Standardskript, das Dialogbot später anbietet.",
     "previous": "Frühere Aufnahmen"
+  },
+  "apiKeys": {
+    "title": "API-Schlüssel",
+    "intro": "Für Ihre eigenen Systeme (CRM, Zapier, eigener Code) über die Dialogbot-API. Geben Sie jedem Schlüssel einen Namen und nur die Rechte, die er braucht.",
+    "name": "Name",
+    "namePlaceholder": "Z. B. CRM-Sync",
+    "scopes": "Berechtigungen",
+    "write": "kann Daten ändern",
+    "create": "Schlüssel erstellen",
+    "creating": "Wird erstellt…",
+    "onceTitle": "Der Schlüssel «{name}» – jetzt kopieren",
+    "onceNote": "Er wird nur dieses eine Mal angezeigt. Geht er verloren, widerrufen Sie ihn und erstellen Sie einen neuen.",
+    "copy": "Kopieren",
+    "copied": "Kopiert",
+    "saved": "Ich habe ihn gespeichert",
+    "listTitle": "Ihre Schlüssel",
+    "none": "Noch keine Schlüssel.",
+    "created": "erstellt {date}",
+    "lastUsed": "zuletzt genutzt {date}",
+    "neverUsed": "nie genutzt",
+    "revoke": "Widerrufen",
+    "revokeConfirm": "«{name}» widerrufen? Systeme, die ihn nutzen, verlieren sofort den Zugriff.",
+    "revoked": "widerrufen {date}",
+    "expired": "abgelaufen",
+    "docs": "So verwenden Sie den Schlüssel: als «Authorization: Bearer <Schlüssel>» an die Dialogbot-API (https://api.dialogbot.app/v1) senden."
   }
 }

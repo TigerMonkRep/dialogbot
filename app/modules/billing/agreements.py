@@ -24,6 +24,16 @@ from app.modules.billing import markets, prices
 from app.modules.billing.money import Money
 
 TAX_BASIS_POINTS = prices.TAX_BASIS_POINTS
+OFFER_CURRENCY = "DKK"  # Dialogbot's own sales are Danish and priced in DKK
+
+
+def offer_call_prices(offer) -> dict[str, int]:
+    """The outbound call prices after the package that accepting `offer` snapshots, by outcome. The offer page shows
+    these same values, so what the customer accepts is what is billed: the offer's answered price, and the list price
+    for voicemail and no answer (the offer row has no columns for those)."""
+    return {"answered": offer.campaign_call_net_minor or markets.erhverv_price(OFFER_CURRENCY, "call_answered"),
+            "voicemail": markets.erhverv_price(OFFER_CURRENCY, "call_voicemail"),
+            "no_answer": markets.erhverv_price(OFFER_CURRENCY, "call_no_answer")}
 
 
 def current(db: OrmSession, workspace_id: uuid.UUID) -> ReceptionAgreement | None:
@@ -33,25 +43,39 @@ def current(db: OrmSession, workspace_id: uuid.UUID) -> ReceptionAgreement | Non
 
 def create(db: OrmSession, workspace_id: uuid.UUID, model: str, created_by: uuid.UUID, *,
            offer=None) -> ReceptionAgreement:
-    """`offer` (an accepted SalesOffer) snapshots the offer's monthly price, VAT and setup fee instead of the list
-    price; its amounts were themselves copied from prices.py when the offer was created."""
+    """`offer` (an accepted SalesOffer) snapshots the offer's monthly price, VAT, setup fee and package (included
+    inbound minutes, overage price) instead of the list price; its amounts were themselves copied from prices.py when
+    the offer was created. Without an offer the package is the list price in the agreement's currency."""
     if model != "A":
         raise ValidationFailed("Betaling pr. henvendelse findes ikke længere. Der er ét abonnement.",
                                field_errors=[{"field": "model", "message": "Kun abonnement"}], code="plan_discontinued")
     last = db.scalar(select(func.max(ReceptionAgreement.version)).where(ReceptionAgreement.workspace_id == workspace_id))
     previous = current(db, workspace_id)
     if offer is not None:
-        currency = "DKK"  # Dialogbot's own sales are Danish and priced in DKK
+        currency = OFFER_CURRENCY
     elif previous is not None:
         currency = previous.currency  # locked: a later country change does not move the currency
     else:
         p = db.get(BusinessProfile, workspace_id)
         currency = markets.currency_for_country(p.country if p else None)
     tax_bp = offer.tax_basis_points if offer is not None else _vat_bp_now(db, workspace_id)
+    calls = offer_call_prices(offer) if offer is not None else {
+        k: markets.erhverv_price(currency, f"call_{k}") for k in ("answered", "voicemail", "no_answer")}
     a = ReceptionAgreement(workspace_id=workspace_id, version=(last or 0) + 1, model="A", currency=currency,
                            monthly_net_minor=offer.monthly_net_minor if offer else markets.erhverv_price(currency, "monthly"),
                            lead_fee_net_minor=0, tax_basis_points=tax_bp,
                            setup_net_minor=offer.setup_net_minor if offer else 0,
+                           inbound_included_minutes=(offer.inbound_included_minutes if offer
+                                                     else prices.INBOUND_INCLUDED_MINUTES),
+                           inbound_extra_minute_net_minor=(offer.inbound_extra_minute_net_minor if offer
+                                                           else markets.erhverv_price(currency, "extra_minute")),
+                           # an offer's campaign minute price is the outbound minute (above the package since 2026-11)
+                           outbound_extra_minute_net_minor=(offer.campaign_minute_net_minor if offer
+                                                            else markets.erhverv_price(currency, "outbound_extra_minute")),
+                           # an offer's campaign call price is the answered call after the package
+                           outbound_call_answered_net_minor=calls["answered"],
+                           outbound_call_voicemail_net_minor=calls["voicemail"],
+                           outbound_call_no_answer_net_minor=calls["no_answer"],
                            sales_offer_id=offer.id if offer else None, created_by=created_by)
     db.add(a)
     db.flush()
@@ -79,10 +103,14 @@ def out(a: ReceptionAgreement | None) -> dict | None:
     return {"id": str(a.id), "version": a.version, "model": a.model, "currency": a.currency,
             "monthly": Money(a.currency, a.monthly_net_minor, a.tax_basis_points).snapshot(),
             "lead_fee": lead_fee(a).snapshot(),
-            "campaign_call": Money(a.currency, markets.erhverv_price(a.currency, "call"), a.tax_basis_points).snapshot(),
-            "campaign_minute": Money(a.currency, markets.erhverv_price(a.currency, "minute"), a.tax_basis_points).snapshot(),
-            "inbound_extra_minute": Money(a.currency, markets.erhverv_price(a.currency, "extra_minute"),
-                                          a.tax_basis_points).snapshot(),
+            # one package for inbound and outbound minutes; above it, priced per direction; no fee per call
+            "included_minutes": a.inbound_included_minutes,
+            "inbound_included_minutes": a.inbound_included_minutes,
+            "outbound_extra_minute": Money(a.currency, a.outbound_extra_minute_net_minor, a.tax_basis_points).snapshot(),
+            # the price of an outbound call that starts after the package is used up, by outcome
+            "outbound_call": {k: Money(a.currency, getattr(a, f"outbound_call_{k}_net_minor"), a.tax_basis_points).snapshot()
+                              for k in ("answered", "voicemail", "no_answer")},
+            "inbound_extra_minute": Money(a.currency, a.inbound_extra_minute_net_minor, a.tax_basis_points).snapshot(),
             "setup": Money(a.currency, a.setup_net_minor or 0, a.tax_basis_points).snapshot(),
             "created_at": a.created_at.isoformat(),
             "invoicing": "not_implemented"}

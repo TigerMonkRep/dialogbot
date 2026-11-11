@@ -60,7 +60,7 @@
       "title": "Campagne",
       "sub": "Chiamate i vostri clienti",
       "outbound": "Chiamate in uscita",
-      "chosen": "Selezionato – {pCall} a chiamata + {pMinute} al minuto IVA esclusa",
+      "chosen": "Scelto – minuti dal pacchetto, poi {pCallAnswered} per chiamata con risposta + {pMinute} al minuto IVA esclusa",
       "notChosen": "Non selezionato"
     },
     "systems": {
@@ -640,5 +640,30 @@
     "back": "Torna alle voci",
     "notice": "La voce personalizzata viene creata da una breve registrazione. La somiglianza con chi registra può variare, soprattutto per voci molto diverse da quelle su cui è stato addestrato il modello. La piena somiglianza richiede l'addestramento sul copione standard, che Dialogbot offrirà in seguito.",
     "previous": "Registrazioni precedenti"
+  },
+  "apiKeys": {
+    "title": "Chiavi API",
+    "intro": "Per i vostri sistemi (CRM, Zapier, codice proprio) tramite l'API di Dialogbot. Date un nome a ogni chiave e solo i permessi necessari.",
+    "name": "Nome",
+    "namePlaceholder": "Es. sincronizzazione CRM",
+    "scopes": "Permessi",
+    "write": "può modificare i dati",
+    "create": "Crea chiave",
+    "creating": "Creazione…",
+    "onceTitle": "La chiave «{name}» – copiala ora",
+    "onceNote": "Viene mostrata solo questa volta. Se la perdete, revocatela e createne una nuova.",
+    "copy": "Copia",
+    "copied": "Copiata",
+    "saved": "L'ho salvata",
+    "listTitle": "Le vostre chiavi",
+    "none": "Ancora nessuna chiave.",
+    "created": "creata il {date}",
+    "lastUsed": "ultimo uso {date}",
+    "neverUsed": "mai usata",
+    "revoke": "Revoca",
+    "revokeConfirm": "Revocare «{name}»? I sistemi che la usano perdono subito l'accesso.",
+    "revoked": "revocata il {date}",
+    "expired": "scaduta",
+    "docs": "Come usarla: inviatela come «Authorization: Bearer <chiave>» all'API di Dialogbot (https://api.dialogbot.app/v1)."
   }
 }

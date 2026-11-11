@@ -9,21 +9,55 @@
     "skipToContent": "Hopp til innhold",
     "home": "Dialogbot – I dag",
     "nav": "Oppsett",
-    "steps": ["Bedrift", "Kalender og systemer", "Test og slå på"],
+    "steps": [
+      "Bedrift",
+      "Kalender og systemer",
+      "Test og slå på"
+    ],
     "stepAria": "Trinn {n}: {label}",
     "skipped": " (hoppet over)",
     "laterNote": " – du finner alt igjen under profilikonet → Alle innstillinger."
   },
   "hours": {
-    "days": ["man", "tir", "ons", "tor", "fre", "lør", "søn"],
-    "dayNames": ["mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag", "søndag"],
+    "days": [
+      "man",
+      "tir",
+      "ons",
+      "tor",
+      "fre",
+      "lør",
+      "søn"
+    ],
+    "dayNames": [
+      "mandag",
+      "tirsdag",
+      "onsdag",
+      "torsdag",
+      "fredag",
+      "lørdag",
+      "søndag"
+    ],
     "and": "og"
   },
   "step1Page": {
     "eyebrow": "Bygg din Dialogbot · trinn 1 av 3 · ca. 5 min",
     "title": "Hvem er dere – og hva skal den gjøre?",
     "intro": "Ett trinn. Vi henter det meste fra nettsiden deres – du retter bare det som er feil. Alt kan endres senere ved å si det til assistenten.",
-    "need": [["1×", "nettadresse"], ["1×", "CVR-nummer", "eller bare navnet"], ["1×", "nummeret kundene ringer til"]]
+    "need": [
+      [
+        "1×",
+        "nettadresse"
+      ],
+      [
+        "1×",
+        "CVR-nummer",
+        "eller bare navnet"
+      ],
+      [
+        "1×",
+        "nummeret kundene ringer til"
+      ]
+    ]
   },
   "step1": {
     "kind": {
@@ -99,7 +133,7 @@
         "phone": { "title": "Ta telefonen", "sub": "når dere ikke rekker det – eller alltid" },
         "booking": { "title": "Booke avtaler", "sub": "rett i kalenderen deres" },
         "web": { "title": "Svare på nettsiden", "sub": "nettchat – én kodelinje" },
-        "outbound": { "title": "Ringe kunder", "sub": "kampanjer · {pCall} per anrop eks. mva." }
+        "outbound": { "title": "Ringe kunder", "sub": "kampanjer · minutter fra pakken" }
       },
       "langAria": "Språk",
       "speaks": "Den snakker",
@@ -129,7 +163,16 @@
   "step2Page": {
     "eyebrow": "Trinn 2 av 3",
     "title": "Hvor skal avtalene havne?",
-    "need": [["1×", "innlogging til kalenderen din"], ["2", "minutter"]],
+    "need": [
+      [
+        "1×",
+        "innlogging til kalenderen din"
+      ],
+      [
+        "2",
+        "minutter"
+      ]
+    ],
     "connector": {
       "google_calendar": "Google Kalender",
       "microsoft_calendar": "Microsoft 365-kalender"
@@ -165,7 +208,20 @@
     "writeUs": "Skriv til oss",
     "managersOnly": "Bare eiere og administratorer kan koble til systemer.",
     "writesTitle": "Dette skriver Dialogbot i kalenderen",
-    "writes": [["1×", "avtale med kundens navn, nummer og ærend"], ["1×", "bekreftelse til dere med tidspunktet for avtalen"], ["0×", "endringer i de eksisterende avtalene deres – dem rører den aldri"]],
+    "writes": [
+      [
+        "1×",
+        "avtale med kundens navn, nummer og ærend"
+      ],
+      [
+        "1×",
+        "bekreftelse til dere med tidspunktet for avtalen"
+      ],
+      [
+        "0×",
+        "endringer i de eksisterende avtalene deres – dem rører den aldri"
+      ]
+    ],
     "defaultsNote": "Tidene følger åpningstidene deres fra trinn 1. Som utgangspunkt: avtaler på 45 minutter, 15 minutters pause og tidligst i morgen. Dette kan endres under Avtaler.",
     "next": "Videre til trinn 3: test og slå på",
     "skip": "Hopp over – jeg bruker ingen kalender"
@@ -173,7 +229,16 @@
   "step3Page": {
     "eyebrow": "Trinn 3 av 3 · siste trinn",
     "title": "Velg stemme, koble til telefonen – og slå på",
-    "need": [["1×", "en telefon å ringe fra"], ["10", "sekunder til viderekobling"]]
+    "need": [
+      [
+        "1×",
+        "en telefon å ringe fra"
+      ],
+      [
+        "10",
+        "sekunder til viderekobling"
+      ]
+    ]
   },
   "step3": {
     "failed": "Det gikk ikke. Prøv igjen.",
@@ -293,23 +358,47 @@
     "turningOn": "Slår på …",
     "turnOn": "Slå på Dialogbot",
     "managersOnly": "Bare eiere og administratorer kan slå på.",
-    "subscriptionNote": "Abonnementet koster fra {pMonthly}/mnd. eks. mva., og utgående kampanjeanrop koster {pCall} per anrop eks. mva.",
+    "subscriptionNote": "Abonnementet er fra {pMonthly}/mnd. eks. mva. med {pIncluded} minutter til inn- og utgående samtaler; deretter {pExtraMinute} per minutt inn, og utgående {pCallAnswered} per besvart anrop + {pMinute} per minutt.",
     "confirmSubscription": "Bekreft abonnement",
-    "findAgain": "Du finner alt igjen under profilikonet → Alle innstillinger."
+    "findAgain": "Du finner alt igjen under profilikonet → Alle innstillinger.",
+    "readerTitle": "Eieren setter opp Dialogbot",
+    "campaignsTitle": "Klar for deres første kampanje",
+    "campaignsText": "Det er ingenting å slå på: Dialogbot ringer først ut når dere har opprettet og startet en kampanje.",
+    "campaignsCta": "Opprett deres første kampanje",
+    "nothingTitle": "Velg hva Dialogbot skal gjøre",
+    "nothingText": "Ingenting er valgt i trinn 1, så det er ingenting å slå på. Velg minst én ting."
   },
   "assistant": {
     "setupChips": {
       "1": [
-        { "label": "Åpningstider", "fill": "Åpningstider man–fre 8–16" },
-        { "label": "Hva skjer i trinn 2?", "say": "I trinn 2 kobler du til kalenderen din, slik at avtalene havner der. Det er valgfritt – du kan hoppe over det." }
+        {
+          "label": "Åpningstider",
+          "fill": "Åpningstider man–fre 8–16"
+        },
+        {
+          "label": "Hva skjer i trinn 2?",
+          "say": "I trinn 2 kobler du til kalenderen din, slik at avtalene havner der. Det er valgfritt – du kan hoppe over det."
+        }
       ],
       "2": [
-        { "label": "Hva skriver dere i kalenderen?", "say": "En avtale med kundens navn, nummer og ærend – og en bekreftelse til dere. De eksisterende avtalene deres rører jeg aldri." },
-        { "label": "Hva skjer i trinn 3?", "say": "I trinn 3 velger du stemme, kobler til telefonen med en viderekobling og slår på Dialogbot." }
+        {
+          "label": "Hva skriver dere i kalenderen?",
+          "say": "En avtale med kundens navn, nummer og ærend – og en bekreftelse til dere. De eksisterende avtalene deres rører jeg aldri."
+        },
+        {
+          "label": "Hva skjer i trinn 3?",
+          "say": "I trinn 3 velger du stemme, kobler til telefonen med en viderekobling og slår på Dialogbot."
+        }
       ],
       "3": [
-        { "label": "Hvordan viderekobler jeg?", "say": "Tast koden i trinn 3 på telefonen din og trykk ring. Slå av viderekoblingen igjen med koden under den." },
-        { "label": "Kan jeg angre?", "say": "Ja. Du kan sette Dialogbot på pause fra I dag og slå av viderekoblingen på telefonen din." }
+        {
+          "label": "Hvordan viderekobler jeg?",
+          "say": "Tast koden i trinn 3 på telefonen din og trykk ring. Slå av viderekoblingen igjen med koden under den."
+        },
+        {
+          "label": "Kan jeg angre?",
+          "say": "Ja. Du kan sette Dialogbot på pause fra I dag og slå av viderekoblingen på telefonen din."
+        }
       ]
     },
     "chips": {

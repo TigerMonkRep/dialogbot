@@ -62,7 +62,9 @@ def label(start: datetime, tz: str) -> str:
     return f"{WEEKDAY_DA[local.weekday()]} {local.day}. {MONTH_DA[local.month - 1]} kl. {local:%H.%M}"
 
 
-def _busy(db: OrmSession, s: BookingSettings, ws_id: uuid.UUID, frm: datetime, to: datetime) -> list[tuple[datetime, datetime]]:
+def _busy_state(db: OrmSession, s: BookingSettings, ws_id: uuid.UUID, frm: datetime,
+                to: datetime) -> tuple[list[tuple[datetime, datetime]], bool]:
+    """Busy periods, and whether the connected calendar's busy time could be read (True when none is connected)."""
     from app.modules.integrations.connectors.calendar import connected_busy
 
     pad = timedelta(minutes=s.buffer_minutes)
@@ -70,26 +72,37 @@ def _busy(db: OrmSession, s: BookingSettings, ws_id: uuid.UUID, frm: datetime, t
         select(Booking).where(Booking.workspace_id == ws_id, Booking.status == "confirmed",
                               Booking.ends_at > frm, Booking.starts_at < to))]
     # A calendar connected via OAuth (Google/Microsoft) replaces the iCal feed as the source of busy time.
-    external = connected_busy(db, ws_id, frm, to)
-    if external is not None:
-        return out + [(b0, b1) for b0, b1 in external]
+    external, readable = connected_busy(db, ws_id, frm, to)
+    if external is not None or not readable:
+        return out + [(b0, b1) for b0, b1 in external or []], readable
     for blk in s.busy_blocks or []:
         try:
             out.append((datetime.fromisoformat(blk[0]), datetime.fromisoformat(blk[1])))
         except (ValueError, TypeError, IndexError):
             continue
-    return out
+    return out, True
+
+
+def _busy(db: OrmSession, s: BookingSettings, ws_id: uuid.UUID, frm: datetime, to: datetime) -> list[tuple[datetime, datetime]]:
+    return _busy_state(db, s, ws_id, frm, to)[0]
 
 
 def slots(db: OrmSession, ws: Workspace, bt: BookingType, tz: str, now: datetime | None = None, limit: int = 60) -> list[dict]:
     """Free start times for a booking type, earliest first."""
+    return slots_state(db, ws, bt, tz, now, limit)[0]
+
+
+def slots_state(db: OrmSession, ws: Workspace, bt: BookingType, tz: str, now: datetime | None = None,
+                limit: int = 60) -> tuple[list[dict], bool]:
+    """Free start times, and whether the connected calendar's busy time was read. When it was not (provider down), the
+    times come from opening hours and Dialogbot's own bookings only – a booking on them awaits confirmation."""
     s = settings(db, ws.id)
     now = now or _now()
     z = ZoneInfo(tz)
     earliest = now + timedelta(hours=s.lead_time_hours)
     end_all = now + timedelta(days=s.horizon_days)
     hours = weekly_hours(db, ws.id)
-    busy = _busy(db, s, ws.id, now, end_all + timedelta(days=1))
+    busy, readable = _busy_state(db, s, ws.id, now, end_all + timedelta(days=1))
     dur = timedelta(minutes=bt.duration_minutes)
     step = timedelta(minutes=max(15, min(bt.duration_minutes, 60)))
     out: list[dict] = []
@@ -104,7 +117,7 @@ def slots(db: OrmSession, ws: Workspace, bt: BookingType, tz: str, now: datetime
                     out.append({"start": st.isoformat(), "end": en.isoformat(), "label": label(st, tz)})
                 t += step
         day += timedelta(days=1)
-    return out
+    return out, readable
 
 
 def active_types(db: OrmSession, ws_id: uuid.UUID) -> list[BookingType]:
@@ -127,16 +140,21 @@ def book(db: OrmSession, ws: Workspace, *, type_id: uuid.UUID, start: str, name:
         st = datetime.fromisoformat(start).astimezone(UTC)
     except ValueError as e:
         raise ValidationFailed("Ugyldigt tidspunkt", field_errors=[{"field": "start"}]) from e
-    if source != "manual" and st.isoformat() not in {x["start"] for x in slots(db, ws, bt, tz, limit=500)}:
-        raise Conflict("Tiden er ikke længere ledig – vælg en anden", code="slot_taken")
     en = st + timedelta(minutes=bt.duration_minutes)
-    if source == "manual" and any(st < b1 and en > b0 for b0, b1 in _busy(db, s, ws.id, st - timedelta(days=1), en + timedelta(days=1))):
-        raise Conflict("Tiden overlapper en anden aftale", code="slot_taken")
+    if source != "manual":
+        free, readable = slots_state(db, ws, bt, tz, limit=500)
+        if st.isoformat() not in {x["start"] for x in free}:
+            raise Conflict("Tiden er ikke længere ledig – vælg en anden", code="slot_taken")
+    else:
+        busy, readable = _busy_state(db, s, ws.id, st - timedelta(days=1), en + timedelta(days=1))
+        if any(st < b1 and en > b0 for b0, b1 in busy):
+            raise Conflict("Tiden overlapper en anden aftale", code="slot_taken")
     who = name.strip() or "kunden"
     b = Booking(workspace_id=ws.id, type_id=bt.id, title=f"{bt.name}: {who}", starts_at=st, ends_at=en, source=source,
                 contact_name=name.strip(), contact_phone=(phone or "").strip() or None,
                 contact_email=(email or "").strip().lower() or None, note=note.strip()[:1000],
-                conversation_id=conversation.id if conversation else None, created_by=created_by)
+                conversation_id=conversation.id if conversation else None, created_by=created_by,
+                confirmation=None if readable else "pending")
     db.add(b)
     db.flush()
     lead = leads.lead_for_conversation(db, conversation.id) if conversation else None
@@ -148,7 +166,82 @@ def book(db: OrmSession, ws: Workspace, *, type_id: uuid.UUID, start: str, name:
     b.lead_id = lead.id
     leads.create_task(db, ws.id, title=f"{bt.name} med {who} – {label(st, tz)}", created_by=created_by, lead=lead,
                       due_at=st)
+    if b.confirmation == "pending":
+        _ask_staff_to_confirm(db, b, tz)
     _emit(db, ws.id, "booking.created", b, tz)
+    return b
+
+
+# --------------------------------------------------------------------------- «afventer bekræftelse»
+
+CONFIRM_TASK = "Bekræft aftale"
+
+
+def _confirm_task_prefix(b: Booking) -> str:
+    return f"{CONFIRM_TASK}: {b.title}"
+
+
+def _ask_staff_to_confirm(db: OrmSession, b: Booking, tz: str) -> None:
+    """The connected calendar could not be read when the time was booked/moved: a task «Bekræft aftale» (Opgaver) and a
+    push to the workspace's subscribed members; the owner confirms or cancels on /app/aftaler."""
+    from app.config import get_settings
+    from app.models import Lead, Task
+    from app.modules.leads import service as leads
+    from app.modules.push import service as push
+
+    when = label(b.starts_at, tz)
+    prefix = _confirm_task_prefix(b)
+    open_task = db.scalar(select(Task).where(Task.workspace_id == b.workspace_id, Task.status == "open",
+                                             Task.lead_id == b.lead_id, Task.title.startswith(prefix)))
+    title = f"{prefix} – {when} (kalenderen kunne ikke læses)"
+    if open_task is not None:
+        open_task.title, open_task.due_at = title[:200], b.starts_at
+    else:
+        lead = db.get(Lead, b.lead_id) if b.lead_id else None
+        leads.create_task(db, b.workspace_id, title=title, created_by=None, lead=lead, due_at=b.starts_at)
+    week = b.starts_at.astimezone(ZoneInfo(tz)).date()
+    url = f"{get_settings().frontend_base_url.rstrip('/')}/app/aftaler?uge={week.isoformat()}"
+    push.notify_workspace(db, b.workspace_id, key=f"booking-confirm:{b.id}:{b.starts_at.isoformat()}",
+                          title="Bekræft aftale", body=f"{b.title} {when} – kalenderen kunne ikke læses."[:300],
+                          url=url, tag=f"booking-{b.id}")
+
+
+def _close_confirm_task(db: OrmSession, b: Booking, actor: uuid.UUID | None) -> None:
+    from app.models import Task
+
+    for t in db.scalars(select(Task).where(Task.workspace_id == b.workspace_id, Task.status == "open",
+                                           Task.lead_id == b.lead_id, Task.title.startswith(_confirm_task_prefix(b)))):
+        t.status, t.completed_at, t.completed_by = "done", _now(), actor
+
+
+def calendar_conflicts(db: OrmSession, b: Booking) -> tuple[list[tuple[datetime, datetime]], bool]:
+    """Busy periods in the connected calendar overlapping the booking, and whether the calendar could be read.
+    The booking's own event (already written at this time) is not a conflict."""
+    from app.modules.integrations.connectors.calendar import connected_busy
+
+    busy, readable = connected_busy(db, b.workspace_id, b.starts_at, b.ends_at)
+    own = (b.starts_at, b.ends_at) if b.calendar_event_id and b.calendar_sync == "synced" else None
+    hits = [(b0, b1) for b0, b1 in busy or [] if b.starts_at < b1 and b.ends_at > b0 and (b0, b1) != own]
+    return hits, readable
+
+
+def confirm(db: OrmSession, b: Booking, *, actor: uuid.UUID | None, override_conflict: bool, tz: str) -> Booking:
+    """A staff member confirms a booking that awaits confirmation. When the calendar can be read again and the time
+    overlaps busy time there, the conflict is shown (409 `calendar_conflict`) unless confirmed anyway. The caller
+    mirrors the booking to the calendar through the shared mirror path."""
+    if b.status != "confirmed":
+        raise Conflict("Aftalen er aflyst", code="booking_cancelled")
+    if b.confirmation != "pending":
+        return b
+    hits, _readable = calendar_conflicts(db, b)
+    if hits and not override_conflict:
+        z = ZoneInfo(tz)
+        spans = ", ".join(f"{b0.astimezone(z):%H.%M}–{b1.astimezone(z):%H.%M}" for b0, b1 in hits[:3])
+        raise Conflict(f"Tiden overlapper optaget tid i kalenderen ({spans}). Flyt eller aflys aftalen – eller bekræft "
+                       "alligevel.", code="calendar_conflict",
+                       extra={"conflicts": [{"start": b0.isoformat(), "end": b1.isoformat()} for b0, b1 in hits]})
+    b.confirmation = "confirmed"
+    _close_confirm_task(db, b, actor)
     return b
 
 
@@ -172,13 +265,17 @@ def move(db: OrmSession, ws: Workspace, b: Booking, *, start: str, tz: str) -> B
     b.status = "cancelled"
     db.flush()
     try:
-        free = st.isoformat() in {x["start"] for x in slots(db, ws, bt, tz, limit=500)}
+        free, readable = slots_state(db, ws, bt, tz, limit=500)
+        free = st.isoformat() in {x["start"] for x in free}
     finally:
         b.status = old_status
         db.flush()
     if not free:
         raise Conflict("Den nye tid er ikke ledig – vælg en anden", code="slot_taken")
     b.starts_at, b.ends_at = st, en
+    if not readable:  # the new time was not checked against the connected calendar
+        b.confirmation = "pending"
+        _ask_staff_to_confirm(db, b, tz)
     db.flush()
     return b
 
@@ -186,6 +283,7 @@ def move(db: OrmSession, ws: Workspace, b: Booking, *, start: str, tz: str) -> B
 def cancel(db: OrmSession, b: Booking) -> Booking:
     if b.status != "cancelled":
         b.status, b.cancelled_at = "cancelled", _now()
+        _close_confirm_task(db, b, None)
         _mirror_cancel(db, b)
         _emit(db, b.workspace_id, "booking.cancelled", b, "Europe/Copenhagen")
     return b
@@ -213,7 +311,8 @@ def _emit(db: OrmSession, ws_id: uuid.UUID, event: str, b: Booking, tz: str) -> 
                                    "ends_at": b.ends_at.isoformat(), "label": label(b.starts_at, tz), "status": b.status,
                                    "source": b.source, "contact_name": b.contact_name, "contact_phone": b.contact_phone,
                                    "contact_email": b.contact_email, "note": b.note,
-                                   "lead_id": str(b.lead_id) if b.lead_id else None}, key=f"{b.id}:{b.status}")
+                                   "lead_id": str(b.lead_id) if b.lead_id else None,
+                                   "confirmation": b.confirmation}, key=f"{b.id}:{b.status}")
 
 
 # --------------------------------------------------------------------------- calendar (iCal)
@@ -292,4 +391,5 @@ def booking_out(b: Booking, tz: str) -> dict:
             "contact_email": b.contact_email, "note": b.note, "lead_id": str(b.lead_id) if b.lead_id else None,
             "conversation_id": str(b.conversation_id) if b.conversation_id else None,
             "calendar_connector": b.calendar_connector, "calendar_event_id": b.calendar_event_id,
-            "calendar_sync": b.calendar_sync, "calendar_sync_error": b.calendar_sync_error}
+            "calendar_sync": b.calendar_sync, "calendar_sync_error": b.calendar_sync_error,
+            "confirmation": b.confirmation}

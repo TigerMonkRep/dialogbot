@@ -460,6 +460,30 @@ class ConversationMessage(Base):
     created_at: Mapped[datetime] = ts_now()
 
 
+def _list_included_minutes(ctx=None) -> int:
+    from app.modules.billing import prices
+
+    return prices.INBOUND_INCLUDED_MINUTES
+
+
+def _list_extra_minute(ctx) -> int:
+    from app.modules.billing import markets
+
+    return markets.erhverv_price(ctx.get_current_parameters().get("currency") or "DKK", "extra_minute")
+
+
+def _list(ctx, item: str) -> int:
+    from app.modules.billing import markets
+
+    return markets.erhverv_price(ctx.get_current_parameters().get("currency") or "DKK", item)
+
+
+def _list_outbound_extra_minute(ctx) -> int:
+    from app.modules.billing import markets
+
+    return markets.erhverv_price(ctx.get_current_parameters().get("currency") or "DKK", "outbound_extra_minute")
+
+
 class ReceptionAgreement(Base):
     """Versioned reception price agreement (append-only; the newest version applies).
 
@@ -480,6 +504,17 @@ class ReceptionAgreement(Base):
     tax_basis_points: Mapped[int] = mapped_column(Integer, nullable=False, default=2500)
     # One-off setup fee from an accepted sales offer (specialist setup), billed on the first invoice. 0 = none.
     setup_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
+    # The package, snapshotted like the monthly price (QA F-BQ-011): minutes included per month – since 2026-11 one
+    # pool for inbound and outbound minutes together (the column name is from when it was inbound only) – and the
+    # price per started minute above it, per direction. Default = the list price in the agreement's currency.
+    inbound_included_minutes: Mapped[int] = mapped_column(Integer, nullable=False, default=_list_included_minutes)
+    inbound_extra_minute_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=_list_extra_minute)
+    outbound_extra_minute_net_minor: Mapped[int] = mapped_column(Integer, nullable=False,
+                                                                 default=_list_outbound_extra_minute)
+    # The price of an outbound call that starts after the package is used up, by outcome (Fürster 2026-11-10 20:28)
+    outbound_call_answered_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=lambda c: _list(c, "call_answered"))
+    outbound_call_voicemail_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=lambda c: _list(c, "call_voicemail"))
+    outbound_call_no_answer_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=lambda c: _list(c, "call_no_answer"))
     sales_offer_id: Mapped[uuid.UUID | None] = mapped_column()  # the accepted sales_offers row (no FK: avoids a cycle)
     created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     created_at: Mapped[datetime] = ts_now()
@@ -757,6 +792,7 @@ class Booking(Base):
         CheckConstraint("status in ('confirmed','cancelled')", name="ck_bookings_status"),
         CheckConstraint("ends_at > starts_at", name="ck_bookings_range"),
         CheckConstraint("calendar_sync is null or calendar_sync in ('synced','failed')", name="ck_bookings_calendar_sync"),
+        CheckConstraint("confirmation is null or confirmation in ('pending','confirmed')", name="ck_bookings_confirmation"),
         Index("ix_bookings_workspace_starts", "workspace_id", "starts_at"),
     )
 
@@ -782,6 +818,10 @@ class Booking(Base):
     # 'failed' = the last write to the calendar failed (shown to the owner; the calendar may disagree).
     calendar_sync: Mapped[str | None] = mapped_column(String(16))
     calendar_sync_error: Mapped[str | None] = mapped_column(String(300))
+    # NULL = booked against readable busy time; 'pending' = made while the connected calendar could not be read
+    # («afventer bekræftelse»: the customer was not given a final confirmation, a staff member confirms);
+    # 'confirmed' = confirmed by staff afterwards. A pending booking is written to the calendar when confirmed.
+    confirmation: Mapped[str | None] = mapped_column(String(16))
     created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     created_at: Mapped[datetime] = ts_now()
     cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
@@ -874,7 +914,9 @@ class ActionRun(Base):
 class Campaign(Base):
     """An outbound calling campaign: script, caller number, calling window, contacts.
 
-    Every outbound call is billed at `call_net_minor` (4 kr. excl. VAT) plus `minute_net_minor` per started minute of
+    Pricing snapshot: `call_net_minor` per call dialled (4 kr. on campaigns made before 2026-11-10, 0 since – the fee
+    was removed) and `minute_net_minor` per started minute (since 2026-11 only above the shared package; the monthly
+    statement allocates the package). Before: every outbound call is billed at `call_net_minor` plus `minute_net_minor` per started minute of
     conversation (2 kr.), both snapshotted when the campaign is created and
     recorded per call in `campaign_calls`); each contact is dialled at most `max_attempts` times and talks at most
     `max_connected_seconds` in total. Payment never starts calls: a campaign only calls after an admin's explicit
@@ -968,12 +1010,15 @@ class CampaignContact(Base):
 
 
 class CampaignCall(Base):
-    """One outbound campaign call that Vapi accepted: the unit the customer pays for – 4 kr. for dialling plus 2 kr. per
+    """One outbound campaign call that Vapi accepted (until 2026-10 billed per call, since then its minutes draw on the
+    package – see billing/statement.py): the unit the customer paid for – 4 kr. for dialling plus 2 kr. per
     started minute of conversation (excl. VAT). Both prices are snapshotted here, so a later price change never alters
     an earlier month."""
 
     __tablename__ = "campaign_calls"
-    __table_args__ = (Index("ix_campaign_calls_workspace_dialled", "workspace_id", "dialled_at"),)
+    __table_args__ = (Index("ix_campaign_calls_workspace_dialled", "workspace_id", "dialled_at"),
+                      CheckConstraint("outcome_class is null or outcome_class in ('answered','voicemail','no_answer')",
+                                      name="ck_campaign_calls_outcome_class"))
 
     id: Mapped[uuid.UUID] = uuid_pk()
     workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
@@ -981,9 +1026,12 @@ class CampaignCall(Base):
     contact_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("campaign_contacts.id", ondelete="CASCADE"), nullable=False)
     provider_call_id: Mapped[str | None] = mapped_column(String(100))
     dialled_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    net_minor: Mapped[int] = mapped_column(Integer, nullable=False)  # the price for dialling (4 kr.)
+    net_minor: Mapped[int] = mapped_column(Integer, nullable=False)  # the price for dialling (4 kr. before 2026-11, now 0)
     connected_seconds: Mapped[int | None] = mapped_column(Integer)  # set from the end-of-call report; None = no report yet
     minutes_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")  # started minutes × price
+    # How the call ended, for the call price after the package: 'answered' | 'voicemail' | 'no_answer'; None = no
+    # end-of-call report yet (billed as the cheapest, 'no_answer'). Set from the report (campaigns/service.outcome_class).
+    outcome_class: Mapped[str | None] = mapped_column(String(12))
 
 
 class DoNotCall(Base):
@@ -1114,6 +1162,43 @@ class DiscountRedemption(Base):
     source: Mapped[str] = mapped_column(String(30))
     stripe_ref: Mapped[str | None] = mapped_column(String(80))
     redeemed_at: Mapped[datetime] = ts_now()
+
+
+class CallDispute(Base):
+    """A customer's complaint about one billed call (Fürster 2026-11-10: minutes are credited ONLY when the customer
+    complains about a call). One per call. The operator approves or rejects it (billing/disputes.py):
+    - approved while the call's month is not invoiced: credit_mode 'pool' – the call's minutes leave the month's usage
+      and go back into the package (no credit note, DB-002);
+    - approved after the month was invoiced: credit_mode 'invoice' – what the call added to that invoice is credited as
+      a line on the next invoice (`credit_net_minor`, 0 when the call was within the package);
+    - rejected: nothing changes."""
+
+    __tablename__ = "call_disputes"
+    __table_args__ = (
+        CheckConstraint("(call_id is null) <> (campaign_call_id is null)", name="ck_call_disputes_one_call"),
+        CheckConstraint("status in ('open','approved','rejected')", name="ck_call_disputes_status"),
+        CheckConstraint("credit_mode is null or credit_mode in ('pool','invoice')", name="ck_call_disputes_credit_mode"),
+        UniqueConstraint("call_id", name="uq_call_disputes_call"),
+        UniqueConstraint("campaign_call_id", name="uq_call_disputes_campaign_call"),
+        Index("ix_call_disputes_workspace_status", "workspace_id", "status"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    call_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("calls.id", ondelete="CASCADE"))  # inbound
+    campaign_call_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("campaign_calls.id", ondelete="CASCADE"))
+    period: Mapped[date] = mapped_column(Date, nullable=False)  # first day of the call's billing month
+    call_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    minutes: Mapped[int] = mapped_column(Integer, nullable=False)  # started minutes of the call
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    status: Mapped[str] = mapped_column(String(10), nullable=False, default="open")
+    created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = ts_now()
+    decided_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    decision_note: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    credit_mode: Mapped[str | None] = mapped_column(String(8))
+    credit_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
 
 
 class Invoice(Base):

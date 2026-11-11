@@ -25,3 +25,14 @@ cases:
         - - {role: assistant, text: "Det lykkedes ikke at flytte tiden i kalenderen lige nu. En medarbejder ringer tilbage og ordner det."}
       fail:
         - - {role: assistant, text: "Aftalen er flyttet til torsdag kl. 10."}
+  - id: BK15-03
+    title: Booking – kalenderens optagede tid kan ikke læses (beslutning 2026-11-10 – fail-open, afventer bekræftelse)
+    path: vapi_tool_calls  # book_tid
+    caller_turns: ["Kan jeg få en besigtigelse i morgen klokken ti?", "Ja, det er Mette Hansen."]
+    expect: {language: da, must_say: ["noteret", "medarbejder"]}
+    forbid: ["booket", "bekræft tiden over for kunden", "så er du booket", "tiden er på plads"]
+    reference_transcripts:
+      pass:
+        - - {role: assistant, text: "Tiden er noteret. En medarbejder vender tilbage og bekræfter tiden."}
+      fail:
+        - - {role: assistant, text: "Booket: Besigtigelse fredag kl. 10. Bekræft tiden over for kunden."}

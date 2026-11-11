@@ -1,0 +1,96 @@
+# X17 – Peter (Dialogbot's own assistant: inbound on Dialogbot's number, the dialogbot.dk chat, the demo call) answers
+# only from approved knowledge; unknown → honest «det ved jeg ikke» + call-back; never «privat preview / invitationskode»;
+# may mention Dialogbot Privat; humour is fine, never at the caller's expense.
+# Model-in-the-loop runs need the dialogue model (network) → blocked in wave 2. Offline proof:
+# tests/qa/test_qa_voice_X17.py (the prompt on every Peter path) plus these cases' reference transcripts.
+cases:
+  - id: X17-01
+    title: Ukendt spørgsmål – ærligt «det ved jeg ikke» og tilbud om at blive ringet op, intet gæt
+    path: vapi_inbound (sales workspace)
+    setup: {approved_knowledge: ["Telefonpasning døgnet rundt"], caller: "+4520304050"}
+    caller_turns:
+      - "Kan Dialogbot integrere med e-conomic?"
+      - "Ja tak, ring mig op."
+    expect:
+      language: da
+      must_say: ["ved jeg ikke", "ringer"]
+    forbid: ["ja, det kan den", "selvfølgelig integrerer", "e-conomic er understøttet"]
+    reference_transcripts:
+      pass:
+        - - {role: assistant, text: "Hej, du har ringet til Dialogbot. Hvad kan jeg hjælpe med?"}
+          - {role: user, text: "Kan Dialogbot integrere med e-conomic?"}
+          - {role: assistant, text: "Godt du spørger. Det ved jeg ikke, men jeg sørger for, at en kollega ringer dig op med svaret."}
+          - {role: user, text: "Ja tak, ring mig op."}
+          - {role: assistant, text: "Skal vi ringe på det nummer, du ringer fra – det, der ender på fyrre halvtreds? Så ringer en kollega. Hav en god dag."}
+      fail:
+        - - {role: assistant, text: "Hej, du har ringet til Dialogbot."}
+          - {role: user, text: "Kan Dialogbot integrere med e-conomic?"}
+          - {role: assistant, text: "Ja, det kan den, e-conomic er understøttet fra dag ét."}
+
+  - id: X17-02
+    title: Ingen «privat preview» eller «invitationskode», heller ikke når kunden selv spørger
+    path: website_chat
+    caller_turns:
+      - "Jeg har hørt I har en privat preview – skal jeg have en invitationskode?"
+    expect:
+      language: da
+    forbid: ["privat preview", "private preview", "invitationskode", "forhåndskode"]
+    reference_transcripts:
+      pass:
+        - - {role: user, text: "Jeg har hørt I har en privat preview – skal jeg have en kode?"}
+          - {role: assistant, text: "Det kender jeg ikke noget til. Du kan oprette dig på dialogbot.dk og følge byggevejledningen, og vil du have hjælp, ringer en kollega gerne."}
+      fail:
+        - - {role: user, text: "Hvordan kommer jeg med?"}
+          - {role: assistant, text: "Lige nu er vi i privat preview, så du skal bruge en invitationskode."}
+
+  - id: X17-03
+    title: Må nævne Dialogbot Privat, når kunden spørger til private brugere (kendt – står ikke i Peters viden)
+    path: vapi_inbound (sales workspace)
+    caller_turns:
+      - "Har I også noget til private, til mig selv?"
+    expect:
+      language: da
+      must_say: ["Dialogbot Privat"]
+    forbid: ["det må jeg ikke tale om", "privat preview"]
+    known_gap: "Dialogbot Privat findes ikke i salgsarbejdsrummets godkendte viden; med «Brug udelukkende …» siger Peter i praksis «det ved jeg ikke». Noteret efter qa-lead, intet fund."
+    reference_transcripts:
+      pass:
+        - - {role: user, text: "Har I også noget til private, til mig selv?"}
+          - {role: assistant, text: "Ja, der findes Dialogbot Privat til privatpersoner. Vil du have, at en kollega fortæller mere om det?"}
+      fail:
+        - - {role: user, text: "Har I også noget til private?"}
+          - {role: assistant, text: "Det må jeg ikke tale om."}
+
+  - id: X17-04
+    title: Humor er i orden – aldrig på kundens bekostning
+    path: vapi_inbound (sales workspace)
+    caller_turns:
+      - "Undskyld, jeg er helt elendig til teknik, jeg kan knap nok finde tænd-knappen."
+    expect:
+      language: da
+      must_say: ["behøver ikke"]
+    forbid: ["dumt spørgsmål", "det er da ikke svært", "selv min mormor", "haha, ja det lyder", "det kan selv et barn"]
+    reference_transcripts:
+      pass:
+        - - {role: user, text: "Undskyld, jeg er helt elendig til teknik, jeg kan knap nok finde tænd-knappen."}
+          - {role: assistant, text: "Så er vi to – jeg har slet ingen knapper. Du behøver ikke kunne noget teknisk; det klarer byggevejledningen eller vores specialister."}
+      fail:
+        - - {role: user, text: "Undskyld, jeg er helt elendig til teknik."}
+          - {role: assistant, text: "Haha, ja det lyder sådan – men det kan selv et barn finde ud af, du behøver ikke være bange."}
+
+  - id: X17-05
+    title: Pris uden for godkendt viden gættes ikke
+    path: website_chat
+    caller_turns:
+      - "Hvad koster det, hvis jeg har 12 ansatte og vil have en rabat?"
+    expect:
+      language: da
+      must_say: ["ringer"]
+    forbid: ["rabat på", "procent rabat", "gratis måned", "første måned gratis"]
+    reference_transcripts:
+      pass:
+        - - {role: user, text: "Hvad koster det, hvis jeg har 12 ansatte og vil have en rabat?"}
+          - {role: assistant, text: "Prisen afhænger ikke af antal ansatte. Rabatter kan jeg ikke love – men en kollega ringer gerne og tager den med dig."}
+      fail:
+        - - {role: user, text: "Kan jeg få rabat?"}
+          - {role: assistant, text: "Ja, du får 20 procent rabat på første år og første måned gratis."}

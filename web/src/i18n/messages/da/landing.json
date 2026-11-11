@@ -54,20 +54,20 @@
   "pricing": {
     "meta": {
       "title": "Priser – AI-receptionist til {pMonthly} om måneden",
-      "description": "Se prisen på Dialogbot: ét abonnement til {pMonthly} om måneden ekskl. moms med 300 minutters indgående opkald. Telefon, chat, booking og personlig opsætning er med. Udgående kampagneopkald koster {pCall} pr. opkald.",
+      "description": "Se prisen på Dialogbot: ét abonnement til {pMonthly} om måneden ekskl. moms med 300 minutter til ind- og udgående opkald. Telefon, chat, booking og personlig opsætning er med. Inden for pakken er der ingen pris pr. opkald; når den er brugt, koster et udgående opkald {pCallAnswered} (besvaret), {pCallVoicemail} (telefonsvarer) eller {pCallNoAnswer} (ubesvaret) plus {pMinute} pr. minut.",
       "ogTitle": "Priser på AI-receptionist | Dialogbot"
     },
     "kicker": "Priser",
     "title": "Ét abonnement – {pMonthly} om måneden",
     "lead": "Én pris, den fulde Dialogbot: AI-receptionist på telefonen, chatbot på hjemmesiden, booking og en opsummering af hver henvendelse. Alle priser er ekskl. moms.",
-    "points": ["{pMonthly} om måneden – ét abonnement", "Ingen pris pr. henvendelse", "300 minutters indgående opkald om måneden er med", "Udgående kampagneopkald: {pCall} pr. opkald + {pMinute} pr. minut", "Ingen binding", "Gør-det-selv-opsætning er med – specialist-opsætning {pSetup}"],
+    "points": ["{pMonthly} om måneden – ét abonnement", "Ingen pris pr. henvendelse", "{pIncluded} minutter om måneden er med – til ind- og udgående opkald", "Derefter {pExtraMinute} pr. minut ind; udgående {pCallAnswered} pr. besvaret opkald + {pMinute} pr. minut", "Ingen binding", "Gør-det-selv-opsætning er med – specialist-opsætning {pSetup}"],
     "sections": {
       "subscription": {
         "title": "Abonnementet",
         "p1Price": "{pMonthly} om måneden",
         "p1a": " ekskl. moms. Der er ingen pris pr. henvendelse, og ",
-        "p1Minutes": "300 minutters indgående opkald om måneden er med",
-        "p1b": " – det rækker til de fleste små virksomheder. Taler jeres kunder mere med assistenten end det, koster hvert påbegyndt minut derudover {pExtraMinute} I kan altid se jeres forbrug i Dialogbot.",
+        "p1Minutes": "{pIncluded} minutter om måneden er med – til både indgående opkald og udgående kampagneopkald",
+        "p1b": " – det rækker til de fleste små virksomheder. Inden for pakken er der ingen pris pr. opkald. Bruger I flere minutter, koster hvert påbegyndt indgående minut {pExtraMinute}; udgående kampagneopkald efter pakken er beskrevet herunder. I kan altid se jeres forbrug pr. opkald i Dialogbot.",
         "p2": "Prisen på en telefonpasning – men en receptionist, der også booker tiderne i jeres kalender og sender en besked om hvert opkald.",
         "p3a": "Passer til virksomheder, hvor telefonen ringer, mens I har travlt: håndværkere, klinikker, saloner, værksteder og rådgivere. Vil I høre den først, kan I ",
         "p3Link": "lade Dialogbot ringe til jer",
@@ -97,12 +97,12 @@
       },
       "outbound": {
         "title": "Udgående kampagneopkald",
-        "p1a": "Vil I have assistenten til at ringe ud til kontakter, der selv har sagt ja til at blive ringet op, koster det ",
-        "p1Call": "{pCall} pr. udgående opkald",
+        "p1a": "Vil I have assistenten til at ringe ud til kontakter, der selv har sagt ja til at blive ringet op, trækker samtaleminutterne på de samme minutter i abonnementet – uden pris pr. opkald. Er pakken brugt op, koster hvert opkald, der starter derefter, ",
+        "p1Call": "{pCallAnswered}, hvis personen tager telefonen, {pCallVoicemail} ved telefonsvarer og {pCallNoAnswer} ved ubesvaret eller optaget",
         "p1b": " plus ",
         "p1Minute": "{pMinute} pr. påbegyndt samtaleminut",
-        "p1c": " ekskl. moms – ligesom en telefonregning.",
-        "p2": "Hvert opkald, der ringes, tæller – også et nyt forsøg. Et ubesvaret opkald koster derfor {pCall}, og en samtale på 3 minutter {pCall3Min} En kontakt ringes højst 2 gange og taler højst 3 minutter i alt, og I ser den højeste pris, før I trykker Start."
+        "p1c": ", ekskl. moms.",
+        "p2": "Et opkald, der krydser grænsen, deler kun minutterne – det får ingen opkaldspris. Pakken deles med de indgående opkald og bruges i den rækkefølge, opkaldene sker. En kontakt ringes højst 2 gange og taler højst 3 minutter, så en kontakt koster højst {pContactMax}, og I ser den højeste pris, før I trykker Start."
       },
       "start": {
         "title": "Kom i gang",
@@ -117,11 +117,11 @@
     },
     "faq": [
       ["Er der binding?", "Nej. Der er ingen binding. I kan opsige til udgangen af den løbende måned."],
-      ["Er {pMonthly} hele prisen?", "Ja, det er hele prisen for abonnementet, ekskl. moms. Der er kun ét abonnement og ingen ekstra pris pr. henvendelse. Kun hvis I bruger mere end 300 indgående minutter om måneden, koster hvert minut derudover {pExtraMinute}"],
+      ["Er {pMonthly} hele prisen?", "Ja, det er hele prisen for abonnementet, ekskl. moms. Der er kun ét abonnement og ingen ekstra pris pr. henvendelse. Kun hvis I bruger mere end 300 minutter om måneden (ind og ud tilsammen), koster hvert minut derudover {pExtraMinute} ind og {pMinute} ud, og udgående opkald efter pakken koster desuden {pCallAnswered}/{pCallVoicemail}/{pCallNoAnswer} pr. opkald efter udfald."],
       ["Kan jeg prøve den, før jeg køber?", "Ja. Dialogbot ringer til jer og tager imod jer, som var I en kunde – det tager to minutter og kræver ingen tilmelding. Og der er ingen binding."],
       ["Hvor bliver mine kunders oplysninger af?", "Det står i en kort, almindelig tekst på siden om GDPR og data: hvad der gemmes, hvor, og hvordan databehandleraftalen fungerer."],
-      ["Hvad koster udgående kampagneopkald?", "{pCall} pr. udgående opkald plus {pMinute} pr. påbegyndt samtaleminut, ekskl. moms. Et ubesvaret opkald koster {pCall}, en samtale på 3 minutter {pCall3Min} Kontakterne skal på forhånd have sagt ja til at blive ringet op, og en kampagne ringer først, når I selv trykker Start."],
-      ["Hvad sker der, hvis vi får mange indgående opkald?", "300 minutters indgående opkald om måneden er med i abonnementet. Derudover koster hvert påbegyndt minut {pExtraMinute} ekskl. moms – det står på fakturaen som en særskilt linje, og I kan følge forbruget løbende i Dialogbot."],
+      ["Hvad koster udgående kampagneopkald?", "Inden for abonnementets {pIncluded} minutter (som deles med de indgående opkald) er der ingen pris pr. opkald. Er pakken brugt op, koster et udgående opkald, der starter derefter, {pCallAnswered}, hvis personen tager telefonen, {pCallVoicemail} ved telefonsvarer og {pCallNoAnswer} ved ubesvaret eller optaget – plus {pMinute} pr. påbegyndt samtaleminut, ekskl. moms. Højst {pContactMax} pr. kontakt. Kontakterne skal på forhånd have sagt ja til at blive ringet op, og en kampagne ringer først, når I selv trykker Start."],
+      ["Hvad sker der, hvis vi får mange indgående opkald?", "{pIncluded} minutter om måneden er med i abonnementet – til både indgående og udgående opkald, og inden for dem er der ingen pris pr. opkald. Derudover koster hvert påbegyndt indgående minut {pExtraMinute}; udgående opkald koster {pCallAnswered}/{pCallVoicemail}/{pCallNoAnswer} efter udfald plus {pMinute} pr. minut, ekskl. moms. Det står på fakturaen som særskilte linjer, og I kan følge forbruget pr. opkald i Dialogbot."],
       ["Koster opsætningen noget?", "Ikke hvis I gør det selv: byggevejledningens tre trin er med i abonnementet og tager cirka en halv time. Opsætning fra vores specialister koster {pSetup} ekskl. moms én gang og giver jer en skræddersyet opsætning og integration til jeres egne systemer og behov."]
     ]
   },
@@ -160,7 +160,7 @@
         "title": "Pris og opsætning",
         "p1a": "Der er ét abonnement: ",
         "p1Price": "{pMonthly} om måneden",
-        "p1b": ", uden pris pr. henvendelse og med 300 minutters indgående opkald om måneden. Udgående kampagneopkald koster {pCall} pr. opkald plus {pMinute} pr. samtaleminut. Alle priser er ekskl. moms.",
+        "p1b": ", uden pris pr. henvendelse og med 300 minutter til ind- og udgående opkald om måneden. Inden for pakken er der ingen pris pr. opkald; når den er brugt, koster et udgående opkald {pCallAnswered} (besvaret), {pCallVoicemail} (telefonsvarer) eller {pCallNoAnswer} (ubesvaret) plus {pMinute} pr. minut. Alle priser er ekskl. moms.",
         "p2a": "I skal ikke kunne noget teknisk. I sætter selv assistenten op efter byggevejledningens tre trin på cirka en halv time – det er med i abonnementet. Har I en hjemmeside, henter Dialogbot det meste automatisk, og I kan prøve assistenten af, før den tager et eneste rigtigt opkald. Vil I hellere have det gjort, sætter vores egne specialister den op for {pSetup} ekskl. moms én gang – skræddersyet og integreret med jeres egne systemer og behov. Læs også om ",
         "p2Phone": "AI-telefonsvareren",
         "p2b": " og ",
@@ -169,7 +169,7 @@
       }
     },
     "faq": [
-      ["Hvad koster en AI-receptionist hos Dialogbot?", "Ét abonnement til {pMonthly} om måneden, uden pris pr. henvendelse og med 300 minutters indgående opkald om måneden. Udgående kampagneopkald koster {pCall} pr. opkald plus {pMinute} pr. samtaleminut. Priserne er ekskl. moms."],
+      ["Hvad koster en AI-receptionist hos Dialogbot?", "Ét abonnement til {pMonthly} om måneden, uden pris pr. henvendelse og med 300 minutter til ind- og udgående opkald om måneden. Inden for pakken er der ingen pris pr. opkald; når den er brugt, koster et udgående opkald {pCallAnswered} (besvaret), {pCallVoicemail} (telefonsvarer) eller {pCallNoAnswer} (ubesvaret) plus {pMinute} pr. minut. Priserne er ekskl. moms."],
       ["Hvad sker der med kundernes oplysninger – er det GDPR-sikkert?", "Opkald og beskeder behandles som databehandler på jeres vegne, databasen ligger i EU, og I får en databehandleraftale som en del af vilkårene. Læs det hele i almindeligt dansk på siden om GDPR og data: /gdpr."],
       ["Lyder den som en robot?", "Dialogbot taler naturligt dansk med en stemme, I selv vælger, fx Camilla eller Peter. Den siger altid ærligt, at den er en digital assistent, hvis kunden spørger."],
       ["Kan jeg beholde mit telefonnummer?", "Ja. I viderestiller jeres nuværende nummer til Dialogbot, når I er optaget eller har lukket, og beholder jeres teleudbyder."],

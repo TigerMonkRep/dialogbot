@@ -120,7 +120,7 @@ Alle felter/endpoints herunder findes allerede, medmindre andet er nævnt. Board
 ### 6.7 Ugen (`Ugen.dc.html`) – erstatter reports
 - Ugevælger. Fire tal: opkald besvaret (+ mistet), aftaler booket (+ delta), beskeder til dig, svartid. Søjler pr. dag (blå = besvaret, gul = besked til dig) – flade divs, ingen chart-lib.
 - «Det spurgte kunderne om»: emne · gange · kunne svare (Ja / Nej · tog besked / Må den ikke) · «Tilføj svar →» (deep-link til Det ved den med emnet udfyldt). Backend: `reports/topics?week=` (nyt; aggregér fra conversation-resuméer).
-- Højre: Dagsrapport (modtager, klokkeslæt, ugemail) – ændres via chips/assistenten → `reports/settings`. «Det kostede ugen» (kampagneopkald × 4 kr.) → `billing/account`.
+- Højre: Dagsrapport (modtager, klokkeslæt, ugemail) – ændres via chips/assistenten → `reports/settings`. «Det kostede ugen» (kampagnens forbrug efter pakken: opkaldspris efter udfald + påbegyndte minutter) → `billing/account`.
 
 ### 6.8 Aftaler (`Aftaler.dc.html`) – erstatter bookings
 - Ugestrimmel man–fre med aftalekort (i dag = gul); lukkedage som stiplet felt. Klik på aftale → lille ark: flyt/aflys (`bookings/{id}`, `/cancel`), kunden får SMS.
@@ -131,11 +131,11 @@ Alle felter/endpoints herunder findes allerede, medmindre andet er nævnt. Board
 - Ny kampagne som tre nummererede trin på én side: 1 Hvem (upload CSV/XLSX → `campaigns/{id}/contacts`; viser antal og hvor mange der springes over pga. `do-not-call`), 2 Hvad skal den sige (manuskript + «Hør det med jeres stemme» + chips via `script-suggestions`), 3 Hvornår og hvad gør den ved svar (tidsvindue, forsøg, ja → book, nej → ring-ikke).
 - Gult godkendelseskort: antal opkald · højst X kr. ekskl. moms (antal × 4) · «Godkend og start» (`campaigns/{id}/start`) · «Ring til mig først som test».
 - Højre: tidligere kampagner med resultat (ringet / svarede / aftaler / kr.), «Ring ikke»-listen (tilføj nummer).
-- Prislinje altid: «4 kr. pr. opkald ekskl. moms». Siden vises kun, hvis «ringe kunder op» er valgt i trin 1 (ellers et kort på I dag: «Vil I også ringe ud? Sig det til assistenten»).
+- Prislinje altid: «minutter fra pakken, derefter 4 kr. pr. besvaret opkald + 2 kr./min ekskl. moms»; i teksten og før start desuden 1 kr. ved telefonsvarer, 0,25 kr. ved ubesvaret/optaget og «pr. påbegyndt minut», højst 14 kr. pr. kontakt. Siden vises kun, hvis «ringe kunder op» er valgt i trin 1 (ellers et kort på I dag: «Vil I også ringe ud? Sig det til assistenten»).
 
 ### 6.10 Konto (`Konto.dc.html`) – erstatter team/profile/billing/agreement
 - 1 Hvem må se og ændre: tabel (navn, e-mail, rolle som dropdown «Ejer / Kan ændre / Kan se», fjern), invitationer, invitér-felt → `members`, `invitations`. Rollerne mappes: owner=Ejer, admin+staff=Kan ændre, reader=Kan se (backend uændret).
-- 2 Abonnement: fast abonnement 2.495 kr./md. ekskl. moms · kampagneopkald 4 kr. · betaling (kort •••• / EAN) → `agreement`, `billing/account`, `billing/card/checkout`. Første gang ejeren ser siden uden bekræftet aftale, står boksen gul med «Bekræft abonnement» (= nuværende settings/agreement).
+- 2 Abonnement: fast abonnement 2.495 kr./md. ekskl. moms med 300 min/md. ind og ud · derefter 1,50 kr./min ind, 2 kr./min ud og 4 / 1 / 0,25 kr. pr. udgående opkald efter udfald · betaling (kort •••• / EAN) → `agreement`, `billing/account`, `billing/card/checkout`. Første gang ejeren ser siden uden bekræftet aftale, står boksen gul med «Bekræft abonnement» (= nuværende settings/agreement).
 - 3 Fakturaer: måned · abonnement · kampagner · i alt · PDF/Åben → `billing/invoices`.
 - Højre: profil (navn, e-mail, skift adgangskode, log ud, sessioner → `/auth/sessions`), andre arbejdsrum (+ «Byg en Dialogbot til en anden virksomhed» → `/opsaetning/1`), data og samtykke (link til log).
 - Ambassadør-/henvisningskode: ét felt under Abonnement («Har du en ambassadørkode?»), ikke tre steder.
@@ -160,7 +160,7 @@ Alle felter/endpoints herunder findes allerede, medmindre andet er nævnt. Board
 
 ## 8. Regler, der ikke må brydes
 
-- Priser kun som: «abonnement fra 2.495 kr./md.» og «4 kr. pr. udgående kampagneopkald», altid «ekskl. moms». Opsætning: gør-det-selv er med i abonnementet; «opsætning fra vores specialister 5.000 kr. ekskl. moms, én gang» (skræddersyet opsætning og integration til egne systemer/behov). Ingen påstande om ISO, hosting, SLA eller «gratis».
+- Priser kun som: «abonnement fra 2.495 kr./md.» og «300 minutter om måneden til ind- og udgående opkald – inden for dem ingen pris pr. opkald; derefter 1,50 kr. pr. påbegyndt minut ind, og et udgående opkald 4 kr. (besvaret), 1 kr. (telefonsvarer) eller 0,25 kr. (ubesvaret/optaget) + 2 kr. pr. påbegyndt minut, højst 14 kr. pr. kontakt», altid «ekskl. moms». Opsætning: gør-det-selv er med i abonnementet; «opsætning fra vores specialister 5.000 kr. ekskl. moms, én gang» (skræddersyet opsætning og integration til egne systemer/behov). Ingen påstande om ISO, hosting, SLA eller «gratis».
 - Ingen gradienter, bløde skygger eller emoji. Eneste skygge: `shadow-block` (8px 8px 0 blæk), én pr. sektion.
 - Rigtige `<a>`/`<button>`/`<label>`; knapper ≥ 44 px; kontrast 4,5:1; alt virker ved 390 px.
 - Intet gemmes uden «Godkend», når det går gennem assistenten. Direkte formularer (fx trin 1) autosaver, men viser «Gemt».

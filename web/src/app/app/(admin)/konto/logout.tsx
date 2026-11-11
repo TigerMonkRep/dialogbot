@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useT } from "@/i18n/client";
+import { clearSwPages } from "@/lib/sw-register";
 
 export function LogoutButton() {
   const router = useRouter();
@@ -12,6 +13,7 @@ export function LogoutButton() {
       onClick={async () => {
         setBusy(true);
         await fetch("/api/auth/logout", { method: "POST", headers: { "x-requested-with": "dialogbot" } });
+        await clearSwPages();
         router.push("/login"); router.refresh();
       }}>{t("account.logout")}</button>
   );

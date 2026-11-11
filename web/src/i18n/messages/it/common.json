@@ -101,5 +101,12 @@
     "pushOff": "Le notifiche sono disattivate su questo dispositivo.",
     "pushDisable": "Disattiva le notifiche",
     "pushIosHome": "Su iPhone le notifiche funzionano solo dall'app nella schermata Home – mettila prima lì (Download app qui sopra)."
+  },
+  "pageError": {
+    "title": "Impossibile mostrare la pagina",
+    "text": "Si è verificato un errore da parte nostra. Riprova – se non basta, accedi di nuovo.",
+    "retry": "Riprova",
+    "login": "Accedi di nuovo",
+    "reference": "Codice errore"
   }
 }

@@ -9,21 +9,55 @@
     "skipToContent": "Skip to content",
     "home": "Dialogbot – Today",
     "nav": "Setup",
-    "steps": ["Business", "Calendar & systems", "Test & switch on"],
+    "steps": [
+      "Business",
+      "Calendar & systems",
+      "Test & switch on"
+    ],
     "stepAria": "Step {n}: {label}",
     "skipped": " (skipped)",
     "laterNote": " – you'll find everything again under the profile icon → All settings."
   },
   "hours": {
-    "days": ["mon", "tue", "wed", "thu", "fri", "sat", "sun"],
-    "dayNames": ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"],
+    "days": [
+      "mon",
+      "tue",
+      "wed",
+      "thu",
+      "fri",
+      "sat",
+      "sun"
+    ],
+    "dayNames": [
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+      "sunday"
+    ],
     "and": "and"
   },
   "step1Page": {
     "eyebrow": "Build your Dialogbot · step 1 of 3 · approx. 5 min",
     "title": "Who are you – and what should it do?",
     "intro": "One step. We fetch most of it from your website – you only correct what's wrong. You can change it later by telling the assistant.",
-    "need": [["1×", "website address"], ["1×", "CVR number", "or just the name"], ["1×", "the number your customers call"]]
+    "need": [
+      [
+        "1×",
+        "website address"
+      ],
+      [
+        "1×",
+        "CVR number",
+        "or just the name"
+      ],
+      [
+        "1×",
+        "the number your customers call"
+      ]
+    ]
   },
   "step1": {
     "kind": {
@@ -99,7 +133,7 @@
         "phone": { "title": "Answer the phone", "sub": "when you can't – or always" },
         "booking": { "title": "Book appointments", "sub": "straight into your calendar" },
         "web": { "title": "Answer on your website", "sub": "web chat – one line of code" },
-        "outbound": { "title": "Call customers", "sub": "campaigns · {pCall} per call excl. VAT" }
+        "outbound": { "title": "Call customers", "sub": "campaigns · minutes from the package" }
       },
       "langAria": "Languages",
       "speaks": "It speaks",
@@ -129,7 +163,16 @@
   "step2Page": {
     "eyebrow": "Step 2 of 3",
     "title": "Where should the appointments land?",
-    "need": [["1×", "login to your calendar"], ["2", "minutes"]],
+    "need": [
+      [
+        "1×",
+        "login to your calendar"
+      ],
+      [
+        "2",
+        "minutes"
+      ]
+    ],
     "connector": {
       "google_calendar": "Google Calendar",
       "microsoft_calendar": "Microsoft 365 calendar"
@@ -165,7 +208,20 @@
     "writeUs": "Write to us",
     "managersOnly": "Only owners and administrators can connect systems.",
     "writesTitle": "What Dialogbot writes in the calendar",
-    "writes": [["1×", "appointment with the customer's name, number and errand"], ["1×", "confirmation to you with the appointment time"], ["0×", "changes to your existing appointments – it never touches them"]],
+    "writes": [
+      [
+        "1×",
+        "appointment with the customer's name, number and errand"
+      ],
+      [
+        "1×",
+        "confirmation to you with the appointment time"
+      ],
+      [
+        "0×",
+        "changes to your existing appointments – it never touches them"
+      ]
+    ],
     "defaultsNote": "The times follow your opening hours from step 1. To start with: 45-minute appointments, a 15-minute break and tomorrow at the earliest. You can change it under Appointments.",
     "next": "Continue to step 3: test & switch on",
     "skip": "Skip – I don't use a calendar"
@@ -173,7 +229,16 @@
   "step3Page": {
     "eyebrow": "Step 3 of 3 · last step",
     "title": "Choose a voice, connect the phone – and switch on",
-    "need": [["1×", "a phone to call from"], ["10", "seconds for call forwarding"]]
+    "need": [
+      [
+        "1×",
+        "a phone to call from"
+      ],
+      [
+        "10",
+        "seconds for call forwarding"
+      ]
+    ]
   },
   "step3": {
     "failed": "That didn't work. Please try again.",
@@ -293,23 +358,47 @@
     "turningOn": "Switching on …",
     "turnOn": "Switch on Dialogbot",
     "managersOnly": "Only owners and administrators can switch it on.",
-    "subscriptionNote": "The subscription is from {pMonthly}/month excl. VAT, and outbound campaign calls cost {pCall} per call excl. VAT.",
+    "subscriptionNote": "The subscription is from {pMonthly}/month excl. VAT with {pIncluded} minutes for inbound and outbound calls; then {pExtraMinute} per minute in, and outbound {pCallAnswered} per answered call + {pMinute} per minute.",
     "confirmSubscription": "Confirm subscription",
-    "findAgain": "You'll find everything again under the profile icon → All settings."
+    "findAgain": "You'll find everything again under the profile icon → All settings.",
+    "readerTitle": "The owner sets up Dialogbot",
+    "campaignsTitle": "Ready for your first campaign",
+    "campaignsText": "There is nothing to switch on: Dialogbot only calls out once you have created and started a campaign.",
+    "campaignsCta": "Create your first campaign",
+    "nothingTitle": "Choose what Dialogbot should do",
+    "nothingText": "Nothing is chosen in step 1, so there is nothing to switch on. Choose at least one thing."
   },
   "assistant": {
     "setupChips": {
       "1": [
-        { "label": "Opening hours", "fill": "Opening hours mon-fri 8-16" },
-        { "label": "What happens in step 2?", "say": "In step 2 you connect your calendar so appointments land there. It's optional – you can skip it." }
+        {
+          "label": "Opening hours",
+          "fill": "Opening hours mon-fri 8-16"
+        },
+        {
+          "label": "What happens in step 2?",
+          "say": "In step 2 you connect your calendar so appointments land there. It's optional – you can skip it."
+        }
       ],
       "2": [
-        { "label": "What do you write in the calendar?", "say": "An appointment with the customer's name, number and errand – and a confirmation to you. I never touch your existing appointments." },
-        { "label": "What happens in step 3?", "say": "In step 3 you choose a voice, connect the phone with call forwarding and switch on Dialogbot." }
+        {
+          "label": "What do you write in the calendar?",
+          "say": "An appointment with the customer's name, number and errand – and a confirmation to you. I never touch your existing appointments."
+        },
+        {
+          "label": "What happens in step 3?",
+          "say": "In step 3 you choose a voice, connect the phone with call forwarding and switch on Dialogbot."
+        }
       ],
       "3": [
-        { "label": "How do I forward calls?", "say": "Type the code from step 3 on your phone and press call. Turn forwarding off again with the code below it." },
-        { "label": "Can I undo it?", "say": "Yes. You can pause Dialogbot from Today and turn off forwarding on your phone." }
+        {
+          "label": "How do I forward calls?",
+          "say": "Type the code from step 3 on your phone and press call. Turn forwarding off again with the code below it."
+        },
+        {
+          "label": "Can I undo it?",
+          "say": "Yes. You can pause Dialogbot from Today and turn off forwarding on your phone."
+        }
       ]
     },
     "chips": {

@@ -15,13 +15,14 @@ export function Num({ n, dark = false }: { n: number; dark?: boolean }) {
   return <span className={`inline-flex w-10 h-10 shrink-0 rounded-[10px] items-center justify-center font-display font-extrabold text-[20px] ${dark ? "bg-ink text-paper" : "bg-highlight text-ink"}`} aria-hidden>{n}</span>;
 }
 
-/** The page only shows campaigns when «ringe kunder op» is chosen; this switches it on (the same setting as in trin 1). */
+/** The page only shows campaigns when «ringe kunder op» is chosen; this switches it on – the same setting as the card in
+ *  trin 1: product_intent reception → both (the reception's own choices are kept). */
 export function EnableOutbound({ wsId, goals }: { wsId: string; goals: Record<string, unknown> & { version: number } }) {
   const router = useRouter();
   const t = useT("app");
   const on = useSubmit(async () => {
     const { version, ...g } = goals;
-    await api(`/workspaces/${wsId}/goals`, { method: "PUT", body: JSON.stringify({ ...g, callback: true, expected_version: version }) });
+    await api(`/workspaces/${wsId}/goals`, { method: "PUT", body: JSON.stringify({ ...g, product_intent: "both", expected_version: version }) });
     router.refresh();
   });
   return <div className="flex flex-col gap-1"><Button type="button" onClick={() => on.run()} disabled={on.pending}>{on.pending ? t("campaigns.enable.pending") : t("campaigns.enable.button")}</Button><ErrorBox error={on.error} /></div>;
@@ -174,7 +175,8 @@ export function StartCampaign({ wsId, c, checklist }: { wsId: string; c: Campaig
       <span className="eyebrow !text-ink">{t("campaigns.start.before")}</span>
       <h2 className="font-display font-extrabold text-[20px] text-ink">{c.status === "paused" ? t("campaigns.start.resumeTitle") : t("campaigns.start.heading", { n: pending, max: kr(c.max_cost.net_minor, lang, c.pricing.currency) })}</h2>
       {c.outbound_problem && <Alert kind="warn">{c.outbound_problem}</Alert>}
-      <p className="text-body-md">{t("campaigns.start.body", { n: pending, max: kr(c.max_cost.net_minor, lang, c.pricing.currency), gross: kr(c.max_cost.gross_minor, lang, c.pricing.currency), call: kr(c.pricing.call_net_minor, lang, c.pricing.currency), minute: kr(c.pricing.minute_net_minor, lang, c.pricing.currency), attempts: c.pricing.max_attempts, minutes: Math.round(c.pricing.max_connected_seconds / 60) })}</p>
+      <p className="text-body-md">{t("campaigns.start.body", { n: pending, max: kr(c.max_cost.net_minor, lang, c.pricing.currency), gross: kr(c.max_cost.gross_minor, lang, c.pricing.currency), withPackage: kr(c.max_cost_with_package.net_minor, lang, c.pricing.currency), maxMinutes: c.max_minutes,
+        answered: kr(c.pricing.call_prices.answered, lang, c.pricing.currency), voicemail: kr(c.pricing.call_prices.voicemail, lang, c.pricing.currency), noAnswer: kr(c.pricing.call_prices.no_answer, lang, c.pricing.currency), contactMax: kr(c.pricing.per_contact_max_net_minor, lang, c.pricing.currency), remaining: c.package.remaining, included: c.package.included, minute: kr(c.pricing.minute_net_minor, lang, c.pricing.currency), attempts: c.pricing.max_attempts, minutes: Math.round(c.pricing.max_connected_seconds / 60) })}</p>
       <fieldset className="flex flex-col gap-1">
         <legend className="text-label-md font-semibold mb-1">{t("campaigns.start.confirm")}</legend>
         {checklist.map((item, i) => (

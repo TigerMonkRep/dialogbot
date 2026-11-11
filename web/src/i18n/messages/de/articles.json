@@ -73,7 +73,7 @@
     "faq": [
       ["Kann ein KI-Anrufbeantworter einen Telefonservice ersetzen?", "Für die meisten Routineanfragen ja: Er antwortet, klärt das Anliegen und bucht. Komplexe Fälle werden an Sie weitergeleitet."],
       ["Ist ein KI-Anrufbeantworter auch nachts erreichbar?", "Ja, Dialogbot geht rund um die Uhr ans Telefon."],
-      ["Was ist günstiger: Telefonservice oder Dialogbot?", "Ein Telefonservice wird meist pro Anruf oder pro Monat abgerechnet. Dialogbot ist ein Abonnement für {pMonthly} im Monat zzgl. MwSt. mit 300 Minuten eingehender Anrufe und ohne Preis pro Anfrage. Siehe auch /viden/dialogbot-vs-vocalis."],
+      ["Was ist günstiger: Telefonservice oder Dialogbot?", "Ein Telefonservice wird meist pro Anruf oder pro Monat abgerechnet. Dialogbot ist ein Abonnement für {pMonthly} im Monat zzgl. MwSt. mit 300 Minuten für ein- und ausgehende Anrufe und ohne Preis pro Anfrage. Siehe auch /viden/dialogbot-vs-vocalis."],
       ["Kann ich meine Nummer behalten?", "Ja. Sie leiten Ihre Nummer auf Dialogbot um, wenn Sie besetzt oder geschlossen sind."]
     ]
   },
@@ -132,7 +132,7 @@
     "faq": [
       ["Kann Dialogbot auch einfach nur ein Chatbot sein?", "Ja. Der Webchat ist im Abonnement enthalten und nutzt dasselbe bestätigte Wissen wie das Telefon. Es ist eine einzige Codezeile auf der Website."],
       ["Rät Dialogbot, wenn er die Antwort nicht kennt?", "Nein. Er antwortet nur auf Grundlage bestätigten Wissens und nimmt eine Nachricht für Sie auf, wenn er nicht antworten kann."],
-      ["Was kostet das?", "{pMonthly} im Monat zzgl. MwSt. mit 300 Minuten eingehender Anrufe. Keine Mindestlaufzeit."]
+      ["Was kostet das?", "{pMonthly} im Monat zzgl. MwSt. mit 300 Minuten für ein- und ausgehende Anrufe. Keine Mindestlaufzeit."]
     ]
   },
   "dialogbot-vs-vocalis": {

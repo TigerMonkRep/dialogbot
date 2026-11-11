@@ -101,5 +101,12 @@
     "pushOff": "Les notifications sont désactivées sur cet appareil.",
     "pushDisable": "Désactiver les notifications",
     "pushIosHome": "Sur iPhone, les notifications ne fonctionnent que depuis l'app sur l'écran d'accueil – mets-la d'abord là (Download app ci-dessus)."
+  },
+  "pageError": {
+    "title": "Impossible d'afficher cette page",
+    "text": "Une erreur s'est produite de notre côté. Réessayez – si cela ne suffit pas, reconnectez-vous.",
+    "retry": "Réessayer",
+    "login": "Se reconnecter",
+    "reference": "Code d'erreur"
   }
 }

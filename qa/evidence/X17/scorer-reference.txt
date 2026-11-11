@@ -1,0 +1,10 @@
+X17-01 reference pass: ok 
+X17-01 reference fail: ok never said 'ved jeg ikke'; never said 'ringer'; forbidden 'ja, det kan den' in 'Ja, det kan den, e-conomic er understøttet fra dag ét.'; forbidden 'e-conomic er understøttet' in 'Ja, det kan den, e-conomic er understøttet fra dag ét.'
+X17-02 reference pass: ok 
+X17-02 reference fail: ok forbidden 'privat preview' in 'Lige nu er vi i privat preview, så du skal bruge en invitationskode.'; forbidden 'invitationskode' in 'Lige nu er vi i privat preview, så du skal bruge en invitationskode.'
+X17-03 reference pass: ok 
+X17-03 reference fail: ok never said 'Dialogbot Privat'; forbidden 'det må jeg ikke tale om' in 'Det må jeg ikke tale om.'
+X17-04 reference pass: ok 
+X17-04 reference fail: ok forbidden 'haha, ja det lyder' in 'Haha, ja det lyder sådan – men det kan selv et barn finde ud af, du behøver ikke være bange.'; forbidden 'det kan selv et barn' in 'Haha, ja det lyder sådan – men det kan selv et barn finde ud af, du behøver ikke være bange.'
+X17-05 reference pass: ok 
+X17-05 reference fail: ok never said 'ringer'; forbidden 'rabat på' in 'Ja, du får 20 procent rabat på første år og første måned gratis.'; forbidden 'procent rabat' in 'Ja, du får 20 procent rabat på første år og første måned gratis.'; forbidden 'første måned gratis' in 'Ja, du får 20 procent rabat på første år og første måned gratis.'

@@ -60,7 +60,7 @@
       "title": "Campagnes",
       "sub": "Appelez vos propres clients",
       "outbound": "Appels sortants",
-      "chosen": "Choisi – {pCall} par appel + {pMinute} par minute HT",
+      "chosen": "Choisi – minutes du forfait, puis {pCallAnswered} par appel décroché + {pMinute} par minute HT",
       "notChosen": "Non choisi"
     },
     "systems": {
@@ -640,5 +640,30 @@
     "back": "Retour aux voix",
     "notice": "La voix personnalisée est créée à partir d’un court enregistrement. La ressemblance avec la personne enregistrée peut varier, notamment pour les voix éloignées des voix d’entraînement du modèle. Une ressemblance complète nécessite un entraînement sur le script standard, que Dialogbot proposera ultérieurement.",
     "previous": "Enregistrements précédents"
+  },
+  "apiKeys": {
+    "title": "Clés API",
+    "intro": "Pour vos propres systèmes (CRM, Zapier, votre code) via l'API de Dialogbot. Donnez un nom à chaque clé et uniquement les droits nécessaires.",
+    "name": "Nom",
+    "namePlaceholder": "Ex. synchro CRM",
+    "scopes": "Droits",
+    "write": "peut modifier des données",
+    "create": "Créer la clé",
+    "creating": "Création…",
+    "onceTitle": "La clé «{name}» – copiez-la maintenant",
+    "onceNote": "Elle n'est affichée qu'une seule fois. Si vous la perdez, révoquez-la et créez-en une nouvelle.",
+    "copy": "Copier",
+    "copied": "Copiée",
+    "saved": "Je l'ai enregistrée",
+    "listTitle": "Vos clés",
+    "none": "Aucune clé pour l'instant.",
+    "created": "créée le {date}",
+    "lastUsed": "dernière utilisation {date}",
+    "neverUsed": "jamais utilisée",
+    "revoke": "Révoquer",
+    "revokeConfirm": "Révoquer «{name}» ? Les systèmes qui l'utilisent perdent l'accès immédiatement.",
+    "revoked": "révoquée le {date}",
+    "expired": "expirée",
+    "docs": "Utilisation : envoyez-la comme «Authorization: Bearer <clé>» à l'API de Dialogbot (https://api.dialogbot.app/v1)."
   }
 }

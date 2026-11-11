@@ -1,0 +1,8 @@
+_______________ test_x18_other_call_language_is_passed_to_soniox _______________
+PASSED tests/qa/test_qa_voice_X18.py::test_x18_every_workspace_inbound_goes_through_soniox_when_switched_on
+PASSED tests/qa/test_qa_voice_X18.py::test_x18_campaign_sales_and_privat_paths_use_the_same_switch
+PASSED tests/qa/test_qa_voice_X18.py::test_x18_bridge_opens_soniox_with_stt_rt_v6_danish_and_the_business_terms
+PASSED tests/qa/test_qa_voice_X18.py::test_x18_other_call_language_is_passed_to_soniox
+PASSED tests/qa/test_qa_voice_X18.py::test_x18_repo_default_is_not_soniox_v6
+PASSED tests/qa/test_qa_voice_X18.py::test_x18_missing_soniox_key_falls_back_to_deepgram
+SKIPPED [1] tests/qa/test_qa_voice_X18.py:127: blocked: replay through Soniox needs SONIOX_API_KEY and the network (wave 2: no network). Fixtures: tests/fixtures/stemmetest/audio/*.wav + manifest.json; run with RUN_LIVE_STT=1 tests/test_stemmetest_live.py

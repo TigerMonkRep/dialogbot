@@ -60,7 +60,7 @@
       "title": "Kampagner",
       "sub": "Ring til jeres egne kunder",
       "outbound": "Udgående opkald",
-      "chosen": "Valgt – {pCall} pr. opkald + {pMinute} pr. minut ekskl. moms",
+      "chosen": "Valgt – minutter fra pakken, derefter {pCallAnswered} pr. besvaret opkald + {pMinute} pr. minut ekskl. moms",
       "notChosen": "Ikke valgt"
     },
     "systems": {
@@ -640,5 +640,30 @@
     "back": "Tilbage til stemmer",
     "notice": "Egen stemme laves ud fra en kort optagelse. Ligheden med indtaleren kan variere, især for stemmer, der ligger langt fra modellens træningsstemmer. Fuld lighed kræver træning på standardmanuskriptet, som Dialogbot tilbyder senere.",
     "previous": "Tidligere indtalinger"
+  },
+  "apiKeys": {
+    "title": "API-nøgler",
+    "intro": "Til jeres egne systemer (CRM, Zapier, egen kode) via Dialogbots API. Giv hver nøgle et navn og kun de rettigheder, den skal bruge.",
+    "name": "Navn",
+    "namePlaceholder": "Fx CRM-sync",
+    "scopes": "Rettigheder",
+    "write": "kan ændre data",
+    "create": "Opret nøgle",
+    "creating": "Opretter…",
+    "onceTitle": "Nøglen «{name}» – kopiér den nu",
+    "onceNote": "Den vises kun denne ene gang. Mister I den, så tilbagekald den og opret en ny.",
+    "copy": "Kopiér",
+    "copied": "Kopieret",
+    "saved": "Jeg har gemt den",
+    "listTitle": "Jeres nøgler",
+    "none": "Ingen nøgler endnu.",
+    "created": "oprettet {date}",
+    "lastUsed": "sidst brugt {date}",
+    "neverUsed": "aldrig brugt",
+    "revoke": "Tilbagekald",
+    "revokeConfirm": "Tilbagekald «{name}»? Systemer, der bruger den, mister adgang med det samme.",
+    "revoked": "tilbagekaldt {date}",
+    "expired": "udløbet",
+    "docs": "Sådan bruges nøglen: send den som «Authorization: Bearer <nøgle>» til Dialogbots API (https://api.dialogbot.app/v1)."
   }
 }

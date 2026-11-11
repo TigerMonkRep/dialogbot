@@ -75,6 +75,16 @@ class AIProvider(Protocol):
                  tools: list[dict] | None = None, model: str | None = None, effort: str | None = None) -> Completion: ...
 
 
+def system_blocks(system: str) -> list[dict]:
+    """The system prompt as Anthropic blocks: everything but the <nu> block cached, the <nu> block after it uncached."""
+    start, end = system.find("<nu>"), system.find("</nu>")
+    if start < 0 or end < start:
+        return [{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}]
+    now = system[start:end + len("</nu>")]
+    stable = (system[:start].rstrip() + "\n\n" + system[end + len("</nu>"):].lstrip()).strip()
+    return [{"type": "text", "text": stable, "cache_control": {"type": "ephemeral"}}, {"type": "text", "text": now}]
+
+
 class AnthropicProvider:
     name = "anthropic"
 
@@ -95,8 +105,9 @@ class AnthropicProvider:
         kwargs: dict = {
             "model": model or self.model,
             "max_tokens": max_tokens,
-            # One stable system block (instructions + approved knowledge) marked for prompt caching.
-            "system": [{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
+            # One stable system block (instructions + approved knowledge) marked for prompt caching; the current time
+            # (<nu>…</nu>, changes every minute) follows uncached so it never breaks the cached prefix.
+            "system": system_blocks(system),
             "messages": messages,
             "output_config": {"effort": effort or self.effort},
         }

@@ -129,7 +129,7 @@
     "noAppointments": "Ingen kommende avtaler.",
     "weekAppointments": "Se ukens avtaler",
     "campaigns": "Kampanjer",
-    "campaignsSub": "Ring deres egne kunder – {pCall} per anrop + {pMinute} per samtaleminutt eks. mva.",
+    "campaignsSub": "Ring deres egne kunder – minuttene trekkes fra abonnementets {pIncluded} minutter. Når de er brukt, koster et besvart anrop {pCallAnswered} pluss {pMinute} per minutt eks. mva.",
     "openCampaigns": "Åpne kampanjer",
     "allActivity": "All aktivitet de siste 14 dagene",
     "power": {
@@ -288,7 +288,7 @@
       "title": "Dette kostet uken",
       "extra": "{amount} ekstra",
       "calls": "{n} kampanjeanrop",
-      "note": "300 minutter innkommende anrop i måneden er inkludert i abonnementet. Kampanjeanrop denne uken: {n} ({pCall} per utgående anrop + {pMinute} per samtaleminutt, eks. mva.).",
+      "note": "{pIncluded} minutter i måneden er med – til både innkommende samtaler og kampanjesamtaler. Kampanjesamtaler denne uken: {n}. Beløpet er det ukens kampanjesamtaler koster etter pakken (anropspris etter utfall + {pMinute} per minutt), eks. mva.",
       "billing": "Se abonnement og fakturaer"
     }
   },
@@ -305,7 +305,12 @@
       "lead": "Henvendelse",
       "cancel": "Avlys",
       "syncFailed": "Ikke i kalenderen",
-      "syncFailedDetail": "Avtalen kunne ikke skrives i den tilkoblede kalenderen: {error}"
+      "syncFailedDetail": "Avtalen kunne ikke skrives i den tilkoblede kalenderen: {error}",
+      "pending": "Venter på bekreftelse",
+      "pendingDetail": "Kalenderen kunne ikke leses da tiden ble booket. Kunden har fått beskjed om at en medarbeider bekrefter tiden. Sjekk kalenderen, og bekreft eller avlys.",
+      "confirm": "Bekreft",
+      "confirming": "Bekrefter…",
+      "confirmAnyway": "Bekreft likevel"
     },
     "book": {
       "noSlotsError": "Det er ingen ledige tider. Sjekk åpningstider og kalender.",
@@ -318,7 +323,8 @@
       "booked": "Booket {label}.",
       "booking": "Booker …",
       "submit": "Book",
-      "note": "Kunden får ingen SMS ennå – send en bekreftelse selv. «Første ledige» tar neste tid som åpningstider og kalender tillater."
+      "note": "Kunden får ingen SMS ennå – send en bekreftelse selv. «Første ledige» tar neste tid som åpningstider og kalender tillater.",
+      "pending": "Notert {label} – venter på bekreftelse fordi kalenderen ikke kunne leses."
     },
     "calendar": {
       "reading": "Leser …",
@@ -339,7 +345,8 @@
       "provider": {
         "google_calendar": "Google Kalender",
         "microsoft_calendar": "Outlook-kalender (Microsoft 365)"
-      }
+      },
+      "pendingN": "{n} avtaler venter på bekreftelse – kalenderen kunne ikke leses da de ble booket."
     },
     "staffOnly": "Avtaler kan ses av medarbeidere, administratorer og eiere.",
     "eyebrow": "I dag → Avtaler",
@@ -472,15 +479,15 @@
     "eyebrow": "I dag → Kampanjer",
     "enable": {
       "title": "Vil dere også ringe ut?",
-      "body": "Dialogbot kan ringe deres egne kunder med et budskap – f.eks. et tilbud – og sende de interesserte videre til dere. Det koster {price} per utgående anrop eks. mva. Det ringes først når dere har godkjent.",
+      "body": "Dialogbot kan ringe deres egne kunder med et budskap – for eksempel et tilbud – og sende de interesserte videre til dere. Minuttene trekkes fra abonnementets {included} minutter, uten pris per anrop. Når pakken er brukt, koster et anrop {answered} (besvart), {voicemail} (telefonsvarer) eller {noAnswer} (ubesvart) pluss {price} per påbegynte minutt eks. mva. Det ringes først når dere har godkjent.",
       "onlyAdmins": "Bare eiere og administratorer kan slå på utgående anrop.",
       "ask": "Du kan også si det til assistenten.",
       "pending": "Slår på …",
       "button": "Ja, slå på utgående anrop"
     },
-    "eyebrowPrice": "I dag → Kampanjer · utgående anrop · {price} per anrop eks. mva.",
+    "eyebrowPrice": "I dag → Kampanjer · utgående samtaler · minutter fra pakken, deretter {answered} per besvart anrop + {price}/min eks. mva.",
     "title": "Ring kundene deres – én kampanje om gangen",
-    "intro": "Tre trinn: du velger hvem den skal ringe, hører hva den sier, og godkjenner prisen før første anrop går ut. Prisen er {price} + mva. per utgående anrop – hvert anrop teller, også et nytt forsøk. Høyst {attempts} forsøk og totalt {minutes} minutters samtale per kontakt. Dialogbot ringer aldri noen på sperrelisten.",
+    "intro": "Tre trinn: du velger hvem den skal ringe til, hører hva den sier, og godkjenner prisen før første samtale går ut. Minuttene trekkes fra abonnementets {included} minutter (de samme som de innkommende samtalene), uten pris per anrop. Når pakken er brukt, koster et anrop {answered} (besvart), {voicemail} (telefonsvarer) eller {noAnswer} (ubesvart) pluss {price} per påbegynte minutt, eks. mva. Høyst {attempts} forsøk og totalt {minutes} minutters samtale per kontakt – høyst {contactMax} per kontakt. Dialogbot ringer aldri noen på sperrelisten.",
     "salesCalls": "Salgsanrop: la AI-en ringe (bare Dialogbot)",
     "need": {
       "title": "Du trenger",
@@ -508,7 +515,7 @@
       "consent": "samtykke",
       "noConsent": "Mangler samtykke – blir ikke ringt",
       "attempts": "{n} forsøk",
-      "priceNote": "{price} per anrop eks. mva. Du betaler bare for anropene som går ut. Stopp når som helst."
+      "priceNote": "Ingen pris per anrop innenfor pakken. Deretter {answered} (besvart), {voicemail} (telefonsvarer) eller {noAnswer} (ubesvart) per anrop pluss {price} per minutt eks. mva. Stopp når som helst."
     },
     "new": {
       "title": "Ny kampanje",
@@ -556,7 +563,8 @@
       "consent": "Hvor og når har de sagt ja til å bli ringt?",
       "consentHint": "Assistenten ringer uten et menneske i andre enden. Etter den danske markedsføringsloven § 10 krever det at kontakten på forhånd har bedt om det – også når det er en bedrift. Det er ikke nok at de ikke står på Robinsonlisten eller er reklamebeskyttet i CVR.",
       "consentPlaceholder": "Påmelding på nettsiden, mars 2026",
-      "importing": "Importerer …"
+      "importing": "Importerer …",
+      "pauseFirst": "Kampanjen kjører. Sett den på pause for å legge til kontakter – når du starter igjen, bekrefter du det nye antallet."
     },
     "start": {
       "completed": "Kampanjen er avsluttet: alle kontakter er ringt.",
@@ -565,7 +573,7 @@
       "before": "Før den starter",
       "resumeTitle": "Gjenoppta kampanjen",
       "heading": "{n} kontakter · høyst {max} eks. mva.",
-      "body": "{n} kontakter venter. Høyst {max} + mva. ({gross} inkl. mva.) – {call} + mva. per utgående anrop og {minute} + mva. per påbegynt samtaleminutt, høyst {attempts} forsøk og {minutes} minutters samtale per kontakt. Betaling starter aldri anrop.",
+      "body": "{n} kontakter venter: høyst {attempts} forsøk og {minutes} samtaleminutter per kontakt, totalt høyst {maxMinutes} minutter. Det er {remaining} av {included} minutter igjen i pakken denne måneden – med dem koster kampanjen høyst {withPackage} + mva. I verste fall (andre samtaler bruker pakken først, og hvert forsøk besvares – høyst {contactMax} per kontakt) er prisen høyst {max} + mva. ({gross} inkl. mva.). Etter pakken koster et anrop {answered} (besvart), {voicemail} (telefonsvarer) eller {noAnswer} (ubesvart) pluss {minute} per påbegynt samtaleminutt. Betaling starter aldri samtaler.",
       "confirm": "Bekreft reglene for anrop",
       "starting": "Starter …",
       "resume": "Gjenoppta",
@@ -792,16 +800,39 @@
       "confirmed": "Bekreftet · avtale v{v}. Gjør-det-selv-oppsett er inkludert.",
       "notConfirmed": "Gjør-det-selv-oppsett er inkludert. Ikke bekreftet ennå.",
       "campaign": "Kampanjeanrop",
-      "campaignPrice": "per anrop + {minute} per påbegynt minutt eks. mva.",
+      "campaignPrice": "per påbegynte minutt etter pakken + {answered}/{voicemail}/{noAnswer} per anrop (besvart/telefonsvarer/ubesvart), eks. mva.",
       "campaignMonth": "Denne måneden: {calls} anrop, {minutes} samtaleminutter · {amount} eks. mva.",
-      "inbound": "Innkommende anrop",
-      "inboundUsed": "av {n} inkluderte minutter brukt denne måneden",
-      "inboundExtra": "{n} minutter utover de inkluderte · {amount} eks. mva. ({price} per påbegynt minutt).",
-      "inboundPrice": "Minutter utover de {n} koster {price} per påbegynt minutt eks. mva.",
+      "package": "Minuttpakke – innkommende og utgående samtaler",
+      "packageUsed": "av {n} minutter brukt denne måneden",
+      "packageExtra": "{n} påbegynte minutter utover pakken · {amount} eks. mva.",
+      "packagePrice": "Utover de {n} minuttene: {inPrice} per påbegynte minutt inn og {outPrice} per påbegynte minutt ut eks. mva.",
       "confirm": "Bekreft abonnement",
       "ownerMustConfirm": "Eieren må bekrefte abonnementet.",
       "older": "Eldre avtale – bekreft abonnementet for å bytte til det nåværende abonnementet.",
       "note": "Priser er eks. mva. Ingen bindingstid – si det til assistenten eller skriv til info@dialogbot.dk hvis dere vil si opp. Betaling starter aldri anrop."
+    },
+    "usage": {
+      "title": "Forbruk per anrop",
+      "intro": "Hvert anrop som teller med i månedens minutter. Er det et anrop dere ikke mener dere skal betale for, kan eieren klage på det – minutter krediteres bare etter en klage.",
+      "prev": "Forrige måned",
+      "next": "Neste måned",
+      "package": "Minuttpakke: {used} av {included} minutter brukt · {over} minutter utover pakken.",
+      "invoiced": "Måneden er fakturert. Fakturaens linjer:",
+      "none": "Ingen anrop denne måneden.",
+      "older": "Måneder før november 2026 avregnes etter den tidligere prislisten; klager på dem behandles av support (info@dialogbot.dk).",
+      "inbound": "Innkommende",
+      "outbound": "Kampanje",
+      "minutes": "{n} min",
+      "extra": "{n} min utover pakken · {amount}",
+      "disputeOpen": "Klage sendt – Dialogbot behandler den.",
+      "disputeRejected": "Klagen er avvist – anropet avregnes som før.",
+      "creditedPool": "Klagen er godkjent – minuttene er tilbake i pakken.",
+      "creditedInvoice": "Klagen er godkjent – {amount} krediteres på neste faktura.",
+      "creditedNothing": "Klagen er godkjent – anropet var innenfor pakken, så det er ikke noe beløp å kreditere.",
+      "dispute": "Klag på anropet",
+      "reason": "Hva var galt med anropet?",
+      "send": "Send klage",
+      "cancel": "Avbryt"
     },
     "pay": {
       "title": "Betaling",
@@ -929,7 +960,7 @@
       },
       "billing": {
         "q": "Avregning",
-        "a": "Det er ett abonnement fra {pMonthly} i måneden eks. mva., inkl. 300 minutter innkommende anrop (deretter {pExtraMinute} per minutt). Utgående kampanjeanrop koster {pCall} per anrop pluss {pMinute} per påbegynt samtaleminutt. Konto viser månedens forhåndsvisning."
+        "a": "Det er ett abonnement fra {pMonthly} i måneden eks. mva., inkl. 300 minutter til inn- og utgående anrop (deretter {pExtraMinute} per minutt inn og {pMinute} per minutt ut). Innenfor pakken er det ingen pris per anrop; når den er brukt opp, koster et utgående anrop {pCallAnswered} (besvart), {pCallVoicemail} (telefonsvarer) eller {pCallNoAnswer} (ubesvart) pluss {pMinute} per minutt. Konto viser månedens forhåndsvisning."
       }
     },
     "team": {

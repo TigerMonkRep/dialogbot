@@ -60,7 +60,7 @@
       "title": "Kampanjer",
       "sub": "Ring deres egne kunder",
       "outbound": "Utgående anrop",
-      "chosen": "Valgt – {pCall} per anrop + {pMinute} per minutt eks. mva.",
+      "chosen": "Valgt – minutter fra pakken, deretter {pCallAnswered} per besvart anrop + {pMinute} per minutt eks. mva.",
       "notChosen": "Ikke valgt"
     },
     "systems": {
@@ -640,5 +640,30 @@
     "back": "Tilbake til stemmer",
     "notice": "Egen stemme lages ut fra et kort opptak. Likheten med innleseren kan variere, særlig for stemmer som ligger langt fra modellens treningsstemmer. Full likhet krever trening på standardmanuset, som Dialogbot tilbyr senere.",
     "previous": "Tidligere innlesinger"
+  },
+  "apiKeys": {
+    "title": "API-nøkler",
+    "intro": "For deres egne systemer (CRM, Zapier, egen kode) via Dialogbots API. Gi hver nøkkel et navn og bare de rettighetene den trenger.",
+    "name": "Navn",
+    "namePlaceholder": "F.eks. CRM-synk",
+    "scopes": "Rettigheter",
+    "write": "kan endre data",
+    "create": "Opprett nøkkel",
+    "creating": "Oppretter…",
+    "onceTitle": "Nøkkelen «{name}» – kopier den nå",
+    "onceNote": "Den vises bare denne ene gangen. Mister dere den, tilbakekall den og opprett en ny.",
+    "copy": "Kopier",
+    "copied": "Kopiert",
+    "saved": "Jeg har lagret den",
+    "listTitle": "Deres nøkler",
+    "none": "Ingen nøkler ennå.",
+    "created": "opprettet {date}",
+    "lastUsed": "sist brukt {date}",
+    "neverUsed": "aldri brukt",
+    "revoke": "Tilbakekall",
+    "revokeConfirm": "Tilbakekall «{name}»? Systemer som bruker den, mister tilgang med en gang.",
+    "revoked": "tilbakekalt {date}",
+    "expired": "utløpt",
+    "docs": "Slik brukes nøkkelen: send den som «Authorization: Bearer <nøkkel>» til Dialogbots API (https://api.dialogbot.app/v1)."
   }
 }

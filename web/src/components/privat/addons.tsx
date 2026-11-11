@@ -10,6 +10,16 @@ export function addonText(t: T, a: Addon, field: "name" | "tagline" | "descripti
   return v === `privat.${k}` ? a[field] : v;
 }
 
+/** «Hvad den gør»: the backend's `what` is Danish only, so in any other language the translated description wins
+ *  when we have one (F-PX-05); in Danish the backend's fuller `what` is used. */
+export function addonWhat(t: T, a: Addon, locale: string): string {
+  const k = `addons.${a.key}.description`;
+  const v = t(k);
+  const translated = v !== `privat.${k}` ? v : null;
+  if (locale !== "da" && translated) return translated;
+  return a.what || translated || a.description;
+}
+
 /** Can the app be switched on with the user's rights? Backends without the field: everything that is not
  *  «monthly» is included; monthly apps need the plan. */
 export function addonIncluded(a: Addon, entitled: boolean): boolean {

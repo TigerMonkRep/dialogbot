@@ -3,7 +3,7 @@ id: F-PX-05-PC-I18N-02
 scenario: PC-I18N-02
 reported_by: i18n-a11y-qa (PX)
 severity: S2
-status: new
+status: fixing
 owner_fix: ui-ux-engineer
 related: [PC-I18N-01]
 ---
@@ -35,3 +35,8 @@ Mobil-390 viste ingen af dem på de samme ruter (andet layout).
 Brug `addonText`-oversættelsen først for name/tagline/description/what/needs/example (backend-teksten kun som fallback), og oversæt `errText`-fallback + OG-billedet.
 
 ## Rodårsag / Rettelse / Verifikation
+
+## Rettelse (udfyldes af fix-engineer)
+- Delvist: ny helper addonWhat(t, a, locale) i web/src/components/privat/addons.tsx – på andre sprog end dansk vinder den oversatte beskrivelse over backendens danske `what`. Brugen i apps.tsx (ui-ux's fil) er overdraget via qa/ledger.md.
+- Rest: backendens needs/example/steps (addons.py) er kun på dansk og kræver i18n-nøgler i privat.json (addons.<key>.needs/example/steps) eller backend-oversættelse.
+- Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)

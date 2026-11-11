@@ -1658,5 +1658,10 @@
     "deleteConfirm": "Radera allt för alltid",
     "cancel": "Avbryt",
     "deleting": "Raderar …"
+  },
+  "inviteOg": {
+    "wishlist": "{name} har delat sin önskelista med dig",
+    "list": "{name} har delat en lista med dig",
+    "generic": "Du är inbjuden till en lista"
   }
 }

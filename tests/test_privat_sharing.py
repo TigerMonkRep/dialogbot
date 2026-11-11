@@ -161,7 +161,7 @@ def test_invite_preview_leaks_nothing(api, pv):
     inv = _share(api, mette, tid, mode="wishlist")
     p = api.c.get(f"/api/v1/privat/invites/{inv['token']}").json()
     assert set(p) == {"title", "owner_first_name", "list_type", "item_count", "share_mode", "inviter_first_name",
-                      "resource_type", "addon_key", "cta_text", "group_gift_count", "design"}
+                      "resource_type", "addon_key", "cta_text", "group_gift_count", "design", "lang"}
     assert set(p["design"]) == {"theme", "accent", "background", "text", "font", "decorations"}  # never the cover
     assert (p["owner_first_name"], p["item_count"], p["list_type"], p["addon_key"]) == ("Mette", 3, "wishlist",
                                                                                           "oenskelister")
@@ -169,6 +169,7 @@ def test_invite_preview_leaks_nothing(api, pv):
     for secret in ("cykel", "bog", "ur.dk", "sort", "ole", "anna", "reserv", "hansen", "@"):
         assert secret not in blob, secret
     assert p["cta_text"].startswith("Mette bruger Dialogbot")
+    assert p["lang"] == "da"  # the invitation's language (the inviter's) – its OG image follows it
     p2 = api.c.get(f"/api/v1/privat/invites/by-code/{inv['short_code']}").json()
     assert p2["title"] == p["title"]
     from app.db import get_session_factory

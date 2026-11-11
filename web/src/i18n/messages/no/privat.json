@@ -1658,5 +1658,10 @@
     "deleteConfirm": "Slett alt for godt",
     "cancel": "Avbryt",
     "deleting": "Sletter …"
+  },
+  "inviteOg": {
+    "wishlist": "{name} har delt ønskelisten sin med deg",
+    "list": "{name} har delt en liste med deg",
+    "generic": "Du er invitert til en liste"
   }
 }

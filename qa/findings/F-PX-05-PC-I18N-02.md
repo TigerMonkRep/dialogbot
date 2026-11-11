@@ -40,3 +40,4 @@ Brug `addonText`-oversættelsen først for name/tagline/description/what/needs/e
 - Delvist: ny helper addonWhat(t, a, locale) i web/src/components/privat/addons.tsx – på andre sprog end dansk vinder den oversatte beskrivelse over backendens danske `what`. Brugen i apps.tsx (ui-ux's fil) er overdraget via qa/ledger.md.
 - Rest: backendens needs/example/steps (addons.py) er kun på dansk og kræver i18n-nøgler i privat.json (addons.<key>.needs/example/steps) eller backend-oversættelse.
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
+- Fix-engineer #5 (2026-11-11): invitationens OG-billede er ikke længere hårdkodet dansk – det følger invitationens sprog (`lang` i GET /privat/invites/{token} = afsenderens sprog; nøgler privat.inviteOg.* ×8). Test: tests/test_privat_sharing.py::test_invite_preview_leaks_nothing (lang). Fundet forbliver «fixing» for apps.tsx/needs/example.

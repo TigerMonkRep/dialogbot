@@ -173,8 +173,10 @@ def preview(db: OrmSession, raw: str | None = None, *, code: str | None = None) 
 
         out.update(household.preview(db, inv))  # «Familie», how many of the 5 places are taken – never names
     inv.opened_count += 1
+    # «lang»: the invitation's language – the inviter's – so its link preview (OG image) reads the way it was sent,
+    # whatever language the crawler or the recipient's browser asks for
     return out | {"inviter_first_name": first, "resource_type": inv.resource_type, "addon_key": inv.addon_key,
-                  "cta_text": CTA_TEXT.format(name=first)}
+                  "cta_text": CTA_TEXT.format(name=first), "lang": (inviter.interface_language if inviter else None) or "da"}
 
 
 def accept(db: OrmSession, principal, raw: str | None = None, *, code: str | None = None) -> dict:

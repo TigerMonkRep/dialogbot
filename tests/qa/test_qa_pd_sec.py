@@ -207,7 +207,8 @@ def test_ps_inv_04_public_previews_carry_only_the_allowlisted_fields(api, pv):
         "group": api.c.get(f"{P}/group-invites/by-code/{link['short_code']}", headers={"x-forwarded-for": "198.51.100.42"}),
     }
     allowed = {"title", "owner_first_name", "list_type", "item_count", "share_mode", "group_gift_count", "design",
-               "inviter_first_name", "resource_type", "addon_key", "cta_text", "group_name", "member_count"}
+               "inviter_first_name", "resource_type", "addon_key", "cta_text", "group_name", "member_count",
+               "lang"}  # the invitation's language (2026-11-11: the OG image follows it) – «da», «en» …, nothing personal
     for k, r in bodies.items():
         assert r.status_code == 200, (k, r.text)
         j = r.json()

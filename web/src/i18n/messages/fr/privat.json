@@ -1658,5 +1658,10 @@
     "deleteConfirm": "Tout supprimer définitivement",
     "cancel": "Annuler",
     "deleting": "Suppression…"
+  },
+  "inviteOg": {
+    "wishlist": "{name} a partagé sa liste de souhaits avec vous",
+    "list": "{name} a partagé une liste avec vous",
+    "generic": "Vous êtes invité à une liste"
   }
 }

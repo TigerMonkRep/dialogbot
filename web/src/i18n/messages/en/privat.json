@@ -1658,5 +1658,10 @@
     "deleteConfirm": "Delete everything for good",
     "cancel": "Cancel",
     "deleting": "Deleting …"
+  },
+  "inviteOg": {
+    "wishlist": "{name} shared their wish list with you",
+    "list": "{name} shared a list with you",
+    "generic": "You are invited to a list"
   }
 }

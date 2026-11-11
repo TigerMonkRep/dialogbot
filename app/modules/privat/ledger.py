@@ -5,7 +5,8 @@ and changes nothing).
 
 Currency: the account's Privat currency (private_subscriptions.currency – kept from the first Checkout), else DKK.
 The welcome bonus is granted in DKK before any Checkout; when the first Checkout gives the account another currency,
-`adopt_currency` moves the DKK balance over once (two 'convert' rows, markets.privat_from_dkk).
+`adopt_currency` moves the DKK balance over once (two 'convert' rows: the untouched welcome bonus becomes the round bonus
+of the new currency, markets.PRIVAT_BALANCE; anything else at the factor, markets.privat_from_dkk).
 
 Extra calls (calls.py) reserve first and settle once (a website booking is included in the plan and moves nothing,
 F-PDEC-02; a run started before that releases its old reservation when it ends):
@@ -108,7 +109,13 @@ def adopt_currency(db: OrmSession, ws_id: uuid.UUID, new: str) -> None:
     old = _sum(db, ws_id, "DKK")
     if old <= 0:
         return
-    moved = markets.privat_from_dkk(old, new)
+    # The untouched welcome bonus becomes the round bonus of the new currency (markets.PRIVAT_BALANCE); only what else is
+    # on the DKK balance (a spent part of it, never the bonus itself) moves at the market's factor.
+    welcome = rules.WELCOME_BONUS_MINOR if amount_of(db, f"welcome:{ws_id}") == rules.WELCOME_BONUS_MINOR else 0
+    if welcome and old >= welcome:
+        moved = markets.privat_balance_amount(new, "welcome") + markets.privat_from_dkk(old - welcome, new)
+    else:
+        moved = markets.privat_from_dkk(old, new)
     ref = f"convert:{ws_id}:DKK-{new}"
     if add(db, ws_id, kind="convert", amount=-old, source_ref=f"{ref}:out", cur="DKK",
            text=f"Saldo flyttet til {new}"):
@@ -140,4 +147,4 @@ def summary(db: OrmSession, ws_id: uuid.UUID) -> dict:
     cur = currency(db, ws_id)
     return {"balance_minor": balance(db, ws_id), "held_minor": reserved(db, ws_id), "currency": cur,
             "extra_call": markets.privat_extra_call(cur), "topups_minor": list(markets.privat_topups(cur)),
-            "extra_task_minor": markets.privat_from_dkk(rules.EXTRA_TASK_MINOR, cur)}
+            "extra_task_minor": markets.privat_balance_amount(cur, "extra_task")}

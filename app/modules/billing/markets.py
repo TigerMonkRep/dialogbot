@@ -123,18 +123,37 @@ def privat_extra_call_text(currency: str = "DKK") -> str:
             f"påbegyndt minut, højst {f('max')}")
 
 
-def privat_from_dkk(dkk_minor: int, currency: str, *, whole: bool = False) -> int:
-    """A Privat amount set in DKK (top-ups, bonuses, the extra task) in another currency: × the market's factor (the
-    ratio of Erhverv's minute price to the Danish one: SEK 1,475, NOK 1,575, EUR 0,135), rounded half up to a whole
-    öre/øre/cent – or with `whole` to a whole krona/krone/euro (top-ups are round amounts)."""
+# The Opkaldssaldo's own amounts (INCL. VAT, minor units): top-ups, the welcome and referral bonus, the extra task.
+# Round, explicit numbers per currency (decision Fürster 2026-11-11) – NOT derived from DKK with a factor. DKK stays in
+# prices.py. (The extra-call prices above are not round on purpose: Erhverv's net price × moms.)
+PRIVAT_BALANCE: dict[Currency, dict] = {
+    "DKK": {"topups": prices.PRIVAT_TOPUPS_GROSS_MINOR, "welcome": prices.PRIVAT_WELCOME_BONUS_MINOR,
+            "referral": prices.PRIVAT_REFERRAL_BONUS_MINOR, "extra_task": prices.PRIVAT_EXTRA_TASK_MINOR},
+    "SEK": {"topups": (7_500, 15_000, 30_000), "welcome": 1_500, "referral": 1_500, "extra_task": 300},
+    "NOK": {"topups": (7_500, 15_000, 30_000), "welcome": 1_500, "referral": 1_500, "extra_task": 300},
+    "EUR": {"topups": (700, 1_500, 3_000), "welcome": 150, "referral": 150, "extra_task": 30},
+}
+BALANCE_AMOUNTS = ("welcome", "referral", "extra_task")
+
+
+def privat_balance_amount(currency: str, key: str) -> int:
+    """The welcome bonus, the referral bonus or the extra task in `currency` (PRIVAT_BALANCE)."""
+    if key not in BALANCE_AMOUNTS:
+        raise ValueError(f"unknown amount {key!r}")
+    return PRIVAT_BALANCE[_cur(currency)][key]
+
+
+def privat_from_dkk(dkk_minor: int, currency: str) -> int:
+    """Any OTHER DKK balance in another currency – only `ledger.adopt_currency` (what is left of a DKK balance after the
+    welcome bonus): × the market's factor (the ratio of Erhverv's minute price to the Danish one: SEK 1,475,
+    NOK 1,575, EUR 0,135), rounded half up to a whole öre/øre/cent. Never used for the amounts in PRIVAT_BALANCE."""
     c = _cur(currency)
     num, den = ERHVERV[c]["outbound_extra_minute"], ERHVERV["DKK"]["outbound_extra_minute"]
-    unit = 100 if whole else 1
-    return (dkk_minor * num + den * unit // 2) // (den * unit) * unit
+    return (dkk_minor * num + den // 2) // den
 
 
 def privat_topups(currency: str) -> tuple[int, ...]:
-    return tuple(privat_from_dkk(a, currency, whole=True) for a in prices.PRIVAT_TOPUPS_GROSS_MINOR)
+    return tuple(PRIVAT_BALANCE[_cur(currency)]["topups"])
 
 
 PRIVAT_EXTRA_CALL: dict[Currency, dict[str, int]] = {}
@@ -259,8 +278,6 @@ def export() -> dict:
         "privat": PRIVAT,
         "privatExtraCall": PRIVAT_EXTRA_CALL,
         "privatTopups": {c: list(v) for c, v in PRIVAT_TOPUPS.items()},
-        # the Opkaldssaldo's bonuses and the extra task in each currency (privat_from_dkk), for the website's texts
-        "privatBalance": {c: {"welcome": privat_from_dkk(prices.PRIVAT_WELCOME_BONUS_MINOR, c),
-                              "referral": privat_from_dkk(prices.PRIVAT_REFERRAL_BONUS_MINOR, c),
-                              "extra_task": privat_from_dkk(prices.PRIVAT_EXTRA_TASK_MINOR, c)} for c in CURRENCIES},
+        # the Opkaldssaldo's bonuses and the extra task in each currency (PRIVAT_BALANCE), for the website's texts
+        "privatBalance": {c: {k: privat_balance_amount(c, k) for k in BALANCE_AMOUNTS} for c in CURRENCIES},
     }

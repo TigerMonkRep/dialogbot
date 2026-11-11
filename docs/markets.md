@@ -36,16 +36,17 @@ Beløbene er skrevet med `markets.fmt` (samme visning som på fakturalinjerne).
 | – ubesvaret/optaget | 0,31 kr. | 0,44 kr | 0,50 kr | €0.04 |
 | – pr. påbegyndt minut (besvaret) | 2,50 kr. | 3,69 kr | 3,94 kr | €0.34 |
 | – højst pr. opkald (reserveres) | 17,50 kr. | 25,81 kr | 27,56 kr | €2.39 |
-| Opkaldssaldo – optankning | 50 kr. / 100 kr. / 200 kr. | 74 kr / 148 kr / 295 kr | 79 kr / 158 kr / 315 kr | €7 / €14 / €27 |
-| Velkomstbonus / henvisning (hver) | 10 kr. | 14,75 kr | 15,75 kr | €1.35 |
-| Ekstra opgave | 3 kr. | 4,43 kr | 4,73 kr | €0.41 |
+| Opkaldssaldo – optankning | 50 kr. / 100 kr. / 200 kr. | 75 kr / 150 kr / 300 kr | 75 kr / 150 kr / 300 kr | €7 / €15 / €30 |
+| Velkomstbonus / henvisning (hver) | 10 kr. | 15 kr | 15 kr | €1.50 |
+| Ekstra opgave | 3 kr. | 3 kr | 3 kr | €0.30 |
 
 Ekstra opkald (beslutning 2026-11-11, F-PDEC-01): Erhvervs nettopris pr. udfald i markedets valuta × 1,25 (Privats regel:
-dansk moms, samme bruttopris i hele valutaen), half-up til hele øre/öre/cent (`markets.privat_extra_call`). Optankning,
-bonusser og ekstra opgave: DKK-beløbet × markedets faktor (Erhvervs minutpris: SEK 1,475, NOK 1,575, EUR 0,135) –
-optankninger afrundet til hele kroner/euro, resten til hele øre (`markets.privat_from_dkk`). De udenlandske optankninger
-og bonusser er afledt, ikke besluttet (se F-PDEC-01). Opkaldssaldoen føres i kontoens valuta (`credit_ledger.currency`);
-en DKK-velkomstbonus flyttes én gang til kontoens valuta ved første Checkout i en anden valuta (`ledger.adopt_currency`).
+dansk moms, samme bruttopris i hele valutaen), half-up til hele øre/öre/cent (`markets.privat_extra_call`). De er
+bevidst ikke runde. Optankning, bonusser og ekstra opgave er pæne, runde beløb skrevet ud pr. valuta (beslutning Fürster
+2026-11-11; `markets.PRIVAT_BALANCE`, DKK fra `prices.py`) – ingen faktorafledning. Opkaldssaldoen føres i kontoens valuta
+(`credit_ledger.currency`); en DKK-velkomstbonus flyttes én gang til kontoens valuta ved første Checkout i en anden valuta
+(`ledger.adopt_currency`): en urørt bonus bliver den runde bonus (10 kr. → 15 kr SEK / 15 kr NOK / €1.50); kun en
+resterende del af en brugt DKK-saldo flyttes med markedets faktor (SEK 1,475, NOK 1,575, EUR 0,135; `markets.privat_from_dkk`).
 
 ## Hvilken valuta en kunde betaler i
 

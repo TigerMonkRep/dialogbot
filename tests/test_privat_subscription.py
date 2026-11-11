@@ -441,7 +441,8 @@ def test_plans_and_subscription_per_currency(api, pv):
 
 def test_topup_checkout_and_webhook_per_currency(api, client, pv, db, monkeypatch):
     """F-PDEC-01: the Opkaldssaldo is filled up with 50/100/200 kr. – in another currency the same amounts × the
-    market's factor, rounded to whole units – and the account's DKK welcome bonus moves to its currency once."""
+    market's round amounts (markets.PRIVAT_BALANCE, decision 2026-11-11) – and the account's DKK welcome bonus moves to its
+    currency once."""
     _stripe_env(monkeypatch)
     sent = _fake_checkout(monkeypatch)
     tok = pv.account("hans@testmail.dk", trial=False)
@@ -453,8 +454,8 @@ def test_topup_checkout_and_webhook_per_currency(api, client, pv, db, monkeypatc
     assert (d["locale"], pd["currency"], pd["unit_amount"]) == ("de", "eur", 700)
     assert pd["product_data"]["description"] == "Opkaldssaldo · €7 incl. 25 % VAT" and d["metadata"]["currency"] == "EUR"
     assert d["line_items"][0]["tax_rates"] == ["txr_dk_vat_2500_incl"]
-    me = pv.me(tok)  # the first Checkout gave the account EUR: 10 kr. welcome bonus = €1.35 (factor 0,135)
-    assert (me["currency"], me["balance_minor"], me["topups_minor"]) == ("EUR", 135, [700, 1400, 2700])
+    me = pv.me(tok)  # the first Checkout gave the account EUR: the untouched 10 kr. welcome bonus = the round €1.50
+    assert (me["currency"], me["balance_minor"], me["topups_minor"]) == ("EUR", 150, [700, 1500, 3000])
     assert me["extra_call"] == {"answered": 69, "voicemail": 18, "no_answer": 4, "minute": 34, "max": 239}
     assert api.post(tok, "/privat/balance/checkout", {"amount_minor": 5000}).status_code == 422  # a DKK amount
     # the webhook adds a EUR top-up paid in full
@@ -464,7 +465,7 @@ def test_topup_checkout_and_webhook_per_currency(api, client, pv, db, monkeypatc
     assert out["outcome"] == "applied"
     rows = db.query(CreditLedger).filter_by(workspace_id=ws).order_by(CreditLedger.created_at).all()
     assert (rows[-1].amount, rows[-1].currency) == (700, "EUR") and "€7" in rows[-1].text
-    assert pv.me(tok)["balance_minor"] == 835
+    assert pv.me(tok)["balance_minor"] == 850
     short = obj | {"id": "cs_eur_2", "amount_total": 300}
     assert _stripe_event(client, {"id": "evt_eur_2", "type": "checkout.session.completed",
                                   "data": {"object": short}})["outcome"] == "ignored"

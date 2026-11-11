@@ -43,8 +43,8 @@ EXPECTED_PLANS = {  # currency: plan: (monthly, yearly per month, yearly total)
 }
 EXPECTED_QUOTA = {"basis": (3, 1, False), "plus": (10, 1, True), "familie": (25, 5, True)}  # calls, people, all apps
 # Opkaldssaldo top-ups incl. moms (F-PDEC-01): 50/100/200 kr.; other currencies × the market factor, whole units
-EXPECTED_TOPUP = {"DKK": (5000, 10000, 20000), "SEK": (7400, 14800, 29500), "NOK": (7900, 15800, 31500),
-                  "EUR": (700, 1400, 2700)}
+EXPECTED_TOPUP = {"DKK": (5000, 10000, 20000), "SEK": (7500, 15000, 30000), "NOK": (7500, 15000, 30000),
+                  "EUR": (700, 1500, 3000)}  # round amounts, decision Fürster 2026-11-11
 # The 8 Privat languages → (currency, Stripe locale, inclusive tax rate id on the line in the default «danish» mode)
 EXPECTED_LOCALE = {"da": ("DKK", "da", ["txr_dk_vat_2500_incl"]), "en": ("EUR", "en", ["txr_dk_vat_2500_incl"]),
                    "de": ("EUR", "de", ["txr_dk_vat_2500_incl"]), "es": ("EUR", "es", ["txr_dk_vat_2500_incl"]),

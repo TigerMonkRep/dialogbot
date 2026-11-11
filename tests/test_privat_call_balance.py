@@ -257,7 +257,7 @@ def test_a_foreign_currency_moves_the_welcome_bonus_once(api, pv, db):
     ledger.adopt_currency(db, ws, "SEK")  # once
     db.commit()
     rows = [(r.kind, r.amount, r.currency) for r in db.query(CreditLedger).filter_by(workspace_id=ws, kind="convert")]
-    assert sorted(rows) == [("convert", -1000, "DKK"), ("convert", 1475, "SEK")]
+    assert sorted(rows) == [("convert", -1000, "DKK"), ("convert", 1500, "SEK")]  # the round bonus (2026-11-11)
 
 
 # --------------------------------------------------------------------------- 5. the migration (1 credit = 2,90 kr.)

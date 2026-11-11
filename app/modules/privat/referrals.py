@@ -27,7 +27,7 @@ from app.models import (
 from app.modules.billing import markets, prices
 from app.modules.privat import ledger, rules
 
-REWARD_MINOR = prices.PRIVAT_REFERRAL_BONUS_MINOR  # DKK øre; in each account's own currency (markets.privat_from_dkk)
+REWARD_MINOR = prices.PRIVAT_REFERRAL_BONUS_MINOR  # DKK øre; in each account's own currency: markets.PRIVAT_BALANCE
 MONTHLY_CAP = 10
 
 
@@ -101,7 +101,7 @@ def try_activate(db: OrmSession, user_id: uuid.UUID) -> bool:
 
 
 def _reward(db: OrmSession, ws_id: uuid.UUID) -> int:
-    return markets.privat_from_dkk(REWARD_MINOR, ledger.currency(db, ws_id))
+    return markets.privat_balance_amount(ledger.currency(db, ws_id), "referral")
 
 
 def summary(db: OrmSession, ctx) -> dict:

@@ -308,7 +308,7 @@ def activate(db: OrmSession, ctx, task: PrivateTask, method: str) -> PrivateTask
         return task
     if method == "balance":
         cur = ledger.currency(db, ctx.ws_id)
-        price = markets.privat_from_dkk(rules.EXTRA_TASK_MINOR, cur)
+        price = markets.privat_balance_amount(cur, "extra_task")
         if (have := ledger.balance(db, ctx.ws_id)) < price:
             raise Conflict(f"Fyld op: en ekstra opgave koster {markets.fmt(price, cur)}, og du har "
                            f"{markets.fmt(have, cur)} på din opkaldssaldo.", code="insufficient_balance",

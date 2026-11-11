@@ -163,19 +163,19 @@
       20000
     ],
     "SEK": [
-      7400,
-      14800,
-      29500
+      7500,
+      15000,
+      30000
     ],
     "NOK": [
-      7900,
-      15800,
-      31500
+      7500,
+      15000,
+      30000
     ],
     "EUR": [
       700,
-      1400,
-      2700
+      1500,
+      3000
     ]
   },
   "privatBalance": {
@@ -185,19 +185,19 @@
       "extra_task": 300
     },
     "SEK": {
-      "welcome": 1475,
-      "referral": 1475,
-      "extra_task": 443
+      "welcome": 1500,
+      "referral": 1500,
+      "extra_task": 300
     },
     "NOK": {
-      "welcome": 1575,
-      "referral": 1575,
-      "extra_task": 473
+      "welcome": 1500,
+      "referral": 1500,
+      "extra_task": 300
     },
     "EUR": {
-      "welcome": 135,
-      "referral": 135,
-      "extra_task": 41
+      "welcome": 150,
+      "referral": 150,
+      "extra_task": 30
     }
   }
 }

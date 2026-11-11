@@ -36,7 +36,7 @@ påmindelser og det første opkaldsforslag som udkast og sender videre til `/pri
 | Familie | 169 kr. (16.900 øre) | 135 kr. (162.000 øre/år) | 25 | 5 | ja |
 
 - Lister og påmindelser: ubegrænsede i prøveperioden og på alle planer. Udløbet prøveperiode uden plan (`expired`): nye opgaver bliver
-  udkast, som kan aktiveres med 3 kr. fra Opkaldssaldoen eller et sponsorindslag – eller med en plan.
+  udkast, som kan aktiveres med 3 kr. fra Opkaldssaldoen (også uden plan) – eller med en plan.
 - Opkald trækkes af planens kvote pr. kalendermåned (Europe/Copenhagen); et opkald, som ingen tager, eller som fejler, tæller ikke.
   Når kvoten er brugt: et ekstra opkald fra Opkaldssaldoen (prisen pr. udfald nedenfor).
 - Apps i Butikken med `included_in` (Kalender, Pakker og de kommende) kræver prøveperiode, Plus eller Familie; «Ring for mig» er med i
@@ -66,7 +66,7 @@ nettopriser (`markets.privat_extra_call`), afrundet half-up til hele øre ét st
 - **Opkaldssaldo** (`credit_ledger`, beløb i øre): optankning via Stripe Checkout (mode=payment) med 50, 100 eller 200 kr.
   inkl. moms (`POST /privat/balance/checkout`); webhooken lægger kun beløbet til, når det betalte dækker det. Velkomstbonus 10 kr.;
   henvisning 10 kr. til hver efter den henvistes første betalte periode (højst 10 pr. måned); ekstra opgave ud over grænsen 3 kr.
-  (eller et sponsorindslag). Gamle credits er konverteret med 1 credit = 2,90 kr. (migration `f3a8c6d2b5e9`).
+  (den eneste vej uden plan; sponsorindslag er fjernet, F-PQ-03). Gamle credits er konverteret med 1 credit = 2,90 kr. (migration `f3a8c6d2b5e9`).
 - **Booking på virksomhedens hjemmeside** (browser-worker) er med i alle planer: den tæller som en almindelig opgave og trækker
   intet fra Opkaldssaldoen (beslutning 2026-11-11, F-PDEC-02). Uden plan er den ikke mulig – som «Ring for mig»: 409 `needs_plan`
   med CTA «Kræver en plan» → `/privat/konto`. Fair use: et skjult loft pr. kalendermåned (Europe/Copenhagen) pr. workspace

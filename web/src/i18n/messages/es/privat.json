@@ -571,12 +571,11 @@
     "titleCall": "Recarga para una llamada extra",
     "titleTrial": "Esto necesita un plan",
     "draft": "Borrador",
-    "textDigital": "La tarea se ha guardado como borrador. Elige un plan, paga {pExtraTask} con tu saldo o mira un anuncio voluntario.",
+    "textDigital": "La tarea se ha guardado como borrador. Elige un plan o paga {pExtraTask} con tu saldo.",
     "textCall": "Una llamada extra reserva {pXMax} de tu saldo cuando la apruebas. Tienes {have}.",
     "textTrial": "Prueba Dialogbot Privat gratis 14 días. Te registras con tarjeta y solo se cobra cuando termina la prueba – cancela antes y no pagas nada. La tarea queda como borrador hasta que elijas.",
     "trialNote": "Plus · {pPlus}/mes tras la prueba · cancela cuando quieras",
     "buy": "{pTopup1}, {pTopup2} o {pTopup3}",
-    "sponsor": "Ver un anuncio patrocinado · +1 tarea ({n} hoy)",
     "later": "Más tarde: guardar el borrador",
     "laterNote": "El borrador está en «Espera tu respuesta». Puedes continuar cuando quieras.",
     "useBalance": "Pagar {pExtraTask} con el saldo · tienes {have}"
@@ -585,7 +584,7 @@
     "title": "Recarga tu saldo de llamadas",
     "item": "Recarga",
     "vat": "IVA incluido",
-    "note": "Pago único, sin suscripción. El saldo no caduca durante el piloto.",
+    "note": "Pago único, sin suscripción. El saldo no caduca mientras exista la cuenta.",
     "pay": "Pagar {amount}",
     "payReal": "Ir al pago · {amount}",
     "simulatedBuy": "Compra simulada",
@@ -593,15 +592,6 @@
     "back": "Volver",
     "have": "Tienes {have} de saldo de llamadas.",
     "prices": "Llamada extra: {pXAnswered} contestada, {pXVoicemail} buzón de voz, {pXNoAnswer} sin respuesta + {pXMinute} por minuto iniciado, como máximo {pXMax}."
-  },
-  "sponsor": {
-    "title": "Anuncio patrocinado voluntario",
-    "label": "Anuncio patrocinado",
-    "placeholder": "[Anuncio del patrocinador, 15 s]",
-    "fictive": "Anunciante ficticio en el piloto",
-    "text": "Recibes 1 tarea extra cuando has visto el anuncio. Máximo 2 al día. El anunciante no sabe nada de tus conversaciones ni tareas.",
-    "watched": "He visto el anuncio: dame la tarea",
-    "later": "Más tarde"
   },
   "login": {
     "title": "Guarda tu tarea",
@@ -1661,7 +1651,7 @@
     "download": "Descargar tus datos",
     "expired": "El enlace ha caducado. Vuelve a pedir tus datos.",
     "delete": "Eliminar mi cuenta",
-    "deleteText": "Se elimina todo en Dialogbot Privat y tu suscripción se detiene. El saldo de llamadas restante se pierde y no se reembolsa. No se puede deshacer.",
+    "deleteText": "Se elimina todo en Dialogbot Privat y tu suscripción se detiene. El saldo de llamadas restante se pierde y no se reembolsa, salvo en los 14 días siguientes a una recarga, en los que puedes desistir de la parte no utilizada de esa recarga (consulta las condiciones, punto 7). La eliminación no se puede deshacer.",
     "deleteLabel": "Escribe tu e-mail para confirmar",
     "deleteConfirm": "Eliminar todo para siempre",
     "cancel": "Cancelar",

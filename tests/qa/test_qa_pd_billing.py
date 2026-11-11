@@ -742,15 +742,17 @@ def test_pc_ent_06_quota_month_is_copenhagen_incl_dst(api, pv, db, approved_utc,
     assert (me["calls_used"], me["calls_left"]) == (expected, 10 - expected)
 
 
-@pytest.mark.xfail(strict=True, reason="F-PQ-03-X09 (open, needs-decision): a free account activates drafts via welcome "
-                                       "bonus / simulated sponsor – regression only, no duplicate")
-def test_pc_ent_07_free_account_cannot_activate_drafts(api, pv, db):
+def test_pc_ent_07_free_account_activates_drafts_only_from_the_saldo(api, pv, db):
+    """F-PQ-03-X09, decided 2026-11-11: without a plan a draft goes live for 3 kr. from the Opkaldssaldo (here the
+    welcome bonus) – the only way; the simulated sponsor spot is gone."""
     tok = pv.account("pbq-ent07@testmail.dk", trial=False)
     t1, t2 = (next(m["task_id"] for m in pv.say(tok, x)["messages"] if m["kind"] == "draft")
               for x in ("Lav en liste med æbler", "Lav en liste med pærer"))
     r1 = api.post(tok, f"/privat/tasks/{t1}/activate", {"method": "balance"})
     r2 = api.post(tok, "/privat/sponsor/claim", {"task_id": t2})
-    assert r1.status_code in (403, 409) and r2.status_code in (403, 409)
+    assert r1.status_code == 200 and r1.json()["usage_text"] == "Ekstra opgave · 3\u00a0kr.", r1.text
+    assert r1.json()["status"] != "draft" and r2.status_code in (404, 405)
+    assert pv.task(tok, t2).json()["status"] == "draft" and pv.me(tok)["balance_minor"] == 700
 
 
 def _privat_paths(app) -> list[str]:

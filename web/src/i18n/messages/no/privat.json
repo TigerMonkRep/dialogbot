@@ -571,12 +571,11 @@
     "titleCall": "Fyll på for en ekstra samtale",
     "titleTrial": "Det krever en plan",
     "draft": "Utkast",
-    "textDigital": "Oppgaven er lagret som utkast. Velg en plan, betal {pExtraTask} fra samtalesaldoen eller se et frivillig sponsorinnslag.",
+    "textDigital": "Oppgaven er lagret som utkast. Velg en plan eller betal {pExtraTask} fra samtalesaldoen.",
     "textCall": "En ekstra samtale reserverer {pXMax} på samtalesaldoen når du godkjenner. Du har {have}.",
     "textTrial": "Prøv Dialogbot Privat gratis i 14 dager. Du registrerer deg med kort, og det trekkes først når prøveperioden er over – si opp før, så betaler du ingenting. Oppgaven er lagret som utkast til du har valgt.",
     "trialNote": "Plus · {pPlus}/md. etter prøveperioden · si opp når som helst",
     "buy": "{pTopup1}, {pTopup2} eller {pTopup3}",
-    "sponsor": "Se et sponsorinnslag · +1 oppgave ({n} igjen i dag)",
     "later": "Senere – behold utkastet",
     "laterNote": "Utkastet ligger under «Venter på svaret ditt». Du kan fortsette når du vil.",
     "useBalance": "Betal {pExtraTask} fra saldoen · du har {have}"
@@ -585,7 +584,7 @@
     "title": "Fyll på samtalesaldoen",
     "item": "Påfylling",
     "vat": "Herav mva.",
-    "note": "Engangsbetaling, intet abonnement. Saldoen utløper ikke i piloten.",
+    "note": "Engangsbetaling, intet abonnement. Saldoen utløper ikke så lenge kontoen finnes.",
     "pay": "Betal {amount}",
     "payReal": "Gå til betaling · {amount}",
     "simulatedBuy": "Simulert kjøp",
@@ -593,15 +592,6 @@
     "back": "Tilbake",
     "have": "Du har {have} på samtalesaldoen.",
     "prices": "Ekstra samtale: {pXAnswered} besvart, {pXVoicemail} telefonsvarer, {pXNoAnswer} ubesvart + {pXMinute} per påbegynte minutt, maks. {pXMax}."
-  },
-  "sponsor": {
-    "title": "Frivillig sponsorinnslag",
-    "label": "Sponset innslag",
-    "placeholder": "[Annonsørens innslag, 15 sek.]",
-    "fictive": "Fiktiv annonsør i piloten",
-    "text": "Du får 1 ekstra oppgave når innslaget er sett. Maks 2 per dag. Annonsøren får ikke vite noe om samtalene eller oppgavene dine.",
-    "watched": "Jeg har sett innslaget – gi meg oppgaven",
-    "later": "Senere"
   },
   "login": {
     "title": "Lagre oppgaven din",
@@ -1661,7 +1651,7 @@
     "download": "Last ned dataene dine",
     "expired": "Lenken har utløpt. Be om dataene dine igjen.",
     "delete": "Slett kontoen min",
-    "deleteText": "Alt i Dialogbot Privat slettes, og abonnementet ditt stopper. En gjenværende samtalesaldo går tapt og refunderes ikke. Det kan ikke angres.",
+    "deleteText": "Alt i Dialogbot Privat slettes, og abonnementet ditt stopper. En gjenværende samtalesaldo går tapt og refunderes ikke – unntatt innen 14 dager etter en påfylling, da du kan angre den ubrukte delen av påfyllingen (se vilkårene, punkt 7). Slettingen kan ikke angres.",
     "deleteLabel": "Skriv e-posten din for å bekrefte",
     "deleteConfirm": "Slett alt for godt",
     "cancel": "Avbryt",

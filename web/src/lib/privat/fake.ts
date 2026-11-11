@@ -1,7 +1,7 @@
 "use client";
 /** In-browser simulation of the Privat API (same interface as ./api.ts) with the prototype's example data and rules
  *  (design-reference/privat/Main.dc.html):
- *  - the Opkaldssaldo in øre (F-PDEC-01): 10 kr. welcome bonus; a task beyond the limit costs 3 kr. (or a sponsor clip);
+ *  - the Opkaldssaldo in øre (F-PDEC-01): 10 kr. welcome bonus; a task beyond the limit costs 3 kr. – the only way without a plan (F-PQ-03);
  *  - edits, ticking off, questions and "what is waiting" are free; a new task without a plan becomes a draft;
  *  - approving an EXTRA call (the plan's calls used) reserves its maximum (17,50 kr.); simulated outcome answered
  *    (5 kr. + 3 started minutes × 2,50 kr.) or no answer (0,31 kr.), the rest released;
@@ -24,7 +24,8 @@ const FREE_LIMIT = 0; // no free tasks any more: without a plan the account only
 const X = extraCallPrices("DKK");
 const B = balanceAmounts("DKK");
 const kr = (minor: number) => formatPrice(minor, "DKK", "da");
-const SPONSOR_PER_DAY = 2;
+/** SMS the user sends from their own phone: GSM-7 like the backend's invites._gsm (F-P2-05) – «–» would make it UCS-2. */
+const gsm = (s: string) => s.replace(/[–—]/g, "-").replace(/[«»]/g, '"');
 
 type Shop = { name: string; address: string; phone: string | null; price: string; open: boolean; next?: string; rating: number; count: number; km: number };
 /** Fictional demo businesses (like the backend's DemoPlaces without a Google key) – never callable. */
@@ -59,7 +60,7 @@ type State = {
   gifts?: Record<string, FakeGift>;
   /** Per-app state for «Mine apps»: setup progress, switched off (data kept), «Giv mig besked». */
   appState?: Record<string, AppState>;
-  invitable: Record<string, Task>; n: number; freeUsed: number; balance: number; held: number; sponsorDay: string; sponsorUsed: number;
+  invitable: Record<string, Task>; n: number; freeUsed: number; balance: number; held: number;
   phone: string | null; phoneVerified: boolean; phonePending: string | null;
   tasks: Task[]; msgs: ChatMessage[]; ledger: LedgerEntry[]; paySeq: number; lastPay: string | null;
   meta: Record<string, Meta>; pending: Record<string, Pending>; prices: Record<string, string>;
@@ -78,7 +79,6 @@ function atDay(offset: number, h: number, m = 0): string {
 }
 /** Days until the next given weekday (0 = Sunday … 6 = Saturday), 1–7. */
 function daysTo(weekday: number): number { const diff = (weekday - new Date().getDay() + 7) % 7; return diff === 0 ? 7 : diff; }
-const dayKey = (d: Date) => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 function dayOffset(iso: string): number {
   const a = new Date(); a.setHours(0, 0, 0, 0); const b = new Date(iso); b.setHours(0, 0, 0, 0);
   return Math.round((b.getTime() - a.getTime()) / 86_400_000);
@@ -182,7 +182,7 @@ function fresh(): State {
     quotaCalls: {}, location: null, push: [], joinLinks: {}, groups: [], status: {}, ref: { invited: 0, joined: 0, activated: 0, earned_minor: 0, viaInvite: null, selfRewarded: false, annaJoined: false, annaRewarded: false },
     addons: { [ADDON.call]: true, [ADDON.sharedLists]: true, [ADDON.wishlists]: true }, invites: {}, reservations: { s1c: "other" },
     gifts: { s1d: { target: 300000, currency: "DKK", others: 125000, othersCount: 2, mine: null, status: "open", coordinator: "other", pendingMe: false } },
-    invitable: sh.invitable, n: 1000, freeUsed: 0, balance: B.welcome, held: 0, sponsorDay: dayKey(new Date()), sponsorUsed: 0,
+    invitable: sh.invitable, n: 1000, freeUsed: 0, balance: B.welcome, held: 0,
     phone: null, phoneVerified: false, phonePending: null,
     tasks: [...examples(), ...sh.joined], msgs: [],
     ledger: [{ id: "l1", kind: "grant", amount_minor: B.welcome, currency: "DKK", text: "Velkomstbonus på opkaldssaldoen (én gang)", created_at: atDay(-3, 9) }],
@@ -231,7 +231,6 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
     id: nid("m"), role: "assistant", text: "", task_id: null, about_task_id: null, before: null, after: null, options: null, links: null,
     created_at: new Date().toISOString(), ...o,
   });
-  function rollSponsorDay() { const k = dayKey(new Date()); if (s.sponsorDay !== k) { s.sponsorDay = k; s.sponsorUsed = 0; } }
   // ---------- subscription ----------
   /** The plans' currency: the subscription's own once chosen (the market it was bought in), else the asked one. */
   function subscription(asked?: string): Subscription {
@@ -262,10 +261,9 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
   /** «Plus» (chosen plan, or the trial's Plus rights). */
   const planName = () => { const sb = subscription(); return PLANS.find((p) => p.key === (sb.plan === "none" ? "plus" : sb.plan))!.name; };
   function balance(): Balance {
-    rollSponsorDay();
     const sb = subscription();
     return { free_used: s.freeUsed, free_limit: FREE_LIMIT, balance_minor: s.balance, held_minor: s.held, currency: "DKK", extra_call: X,
-      topups_minor: topupAmounts("DKK"), extra_task_minor: B.extra_task, sponsor_left_today: SPONSOR_PER_DAY - s.sponsorUsed,
+      topups_minor: topupAmounts("DKK"), extra_task_minor: B.extra_task,
       phone_display: s.phone, phone_verified: s.phoneVerified, push_enabled: s.push.length > 0, location_city: s.location,
       plan: sb.plan, plan_status: sb.status, trial_days_left: sb.trial_days_left, calls_quota: sb.calls_quota, calls_used: sb.calls_used, calls_left: sb.calls_left, entitled: sb.entitled };
   }
@@ -584,8 +582,8 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       await wait();
       const t = find(taskId);
       if (t.status !== "draft") return done(t);
-      if (method === "sponsor") return fake.sponsorClaim(taskId);
-      if (s.balance < B.extra_task) fail(409, "insufficient_balance", `Fyld op: en ekstra opgave koster ${kr(B.extra_task)}`);
+      if (method !== "balance") fail(422, "validation_failed", "Betal med opkaldssaldoen");
+      if (s.balance < B.extra_task) fail(409, "insufficient_balance", `Fyld op: en ekstra opgave koster ${kr(B.extra_task)}${subscription().entitled ? "" : ". Eller vælg en plan."}`);
       s.balance -= B.extra_task; ledger("spend", -B.extra_task, "Ny opgave efter månedsgrænsen");
       s.msgs.push(...activate(t, `Ekstra opgave · ${kr(B.extra_task)}`));
       return done(t);
@@ -760,16 +758,6 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
     },
     async subscriptionPortal() { await wait(); return { url: "/privat/konto?portal=simuleret" }; },
     async ledger() { await wait(); return done(s.ledger); },
-    async sponsorClaim(taskId) {
-      await wait();
-      rollSponsorDay();
-      const t = find(taskId);
-      if (s.sponsorUsed >= SPONSOR_PER_DAY) fail(409, "sponsor_limit", "Du har set 2 sponsorindslag i dag");
-      if (t.status !== "draft") return done(t);
-      s.sponsorUsed += 1; ledger("sponsor", 0, "Sponsorindslag set – 1 ekstra opgave");
-      s.msgs.push(...activate(t, "Sponsorindslag (+1 opgave)"));
-      return done(t);
-    },
 
     // ---------- shared lists ----------
     async sharedTasks() { await wait(); return done(s.tasks.filter((t) => t.shared)); },
@@ -813,8 +801,8 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       event(t, body.mode === "wishlist" ? "Delt som ønskeliste" : "Delt som fælles liste");
       save();
       const short = `${location.origin}/i/${token}`;
-      const text = body.mode === "wishlist" ? `Hej! Jeg har lavet en ønskeliste – se den og reservér her: ${bareLink(short)} – ${FAKE_ME}`
-        : `Hej! Jeg har lavet en fælles liste – se den og tilføj her: ${bareLink(short)} – ${FAKE_ME}`;
+      const text = body.mode === "wishlist" ? `Hej! Jeg har lavet en ønskeliste - se den og reservér her: ${bareLink(short)} - ${FAKE_ME}`
+        : `Hej! Jeg har lavet en fælles liste - se den og tilføj her: ${bareLink(short)} - ${FAKE_ME}`;
       return { invite_url: `${location.origin}/privat/invitation/${token}`, token, expires_at: atDay(30, 23, 59),
         short_code: token, short_url: short, suggested_text: text, share_text: text };
     },
@@ -902,14 +890,14 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       }
       if (smsPeople.length) {
         if (body.style === "group_sms") {
-          res.sms_group = { recipients: smsPeople.map((m) => m.phone_e164!), body: `Hej! Jeg har lavet ${what}: ${link} – ${FAKE_ME}`, short_url: link };
+          res.sms_group = { recipients: smsPeople.map((m) => m.phone_e164!), body: gsm(`Hej! Jeg har lavet ${what}: ${link} - ${FAKE_ME}`), short_url: link };
         } else {
           res.sms_queue = smsPeople.map((m) => {
             const personal = Array.from({ length: 8 }, () => "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[Math.floor(Math.random() * 32)]).join("");
             s.invites[personal] = t.id;
             const pl = bareLink(`${location.origin}/i/${personal}`);
             const hi = /^\+?\d/.test(m.name) ? "Hej!" : `Hej ${m.name.split(" ")[0]}!`;
-            return { member_id: m.id, name: m.name, phone_e164: m.phone_e164!, body: `${hi} Jeg har lavet ${what}: ${pl} – ${FAKE_ME}`, short_url: pl };
+            return { member_id: m.id, name: m.name, phone_e164: m.phone_e164!, body: gsm(`${hi} Jeg har lavet ${what}: ${pl} - ${FAKE_ME}`), short_url: pl };
           });
         }
       }

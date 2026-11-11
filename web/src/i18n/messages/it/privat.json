@@ -571,12 +571,11 @@
     "titleCall": "Ricarica per una chiamata extra",
     "titleTrial": "Serve un piano",
     "draft": "Bozza",
-    "textDigital": "L'attività è salvata come bozza. Scegli un piano, paga {pExtraTask} dal saldo o guarda uno spot sponsor facoltativo.",
+    "textDigital": "L'attività è salvata come bozza. Scegli un piano o paga {pExtraTask} dal saldo.",
     "textCall": "Una chiamata extra riserva {pXMax} sul tuo saldo quando la approvi. Hai {have}.",
     "textTrial": "Prova Dialogbot Privat gratis per 14 giorni. Ti registri con una carta, addebitata solo alla fine della prova – disdici prima e non paghi nulla. Il compito resta una bozza finché non scegli.",
     "trialNote": "Plus · {pPlus}/mese dopo la prova · disdici quando vuoi",
     "buy": "{pTopup1}, {pTopup2} o {pTopup3}",
-    "sponsor": "Guarda un contenuto sponsorizzato · +1 attività ({n} rimasti oggi)",
     "later": "Più tardi – tieni la bozza",
     "laterNote": "La bozza è in «Attende la tua risposta». Puoi continuare quando vuoi.",
     "useBalance": "Paga {pExtraTask} dal saldo · hai {have}"
@@ -585,7 +584,7 @@
     "title": "Ricarica il saldo chiamate",
     "item": "Ricarica",
     "vat": "di cui IVA",
-    "note": "Pagamento unico, nessun abbonamento. Il saldo non scade durante il pilota.",
+    "note": "Pagamento unico, nessun abbonamento. Il saldo non scade finché l'account esiste.",
     "pay": "Paga {amount}",
     "payReal": "Vai al pagamento · {amount}",
     "simulatedBuy": "Acquisto simulato",
@@ -593,15 +592,6 @@
     "back": "Indietro",
     "have": "Hai {have} di saldo chiamate.",
     "prices": "Chiamata extra: {pXAnswered} con risposta, {pXVoicemail} segreteria, {pXNoAnswer} senza risposta + {pXMinute} per minuto iniziato, al massimo {pXMax}."
-  },
-  "sponsor": {
-    "title": "Contenuto sponsorizzato facoltativo",
-    "label": "Contenuto sponsorizzato",
-    "placeholder": "[Contenuto dell'inserzionista, 15 sec.]",
-    "fictive": "Inserzionista fittizio nel pilota",
-    "text": "Ricevi 1 attività in più dopo aver guardato il contenuto. Massimo 2 al giorno. L'inserzionista non sa nulla delle tue conversazioni o attività.",
-    "watched": "Ho guardato il contenuto – dammi l'attività",
-    "later": "Più tardi"
   },
   "login": {
     "title": "Salva la tua attività",
@@ -1661,7 +1651,7 @@
     "download": "Scarica i tuoi dati",
     "expired": "Il link è scaduto. Richiedi di nuovo i tuoi dati.",
     "delete": "Elimina il mio account",
-    "deleteText": "Tutto in Dialogbot Privat viene eliminato e l'abbonamento si ferma. L'eventuale credito chiamate residuo va perso e non viene rimborsato. Non si può annullare.",
+    "deleteText": "Tutto in Dialogbot Privat viene eliminato e l'abbonamento si ferma. L'eventuale credito chiamate residuo va perso e non viene rimborsato, tranne entro 14 giorni da una ricarica: in quel caso puoi recedere per la parte non utilizzata di quella ricarica (vedi le condizioni, punto 7). L'eliminazione non si può annullare.",
     "deleteLabel": "Scrivi la tua e-mail per confermare",
     "deleteConfirm": "Elimina tutto per sempre",
     "cancel": "Annulla",

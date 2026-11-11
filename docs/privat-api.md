@@ -15,7 +15,7 @@ Task = {
                 confirmed_text|null, business_reply|null, business_price_text|null, duration_seconds|null},
   events: [{at, text}]                            // historik, nyeste sidst
 }
-Balance = {free_used, free_limit: 10, sponsor_left_today, phone_display|null, phone_verified: bool,
+Balance = {free_used, free_limit: 10, phone_display|null, phone_verified: bool,
   balance_minor, held_minor, currency, extra_call: {answered, voicemail, no_answer, minute, max}, topups_minor: [5000, 10000, 20000],
   extra_task_minor,   // Opkaldssaldoen (F-PDEC-01): øre inkl. moms i kontoens valuta
   plan: "none"|"basis"|"plus"|"familie", plan_status: "trial"|"active"|"past_due"|"canceled"|"expired"|"none",
@@ -33,7 +33,7 @@ GET  /privat/day                              → {awaiting: Task[], today: Task
 GET  /privat/tasks?status=                    → Task[]
 GET  /privat/tasks/{id}                       → Task
 POST /privat/tasks/{id}/items/{item_id}/toggle → Task
-POST /privat/tasks/{id}/activate {method:"balance"|"sponsor"} → Task   (draft → aktiv; balance = 3 kr. fra Opkaldssaldoen; 409 insufficient_balance «Fyld op» / sponsor_limit)
+POST /privat/tasks/{id}/activate {method:"balance"} → Task   (draft → aktiv; 3 kr. fra Opkaldssaldoen – også uden plan; 409 insufficient_balance «Fyld op» (+ plan_cta «Vælg en plan» uden plan))
 GET  /privat/messages?task_id=                → ChatMessage[]
 POST /privat/messages {text, about_task_id?}  (Idempotency-Key header) → {messages: ChatMessage[], balance: Balance}
 POST /privat/messages/{id}/options/{option_id} → {messages: ChatMessage[], balance: Balance}   // svar på clarify
@@ -49,7 +49,6 @@ GET  /privat/subscription                     → Subscription          // ?sess
 POST /privat/subscription/checkout {plan, interval, code?, locale?} → {url}  // Stripe Checkout mode=subscription; locale: da|en|de|es|fr|it|no|sv (docs/markets.md)
 POST /privat/subscription/portal              → {url}                 // Stripe Billing Portal; 501 not_configured uden Stripe/kunde
 GET  /privat/ledger                           → [{id, kind, amount, text, created_at}]
-POST /privat/sponsor/claim {task_id}          → Task                  // pilot: simuleret indslag, max 2/dag
 
 ## Abonnement (Dialogbot Privat: prøveperiode, Basis, Plus, Familie)
 Abonnementet er den primære model; ekstra opkald ud over kvoten betales fra Opkaldssaldoen (F-PDEC-01, docs/pricing.md). Backend: `app/modules/privat/subscriptions.py`,
@@ -278,7 +277,7 @@ Alt ovenfor er implementeret. Afvigelser er bagudkompatible (kun ekstra felter/e
 - «Se som kunde» (operatør-sessioner) kan ALDRIG se private data: 403 `view_as_not_allowed`.
 - Isolation: et privat arbejdsrum (`workspaces.kind='personal'`) kan aldrig nås via `/workspaces/{id}/…` (404), vises ikke i
   `GET /workspaces`, admin-kundelister/-tal, daglige rapporter eller fakturering. Opgaver nås KUN via `private_task_members`.
-- Fejlkoder (409 medmindre andet): `needs_phone`, `insufficient_balance`, `outside_hours`, `sponsor_limit`, `coming_soon`, `needs_plan`,
+- Fejlkoder (409 medmindre andet): `needs_phone`, `insufficient_balance`, `outside_hours`, `coming_soon`, `needs_plan`,
   `already_reserved`, `not_reserved_by_you`, `share_mode_locked`, `call_not_proposed`, `call_running`, `code_expired`,
   `too_many_attempts`, `too_soon`, `demo_business`; 403: `addon_disabled` (+ `addon`), `read_only`, `owner_only`, `use_reserve`,
   `owner_cannot_reserve`, `sharing_paused`; 404 `invite_invalid`; 422 forkert kode (+ `attempts_left`); 429 `rate_limited`;
@@ -296,8 +295,8 @@ Alt ovenfor er implementeret. Afvigelser er bagudkompatible (kun ekstra felter/e
 ## Regler
 - Med prøveperiode eller plan (`entitled`): ubegrænsede lister/påmindelser (`paid_by:"plan"`) og opkald af planens kvote – se «Abonnement».
 - Ellers 10 gratis digitale opgaver (lister/påmindelser) pr. kalendermåned (Europe/Copenhagen). Opkald bruger ikke gratis opgaver.
-  Opgave nr. 11 → `draft` (en draft-påmindelse sendes aldrig) indtil `activate` (3 kr. fra Opkaldssaldoen, `spend:<task_id>`) eller sponsor
-  (højst 2 pr. dag, `sponsor:<task_id>`). Rettelser, afkrydsning, læsning, afklaring og alt, som medlemmer gør på en delt liste, er gratis.
+  Opgave nr. 11 → `draft` (en draft-påmindelse sendes aldrig) indtil `activate` (3 kr. fra Opkaldssaldoen, `spend:<task_id>`) – den
+  eneste vej uden plan (beslutning 2026-11-11, F-PQ-03; sponsorindslag er fjernet, gamle `sponsor`-rækker bliver i ledgeren). Rettelser, afkrydsning, læsning, afklaring og alt, som medlemmer gør på en delt liste, er gratis.
 - Opkaldssaldo = SUM(credit_ledger.amount) i øre i kontoens valuta. Ekstra opkald: `reserve` −1750, `capture` +(1750 − pris), `release` +1750 – én gang pr. opkald (unik source_ref). `held_minor` = åbne reservationer.
 - Velkomst +3 én gang (`welcome:<workspace_id>`). Køb: +10 (`stripe:<checkout_session_id>`), KUN via Stripe-webhook; webhooken gemmer
   `WebhookEvent(provider='stripe', event_id)` i samme transaktion for ALLE Stripe-hændelser.

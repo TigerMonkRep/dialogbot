@@ -113,7 +113,7 @@ class Pv:
 
     def expire_trial(self, tok: str) -> None:
         """Put the account past its 14-day trial (no plan): the free quota applies (an extra task: 3 kr. from the
-        Opkaldssaldo or a sponsor spot), and «Ring for mig» stops."""
+        Opkaldssaldo), and «Ring for mig» stops."""
         ws = self.ws(tok)
         with get_session_factory()() as db:
             row = db.get(PrivateSubscription, ws)

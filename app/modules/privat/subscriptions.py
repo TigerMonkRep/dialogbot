@@ -6,7 +6,7 @@ Rules (docs/pricing.md, docs/privat-api.md):
 - Entitled (trial, active or past_due; canceled until the paid period ends): lists and reminders are unlimited
   (paid_by 'plan'), calls draw on the plan's monthly quota (calendar month, Europe/Copenhagen; a call nobody answers
   or that fails does not count), Shop apps with `included_in` can be switched on. Not entitled: the free quota applies
-  (a task beyond it costs 3 kr. from the Opkaldssaldo or a sponsor spot), and «Ring for mig» stops.
+  (a task beyond it costs 3 kr. from the Opkaldssaldo – also with no plan at all, F-PQ-03), and «Ring for mig» stops.
 - The ONLY writer of active/past_due/canceled is the signed Stripe webhook (upsert_from_stripe_subscription) or the
   return from Checkout (sync_from_session reads the session from Stripe, never trusts the browser).
 """

@@ -63,7 +63,7 @@ def gross_minor(net_minor: int, rate_bp: int = TAX_BASIS_POINTS) -> int:
 PRIVAT_TOPUPS_GROSS_MINOR = (5_000, 10_000, 20_000)  # top-ups at Stripe Checkout (mode=payment): 50, 100, 200 kr.
 PRIVAT_WELCOME_BONUS_MINOR = 1_000        # 10 kr. once, when the account is created
 PRIVAT_REFERRAL_BONUS_MINOR = 1_000       # 10 kr. to each, after the invitee's first paid period
-PRIVAT_EXTRA_TASK_MINOR = 300             # 3 kr. for a task beyond the month's limit (or a sponsor spot)
+PRIVAT_EXTRA_TASK_MINOR = 300             # 3 kr. for a task beyond the month's limit (the only way without a plan)
 # The old credits were converted at 1 credit = 2,90 kr. (29 kr. for 10; migration f3a8c6d2b5e9).
 PRIVAT_CREDIT_VALUE_MINOR = 290
 # A booking on a business's website (browser worker) is included in every plan and costs nothing (decision Fürster

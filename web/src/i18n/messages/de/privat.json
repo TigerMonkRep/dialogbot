@@ -571,12 +571,11 @@
     "titleCall": "Für einen zusätzlichen Anruf aufladen",
     "titleTrial": "Dafür brauchst du einen Plan",
     "draft": "Entwurf",
-    "textDigital": "Die Aufgabe ist als Entwurf gespeichert. Wähle ein Abo, zahle {pExtraTask} vom Anrufguthaben oder sieh dir einen freiwilligen Sponsorbeitrag an.",
+    "textDigital": "Die Aufgabe ist als Entwurf gespeichert. Wähle ein Abo oder zahle {pExtraTask} vom Anrufguthaben.",
     "textCall": "Ein zusätzlicher Anruf reserviert {pXMax} auf deinem Anrufguthaben, wenn du ihn freigibst. Du hast {have}.",
     "textTrial": "Teste Dialogbot Privat 14 Tage gratis. Du meldest dich mit Karte an, belastet wird sie erst nach der Testphase – kündige vorher, und du zahlst nichts. Die Aufgabe bleibt als Entwurf gespeichert, bis du gewählt hast.",
     "trialNote": "Plus · {pPlus}/Monat nach der Testphase · jederzeit kündbar",
     "buy": "{pTopup1}, {pTopup2} oder {pTopup3}",
-    "sponsor": "Sponsorenclip ansehen · +1 Aufgabe ({n} heute übrig)",
     "later": "Später – Entwurf behalten",
     "laterNote": "Der Entwurf liegt unter «Wartet auf deine Antwort». Du kannst jederzeit weitermachen.",
     "useBalance": "{pExtraTask} vom Guthaben zahlen · du hast {have}"
@@ -585,7 +584,7 @@
     "title": "Anrufguthaben aufladen",
     "item": "Aufladung",
     "vat": "Davon MwSt.",
-    "note": "Einmalzahlung, kein Abo. Das Guthaben verfällt während der Pilotphase nicht.",
+    "note": "Einmalzahlung, kein Abo. Das Guthaben verfällt nicht, solange das Konto besteht.",
     "pay": "{amount} zahlen",
     "payReal": "Zur Zahlung · {amount}",
     "simulatedBuy": "Simulierter Kauf",
@@ -593,15 +592,6 @@
     "back": "Zurück",
     "have": "Du hast {have} Anrufguthaben.",
     "prices": "Zusätzlicher Anruf: {pXAnswered} angenommen, {pXVoicemail} Mailbox, {pXNoAnswer} nicht angenommen + {pXMinute} pro angefangene Minute, höchstens {pXMax}."
-  },
-  "sponsor": {
-    "title": "Freiwilliger Sponsorenclip",
-    "label": "Gesponserter Clip",
-    "placeholder": "[Clip des Werbepartners, 15 Sek.]",
-    "fictive": "Fiktiver Werbepartner im Pilotprojekt",
-    "text": "Du bekommst 1 zusätzliche Aufgabe, wenn du den Clip angesehen hast. Höchstens 2 pro Tag. Der Werbepartner erfährt nichts über deine Unterhaltungen oder Aufgaben.",
-    "watched": "Ich habe den Clip gesehen – gib mir die Aufgabe",
-    "later": "Später"
   },
   "login": {
     "title": "Aufgabe speichern",
@@ -1661,7 +1651,7 @@
     "download": "Daten herunterladen",
     "expired": "Der Link ist abgelaufen. Fordere deine Daten erneut an.",
     "delete": "Mein Konto löschen",
-    "deleteText": "Alles in Dialogbot Privat wird gelöscht, und dein Abo endet. Ein verbleibendes Anrufguthaben verfällt und wird nicht erstattet. Das kann nicht rückgängig gemacht werden.",
+    "deleteText": "Alles in Dialogbot Privat wird gelöscht, und dein Abo endet. Ein verbleibendes Anrufguthaben verfällt und wird nicht erstattet – außer innerhalb von 14 Tagen nach einer Aufladung: Dann kannst du den nicht genutzten Teil dieser Aufladung widerrufen (siehe Bedingungen, Punkt 7). Das Löschen kann nicht rückgängig gemacht werden.",
     "deleteLabel": "Gib zur Bestätigung deine E-Mail ein",
     "deleteConfirm": "Alles endgültig löschen",
     "cancel": "Abbrechen",

@@ -571,12 +571,11 @@
     "titleCall": "Fyld op til et ekstra opkald",
     "titleTrial": "Det kræver en plan",
     "draft": "Udkast",
-    "textDigital": "Opgaven er gemt som udkast. Vælg en plan, betal {pExtraTask} fra din opkaldssaldo eller se et frivilligt sponsorindslag.",
+    "textDigital": "Opgaven er gemt som udkast. Vælg en plan eller betal {pExtraTask} fra din opkaldssaldo.",
     "textCall": "Et ekstra opkald reserverer {pXMax} på din opkaldssaldo, når du godkender. Du har {have}.",
     "textTrial": "Prøv Dialogbot Privat gratis i 14 dage. Du tilmelder dig med kort, og det trækkes først, når prøveperioden er slut – opsig inden, og du betaler intet. Opgaven er gemt som udkast, til du har valgt.",
     "trialNote": "Plus · {pPlus}/md. efter prøveperioden · opsig når som helst",
     "buy": "{pTopup1}, {pTopup2} eller {pTopup3}",
-    "sponsor": "Se et sponsorindslag · +1 opgave ({n} tilbage i dag)",
     "later": "Senere – gem udkastet",
     "laterNote": "Udkastet ligger under «Afventer dit svar». Du kan fortsætte, når du vil.",
     "useBalance": "Betal {pExtraTask} fra saldoen · du har {have}"
@@ -585,7 +584,7 @@
     "title": "Fyld opkaldssaldoen op",
     "item": "Optankning",
     "vat": "Heraf moms",
-    "note": "Engangsbetaling, intet abonnement. Saldoen udløber ikke i piloten.",
+    "note": "Engangsbetaling, intet abonnement. Saldoen udløber ikke, så længe kontoen findes.",
     "pay": "Betal {amount}",
     "payReal": "Gå til betaling · {amount}",
     "simulatedBuy": "Simuleret køb",
@@ -593,15 +592,6 @@
     "back": "Tilbage",
     "have": "Du har {have} på din opkaldssaldo.",
     "prices": "Ekstra opkald: {pXAnswered} besvaret, {pXVoicemail} telefonsvarer, {pXNoAnswer} ubesvaret + {pXMinute} pr. påbegyndt minut, højst {pXMax}."
-  },
-  "sponsor": {
-    "title": "Frivilligt sponsorindslag",
-    "label": "Sponsoreret indslag",
-    "placeholder": "[Annoncørens indslag, 15 sek.]",
-    "fictive": "Fiktiv annoncør i piloten",
-    "text": "Du får 1 ekstra opgave, når indslaget er set. Højst 2 pr. dag. Annoncen får intet at vide om dine samtaler eller opgaver.",
-    "watched": "Jeg har set indslaget – giv mig opgaven",
-    "later": "Senere"
   },
   "login": {
     "title": "Gem din opgave",
@@ -1661,7 +1651,7 @@
     "download": "Hent dine data",
     "expired": "Linket er udløbet. Bed om dine data igen.",
     "delete": "Slet min konto",
-    "deleteText": "Alt i Dialogbot Privat slettes, og dit abonnement stopper. En resterende Opkaldssaldo går tabt og refunderes ikke. Det kan ikke fortrydes.",
+    "deleteText": "Alt i Dialogbot Privat slettes, og dit abonnement stopper. En resterende Opkaldssaldo går tabt og refunderes ikke – undtagen inden for 14 dage efter en optankning, hvor du kan fortryde den ubrugte del af optankningen (se vilkårene, punkt 7). Sletningen kan ikke fortrydes.",
     "deleteLabel": "Skriv din e-mail for at bekræfte",
     "deleteConfirm": "Slet alt for altid",
     "cancel": "Fortryd",

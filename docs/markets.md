@@ -28,7 +28,21 @@ Beløbene er skrevet med `markets.fmt` (samme visning som på fakturalinjerne).
 | Familie – månedlig | 169 kr. | 249 kr | 269 kr | €22.49 |
 | Familie – årlig, pr. md. | 135 kr. | 199 kr | 215 kr | €17.99 |
 | Familie – årlig, i alt | 1.620 kr. | 2 388 kr | 2 580 kr | €215.88 |
-| 10 credits («ekstra opkald») | 29 kr. | 45 kr | 45 kr | €3.99 |
+| Ekstra opkald – besvaret | 5 kr. | 7,38 kr | 7,88 kr | €0.69 |
+| – telefonsvarer | 1,25 kr. | 1,88 kr | 2 kr | €0.18 |
+| – ubesvaret/optaget | 0,31 kr. | 0,44 kr | 0,50 kr | €0.04 |
+| – pr. påbegyndt minut (besvaret) | 2,50 kr. | 3,69 kr | 3,94 kr | €0.34 |
+| – højst pr. opkald (reserveres) | 17,50 kr. | 25,81 kr | 27,56 kr | €2.39 |
+| Opkaldssaldo – optankning | 50 kr. / 100 kr. / 200 kr. | 74 kr / 148 kr / 295 kr | 79 kr / 158 kr / 315 kr | €7 / €14 / €27 |
+| Velkomstbonus / henvisning (hver) | 10 kr. | 14,75 kr | 15,75 kr | €1.35 |
+| Ekstra opgave | 3 kr. | 4,43 kr | 4,73 kr | €0.41 |
+
+Ekstra opkald (beslutning 2026-11-11, F-PDEC-01): Erhvervs nettopris pr. udfald i markedets valuta × 1,25 (Privats regel:
+dansk moms, samme bruttopris i hele valutaen), half-up til hele øre/öre/cent (`markets.privat_extra_call`). Optankning,
+bonusser og ekstra opgave: DKK-beløbet × markedets faktor (Erhvervs minutpris: SEK 1,475, NOK 1,575, EUR 0,135) –
+optankninger afrundet til hele kroner/euro, resten til hele øre (`markets.privat_from_dkk`). De udenlandske optankninger
+og bonusser er afledt, ikke besluttet (se F-PDEC-01). Opkaldssaldoen føres i kontoens valuta (`credit_ledger.currency`);
+en DKK-velkomstbonus flyttes én gang til kontoens valuta ved første Checkout i en anden valuta (`ledger.adopt_currency`).
 
 ## Hvilken valuta en kunde betaler i
 
@@ -50,7 +64,7 @@ Beløbene er skrevet med `markets.fmt` (samme visning som på fakturalinjerne).
 
 - Den besøgendes sprog ved Checkout: da → DKK, sv → SEK, no → NOK, en/de/es/fr/it → EUR
   (`markets.currency_for_locale`). Klienten sender `locale` på `POST /privat/subscription/checkout` og
-  `POST /privat/credits/checkout`.
+  `POST /privat/balance/checkout`.
 - Valutaen gemmes på `private_subscriptions.currency` ved første Checkout, og kunden beholder den (webhooken spejler den
   valuta, Stripe faktisk opkræver i). Eksisterende rækker uden valuta læses som DKK.
 - `GET /privat/subscription?currency=EUR` viser planerne i rækkens valuta, ellers den ønskede, ellers DKK.
@@ -68,7 +82,7 @@ To veje, styret af `STRIPE_TAX_ENABLED`:
   momsnummeret som kunde-skatte-id (`eu_vat` i EU, `no_vat` i Norge), så Stripe Tax selv anvender omvendt betalingspligt
   og skriver sin egen note. Fakturarækken (`invoices`) tager netto/moms/brutto fra Stripes færdige faktura
   (`total_excluding_tax`, `total_taxes`, `total`) og har `tax_source = "stripe_tax"`.
-- **Privat Checkout** (abonnement og credits): `automatic_tax: {enabled: true}`, prisen er `tax_behavior: inclusive`,
+- **Privat Checkout** (abonnement og optankning af Opkaldssaldoen): `automatic_tax: {enabled: true}`, prisen er `tax_behavior: inclusive`,
   produktet har skattekoden `txcd_10103000` (SaaS, privat), faktureringsadressen er påkrævet, og en eksisterende kunde
   får `customer_update: {address: "auto", name: "auto"}`. Et fast Stripe-pris-id (kun DKK) skal selv have
   skattekoden på sit produkt i Stripe.

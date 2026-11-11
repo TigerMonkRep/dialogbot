@@ -86,10 +86,10 @@ Modellen siger kun, **hvad brugeren vil** (virksomhed, ydelse, tidsvinduer og ku
 sporet** (`app/modules/browser/routing.py`), i denne rækkefølge: (1) brugeren sagde «ring» → telefon, «skriv» → browser, hvis det kan lade sig gøre
 (ellers telefon, og vi siger hvorfor), uden spørgsmål; (2) ønsket er ikke «book» (flyt/aflys er ikke automatiseret i v1) → telefon; (3) hjemmeside
 fundet, motor kendt og tilladt, bookingadresse findes, og brugeren har navn og bekræftet mobil på profilen → browser (kræver også, at workeren er
-slået til, og at 1 credit er ledig); (4) ellers telefon. Assistenten **siger altid, hvilket spor** den tager («Jeg prøver at booke online hos X – du får et
+slået til, og at bookingprisen er på Opkaldssaldoen); (4) ellers telefon. Assistenten **siger altid, hvilket spor** den tager («Jeg prøver at booke online hos X – du får et
 forslag at godkende» / «Jeg ringer til X i åbningstiden, når du har godkendt opkaldet»). Enhver fejl i browsersporet giver et færdigt opkaldsforslag
 uden et ekstra «skal jeg ringe?», men opkaldet kræver stadig brugerens almindelige godkendelse, fordi et opkald er en handling med omkostning. «Ring i
-stedet» stopper en kørsel, der endnu ikke har trykket bekræft, og frigiver creditten; efter bekræft-klikket kan den ikke fortrydes (`browser_run_confirming`).
+stedet» stopper en kørsel, der endnu ikke har trykket bekræft, og frigiver reservationen; efter bekræft-klikket kan den ikke fortrydes (`browser_run_confirming`).
 
 **Hvad en kørsel aldrig må:** starte uden en konkret booking (ydelse + mindst én dateret tidsramme; ellers spørger assistenten), og udfylde andet end brugerens
 eget navn og bekræftede mobilnummer (aldrig e-mailadressen).
@@ -99,7 +99,7 @@ eget navn og bekræftede mobilnummer (aldrig e-mailadressen).
 springes hjemmeside-opslaget over, og sporet bliver telefonen. Resultatet gemmes i `external_business_contacts`, så det samme opslag ikke betales to gange; Googles
 indhold (hjemmeside, åbningstider) droppes efter `GOOGLE_PLACES_CACHE_DAYS`, kun `place_id` bliver. Opslag i CVR på navn er **ikke eksternt verificeret**.
 
-**Credits:** en browser-booking koster 1 credit (konstanten `BROWSER_BOOKING_CREDITS`; et opkald koster 3). Reserveres ved start, bruges når kørslen ender i en
+**Pris:** en browser-booking koster 2,90 kr. fra Opkaldssaldoen (`BROWSER_BOOKING_MINOR` = den tidligere ene credit omregnet med 2,90 kr.; F-PDEC-01 – egen pris er ikke besluttet). Reserveres ved start, bruges når kørslen ender i en
 booking (eller i et klik, der kan have booket), frigives ellers. Prisen er den samme for alle, også med en plan; det er ikke afgjort, om en plans
 opkaldskvote skal gælde for browser-bookinger.
 

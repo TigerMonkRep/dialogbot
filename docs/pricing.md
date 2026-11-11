@@ -19,7 +19,8 @@ kontakt. De findes ikke mere.
 Gældende fra 4. november 2026. Private kunder: 14 dages gratis prøveperiode med den valgte plans rettigheder – prøveperioden starter
 først i Stripe Checkout, hvor kort, navn, adresse og telefon indtastes (`trial_period_days`, `payment_method_collection: always`,
 `billing_address_collection: required`, telefon), og kortet trækkes først, når den slutter. Opsiges den inden, betales intet.
-Credits (10 for 29 kr.) findes stadig som «ekstra opkald», når månedens opkald er brugt (3 credits pr. besvaret opkald, uændret).
+Ekstra opkald ud over planens opkald betales fra **Opkaldssaldoen** – se «Ekstra opkald og Opkaldssaldo» nedenfor
+(Fürsters beslutning 2026-11-11, F-PDEC-01; afløser credits).
 
 **Uden plan (status `none` – ny konto, eller prøveperiode aldrig startet):** stærkt begrænset gratis-version. Man kan modtage, se og
 reservere på lister, andre deler med én (delte lister og ønskelister), men ikke oprette egne opgaver, lister eller opkald – chatten
@@ -35,14 +36,38 @@ påmindelser og det første opkaldsforslag som udkast og sender videre til `/pri
 | Familie | 169 kr. (16.900 øre) | 135 kr. (162.000 øre/år) | 25 | 5 | ja |
 
 - Lister og påmindelser: ubegrænsede i prøveperioden og på alle planer. Udløbet prøveperiode uden plan (`expired`): nye opgaver bliver
-  udkast, som kan aktiveres med 1 credit eller et sponsorindslag som før – eller med en plan.
+  udkast, som kan aktiveres med 3 kr. fra Opkaldssaldoen eller et sponsorindslag – eller med en plan.
 - Opkald trækkes af planens kvote pr. kalendermåned (Europe/Copenhagen); et opkald, som ingen tager, eller som fejler, tæller ikke.
-  Når kvoten er brugt: 3 credits pr. opkald (den eksisterende logik).
+  Når kvoten er brugt: et ekstra opkald fra Opkaldssaldoen (prisen pr. udfald nedenfor).
 - Apps i Butikken med `included_in` (Kalender, Pakker og de kommende) kræver prøveperiode, Plus eller Familie; «Ring for mig» er med i
   alle planer. Delte lister og ønskelister er gratis for alle.
 - Opsigelse og skift: Stripe Billing Portal. Ingen binding.
 - **Kode:** `app/modules/billing/prices.py` – `PRIVAT_PLANS` (øre inkl. moms) og `PRIVAT_TRIAL_DAYS`; `app/modules/privat/subscriptions.py`
   læser dem, og `GET /privat/subscription` leverer kataloget til web (docs/privat-api.md), så web hardcoder ingen priser.
+
+### Ekstra opkald og Opkaldssaldo (Privat, inkl. moms – beslutning 2026-11-11)
+
+Ekstra opkald følger Erhvervs pris pr. udfald (beslutningen 2026-11-10) + 25 % moms. Beløbene afledes af Erhvervs
+nettopriser (`markets.privat_extra_call`), afrundet half-up til hele øre ét sted (`prices.gross_minor`):
+
+| Ekstra opkald | Netto (Erhverv) | Privat inkl. moms |
+|---|---|---|
+| Besvaret | 4 kr. | 5 kr. |
+| Telefonsvarer | 1 kr. | 1,25 kr. |
+| Ubesvaret/optaget | 0,25 kr. | 0,3125 → **0,31 kr.** |
+| Pr. påbegyndt samtaleminut (kun besvaret) | 2 kr. | 2,50 kr. |
+| Højst pr. opkald (Erhvervs maks. pr. kontakt: 2 × 4 + 3 × 2) | 14 kr. | 17,50 kr. |
+
+- Prisen gælder **kun** opkald efter planens kvote. Opkald inden for kvoten koster intet ekstra. Et ubesvaret opkald tæller
+  stadig ikke mod kvoten, men et ubesvaret *ekstra* opkald koster 0,31 kr. Uden plan: «Ring for mig» er blokeret (409 `needs_plan`).
+- Godkendelse reserverer 17,50 kr. på saldoen (ellers 409 `insufficient_balance` «Fyld op» med CTA `/privat/konto#saldo`).
+  Rapporten fra Vapi afregner én gang: prisen efter udfald og påbegyndte minutter (`durationSeconds`) trækkes, resten frigives.
+  Fejler opkaldet hos Vapi (create_call-fejl, `endedReason` med «error», ingen rapport inden 30 min.), frigives det hele.
+- **Opkaldssaldo** (`credit_ledger`, beløb i øre): optankning via Stripe Checkout (mode=payment) med 50, 100 eller 200 kr.
+  inkl. moms (`POST /privat/balance/checkout`); webhooken lægger kun beløbet til, når det betalte dækker det. Velkomstbonus 10 kr.;
+  henvisning 10 kr. til hver efter den henvistes første betalte periode (højst 10 pr. måned); ekstra opgave ud over grænsen 3 kr.
+  (eller et sponsorindslag). Gamle credits er konverteret med 1 credit = 2,90 kr. (migration `f3a8c6d2b5e9`). En booking på
+  virksomhedens hjemmeside (browser-worker) koster indtil videre den konverterede 2,90 kr. (ingen egen pris besluttet).
   Stripe: inline `price_data` (tax_behavior inclusive) eller faste price-id'er via `PRIVAT_STRIPE_PRICE_<PLAN>_<INTERVAL>`.
 
 ## Rabatkoder (operatører laver dem under Admin → Rabatkoder)

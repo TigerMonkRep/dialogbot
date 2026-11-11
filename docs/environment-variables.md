@@ -106,7 +106,7 @@
 | `STRIPE_TAX_ENABLED` | nej | API + worker | – (`true`/`false`, standard `false`) | Stripe Tax afgør momsen (docs/markets.md). Kun efter Stripe Tax er aktiveret i kontoen. |
 | `PRIVAT_EU_VAT_MODE` | nej | API | – (`danish`/`destination`, standard `danish`) | Moms på Privat-salg til EU-forbrugere uden Stripe Tax (docs/markets.md). `destination` kræver OSS. |
 | `NO_VOEC_REGISTERED` | nej | API | – (`true`/`false`, standard `false`) | Norsk moms på Privat-salg til Norge efter VOEC-registrering (docs/markets.md). |
-| `PRIVAT_STRIPE_PRICE_ID` | nej | API | Stripe → Products | Pris for 10 credits («ekstra opkald», 29,00 kr. inkl. moms). Tom = inline-pris 2900 øre. |
+| `PRIVAT_STRIPE_PRICE_ID` | nej | – | – | Bruges ikke længere: Opkaldssaldoen fyldes op med inline-priser (50/100/200 kr. inkl. moms, F-PDEC-01). Kan fjernes sammen med variablen. |
 | `PRIVAT_STRIPE_PRICE_BASIS_MONTH`, `PRIVAT_STRIPE_PRICE_BASIS_YEAR`, `PRIVAT_STRIPE_PRICE_PLUS_MONTH`, `PRIVAT_STRIPE_PRICE_PLUS_YEAR`, `PRIVAT_STRIPE_PRICE_FAMILIE_MONTH`, `PRIVAT_STRIPE_PRICE_FAMILIE_YEAR` | nej | API | Stripe → Products (recurring) | Faste Stripe Price-id'er for Dialogbot Privat-abonnementerne (docs/pricing.md). Tom = inline `price_data` med beløbene fra `prices.PRIVAT_PLANS` (inkl. moms). Webhooken skal også sende `customer.subscription.*`. |
 | `PRIVAT_DEFAULT_ADDONS` | nej | API | — | Tilføjelser slået til for nye private konti. Standard `ring-for-mig,delte-lister,oenskelister`. |
 | `TRACK17_API_KEY` | nej | API + worker | 17TRACK → API → Security key | Pakker-appen (pakkesporing). Uden den er appen «Kommer snart». Kun forsendelsesnummeret sendes til 17TRACK. **Server-only.** |

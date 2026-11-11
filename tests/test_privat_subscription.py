@@ -295,8 +295,13 @@ def test_checkout_payload(api, pv, db, monkeypatch):
     assert line["tax_rates"] == ["txr_dk_vat_2500_incl"]  # 25 % Danish VAT, included in the price
     created = next(x for x in sent if x[:2] == ("POST", "/tax_rates"))[2]
     assert (created["percentage"], created["inclusive"], created["country"]) == (25, True, "DK")
-    meta = {"kind": "privat_subscription", "workspace_id": str(ws), "plan": "plus", "interval": "month", "currency": "DKK"}
+    meta = {"kind": "privat_subscription", "workspace_id": str(ws), "plan": "plus", "interval": "month", "currency": "DKK",
+            "terms_version": "1"}  # F-PDEC-03: the Privat terms the plan is bought under
     assert d["metadata"] == meta and d["subscription_data"]["metadata"] == meta
+    # F-PDEC-03: the consumer terms are linked above the pay button (with the one-trial-per-card rule)
+    note = d["custom_text"]["submit"]["message"]
+    assert "Én prøveperiode pr. kort" in note and "Handelsbetingelser for Dialogbot Privat (version 1): " in note
+    assert note.endswith("/privat/vilkaar")
     assert d["subscription_data"]["trial_period_days"] == 14  # 14 days free, the card is given now
     assert d["payment_method_collection"] == "always" and d["billing_address_collection"] == "required"
     assert d["phone_number_collection"] == {"enabled": True}  # name, address and phone at Stripe, never stored by us

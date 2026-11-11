@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui";
 import { useLocale, useT } from "@/i18n/client";
@@ -326,6 +327,8 @@ function PlanPicker({ onPick, busy }: { onPick: (plan: PlanKey, interval: Billin
         <button type="button" className={`${LINK} self-start`} onClick={() => setCodeOpen(true)}>{t("plan.codeAsk")}</button>
       )}
       <p className="m-0 text-[13px] text-muted">{t("plan.pickerNote")}</p>
+      {/* The consumer terms before the Stripe Checkout (F-PDEC-03) */}
+      <Link href="/privat/vilkaar" className={`${LINK} text-[13px]`} data-testid="privat-terms-link">{t("landing.footer.terms")}</Link>
     </div>
   );
 }

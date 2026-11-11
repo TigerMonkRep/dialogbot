@@ -49,7 +49,8 @@ def checkout(db: OrmSession, ctx, amount_minor: int | None = None, locale: str |
     if amount not in allowed:
         raise ValidationFailed("Vælg et af beløbene", code="invalid_topup",
                                field_errors=[{"field": "amount_minor", "allowed": list(allowed)}])
-    meta = {"workspace_id": str(ctx.ws_id), "kind": KIND, "amount_minor": str(amount), "currency": currency}
+    meta = {"workspace_id": str(ctx.ws_id), "kind": KIND, "amount_minor": str(amount), "currency": currency,
+            "terms_version": market.TERMS_VERSION}  # the Privat terms the top-up is bought under (F-PDEC-03)
     line = {"quantity": 1, "price_data": {
         "currency": currency.lower(), "unit_amount": amount, "tax_behavior": "inclusive",
         "product_data": {"name": "Opkaldssaldo – Dialogbot Privat" if market.norm_locale(locale) == "da"
@@ -60,7 +61,8 @@ def checkout(db: OrmSession, ctx, amount_minor: int | None = None, locale: str |
         # No discount codes on top-ups (F-PBQ-03): the Privat codes are made for the plans (no applies_to), and a
         # top-up paid below its amount would be ignored by the webhook – paid, but nothing added.
         "client_reference_id": str(ctx.ws_id), "metadata": meta, "payment_intent_data": {"metadata": meta},
-        "success_url": f"{base}/privat/konto?betaling=ok", "cancel_url": f"{base}/privat/konto?betaling=annulleret"}
+        "success_url": f"{base}/privat/konto?betaling=ok", "cancel_url": f"{base}/privat/konto?betaling=annulleret",
+        "custom_text": {"submit": {"message": market.terms_note(base, locale)}}}
     market.apply_tax(payload, line, locale)
     sess = branding.create_checkout_session(payload)
     return sess["url"]

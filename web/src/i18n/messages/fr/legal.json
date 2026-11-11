@@ -521,5 +521,166 @@
         ]
       }
     ]
+  },
+  "privatTerms": {
+    "meta": {
+      "title": "Conditions de Dialogbot Privat | Dialogbot",
+      "description": "Conditions générales de vente de Dialogbot Privat : formules, essai gratuit, droit de rétractation, solde d'appels et vos données."
+    },
+    "version": "1",
+    "label": "Conditions · Dialogbot Privat",
+    "title": "Conditions générales de vente de Dialogbot Privat",
+    "updated": "Version 1 · en vigueur à compter du 11 novembre 2026.",
+    "intro": "Ces conditions s'appliquent lorsque vous, en tant que particulier, créez un compte et utilisez Dialogbot Privat. « Nous » désigne {name} (n° CVR {cvr}), {address}. « Vous » désigne la personne titulaire du compte. Dialogbot pour les entreprises a ses propres conditions.",
+    "sections": [
+      {
+        "title": "1. Le contrat",
+        "body": [
+          {"type": "p", "text": "Le contrat est conclu entre vous et {name}. Il est conclu lorsque vous créez un compte et couvre les achats que vous effectuez dans Dialogbot Privat (une formule ou une recharge de votre solde d'appels). Vous devez avoir au moins 18 ans pour acheter une formule ou recharger votre solde."},
+          {"type": "p", "text": "Ces conditions existent en plusieurs langues. En cas de divergence entre les versions linguistiques, la version danoise prévaut."}
+        ]
+      },
+      {
+        "title": "2. Ce qu'est Dialogbot Privat",
+        "body": [
+          {"type": "p", "text": "Dialogbot Privat est un assistant personnel dans une application et sur le web. Il vous permet de :"},
+          {"type": "ul", "items": [
+            "créer des listes, des tâches et des rappels,",
+            "utiliser les applications de la boutique de l'application, par exemple calendrier, colis et factures – les applications incluses dépendent de votre formule,",
+            "partager des listes et des listes de souhaits avec d'autres personnes,",
+            [{"b": "« Appelle pour moi » :"}, " l'assistant appelle une entreprise ou un lieu en votre nom. Avant chaque appel, vous voyez qui sera appelé, ce que l'assistant peut dire et convenir, et ce que l'appel peut coûter au maximum. L'appel n'est passé qu'une fois que vous l'avez approuvé,"],
+            [{"b": "Réservation sur un site web :"}, " l'assistant réserve un rendez-vous via le site web d'une entreprise. Rien n'est réservé avant que vous l'ayez approuvé."]
+          ]},
+          {"type": "p", "text": "L'assistant utilise l'intelligence artificielle. Il peut se tromper ou mal comprendre ; vérifiez donc les rendez-vous importants. Lorsqu'il appelle, il dit toujours qu'il est une IA. Les fonctions signalées « bientôt disponible » ne font partie du contrat qu'une fois lancées."}
+        ]
+      },
+      {
+        "title": "3. Compte gratuit",
+        "body": [
+          {"type": "p", "text": "Vous pouvez créer un compte gratuit sans carte de paiement. Il sert aux listes que d'autres partagent avec vous : vous pouvez les consulter, cocher des éléments et réserver des souhaits. Vos propres listes, tâches, rappels et appels nécessitent une formule ou un essai – ce que vous créez sans est enregistré comme brouillon jusqu'à ce que vous choisissiez une formule. Le compte gratuit ne coûte rien et peut être supprimé à tout moment."}
+        ]
+      },
+      {
+        "title": "4. Formules et prix",
+        "body": [
+          {"type": "p", "text": "Il existe trois formules. Vous pouvez payer au mois ou à l'année. Tous les prix s'entendent TVA comprise et sont affichés dans la devise applicable à votre pays."},
+          {"type": "ul", "items": [
+            [{"b": "Basis :"}, " {pBasis} par mois, ou {pBasisYearTotal} par an (soit {pBasisYear} par mois)."],
+            [{"b": "Plus :"}, " {pPlus} par mois, ou {pPlusYearTotal} par an (soit {pPlusYear} par mois)."],
+            [{"b": "Familie :"}, " {pFamilie} par mois, ou {pFamilieYearTotal} par an (soit {pFamilieYear} par mois)."]
+          ]},
+          {"type": "p", "text": "Le contenu de chaque formule – appels par mois, nombre de personnes et applications – figure sur la page des prix et dans l'application lorsque vous choisissez une formule. Les appels compris dans votre formule ne coûtent rien de plus. Les appels de la formule valent par mois civil et ne sont pas reportés sur le mois suivant. Un appel auquel personne ne répond, ou qui échoue, n'est pas compté."}
+        ]
+      },
+      {
+        "title": "5. Essai gratuit et paiement",
+        "body": [
+          {"type": "p", "text": "Une formule commence par un essai gratuit de {pTrialDays} jours avec les droits de la formule. Vous enregistrez une carte de paiement lorsque vous démarrez l'essai. Rien n'est débité pendant l'essai ; le prix n'est débité qu'à la fin de l'essai, puis d'avance au début de chaque mois ou de chaque année."},
+          {"type": "p", "text": "Il y a un seul essai par compte et par carte de paiement. Si la carte a déjà bénéficié d'un essai chez Dialogbot Privat, la formule démarre immédiatement et est payée à partir de ce jour. C'est également indiqué sur la page de paiement avant que vous payiez."},
+          {"type": "p", "text": "Le paiement est traité par notre prestataire de paiement Stripe. Nous ne conservons pas nous-mêmes les données de carte. Si un paiement ne peut pas être effectué, vous en êtes informé. S'il échoue encore après de nouvelles tentatives de Stripe, la formule prend fin."}
+        ]
+      },
+      {
+        "title": "6. Résiliation et changement de formule",
+        "body": [
+          {"type": "p", "text": "Il n'y a aucun engagement. Vous pouvez résilier à tout moment dans l'application, sous votre compte. La formule reste valable jusqu'à la fin de la période payée (mois ou année), puis plus rien n'est débité. Si vous résiliez pendant l'essai, vous ne payez rien."},
+          {"type": "p", "text": "Les périodes payées ne sont pas remboursées, sauf si la loi vous y donne droit, par exemple au titre du droit de rétractation (point 7) ou d'un défaut de conformité (point 14). Vous pouvez changer de formule et de moyen de paiement au même endroit ; le prix est affiché avant que vous confirmiez."},
+          {"type": "p", "text": "Nous pouvons résilier le contrat avec un préavis de 30 jours. Si vous avez payé une période qui va au-delà du préavis, nous remboursons la part proportionnelle. En cas d'abus grave du service (point 11), nous pouvons fermer votre accès sans préavis."}
+        ]
+      },
+      {
+        "title": "7. Droit de rétractation",
+        "body": [
+          {"type": "p", "text": "En tant que consommateur, vous disposez d'un droit de rétractation de 14 jours en vertu de la loi danoise sur les contrats de consommation (forbrugeraftaleloven) lorsque vous achetez une formule ou rechargez votre solde d'appels. Le délai court à compter du jour où l'achat est conclu."},
+          {"type": "ul", "items": [
+            [{"b": "Formule avec essai gratuit :"}, " Le délai de rétractation et l'essai commencent le même jour. Si vous vous rétractez dans les 14 jours, cela ne vous coûte rien. Si un paiement a malgré tout été débité, vous êtes remboursé intégralement."],
+            [{"b": "Formule sans essai gratuit"}, " (la carte a déjà bénéficié d'un essai) : Si vous vous rétractez dans les 14 jours, vous êtes remboursé intégralement."],
+            [{"b": "Recharge du solde d'appels :"}, " Si vous vous rétractez dans les 14 jours, la part non utilisée vous est remboursée. Les appels que vous avez vous-même approuvés et qui ont été passés sont payés avec la part utilisée."]
+          ]},
+          {"type": "p", "parts": ["Pour vous rétracter, écrivez à ", {"email": true}, " avant la fin du délai. Vous pouvez utiliser le modèle de formulaire de rétractation de la loi sur les contrats de consommation, mais ce n'est pas obligatoire. Nous remboursons au plus tard 14 jours après réception de votre message, sur le moyen de paiement que vous avez utilisé."]}
+        ]
+      },
+      {
+        "title": "8. Solde d'appels et appels supplémentaires",
+        "body": [
+          {"type": "p", "text": "Le solde d'appels est un montant prépayé dans la devise de votre compte. Vous le rechargez avec {pTopup1}, {pTopup2} ou {pTopup3} TVA comprise."},
+          {"type": "p", "text": "Lorsque les appels de votre formule sont épuisés pour le mois, vous pouvez approuver un appel supplémentaire, payé sur le solde :"},
+          {"type": "ul", "items": [
+            "{pXAnswered} si quelqu'un répond, {pXVoicemail} en cas de messagerie et {pXNoAnswer} si personne ne répond, si la ligne est occupée ou si le résultat est inconnu,",
+            "plus {pXMinute} par minute de conversation entamée lorsque quelqu'un répond,",
+            "au maximum {pXMax} par appel. Lorsque vous approuvez, {pXMax} sont réservés sur votre solde. Après l'appel, le prix réel est déduit et le reste est libéré. Si l'appel échoue de notre côté ou chez notre opérateur téléphonique, rien n'est déduit."
+          ]},
+          {"type": "p", "text": "Le prix figure sur l'appel avant que vous l'approuviez. « Appelle pour moi » nécessite une formule ; sans formule, le solde ne peut pas servir à des appels. Sans formule, le solde peut servir à activer une tâche supplémentaire pour {pExtraTask}."},
+          {"type": "p", "text": "Le solde n'expire pas tant que le compte existe. Il ne peut pas être transféré à d'autres personnes. Les bonus que nous ajoutons à votre solde (par exemple le bonus de bienvenue de {pWelcome} et le bonus de parrainage de {pReferral}) ne peuvent être utilisés que dans Dialogbot Privat et ne sont pas versés."},
+          {"type": "p", "parts": ["Le solde non utilisé que vous avez vous-même versé vous est remboursé si vous le demandez lors de la résiliation ou de la suppression de votre compte. Écrivez à ", {"email": true}, " avant de supprimer le compte. Nous remboursons sur le moyen de paiement que vous avez utilisé, au plus tard 14 jours après votre demande."]}
+        ]
+      },
+      {
+        "title": "9. Réservation sur un site web",
+        "body": [
+          {"type": "p", "text": "La réservation sur un site web est incluse dans toutes les formules et pendant l'essai, dans le cadre d'un usage raisonnable : un usage personnel normal pour vous (et votre foyer avec Familie). Si la fonction est utilisée dans une mesure qui ne ressemble pas à un usage personnel, nous pouvons la limiter – nous vous prévenons d'abord."},
+          {"type": "p", "text": "Une réservation est un accord entre vous et l'entreprise. Les règles propres à l'entreprise, par exemple en matière d'annulation et de frais, s'y appliquent."}
+        ]
+      },
+      {
+        "title": "10. Familie et foyer",
+        "body": [
+          {"type": "p", "text": "La formule Familie appartient à la personne qui l'a achetée. Cette personne gère la formule et le paiement, et peut inviter et retirer des membres, dans la limite du nombre de personnes prévu par la formule. Les membres bénéficient des droits de la formule et se partagent les appels de la formule chaque mois."},
+          {"type": "p", "text": "Chaque membre a son propre compte, son propre solde d'appels et ses propres données. Personne dans le foyer – pas même le titulaire de la formule – ne peut voir les listes, tâches, appels ou soldes des autres, sauf s'ils les partagent eux-mêmes. Si la formule prend fin, ou si un membre quitte le foyer, ce membre perd les droits de la formule mais conserve ses propres données."}
+        ]
+      },
+      {
+        "title": "11. Votre utilisation du service",
+        "body": [
+          {"type": "p", "text": "Gardez vos identifiants pour vous. Vous êtes responsable des tâches et des appels que vous demandez à l'assistant. « Appelle pour moi » et la réservation sur un site web ne doivent servir qu'à des démarches personnelles et licites – pas au harcèlement, à la vente ou au marketing, à vous faire passer pour quelqu'un d'autre ni à appeler des numéros d'urgence. Ne partagez les informations d'autres personnes, comme leurs numéros de téléphone, que si vous en avez le droit."},
+          {"type": "p", "text": "Nous pouvons refuser un appel ou une tâche contraire à ces règles ou à la loi."}
+        ]
+      },
+      {
+        "title": "12. Annonces et liens d'affiliation",
+        "body": [
+          {"type": "p", "text": "Certaines parties de l'application peuvent afficher des annonces, et certaines suggestions (par exemple de voyages) peuvent contenir des liens d'affiliation, pour lesquels nous percevons une commission si vous achetez quelque chose. Ils sont toujours signalés par « Annonce »."}
+        ]
+      },
+      {
+        "title": "13. Données personnelles",
+        "body": [
+          {"type": "p", "parts": ["Nous sommes responsables du traitement des informations que vous enregistrez dans Dialogbot Privat. La façon dont nous les traitons, et les sous-traitants que nous utilisons, sont décrits dans la ", {"link": "/privatliv", "text": "politique de confidentialité"}, ". En bref :"]},
+          {"type": "ul", "items": [
+            "Les conversations et les résumés d'appels sont conservés tant que le compte existe. Vous pouvez les supprimer un par un à tout moment.",
+            "Les transcriptions brutes des appels sont supprimées après 90 jours. Nous n'enregistrons pas le son.",
+            "Vous pouvez télécharger une copie de vos données. Le lien d'export est valable 7 jours.",
+            "Si vous supprimez votre compte, vos données sont supprimées immédiatement, sauf ce que la loi nous oblige à conserver (par exemple la comptabilité des paiements). Si vous avez connecté un agenda Google, nous révoquons l'accès auprès de Google. Pour Microsoft (Outlook), nous supprimons les clés de notre côté ; vous pouvez retirer vous-même Dialogbot dans votre compte Microsoft."
+          ]}
+        ]
+      },
+      {
+        "title": "14. Défauts et responsabilité",
+        "body": [
+          {"type": "p", "text": "Vous disposez des droits que la loi vous accorde si le service ne fonctionne pas comme promis. Contactez-nous dans un délai raisonnable après avoir constaté le problème : nous le corrigerons ou trouverons une autre solution."},
+          {"type": "p", "text": "Notre responsabilité est engagée selon les règles générales du droit danois. Nous ne sommes pas responsables de ce que fait ou ne fait pas une entreprise que vous avez contactée via l'assistant (par exemple un rendez-vous non honoré), des pannes chez les opérateurs télécoms et les fournisseurs cloud, ni des circonstances indépendantes de notre volonté. Rien dans ces conditions ne limite les droits que la loi vous accorde en tant que consommateur."}
+        ]
+      },
+      {
+        "title": "15. Réclamations",
+        "body": [
+          {"type": "p", "parts": ["Si vous n'êtes pas satisfait, écrivez à ", {"email": true}, " – nous répondons dès que possible. Si nous ne parvenons pas à un accord, vous pouvez déposer une réclamation auprès de la commission danoise des litiges de consommation (Nævnenes Hus, Forbrugerklagenævnet), Toldboden 2, 8800 Viborg, Danemark, via ", {"href": "https://www.forbrug.dk", "text": "forbrug.dk"}, "."]},
+          {"type": "p", "parts": ["Si vous habitez dans un autre pays de l'UE, vous pouvez obtenir de l'aide auprès de ", {"href": "https://www.forbrugereuropa.dk", "text": "Forbrugereuropa"}, " (le Centre européen des consommateurs au Danemark)."]},
+          {"type": "p", "text": "Le contrat est régi par le droit danois. Si vous habitez dans un autre pays, vous conservez la protection que vous accordent les règles de consommation de votre pays, et vous pouvez toujours saisir les juridictions auxquelles la loi vous donne droit."}
+        ]
+      },
+      {
+        "title": "16. Modification des conditions",
+        "body": [
+          {"type": "p", "text": "Nous pouvons modifier les conditions et les prix avec un préavis de 30 jours par e-mail et dans l'application. Si une modification vous est défavorable, vous pouvez résilier avant qu'elle ne prenne effet. Chaque version porte un numéro et une date en haut de la page."}
+        ]
+      },
+      {
+        "title": "Contact",
+        "body": [
+          {"type": "p", "parts": ["{name}, n° CVR {cvr}, {address} · ", {"email": true}, " · ", {"link": "/kontakt", "text": "Contact et support"}]}
+        ]
+      }
+    ]
   }
 }

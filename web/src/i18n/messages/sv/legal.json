@@ -266,5 +266,166 @@
         ]
       }
     ]
+  },
+  "privatTerms": {
+    "meta": {
+      "title": "Villkor för Dialogbot Privat | Dialogbot",
+      "description": "Köpvillkor för Dialogbot Privat: planer, provperiod, ångerrätt, samtalssaldo och dina uppgifter."
+    },
+    "version": "1",
+    "label": "Villkor · Dialogbot Privat",
+    "title": "Köpvillkor för Dialogbot Privat",
+    "updated": "Version 1 · gäller från 11 november 2026.",
+    "intro": "Dessa villkor gäller när du som privatperson skapar ett konto och använder Dialogbot Privat. \"Vi\" är {name} (CVR-nr {cvr}), {address}. \"Du\" är den person som har kontot. Dialogbot för företag har egna villkor.",
+    "sections": [
+      {
+        "title": "1. Avtalet",
+        "body": [
+          {"type": "p", "text": "Avtalet är mellan dig och {name}. Det ingås när du skapar ett konto och omfattar de köp du gör i Dialogbot Privat (en plan eller en påfyllning av samtalssaldot). Du måste ha fyllt 18 år för att köpa en plan eller fylla på saldot."},
+          {"type": "p", "text": "Villkoren finns på flera språk. Om språkversionerna skiljer sig åt gäller den danska."}
+        ]
+      },
+      {
+        "title": "2. Vad Dialogbot Privat är",
+        "body": [
+          {"type": "p", "text": "Dialogbot Privat är en personlig assistent i en app och på webben. Med den kan du:"},
+          {"type": "ul", "items": [
+            "skapa listor, uppgifter och påminnelser,",
+            "använda appar från appens butik, till exempel kalender, paket och räkningar – vilka appar som ingår beror på din plan,",
+            "dela listor och önskelistor med andra,",
+            [{"b": "«Ring för mig»:"}, " assistenten ringer för din räkning till ett företag eller en plats. Före varje samtal ser du vem som ska ringas, vad assistenten får säga och komma överens om och vad samtalet högst kostar. Samtalet rings först när du har godkänt det,"],
+            [{"b": "Bokning på webbplatser:"}, " assistenten bokar en tid via ett företags webbplats. Ingenting bokas innan du har godkänt det."]
+          ]},
+          {"type": "p", "text": "Assistenten använder artificiell intelligens. Den kan göra fel eller missförstå, så kontrollera viktiga överenskommelser. När den ringer säger den alltid att den är en AI. Funktioner som är märkta \"kommer snart\" ingår inte i avtalet förrän de har lanserats."}
+        ]
+      },
+      {
+        "title": "3. Gratiskonto",
+        "body": [
+          {"type": "p", "text": "Du kan skapa ett gratiskonto utan betalkort. Det är till för listor som andra delar med dig: Du kan se dem, bocka av och reservera önskningar. Egna listor, uppgifter, påminnelser och samtal kräver en plan eller en provperiod – det du skapar utan sparas som utkast tills du väljer en plan. Gratiskontot kostar ingenting och kan raderas när som helst."}
+        ]
+      },
+      {
+        "title": "4. Planer och priser",
+        "body": [
+          {"type": "p", "text": "Det finns tre planer. Du kan betala månadsvis eller årsvis. Alla priser är inkl. moms och visas i den valuta som gäller för ditt land."},
+          {"type": "ul", "items": [
+            [{"b": "Basis:"}, " {pBasis} per månad, eller {pBasisYearTotal} per år (motsvarar {pBasisYear} per månad)."],
+            [{"b": "Plus:"}, " {pPlus} per månad, eller {pPlusYearTotal} per år (motsvarar {pPlusYear} per månad)."],
+            [{"b": "Familie:"}, " {pFamilie} per månad, eller {pFamilieYearTotal} per år (motsvarar {pFamilieYear} per månad)."]
+          ]},
+          {"type": "p", "text": "Vad varje plan innehåller – samtal per månad, antal personer och appar – står på prissidan och i appen när du väljer plan. Samtal inom planen kostar inget extra. Planens samtal gäller per kalendermånad och förs inte över till nästa månad. Ett samtal som ingen svarar på, eller som misslyckas, räknas inte."}
+        ]
+      },
+      {
+        "title": "5. Provperiod och betalning",
+        "body": [
+          {"type": "p", "text": "En plan börjar med {pTrialDays} dagars gratis provperiod med planens rättigheter. Du lägger in ett betalkort när du startar provperioden. Ingenting dras under provperioden; priset dras först när den är slut och därefter i förskott i början av varje månad eller år."},
+          {"type": "p", "text": "Det finns en provperiod per konto och per betalkort. Har kortet haft en provperiod hos Dialogbot Privat tidigare, startar planen direkt och betalas från den dagen. Det står också på betalningssidan innan du betalar."},
+          {"type": "p", "text": "Betalningen sker via vår betalleverantör Stripe. Vi sparar inte själva några kortuppgifter. Om en betalning inte kan genomföras får du besked. Lyckas den inte efter att Stripe har försökt igen upphör planen."}
+        ]
+      },
+      {
+        "title": "6. Uppsägning och byte av plan",
+        "body": [
+          {"type": "p", "text": "Det finns ingen bindningstid. Du kan säga upp när som helst i appen under ditt konto. Planen gäller till slutet av den period du har betalat för (månad eller år), och därefter dras inget mer. Säger du upp under provperioden betalar du ingenting."},
+          {"type": "p", "text": "Betalda perioder återbetalas inte, om du inte har rätt till det enligt lag, till exempel enligt ångerrätten (punkt 7) eller vid ett fel (punkt 14). Du kan byta plan och betalsätt på samma ställe; priset visas innan du bekräftar."},
+          {"type": "p", "text": "Vi kan säga upp avtalet med 30 dagars varsel. Har du betalat för en period som sträcker sig längre än varseltiden, återbetalar vi den proportionella delen. Missbrukar du tjänsten grovt (punkt 11) kan vi stänga din åtkomst utan varsel."}
+        ]
+      },
+      {
+        "title": "7. Ångerrätt",
+        "body": [
+          {"type": "p", "text": "Som konsument har du 14 dagars ångerrätt enligt den danska konsumentavtalslagen (forbrugeraftaleloven) när du köper en plan eller fyller på samtalssaldot. Fristen räknas från den dag köpet genomförs."},
+          {"type": "ul", "items": [
+            [{"b": "Plan med provperiod:"}, " Ångerfristen och provperioden löper från samma dag. Ångrar du dig inom de 14 dagarna kostar det dig ingenting. Har en betalning ändå dragits får du tillbaka hela beloppet."],
+            [{"b": "Plan utan provperiod"}, " (kortet har haft en provperiod tidigare): Ångrar du dig inom 14 dagar får du tillbaka hela beloppet."],
+            [{"b": "Påfyllning av samtalssaldot:"}, " Ångrar du dig inom 14 dagar får du tillbaka den del som inte har använts. Samtal som du själv har godkänt och som har genomförts betalas med den använda delen."]
+          ]},
+          {"type": "p", "parts": ["Du ångrar dig genom att skriva till ", {"email": true}, " inom fristen. Du kan använda standardformuläret för ånger från konsumentavtalslagen, men det är inget krav. Vi återbetalar senast 14 dagar efter att vi har fått ditt meddelande, till det betalningsmedel du betalade med."]}
+        ]
+      },
+      {
+        "title": "8. Samtalssaldo och extra samtal",
+        "body": [
+          {"type": "p", "text": "Samtalssaldot är ett förbetalt belopp i den valuta som ditt konto använder. Du fyller på det med {pTopup1}, {pTopup2} eller {pTopup3} inkl. moms."},
+          {"type": "p", "text": "När planens samtal för månaden är förbrukade kan du godkänna ett extra samtal, som betalas från saldot:"},
+          {"type": "ul", "items": [
+            "{pXAnswered} om någon svarar, {pXVoicemail} vid röstbrevlåda och {pXNoAnswer} om ingen svarar, det är upptaget eller utfallet är okänt,",
+            "plus {pXMinute} per påbörjad samtalsminut när någon svarar,",
+            "högst {pXMax} per samtal. När du godkänner reserveras {pXMax} på saldot. Efter samtalet dras det faktiska priset, och resten frigörs. Misslyckas samtalet hos oss eller vår teleoperatör dras ingenting."
+          ]},
+          {"type": "p", "text": "Priset står på samtalet innan du godkänner det. «Ring för mig» kräver en plan; saldot kan inte användas till samtal utan plan. Utan plan kan saldot användas för att aktivera en extra uppgift för {pExtraTask}."},
+          {"type": "p", "text": "Saldot förfaller inte så länge kontot finns. Det kan inte överföras till andra. Bonusar som vi lägger på saldot (till exempel välkomstbonusen på {pWelcome} och värvningsbonusen på {pReferral}) kan bara användas i Dialogbot Privat och betalas inte ut."},
+          {"type": "p", "parts": ["Oanvänt saldo som du själv har betalat in återbetalar vi när du ber om det i samband med uppsägning eller radering av kontot. Skriv till ", {"email": true}, " innan du raderar kontot. Vi återbetalar till det betalningsmedel du betalade med, senast 14 dagar efter din begäran."]}
+        ]
+      },
+      {
+        "title": "9. Bokning på webbplatser",
+        "body": [
+          {"type": "p", "text": "Bokning på webbplatser ingår i alla planer och i provperioden enligt skälig användning: vanlig personlig användning för dig (och ditt hushåll på Familie). Används funktionen i en omfattning som inte liknar personlig användning kan vi begränsa den – vi meddelar dig först."},
+          {"type": "p", "text": "En bokning är ett avtal mellan dig och företaget. Företagets egna regler, till exempel om avbokning och avgifter, gäller för den."}
+        ]
+      },
+      {
+        "title": "10. Familie och hushåll",
+        "body": [
+          {"type": "p", "text": "Familie-planen ägs av den som har köpt den. Ägaren styr planen och betalningen och kan bjuda in och ta bort medlemmar, upp till det antal personer som planen omfattar. Medlemmarna får planens rättigheter och delar på planens samtal per månad."},
+          {"type": "p", "text": "Varje medlem har sitt eget konto, sitt eget samtalssaldo och sina egna uppgifter. Ingen i hushållet – inte heller ägaren – kan se de andras listor, uppgifter, samtal eller saldo, om de inte själva delar dem. Om planen upphör, eller en medlem lämnar hushållet, förlorar medlemmen planens rättigheter men behåller sina egna uppgifter."}
+        ]
+      },
+      {
+        "title": "11. Din användning av tjänsten",
+        "body": [
+          {"type": "p", "text": "Håll din inloggning för dig själv. Du ansvarar för de uppgifter och samtal du ber assistenten om. «Ring för mig» och bokning på webbplatser får bara användas för lagliga, personliga ärenden – inte för trakasserier, försäljning eller marknadsföring, för att utge dig för att vara någon annan eller för att ringa larmnummer. Dela bara andras uppgifter, till exempel telefonnummer, när du har rätt till det."},
+          {"type": "p", "text": "Vi kan avvisa ett samtal eller en uppgift som strider mot dessa regler eller mot lagen."}
+        ]
+      },
+      {
+        "title": "12. Annonser och affiliatelänkar",
+        "body": [
+          {"type": "p", "text": "Vissa delar av appen kan visa annonser, och vissa förslag (till exempel resor) kan innehålla affiliatelänkar, där vi får provision om du köper något. De är alltid märkta «Annons»."}
+        ]
+      },
+      {
+        "title": "13. Personuppgifter",
+        "body": [
+          {"type": "p", "parts": ["Vi är personuppgiftsansvariga för de uppgifter du sparar i Dialogbot Privat. Hur vi behandlar dem och vilka personuppgiftsbiträden vi använder står i ", {"link": "/privatliv", "text": "integritetspolicyn"}, ". Kort sagt:"]},
+          {"type": "ul", "items": [
+            "Chattar och samtalssammanfattningar sparas så länge kontot finns. Du kan radera dem en i taget när som helst.",
+            "Råa transkriptioner av samtal raderas efter 90 dagar. Vi spelar inte in ljud.",
+            "Du kan ladda ner en kopia av dina uppgifter. Länken till exporten gäller i 7 dagar.",
+            "Raderar du kontot raderas dina uppgifter direkt, utom det som lagen kräver att vi sparar (till exempel bokföring av betalningar). Har du kopplat en Google-kalender återkallar vi åtkomsten hos Google. För Microsoft (Outlook) raderar vi nycklarna hos oss; du kan själv ta bort Dialogbot i ditt Microsoft-konto."
+          ]}
+        ]
+      },
+      {
+        "title": "14. Fel och ansvar",
+        "body": [
+          {"type": "p", "text": "Du har de rättigheter som lagen ger dig om tjänsten inte fungerar som utlovat (reklamation). Kontakta oss inom skälig tid efter att du har upptäckt felet, så rättar vi det eller hittar en annan lösning."},
+          {"type": "p", "text": "Vi ansvarar enligt allmänna regler i dansk rätt. Vi ansvarar inte för vad ett företag som du har kontaktat via assistenten gör eller låter bli att göra (till exempel en tid som det inte håller), för avbrott hos teleoperatörer och molnleverantörer eller för förhållanden utanför vår kontroll. Ingenting i dessa villkor begränsar de rättigheter du har som konsument enligt lag."}
+        ]
+      },
+      {
+        "title": "15. Klagomål",
+        "body": [
+          {"type": "p", "parts": ["Är du missnöjd, skriv till ", {"email": true}, " – vi svarar så snabbt vi kan. Kommer vi inte överens kan du klaga till den danska konsumentklagonämnden (Nævnenes Hus, Forbrugerklagenævnet), Toldboden 2, 8800 Viborg, Danmark, via ", {"href": "https://www.forbrug.dk", "text": "forbrug.dk"}, "."]},
+          {"type": "p", "parts": ["Bor du i ett annat EU-land kan du få hjälp hos ", {"href": "https://www.forbrugereuropa.dk", "text": "Forbrugereuropa"}, " (Europeiska konsumentcentret i Danmark)."]},
+          {"type": "p", "text": "Avtalet lyder under dansk rätt. Bor du i ett annat land behåller du det skydd som konsumentreglerna i ditt eget land ger dig, och du kan alltid vända dig till de domstolar som lagen ger dig rätt till."}
+        ]
+      },
+      {
+        "title": "16. Ändringar av villkoren",
+        "body": [
+          {"type": "p", "text": "Vi kan ändra villkoren och priserna med 30 dagars varsel via e-post och i appen. Är en ändring till din nackdel kan du säga upp innan den börjar gälla. Varje version har ett nummer och ett datum högst upp på sidan."}
+        ]
+      },
+      {
+        "title": "Kontakt",
+        "body": [
+          {"type": "p", "parts": ["{name}, CVR-nr {cvr}, {address} · ", {"email": true}, " · ", {"link": "/kontakt", "text": "Kontakt och support"}]}
+        ]
+      }
+    ]
   }
 }

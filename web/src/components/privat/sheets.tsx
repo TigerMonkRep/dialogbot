@@ -131,6 +131,7 @@ function PaywallSheet({ onClose }: { onClose: () => void }) {
         <p className="m-0 text-[15px] leading-normal text-ink-soft">{text}</p>
         <Button className={`${BIG} rounded-full`} disabled={busy} onClick={() => void startTrial()} data-testid="paywall-trial">{t("store.needsPlan.trial")}</Button>
         <p className="m-0 text-[13px] text-muted text-center">{t("paywall.trialNote")}</p>
+        <Link href="/privat/vilkaar" className={`${LINK} self-center text-[13px]`} data-testid="privat-terms-link">{t("landing.footer.terms")}</Link>
         <button type="button" className={`${LINK} self-center`} onClick={later}>{t("paywall.later")}</button>
       </Sheet>
     );
@@ -183,6 +184,7 @@ function BuySheet({ onClose }: { onClose: () => void }) {
         <div className="flex justify-between text-[13px] text-muted"><span>{t("buy.vat")}</span><span>{sd.fmt(includedVat(amount))}</span></div>
         <p className="m-0 mt-1 text-[13px] text-muted">{t("buy.prices", sd.vars)}</p>
         <p className="m-0 text-[13px] text-muted">{t("buy.note")}</p>
+        <Link href="/privat/vilkaar" className={`${LINK} text-[13px]`} data-testid="privat-terms-link">{t("landing.footer.terms")}</Link>
       </div>
       <Button className={BIG} onClick={pay} disabled={busy || mode === "demo"}>{simulated ? <>{t("buy.pay", { amount: sd.fmt(amount) })} <Sim label={t("buy.simulatedBuy")} /></> : busy ? t("buy.redirecting") : t("buy.payReal", { amount: sd.fmt(amount) })}</Button>
       <button type="button" className={`${LINK} self-center`} onClick={() => (sheet?.taskId ? openSheet({ kind: "paywall", taskId: sheet.taskId }) : onClose())}>{t("buy.back")}</button>

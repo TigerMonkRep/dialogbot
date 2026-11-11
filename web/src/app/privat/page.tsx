@@ -206,7 +206,7 @@ export default async function PrivatLanding() {
           <LanguageSwitcher compact className="sm:!hidden" />
           <SiteLink href="/erhverv" className="inline-flex items-center gap-1 min-h-8 font-semibold text-ink no-underline hover:text-accent">{t("landing.footer.business")} <Ico name="arrow" size={14} stroke={2.6} /></SiteLink>
           <SiteLink href="/privatliv" className="inline-flex items-center min-h-8 text-ink no-underline hover:text-accent">{t("landing.footer.privacy")}</SiteLink>
-          <SiteLink href="/vilkaar" className="inline-flex items-center min-h-8 text-ink no-underline hover:text-accent">{t("landing.footer.terms")}</SiteLink>
+          <SiteLink href="/privat/vilkaar" className="inline-flex items-center min-h-8 text-ink no-underline hover:text-accent">{t("landing.footer.terms")}</SiteLink>
         </div>
       </footer>
     </div>

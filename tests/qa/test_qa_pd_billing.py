@@ -190,7 +190,7 @@ def test_pc_sub_01_checkout_collects_card_address_phone_and_gives_no_rights_befo
     assert d["subscription_data"]["trial_period_days"] == 14 and "trial_end" not in d["subscription_data"]
     assert d["customer_email"] == "pbq01@testmail.dk"
     assert d["metadata"] == {"kind": "privat_subscription", "workspace_id": str(pv.ws(tok)), "plan": "plus",
-                             "interval": "month", "currency": "DKK"}
+                             "interval": "month", "currency": "DKK", "terms_version": "1"}
     assert len(stripe.sessions) == 1
     # before the session is complete: nothing
     s = api.get(tok, f"/privat/subscription?session_id={list(stripe.sessions)[0]}").json()

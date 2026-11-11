@@ -144,6 +144,7 @@
     "status": {
       "saving": "Gemmer …",
       "saved": "Gemt",
+      "notSaved": "Ikke gemt",
       "idle": "Gemmes løbende",
       "comeBack": " · du kan altid komme tilbage hertil",
       "fillIn": "Udfyld navn, telefonnummer og hvad I laver for at gå videre.",

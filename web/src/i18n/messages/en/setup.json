@@ -144,6 +144,7 @@
     "status": {
       "saving": "Saving …",
       "saved": "Saved",
+      "notSaved": "Not saved",
       "idle": "Saved as you go",
       "comeBack": " · you can always come back here",
       "fillIn": "Fill in name, phone number and what you do to continue.",

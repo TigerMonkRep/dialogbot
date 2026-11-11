@@ -156,6 +156,7 @@
     "status": {
       "saving": "Enregistrement …",
       "saved": "Enregistré",
+      "notSaved": "Non enregistré",
       "idle": "Enregistrement automatique",
       "comeBack": " · vous pouvez toujours revenir ici",
       "fillIn": "Renseignez le nom, le numéro de téléphone et votre activité pour continuer.",

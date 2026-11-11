@@ -144,6 +144,7 @@
     "status": {
       "saving": "Guardando…",
       "saved": "Guardado",
+      "notSaved": "No guardado",
       "idle": "Se guarda automáticamente",
       "comeBack": " · siempre puede volver aquí",
       "fillIn": "Rellene el nombre, el número de teléfono y a qué se dedican para continuar.",

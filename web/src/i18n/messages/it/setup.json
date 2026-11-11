@@ -144,6 +144,7 @@
     "status": {
       "saving": "Salvataggio …",
       "saved": "Salvato",
+      "notSaved": "Non salvato",
       "idle": "Salvataggio automatico",
       "comeBack": " · può sempre tornare qui",
       "fillIn": "Compili nome, numero di telefono e attività per proseguire.",

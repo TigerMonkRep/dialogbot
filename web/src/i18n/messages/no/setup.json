@@ -144,6 +144,7 @@
     "status": {
       "saving": "Lagrer …",
       "saved": "Lagret",
+      "notSaved": "Ikke lagret",
       "idle": "Lagres fortløpende",
       "comeBack": " · du kan alltid komme tilbake hit",
       "fillIn": "Fyll ut navn, telefonnummer og hva dere gjør for å gå videre.",

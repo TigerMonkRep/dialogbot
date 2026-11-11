@@ -144,6 +144,7 @@
     "status": {
       "saving": "Wird gespeichert …",
       "saved": "Gespeichert",
+      "notSaved": "Nicht gespeichert",
       "idle": "Wird laufend gespeichert",
       "comeBack": " · Sie können jederzeit hierher zurückkehren",
       "fillIn": "Geben Sie Name, Telefonnummer und Ihre Tätigkeit an, um fortzufahren.",

@@ -411,7 +411,7 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
 
       <MobileActionBar className="flex-col-reverse sm:flex-row sm:items-center sm:justify-between">
         <p className="text-[13px] leading-snug text-muted" role="status" aria-live="polite">
-          {save === "saving" ? t("status.saving") : save === "saved" ? t("status.saved") : save === "error" ? "" : t("status.idle")}{t("status.comeBack")}
+          {save === "saving" ? t("status.saving") : save === "saved" ? t("status.saved") : save === "error" ? t("status.notSaved") : t("status.idle")}{t("status.comeBack")}
           {!ready && <span className="block">{t("status.fillIn")}</span>}
           {problem && <span className="block text-danger" role="alert">{problem} {problem === t("versionConflict") && <button type="button" className="underline" onClick={() => { clearDraft(); window.location.reload(); }}>{t("status.reload")}</button>}</span>}
         </p>

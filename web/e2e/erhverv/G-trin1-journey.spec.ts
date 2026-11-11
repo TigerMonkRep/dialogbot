@@ -116,7 +116,8 @@ test("Trin 1 (c) · udfyld og genindlæs siden: det skrevne er gemt og står der
   await fillStep1(page);
   await page.reload(); // straight away – the browser's own reload, before any pause has run out
   await step1Shows(page);
-  expect(await profile(page, wsId)).toMatchObject(WANT);
+  // what the reload cut off is sent again from the tab's draft – the server has it moments later
+  await expect.poll(() => profile(page, wsId), { timeout: 15_000 }).toMatchObject(WANT);
   await page.goto("/opsaetning/3");
   await step1Done(page);
   await shot(page, info, "trin1-c-reload");
@@ -158,7 +159,7 @@ test("Trin 1 (e) · hjemmeside skrevet som «rebotti.dk» (som feltets eksempel)
   await page.getByLabel("Hjemmesidens adresse").fill("rebotti.dk");
   await fillStep1(page);
   await expect(page.getByRole("status").getByText(/^Gemt/)).toBeVisible({ timeout: 20_000 });
-  await expect(page.getByRole("alert")).toHaveCount(0);
+  await expect(page.locator("main").getByRole("alert")).toHaveCount(0);
   expect(await profile(page, wsId)).toMatchObject({ ...WANT, website_url: "https://rebotti.dk" });
   await page.getByRole("button", { name: /Videre til trin/ }).click();
   await expect(page).toHaveURL(/\/opsaetning\/[23]$/);

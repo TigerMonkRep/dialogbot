@@ -1,0 +1,31 @@
+# verifier bølge 2 (runde 3) – S03-pool på 534a8a5, stak :8200/:3200, db qa_verify4_stack
+S03-pool.spec.ts + S03.spec.ts run1:  12 passed (1.2m)
+S03-pool.spec.ts + S03.spec.ts run2:  12 passed (56.9s)
+S03-pool.spec.ts + S03.spec.ts run3:  12 passed (55.0s)
+✓   2 [desktop-1440] › e2e/qa/erhverv-d/S03-pool.spec.ts:12:5 › S03 · samtidige opslag af ledige tider under kalenderudfald udtømmer ikke forbindelsespuljen (10.9s)
+✓   3 [mobil-390] › e2e/qa/erhverv-d/S03-pool.spec.ts:12:5 › S03 · samtidige opslag af ledige tider under kalenderudfald udtømmer ikke forbindelsespuljen (8.1s)
+✓   2 [desktop-1440] › e2e/qa/erhverv-d/S03-pool.spec.ts:12:5 › S03 · samtidige opslag af ledige tider under kalenderudfald udtømmer ikke forbindelsespuljen (7.4s)
+✓   4 [mobil-390] › e2e/qa/erhverv-d/S03-pool.spec.ts:12:5 › S03 · samtidige opslag af ledige tider under kalenderudfald udtømmer ikke forbindelsespuljen (7.3s)
+✓   1 [desktop-1440] › e2e/qa/erhverv-d/S03-pool.spec.ts:12:5 › S03 · samtidige opslag af ledige tider under kalenderudfald udtømmer ikke forbindelsespuljen (7.5s)
+✓   3 [mobil-390] › e2e/qa/erhverv-d/S03-pool.spec.ts:12:5 › S03 · samtidige opslag af ledige tider under kalenderudfald udtømmer ikke forbindelsespuljen (8.7s)
+QueuePool i api-8200.log under de 3 kørsler: 0; calendar_status_not_recorded: 0
+
+# widget-variant (ny test, --workers=2, 2×40 samtidige GET /public/webchat/{key}/booking)
+run1:  2 passed (12.6s)
+run2:  2 failed
+run3:  2 failed
+run4:  2 passed (14.7s)
+run5:  2 passed (11.9s)
+run6:  2 passed (11.6s)
+Error: widget booking: 200,200,200,200,500,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200
+Error: widget booking: 200,200,500,200,200,200,200,200,200,200,200,500,200,200,200,500,200,200,200,200,200,200,200,500,200,200,200,200,200,500,200,200,500,200,200,500,200,200,500,200
+Error: widget booking: 500,200,200,500,500,500,200,500,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200
+Error: widget booking: 200,500,200,200,200,200,500,500,200,200,500,500,200,200,500,500,500,200,500,500,200,500,200,500,200,500,500,500,500,500,200,500,500,500,200,500,500,200,500,500
++ 5 ekstra kørsler: 5/5 bestået
+
+# kapacitetsprobe (staff GET /bookings/slots, én login, N=80 samtidige, HEAD)
+kalender NEDE: {200:48,500:32} og {200:51,500:29}; QueuePool=61
+kalender OPPE (ingen statusskrivning): {200:40,500:40} og {200:44,500:36}; QueuePool=76
+widget N=80 nede/oppe, 2×80 nede/oppe: alle 200
+pg_stat_activity under widget-kørsel 4-6 (integrationssiden indlæses samtidig, samme login): 31 prøver 'active|Lock|transactionid|UPDATE sessions SET last_seen_at' (+4 'Lock|tuple')
+statement-log (log_statement=mod), widget 2×40 nede: 82 UPDATE integration_connections = 2 connect + 80 statusskrivninger (én pr. opslag, ingen i requestens egen transaktion)

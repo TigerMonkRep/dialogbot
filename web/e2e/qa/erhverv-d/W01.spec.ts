@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { closeAll, CSRF, EVID, newVisitorContext, SITE, visitor, widgetWorkspace, type Widget } from "./d-helpers";
+import { closeAll, CSRF, EVID, newVisitorContext, SITE, SITE_PORT, visitor, widgetWorkspace, type Widget } from "./d-helpers";
 
 /* W01 – widget launcher/home: «Collapsed launcher and open client-branded chat/callback choices; “Book en tid” when
  * configured and supported.» The widget runs on a foreign origin (SITE, :4318). */
@@ -47,10 +47,10 @@ test("W01 · uden online booking: ingen «Book en tid»; booking slået til uden
 test("W01 · ikke-tilladt site og slukket widget viser ingen launcher", async ({ page, browser }, info) => {
   w = await widgetWorkspace(page, info);
   const { serve } = await import("../../helpers");
-  w.servers.push(await serve(4319, `<!doctype html><html><body><h1>Fremmed side</h1>${w.embed}</body></html>`));
+  w.servers.push(await serve(SITE_PORT + 1, `<!doctype html><html><body><h1>Fremmed side</h1>${w.embed}</body></html>`));
   const ctx = await newVisitorContext(browser, page);
   const v = await ctx.newPage();
-  await v.goto("http://localhost:4319/");
+  await v.goto(`http://localhost:${SITE_PORT + 1}/`);
   await v.waitForTimeout(1500);
   await expect(v.getByRole("button", { name: "Åbn chat" })).toHaveCount(0);
   const wc = await (await page.request.get(`/api/backend/workspaces/${w.wsId}/webchat`)).json();

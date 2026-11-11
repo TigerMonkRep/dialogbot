@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { PROTECTED_PATH_HEADER, SESSION_COOKIE } from "@/lib/config";
 import { PREVIEW_COOKIE, cookieValid, gateEnabled } from "@/lib/preview-gate";
 import { safeNext } from "@/lib/safe-next";
+import { privatKind, privatNext } from "@/lib/privat-next";
 import {
   DEFAULT_LOCALE, LOCALE_COOKIE, LOCALE_HEADER, LOCALES, fromAcceptLanguage, isLocale, isPublicPage, type Locale,
 } from "@/i18n/config";
@@ -164,7 +165,10 @@ async function gateFor(req: NextRequest, path: string, search: string): Promise<
   if (!gateEnabled() || !GATED.has(path) || hasSession) return null;
   // Invited colleagues, new ambassadors and customers accepting an offer must be able to sign up from their link.
   const next = req.nextUrl.searchParams.get("next") ?? "";
-  const invited = path === "/signup" && (next.startsWith("/invite/") || next.startsWith("/ambassador") || next.startsWith("/tilbud/"));
+  // A person who was sent a shared Privat list or group has no preview code either (F-JP-16): /signup with a safe
+  // Privat next under /privat/invitation/, /g/ or /i/ is let through, like a colleague's invitation.
+  const sharedList = privatNext(next) !== null && privatKind(privatNext(next)) === "list";
+  const invited = path === "/signup" && (next.startsWith("/invite/") || next.startsWith("/ambassador") || next.startsWith("/tilbud/") || sharedList);
   if (invited || (await cookieValid(req.cookies.get(PREVIEW_COOKIE)?.value))) return null;
   const url = new URL("/preview", req.url);
   if (path !== "/") url.searchParams.set("next", path + search);

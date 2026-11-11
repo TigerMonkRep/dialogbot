@@ -27,6 +27,8 @@ appSuite({
     const panel = page.getByTestId("bills-panel");
     await expect(panel).toContainText("Netflix 🎬");
     await panel.getByRole("button", { name: "Fjern: Bilforsikring" }).click();
+    // removing now asks first (ui-ux stabilt punkt 2): confirm with «Ja, fjern»
+    await page.getByRole("button", { name: "Ja, fjern" }).click();
     await expect(panel).not.toContainText("Bilforsikring");
     expect(sql(`select count(*) from private_bills where workspace_id='${ws}' and name='Bilforsikring'`)).toBe("0");
     expect((await api(page, "DELETE", `/bills/${a.id}`)).status()).toBe(404);

@@ -92,7 +92,7 @@ test("I03 · «I dag»-flisen «Henvendelser» og ukendte id'er giver ikke en se
 });
 
 test("R04–R07 · gamle receptionsadresser fra kravene ender ikke på en 404", async ({ page }, info) => {
-  test.fail(true, "F-V2-07-R05: S3 new – Kravsruterne `/app/reception/widget`, `/app/reception/assistant`, `/app/reception/test` og …");
+  // F-V2-07-R05 (fixed): next.config.ts MOVED redirects the four requirement routes to their v2 sheets.
   await freshOwner(page, info);
   const dead: string[] = [];
   for (const p of ["/app/reception/widget", "/app/reception/assistant", "/app/reception/test", "/app/reception/routing"]) {

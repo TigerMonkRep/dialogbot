@@ -108,6 +108,7 @@ def test_the_website_price_table_is_the_markets_table():
                                                  "yearly_total": p["yearly_total_minor"]} for p in prices.PRIVAT_PLANS}
     assert table["privatExtraCall"]["DKK"] == {"answered": 500, "voicemail": 125, "no_answer": 31, "minute": 250, "max": 1750}
     assert table["privatTopups"]["DKK"] == list(prices.PRIVAT_TOPUPS_GROSS_MINOR) and "privatCreditPack" not in table
+    assert table["privatBalance"]["DKK"] == {"welcome": 1000, "referral": 1000, "extra_task": 300}
     assert table["inboundIncludedMinutes"] == prices.INBOUND_INCLUDED_MINUTES and table["privatTrialDays"] == prices.PRIVAT_TRIAL_DAYS
     assert table["localeCurrency"] == {"da": "DKK", "sv": "SEK", "no": "NOK", "en": "EUR", "de": "EUR", "es": "EUR", "fr": "EUR", "it": "EUR"}
 

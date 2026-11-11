@@ -1,7 +1,8 @@
 "use client";
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useT } from "@/i18n/client";
+import { useLocale, useT } from "@/i18n/client";
+import { signed } from "@/lib/privat/saldo";
 import { ADDON, type Task, type TaskStatus } from "@/lib/privat/api";
 import { isDanishMobile } from "@/lib/privat/fake";
 import { BIG, CHIP, Ex, LINK, SR, TONE } from "./bits";
@@ -85,7 +86,7 @@ function AskDock({ empty, quiet }: { empty: boolean; quiet: boolean }) {
 }
 
 /** «Din tur»: the first task that waits for the user. «Ja, ring» approves a call proposal straight away when nothing
- *  else is needed (number known, phone verified, rights or credits in place); otherwise it opens the full card. */
+ *  else is needed (number known, phone verified, a plan call left, or the extra call's maximum on the Opkaldssaldo); otherwise it opens the full card. */
 function YourTurn() {
   const t = useT("privat");
   const { day, tasks, talk, openSheet, balance, addonOn, api, refresh, setError } = usePrivat();
@@ -99,7 +100,7 @@ function YourTurn() {
     if (!x || !c) return;
     const mobile = c.is_mobile ?? isDanishMobile(c.phone_e164);
     const rights = plan.entitled && plan.callsLeft > 0;
-    const simple = addonOn(ADDON.call) && !!balance?.phone_verified && !!c.phone_e164 && !mobile && c.open_now !== false && (rights || (balance?.credits ?? 0) >= c.max_credits);
+    const simple = addonOn(ADDON.call) && !!balance?.phone_verified && !!c.phone_e164 && !mobile && c.open_now !== false && (rights || (balance?.balance_minor ?? 0) >= (balance?.extra_call?.max ?? Infinity));
     if (!simple) { talk(x.id); return; }
     setBusy(true); setError(null);
     try { await api.approveCall(x.id, { window: c.window, share_phone: c.share_phone }); await refresh(); }
@@ -193,9 +194,11 @@ function Bar({ value, max, label }: { value: number; max: number; label: string 
   );
 }
 
-/** «Dit råderum»: calls left, trial days left (or the plan), «Vælg plan». Without rights: the free quota and credits. */
+/** «Dit råderum»: calls left, trial days left (or the plan), «Vælg plan». Without rights: the free quota and the
+ *  Opkaldssaldo. */
 export function RoomCard() {
   const t = useT("privat");
+  const locale = useLocale();
   const { balance, choosePlan, startTrial } = usePrivat();
   const p = usePlan();
   const eyebrow = p.status === "trial" ? t("day2.room.trialEyebrow", { plan: p.rightsName }) : p.entitled ? t("day2.room.planEyebrow", { plan: p.rightsName, status: t(`plan.status.${p.status}`) }) : t("day2.room.freeEyebrow");
@@ -220,7 +223,7 @@ export function RoomCard() {
         </>
       ) : (
         <>
-          {p.status !== "none" && <div className="flex justify-between text-[14px]"><span>{t("day2.room.extraCalls")}</span><strong>{balance?.credits ?? 0}</strong></div>}
+          {p.status !== "none" && <div className="flex justify-between text-[14px]"><span>{t("day2.room.extraCalls")}</span><strong>{signed(balance?.balance_minor ?? 0, balance?.currency ?? "DKK", locale).replace(/^\+/, "")}</strong></div>}
           <p className="m-0 text-[13px] text-muted leading-normal">{t(p.status === "none" ? "day2.room.noteNone" : "day2.room.noteFree")}</p>
           {p.status === "none"
             ? <button type="button" className={`${PRIMARY} self-start`} onClick={() => void startTrial()}>{t("day2.room.startTrial")}</button>

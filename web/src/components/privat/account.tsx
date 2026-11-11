@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui";
 import { useLocale, useT } from "@/i18n/client";
-import { currencyFor } from "@/lib/markets";
+import { currencyFor, currencyOr, formatPrice } from "@/lib/markets";
+import { saldo, signed } from "@/lib/privat/saldo";
 import { BIG, Eyebrow, LINK, Pill, Sim } from "./bits";
 import { PhoneVerify } from "./cards";
 import { PushPrompt } from "./push";
@@ -38,7 +39,7 @@ export function AccountPane() {
   const [hh, setHh] = useState<Household | null>(null);
   useEffect(() => { if (mode === "real") household().then(setHh).catch(() => setHh(null)); }, [mode, p.plan]);
   const handled = useRef<string | null>(null);
-  // Credits checkout return (unchanged) and the subscription flows: ?abonnement=ok&session_id= (synchronise, then
+  // Top-up checkout return and the subscription flows: ?abonnement=ok&session_id= (synchronise, then
   // «Dit abonnement er aktivt»), ?abonnement=annulleret, ?portal=simuleret, and ?plan=&interval= (start the checkout).
   useEffect(() => {
     const c = params.get("checkout");
@@ -114,7 +115,9 @@ export function AccountPane() {
     catch (e) { const x = e as ApiError; if (x.code === CONFLICT.notConfigured || x.status === 501) setNote(t("plan.portalMissing")); else setError(x); }
   };
   const line = mode === "demo" ? t("account.exampleLine") : loggedIn ? t("account.privateLine", { email: session.email ?? (simulated ? "mette@eksempel.dk" : "") }) : t("account.exampleLine");
-  const amount = (kind: string, n: number) => kind === "sponsor" ? t("account.oneTask") : `${n > 0 ? "+" : n < 0 ? "−" : ""}${Math.abs(n)}${kind === "reserve" ? ` ${t("account.reservedSuffix")}` : ""}`;
+  const amount = (l: { kind: string; amount_minor: number; currency: string }) => l.kind === "sponsor" ? t("account.oneTask")
+    : `${signed(l.amount_minor, l.currency, locale)}${l.kind === "reserve" ? ` ${t("account.reservedSuffix")}` : ""}`;
+  const sd = saldo(balance, locale);
   // Before the data is in (the server-rendered copy and the first client frame) only the heading: no «Ingen plan»
   // card that is wrong for a second and, on a slow machine, sits next to the real one while hydration settles.
   if (mode === "loading") {
@@ -216,22 +219,22 @@ export function AccountPane() {
         </div>
       </section>
 
-      {/* Ekstra */}
-      <section className={GROUP} aria-labelledby="extra-h">
+      {/* Opkaldssaldo */}
+      <section id="saldo" className={GROUP} aria-labelledby="extra-h">
         <h3 id="extra-h" className={H}>{t("account.groupExtra")}</h3>
         <div className="flex items-center gap-3 flex-wrap">
-          <span className="flex items-baseline gap-2"><span className="font-display font-extrabold text-[28px]" data-testid="credits">{balance?.credits ?? 0}</span><span className="text-[15px] text-ink-soft">{t("plan.extraWord")}</span></span>
-          {(balance?.reserved ?? 0) > 0 && <Pill tone="progress">{t("account.reserved", { n: balance!.reserved })}</Pill>}
+          <span className="flex items-baseline gap-2"><span className="font-display font-extrabold text-[28px]" data-testid="balance">{sd.fmt(sd.balance)}</span><span className="text-[15px] text-ink-soft">{t("plan.extraWord")}</span></span>
+          {sd.held > 0 && <Pill tone="progress">{t("account.reserved", { amount: sd.fmt(sd.held) })}</Pill>}
           <span className="flex-1" />
           <Button variant={p.entitled ? "outline" : "primary"} className="border-2 rounded-full" onClick={() => openSheet({ kind: "buy" })} disabled={mode === "demo"}>{t("account.buy")}</Button>
         </div>
-        <p className="m-0 text-[13px] text-muted">{t("plan.extraNote")}</p>
+        <p className="m-0 text-[13px] text-muted" data-testid="extra-call-prices">{t("plan.extraNote", sd.vars)}</p>
         <div className="flex flex-col gap-1" aria-labelledby="ledger-h">
           <h4 id="ledger-h" className="m-0 font-body text-[15px] font-semibold">{t("account.ledger")}</h4>
           {ledger.length === 0 && <p className="m-0 text-[14px] text-muted">{t("account.ledgerEmpty")}</p>}
           <ul className="m-0 p-0 list-none" data-testid="ledger">
             {[...ledger].reverse().slice(0, allLedger ? undefined : 3).map((l) => (
-              <li key={l.id} className="flex gap-2.5 justify-between border-b-[1.5px] border-line py-2 text-[14px]"><span className="[overflow-wrap:anywhere] min-w-0">{l.text}</span><span className="font-bold whitespace-nowrap">{amount(l.kind, l.amount)}</span></li>
+              <li key={l.id} className="flex gap-2.5 justify-between border-b-[1.5px] border-line py-2 text-[14px]"><span className="[overflow-wrap:anywhere] min-w-0">{l.text}</span><span className="font-bold whitespace-nowrap">{amount(l)}</span></li>
             ))}
           </ul>
           {ledger.length > 3 && !allLedger && <button type="button" className={LINK} onClick={() => setAllLedger(true)}>{t("account.ledgerAll", { n: ledger.length })}</button>}
@@ -330,6 +333,7 @@ function PlanPicker({ onPick, busy }: { onPick: (plan: PlanKey, interval: Billin
 /** «Inviter venner»: a general Dialogbot link, the referral numbers and the reward. Shared from the user's own phone. */
 function InviteFriends() {
   const t = useT("privat");
+  const locale = useLocale();
   const { referrals, mode, api } = usePrivat();
   const [ref, setRef] = useState<ShareResult | null>(null);
   const [ua, setUa] = useState("");
@@ -340,7 +344,7 @@ function InviteFriends() {
   const link = ref.short_url ?? ref.invite_url;
   const body = t("invite.smsText", { link: bareLink(link) });
   const stats: [string, number | string][] = referrals
-    ? [[t("invite.stats.invited"), referrals.invited], [t("invite.stats.joined"), referrals.joined], [t("invite.stats.activated"), referrals.activated], [t("invite.stats.earned"), referrals.credits_earned]]
+    ? [[t("invite.stats.invited"), referrals.invited], [t("invite.stats.joined"), referrals.joined], [t("invite.stats.activated"), referrals.activated], [t("invite.stats.earned"), formatPrice(referrals.earned_minor, currencyOr(referrals.currency), locale)]]
     : [];
   return (
     <section className="rounded-[18px] border-2 border-ink bg-paper p-4 flex flex-col gap-3" aria-labelledby="invite-h">

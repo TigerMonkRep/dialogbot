@@ -6,9 +6,13 @@ import PRICES from "./prices.json";
 import { HTML_LANG, type Locale } from "@/i18n/config";
 
 export type Currency = "DKK" | "SEK" | "NOK" | "EUR";
-export type ErhvervItem = "monthly" | "call" | "minute" | "extra_minute" | "setup";
+export type ErhvervItem = "monthly" | "call" | "minute" | "extra_minute" | "call_answered" | "call_voicemail" | "call_no_answer" | "setup";
 export type PrivatPlanKey = "basis" | "plus" | "familie";
 export type PrivatPrice = { monthly: number; yearly_monthly: number; yearly_total: number };
+/** Dialogbot Privat's extra call (beyond the plan's calls), incl. VAT: by outcome + per started minute, at most `max`. */
+export type ExtraCallPrices = { answered: number; voicemail: number; no_answer: number; minute: number; max: number };
+/** The Opkaldssaldo's bonuses and the extra task, incl. VAT. */
+export type BalanceAmounts = { welcome: number; referral: number; extra_task: number };
 
 type PriceTable = {
   currencies: Currency[];
@@ -17,7 +21,9 @@ type PriceTable = {
   privatTrialDays: number;
   erhverv: Record<Currency, Record<ErhvervItem, number>>;
   privat: Record<Currency, Record<PrivatPlanKey, PrivatPrice>>;
-  privatCreditPack: Record<Currency, number>;
+  privatExtraCall: Record<Currency, ExtraCallPrices>;
+  privatTopups: Record<Currency, number[]>;
+  privatBalance: Record<Currency, BalanceAmounts>;
 };
 const P = PRICES as unknown as PriceTable;
 
@@ -109,11 +115,21 @@ export function privatPrices(currency: Currency): Record<PrivatPlanKey, PrivatPr
   return P.privat[currency] ?? P.privat.DKK;
 }
 
-export function creditPackPrice(currency: Currency): number {
-  return P.privatCreditPack[currency] ?? P.privatCreditPack.DKK;
+/** What an extra call costs in a currency (markets.privat_extra_call: Erhverv's net price by outcome + 25 % moms). */
+export function extraCallPrices(currency: Currency): ExtraCallPrices {
+  return P.privatExtraCall[currency] ?? P.privatExtraCall.DKK;
 }
 
-/** The VAT inside a gross Privat price (25 % Danish VAT → a fifth of the gross): 2900 → 580. */
+/** The three top-ups of the Opkaldssaldo (50, 100, 200 kr. incl. moms, or the currency's amounts). */
+export function topupAmounts(currency: Currency): number[] {
+  return P.privatTopups[currency] ?? P.privatTopups.DKK;
+}
+
+export function balanceAmounts(currency: Currency): BalanceAmounts {
+  return P.privatBalance[currency] ?? P.privatBalance.DKK;
+}
+
+/** The VAT inside a gross Privat price (25 % Danish VAT → a fifth of the gross): 5000 → 1000. */
 export function includedVat(grossMinor: number, bp = PRIVAT_VAT_BP): number {
   return Math.round(grossMinor - grossMinor * 10000 / (10000 + bp));
 }
@@ -125,7 +141,8 @@ export function market(locale: Locale | string) {
     currency,
     erhverv: erhvervPrices(currency),
     privat: privatPrices(currency),
-    creditPack: creditPackPrice(currency),
+    extraCall: extraCallPrices(currency),
+    topups: topupAmounts(currency),
     fmt: (minor: number) => formatPrice(minor, currency, locale),
   };
 }
@@ -142,7 +159,9 @@ export const PRICE_TOKENS = [
   "pBasis", "pPlus", "pFamilie", "pBasisYear", "pPlusYear", "pFamilieYear",
   "pBasisYearTotal", "pPlusYearTotal", "pFamilieYearTotal",
   "pBasisNum", "pPlusNum", "pFamilieNum", "pPrivatFrom", "pPrivatFromNum",
-  "pCredits", "pCreditsVat", "pTrialDays",
+  // Privat's extra call and Opkaldssaldo (incl. VAT): by outcome, per started minute, the maximum; top-ups; bonuses
+  "pXAnswered", "pXVoicemail", "pXNoAnswer", "pXMinute", "pXMax", "pTopup1", "pTopup2", "pTopup3",
+  "pWelcome", "pReferral", "pExtraTask", "pTrialDays",
 ] as const;
 export type PriceToken = (typeof PRICE_TOKENS)[number];
 
@@ -153,7 +172,7 @@ export function priceVars(locale: Locale | string): Record<PriceToken, string | 
   const hit = tokenCache.get(locale);
   if (hit) return hit;
   const c = currencyFor(locale);
-  const e = erhvervPrices(c), pv = privatPrices(c), pack = creditPackPrice(c);
+  const e = erhvervPrices(c), pv = privatPrices(c), x = extraCallPrices(c), tu = topupAmounts(c), b = balanceAmounts(c);
   const f = (m: number) => formatPrice(m, c, locale);
   const n = (m: number) => formatAmount(m, locale);
   const from = Math.min(pv.basis.monthly, pv.plus.monthly, pv.familie.monthly);
@@ -167,7 +186,9 @@ export function priceVars(locale: Locale | string): Record<PriceToken, string | 
     pBasisYearTotal: f(pv.basis.yearly_total), pPlusYearTotal: f(pv.plus.yearly_total), pFamilieYearTotal: f(pv.familie.yearly_total),
     pBasisNum: n(pv.basis.monthly), pPlusNum: n(pv.plus.monthly), pFamilieNum: n(pv.familie.monthly),
     pPrivatFrom: f(from), pPrivatFromNum: n(from),
-    pCredits: f(pack), pCreditsVat: f(includedVat(pack)), pTrialDays: PRIVAT_TRIAL_DAYS,
+    pXAnswered: f(x.answered), pXVoicemail: f(x.voicemail), pXNoAnswer: f(x.no_answer), pXMinute: f(x.minute),
+    pXMax: f(x.max), pTopup1: f(tu[0]), pTopup2: f(tu[1]), pTopup3: f(tu[2]),
+    pWelcome: f(b.welcome), pReferral: f(b.referral), pExtraTask: f(b.extra_task), pTrialDays: PRIVAT_TRIAL_DAYS,
   };
   tokenCache.set(locale, v);
   return v;

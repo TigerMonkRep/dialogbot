@@ -257,4 +257,8 @@ def export() -> dict:
         "privat": PRIVAT,
         "privatExtraCall": PRIVAT_EXTRA_CALL,
         "privatTopups": {c: list(v) for c, v in PRIVAT_TOPUPS.items()},
+        # the Opkaldssaldo's bonuses and the extra task in each currency (privat_from_dkk), for the website's texts
+        "privatBalance": {c: {"welcome": privat_from_dkk(prices.PRIVAT_WELCOME_BONUS_MINOR, c),
+                              "referral": privat_from_dkk(prices.PRIVAT_REFERRAL_BONUS_MINOR, c),
+                              "extra_task": privat_from_dkk(prices.PRIVAT_EXTRA_TASK_MINOR, c)} for c in CURRENCIES},
     }

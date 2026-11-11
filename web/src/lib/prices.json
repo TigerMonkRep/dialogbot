@@ -181,5 +181,27 @@
       1400,
       2700
     ]
+  },
+  "privatBalance": {
+    "DKK": {
+      "welcome": 1000,
+      "referral": 1000,
+      "extra_task": 300
+    },
+    "SEK": {
+      "welcome": 1475,
+      "referral": 1475,
+      "extra_task": 443
+    },
+    "NOK": {
+      "welcome": 1575,
+      "referral": 1575,
+      "extra_task": 473
+    },
+    "EUR": {
+      "welcome": 135,
+      "referral": 135,
+      "extra_task": 41
+    }
   }
 }

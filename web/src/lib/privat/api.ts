@@ -74,7 +74,9 @@ export type Member = { id: string; name: string; role: MemberRole; is_me: boolea
 export type TaskEvent = { at: string; text: string };
 export type TaskCall = {
   business_name: string; address: string; phone_display: string;
-  may_ask: string; may_agree: string; may_not: string; window: string; max_credits: number;
+  may_ask: string; may_agree: string; may_not: string; window: string;
+  /** plan = one of the month's plan calls; balance = an extra call paid from the Opkaldssaldo; null = not approved. */
+  paid_via?: "plan" | "balance" | null;
   share_phone: boolean; result: CallResult | null;
   confirmed_text: string | null; business_reply: string | null; business_price_text: string | null; duration_seconds: number | null;
   /** Backend detail (docs/privat-api.md): proposed|approved|dialling|in_progress|unknown|answered|no_answer|failed|declined. */
@@ -102,7 +104,11 @@ export type Task = {
   appointment?: { id: string; when_text: string; ics_path: string } | null;
 };
 export type Balance = {
-  free_used: number; free_limit: number; credits: number; reserved: number; sponsor_left_today: number;
+  free_used: number; free_limit: number; sponsor_left_today: number;
+  /** The Opkaldssaldo (øre, incl. VAT, in `currency`): what is on it, what open reservations hold, and the prices. */
+  balance_minor: number; held_minor: number; currency: string;
+  extra_call?: { answered: number; voicemail: number; no_answer: number; minute: number; max: number };
+  topups_minor?: number[]; extra_task_minor?: number;
   phone_display: string | null; phone_verified: boolean;
   /** «Tilføjelse 6» */
   push_enabled?: boolean; location_city?: string | null;
@@ -163,7 +169,8 @@ export type ChatMessage = {
   answered_option_id?: string | null;
 };
 export type Day = { awaiting: Task[]; today: Task[]; soon: Task[] };
-export type LedgerEntry = { id: string; kind: string; amount: number; text: string; created_at: string };
+/** One movement on the Opkaldssaldo: `amount_minor` in øre (minor units of `currency`), incl. VAT. */
+export type LedgerEntry = { id: string; kind: string; amount_minor: number; currency: string; text: string; created_at: string };
 export type SendResult = { messages: ChatMessage[]; balance: Balance };
 /** confirm_business: the user ticked «Det er en virksomhed» for a mobile-looking number.
  *  at_next_open: the business is closed now – call at its next opening time (without it the API answers 409 business_closed). */
@@ -199,14 +206,14 @@ export type ShareGroupResult = {
 export type GroupJoinLink = { short_url: string; short_code: string; suggested_text: string; expires_at: string };
 export type GroupInvitePreview = { group_name: string; owner_first_name: string; member_count: number };
 export type InviteStatus = { name: string; status: "member" | "opened" | "invited" };
-export type Referrals = { invited: number; joined: number; activated: number; credits_earned: number; monthly_left: number };
+export type Referrals = { invited: number; joined: number; activated: number; earned_minor: number; currency?: string; reward_minor?: number; monthly_left: number };
 export type GrowthRow = { invites_created: number; opened: number; accepted: number; new_users_from_invites: number; activated: number; k_factor: number };
 export type Growth = GrowthRow & { by_addon: Record<string, Partial<GrowthRow>> };
 export type AddonStatus = "available" | "beta" | "coming_soon";
 /** Add-on shop (contract: «Tilføjelse 2»). The catalog comes from the API; the web hard-codes none of it. */
 export type Addon = {
   key: string; name: string; tagline: string; description: string; icon: string; category: string; price_text: string;
-  pricing: "free" | "credits" | "monthly"; monthly_price_minor: number | null; status: AddonStatus;
+  pricing: "free" | "balance" | "monthly"; monthly_price_minor: number | null; status: AddonStatus;
   permissions: string[]; requires: string[]; enabled: boolean; enabled_at: string | null;
   // Butikken (privat-abonnement-brief). Optional until the backend sends them.
   /** What it does, 1–2 sentences («Hvad den gør»). */
@@ -245,7 +252,7 @@ export interface PrivatApi {
   tasks(status?: TaskStatus): Promise<Task[]>;
   task(id: string): Promise<Task>;
   toggleItem(taskId: string, itemId: string): Promise<Task>;
-  activate(taskId: string, method: "credit" | "sponsor"): Promise<Task>;
+  activate(taskId: string, method: "balance" | "sponsor"): Promise<Task>;
   messages(taskId?: string): Promise<ChatMessage[]>;
   send(text: string, aboutTaskId?: string | null): Promise<SendResult>;
   pickOption(messageId: string, optionId: string): Promise<SendResult>;
@@ -258,8 +265,9 @@ export interface PrivatApi {
   deleteMessage(messageId: string): Promise<void>;
   phoneStart(phone: string): Promise<{ sent: true }>;
   phoneVerify(code: string): Promise<Balance>;
-  /** Credit pack checkout; `locale` picks the market's price (da → DKK, sv → SEK, no → NOK, others → EUR). */
-  checkout(body?: { locale?: string }): Promise<{ url: string }>;
+  /** Fill up the Opkaldssaldo at Stripe Checkout: `amount_minor` one of `topups_minor` (50/100/200 kr.); `locale` picks
+   *  the market for a customer without a currency yet (da → DKK, sv → SEK, no → NOK, others → EUR). */
+  checkout(body?: { amount_minor?: number; locale?: string }): Promise<{ url: string }>;
   ledger(): Promise<LedgerEntry[]>;
   // Subscription (privat-abonnement-brief). sessionId = Stripe Checkout session on return (synchronises first).
   /** `currency` = the market of the page's language: the plans come back in it (a paying customer keeps their own). */
@@ -466,7 +474,7 @@ export const realPrivat: PrivatApi = {
   deleteMessage: (messageId) => api(`${P}/messages/${enc(messageId)}`, { method: "DELETE" }),
   phoneStart: (phone) => api(`${P}/phone/start`, json({ phone })),
   phoneVerify: (code) => api(`${P}/phone/verify`, json({ code })),
-  checkout: (body) => api(`${P}/credits/checkout`, json(body ?? {})),
+  checkout: (body) => api(`${P}/balance/checkout`, json(body ?? {})),
   ledger: () => api(`${P}/ledger`),
   subscription: (sessionId, currency) => {
     const q = [sessionId ? `session_id=${enc(sessionId)}` : "", currency ? `currency=${enc(currency)}` : ""].filter(Boolean).join("&");
@@ -593,7 +601,7 @@ export const isDemoPlace = (id: string) => id.startsWith("place:demo");
 export const isShortCode = (s: string) => /^[A-HJ-NP-Z2-9]{8}$/.test(s);
 
 /** 409 codes from POST /calls/{id}/approve and /tasks/{id}/activate. */
-export const CONFLICT = { needsPhone: "needs_phone", insufficientCredits: "insufficient_credits", outsideHours: "outside_hours", sponsorLimit: "sponsor_limit", addonDisabled: "addon_disabled", comingSoon: "coming_soon",
+export const CONFLICT = { needsPhone: "needs_phone", insufficientBalance: "insufficient_balance", outsideHours: "outside_hours", sponsorLimit: "sponsor_limit", addonDisabled: "addon_disabled", comingSoon: "coming_soon",
   demoBusiness: "demo_business", sharingPaused: "sharing_paused", accountMissing: "privat_account_missing",
   emailNotVerified: "email_not_verified", viewAsNotAllowed: "view_as_not_allowed",
   needsBusinessPhone: "needs_business_phone", businessClosed: "business_closed", confirmBusiness: "confirm_business",

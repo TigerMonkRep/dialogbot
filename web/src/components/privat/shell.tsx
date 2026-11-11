@@ -3,7 +3,8 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LogoMark } from "@/components/ui";
-import { AssistantNameProvider, useT } from "@/i18n/client";
+import { AssistantNameProvider, useLocale, useT } from "@/i18n/client";
+import { saldo } from "@/lib/privat/saldo";
 import { AccountPane } from "./account";
 import { AppPage, MyAppsPage, ShopItemPage, ShopPage, Toast } from "./apps";
 import { PeoplePage } from "./people";
@@ -113,17 +114,19 @@ function Header() {
   const t = useT("privat");
   const { balance, go, mode, simulated, loggedIn, session, screen } = usePrivat();
   const p = usePlan();
+  const locale = useLocale();
   const free = balance ? Math.max(0, balance.free_limit - balance.free_used) : null;
   const active: Screen = screen === "task" ? "tasks" : screen === "chat" ? "day" : APP_SCREENS.includes(screen) ? "apps" : screen;
   const guest = useGuest();
   const nav: [Screen, string][] = ([["day", "nav.day"], ["tasks", "nav.tasks"], ["apps", "apps.tab"], ["people", "nav.people"], ["account", "nav.account"]] as [Screen, string][])
     .filter(([k]) => !guest || (k !== "apps" && k !== "people"));
-  // The badge: «Plus · prøveperiode, 9 dage tilbage», the plan name, or (without rights) credits and free tasks.
+  // The badge: «Plus · prøveperiode, 9 dage tilbage», the plan name, or (without rights) the Opkaldssaldo in kroner.
+  const saldoText = balance ? t("header.balance", { amount: saldo(balance, locale).fmt(balance.balance_minor) }) : "";
   const badge = p.entitled
     ? (p.status === "trial" ? t("nav.trialBadge", { plan: p.rightsName, n: p.trialDays }) : t("nav.planBadge", { plan: p.rightsName }))
-    : balance ? (p.status === "none" ? t("header.noPlanBadge") : t("header.credits", { n: balance.credits })) : "";
+    : balance ? (p.status === "none" ? t("header.noPlanBadge") : saldoText) : "";
   // Phone: as short as possible, so the logo and the PRIVAT mark are never covered (F-UX-05); the aria-label says it all.
-  const badgeShort = p.entitled && p.status === "trial" ? t("nav.trialDaysShort", { n: p.trialDays }) : p.entitled ? p.rightsName : balance ? (p.status === "none" ? t("header.noPlanBadgeShort") : t("header.credits", { n: balance.credits })) : "";
+  const badgeShort = p.entitled && p.status === "trial" ? t("nav.trialDaysShort", { n: p.trialDays }) : p.entitled ? p.rightsName : balance ? (p.status === "none" ? t("header.noPlanBadgeShort") : saldoText) : "";
   return (
     <header className="flex-none flex items-center gap-2 sm:gap-2.5 px-4 py-3 min-h-16 border-b-2 border-ink bg-paper pt-safe">
       <StandaloneBack roots={["/privat/dag", "/privat/samtale", "/privat/opgaver", "/privat/apps", "/privat/butik", "/privat/folk", "/privat/konto"]} />
@@ -145,7 +148,7 @@ function Header() {
       <span className="flex-1" />
       {balance && (
         <button type="button" onClick={() => go("account")}
-          data-credits={balance.credits} data-free={free ?? 0} data-plan={p.plan} data-status={p.status} data-calls-left={p.callsLeft}
+          data-balance-minor={balance.balance_minor} data-free={free ?? 0} data-plan={p.plan} data-status={p.status} data-calls-left={p.callsLeft}
           className={`inline-flex items-center gap-1.5 sm:gap-2 min-h-[44px] shrink-0 px-3 sm:px-3.5 rounded-full border-2 border-ink text-[14px] font-semibold whitespace-nowrap ${p.entitled ? "bg-accent-soft hover:bg-panel-deep" : "bg-paper hover:bg-panel"}`} data-testid="balance-chip">
           <span className={`hidden min-[400px]:inline-block w-2.5 h-2.5 rounded-full border-[1.5px] border-ink ${p.entitled ? "bg-accent" : "bg-highlight"}`} aria-hidden />
           <span className="hidden sm:inline">{badge}</span><span className="sm:hidden" aria-hidden>{badgeShort}</span>

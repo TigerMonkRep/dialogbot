@@ -16,6 +16,7 @@
     ],
     "stepAria": "Passaggio {n}: {label}",
     "skipped": " (saltato)",
+    "done": " (completato)",
     "laterNote": " – ritrova tutto sotto l'icona del profilo → Tutte le impostazioni."
   },
   "hours": {
@@ -82,6 +83,7 @@
       "de": "Tedesco"
     },
     "versionConflict": "La pagina è stata modificata altrove. La ricarichi per vedere la versione più recente.",
+    "nameRequired": "Il nome è obbligatorio: non è ancora stato salvato nulla.",
     "saveFailed": "Impossibile salvare. Riprovi.",
     "hoursHint": "Scriva ad es. «Lun–ven 07–16» oppure «Lun–ven 07–16; sab 09–12». Viene salvato non appena è leggibile.",
     "hoursTitle": "Orari di apertura",

@@ -16,6 +16,7 @@
     ],
     "stepAria": "Step {n}: {label}",
     "skipped": " (skipped)",
+    "done": " (done)",
     "laterNote": " – you'll find everything again under the profile icon → All settings."
   },
   "hours": {
@@ -82,6 +83,7 @@
       "de": "German"
     },
     "versionConflict": "This page was changed somewhere else. Reload it to see the latest version.",
+    "nameRequired": "The name is required – nothing is saved yet.",
     "saveFailed": "Couldn't save. Please try again.",
     "hoursHint": "Write e.g. «Mon–fri 07–16» or «Mon–fri 07–16; sat 09–12». It's saved as soon as it can be read.",
     "hoursTitle": "Opening hours",

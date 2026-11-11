@@ -16,6 +16,7 @@
     ],
     "stepAria": "Schritt {n}: {label}",
     "skipped": " (übersprungen)",
+    "done": " (erledigt)",
     "laterNote": " – Sie finden alles wieder unter dem Profilsymbol → Alle Einstellungen."
   },
   "hours": {
@@ -82,6 +83,7 @@
       "de": "Deutsch"
     },
     "versionConflict": "Die Seite wurde an anderer Stelle geändert. Laden Sie sie neu, um den aktuellen Stand zu sehen.",
+    "nameRequired": "Der Name ist erforderlich – noch nichts gespeichert.",
     "saveFailed": "Speichern fehlgeschlagen. Bitte versuchen Sie es erneut.",
     "hoursHint": "Schreiben Sie z. B. «Mo–Fr 07–16» oder «Mo–Fr 07–16; Sa 09–12». Es wird gespeichert, sobald es lesbar ist.",
     "hoursTitle": "Öffnungszeiten",

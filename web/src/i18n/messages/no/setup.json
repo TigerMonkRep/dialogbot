@@ -16,6 +16,7 @@
     ],
     "stepAria": "Trinn {n}: {label}",
     "skipped": " (hoppet over)",
+    "done": " (fullført)",
     "laterNote": " – du finner alt igjen under profilikonet → Alle innstillinger."
   },
   "hours": {
@@ -82,6 +83,7 @@
       "de": "Tysk"
     },
     "versionConflict": "Siden er endret et annet sted. Last den inn på nytt for å se den nyeste versjonen.",
+    "nameRequired": "Navnet må fylles ut – ingenting er lagret ennå.",
     "saveFailed": "Kunne ikke lagre. Prøv igjen.",
     "hoursHint": "Skriv f.eks. «Man–fre 07–16» eller «Man–fre 07–16; lør 09–12». Det lagres så snart det kan leses.",
     "hoursTitle": "Åpningstider",

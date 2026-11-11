@@ -16,6 +16,7 @@
     ],
     "stepAria": "Paso {n}: {label}",
     "skipped": " (omitido)",
+    "done": " (completado)",
     "laterNote": ": lo encontrará todo de nuevo en el icono de perfil → Todos los ajustes."
   },
   "hours": {
@@ -82,6 +83,7 @@
       "de": "Alemán"
     },
     "versionConflict": "La página se ha modificado en otro lugar. Recárguela para ver la versión más reciente.",
+    "nameRequired": "El nombre es obligatorio: todavía no se ha guardado nada.",
     "saveFailed": "No se ha podido guardar. Inténtelo de nuevo.",
     "hoursHint": "Escriba, por ejemplo, «Lun–vie 07–16» o «Lun–vie 07–16; sáb 09–12». Se guarda en cuanto se puede interpretar.",
     "hoursTitle": "Horario",

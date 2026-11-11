@@ -16,6 +16,7 @@
     ],
     "stepAria": "Steg {n}: {label}",
     "skipped": " (överhoppat)",
+    "done": " (klart)",
     "laterNote": " – du hittar allt igen under profilikonen → Alla inställningar."
   },
   "hours": {
@@ -82,6 +83,7 @@
       "de": "Tyska"
     },
     "versionConflict": "Sidan har ändrats någon annanstans. Ladda om den för att se det senaste.",
+    "nameRequired": "Namnet måste fyllas i – inget är sparat än.",
     "saveFailed": "Kunde inte spara. Försök igen.",
     "hoursHint": "Skriv t.ex. «Mån–fre 07–16» eller «Mån–fre 07–16; lör 09–12». Det sparas så fort det går att läsa.",
     "hoursTitle": "Öppettider",

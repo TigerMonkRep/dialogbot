@@ -48,7 +48,7 @@ export default async function Trin1({ searchParams }: { searchParams: Promise<{ 
   return (
     <SetupShell step={1} steps={st.steps} workspaceName={ws.name} wide later assistant={{ wsId: ws.id, canChange: canEdit }}>
       {head}
-      <Step1 wsId={ws.id} canEdit={canEdit} canApprove={canApprove} aiReady={capOn("knowledge.source_import")} cvrReady={capOn("cvr.lookup")} profile={profile} goals={goals} languages={languages} facts={facts} />
+      <Step1 wsId={ws.id} canEdit={canEdit} canApprove={canApprove} aiReady={capOn("knowledge.source_import")} cvrReady={capOn("cvr.lookup")} profile={profile} goals={goals} languages={languages} facts={facts} done={st.steps[0] === "done"} />
     </SetupShell>
   );
 }

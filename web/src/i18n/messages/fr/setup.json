@@ -16,6 +16,7 @@
     ],
     "stepAria": "Étape {n} : {label}",
     "skipped": " (ignorée)",
+    "done": " (terminé)",
     "laterNote": " – vous retrouverez tout via l’icône de profil → Tous les paramètres."
   },
   "hours": {
@@ -82,6 +83,7 @@
       "de": "Allemand"
     },
     "versionConflict": "Cette page a été modifiée ailleurs. Rechargez-la pour voir la dernière version.",
+    "nameRequired": "Le nom est obligatoire – rien n’est encore enregistré.",
     "saveFailed": "Enregistrement impossible. Réessayez.",
     "hoursHint": "Écrivez par ex. « Lun–ven 07–16 » ou « Lun–ven 07–16 ; sam 09–12 ». C’est enregistré dès que c’est lisible.",
     "hoursTitle": "Horaires d’ouverture",

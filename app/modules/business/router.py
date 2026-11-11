@@ -72,6 +72,16 @@ class ProfileIn(BaseModel):
     phone: str | None = Field(default=None, max_length=40)
 
 
+def _website(raw: str | None) -> str | None:
+    """«firma.dk», « www.firma.dk/ » and «https://firma.dk» are all the same website; blank is none."""
+    url = (raw or "").strip()
+    if not url:
+        return None
+    if "://" not in url:
+        url = "https://" + url
+    return url
+
+
 def _profile_out(p: BusinessProfile) -> ProfileOut:
     return ProfileOut(**{k: getattr(p, k) for k in ProfileOut.model_fields})
 
@@ -91,6 +101,9 @@ def update_profile(body: ProfileIn, request: Request, ctx: WorkspaceContext = De
     if p is None:
         raise NotFound("Profilen findes ikke")
     _check_version(body.expected_version, p.version)
+    # «rebotti.dk» is how people write their website (and the field's own example): it means https://rebotti.dk – the
+    # same reading as the website import. Rejecting it used to fail the whole trin-1 save (name, phone, description …).
+    body.website_url = _website(body.website_url)
     if body.website_url and not re.match(r"^https?://", body.website_url):
         raise ValidationFailed("URL skal begynde med http:// eller https://", field_errors=[{"field": "website_url"}])
     try:

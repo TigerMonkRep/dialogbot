@@ -35,9 +35,10 @@ export async function SetupShell({ step, steps, workspaceName, children, wide = 
                 const here = n === step;
                 return (
                   <li key={label}>
-                    <Link href={`/opsaetning/${n}`} aria-label={`${t("stepAria", { n, label })}${st === "skipped" ? t("skipped") : ""}`} aria-current={here ? "step" : undefined} className="inline-flex items-center justify-center gap-2 min-w-[44px] min-h-[44px] rounded-xl">
+                    <Link href={`/opsaetning/${n}`} aria-label={`${t("stepAria", { n, label })}${st === "done" ? t("done") : st === "skipped" ? t("skipped") : ""}`} aria-current={here ? "step" : undefined} className="inline-flex items-center justify-center gap-2 min-w-[44px] min-h-[44px] rounded-xl">
                       <span className={`w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] border-2 border-ink inline-flex items-center justify-center font-display font-extrabold text-[15px] ${here ? "bg-highlight text-ink" : st === "done" ? "bg-ink text-paper" : "bg-paper text-ink"}`}>
-                        {st === "done" && !here ? <Icon name="check" size={18} /> : n}
+                        {/* done shows as done also on the step you are on (trin 1 filled in = ✓ at once) */}
+                        {st === "done" ? <Icon name="check" size={18} /> : n}
                       </span>
                       <span className={`${here ? "hidden sm:inline" : "hidden md:inline"} text-[14px] ${here ? "font-semibold text-ink" : "text-muted"}`}>{label}{st === "skipped" && !here ? t("skipped") : ""}</span>
                     </Link>

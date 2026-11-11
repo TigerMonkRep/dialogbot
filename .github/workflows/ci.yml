@@ -112,9 +112,9 @@ jobs:
           pip install -r requirements.lock -r browser_worker/requirements.lock
       - name: Install Chromium (with ffmpeg for video)
         run: |
-          playwright install --with-deps chromium
+          if getent hosts azure.archive.ubuntu.com >/dev/null; then playwright install --with-deps chromium; else echo "apt unreachable (GitHub runner DNS 11/11) – chromium without apt; the runner image carries its libraries"; playwright install chromium; fi
           playwright install ffmpeg
-          sudo apt-get install -y --no-install-recommends ffmpeg   # the video is cut with ffmpeg before it is uploaded
+          if getent hosts azure.archive.ubuntu.com >/dev/null; then sudo apt-get install -y --no-install-recommends ffmpeg; else pip install imageio-ffmpeg && sudo ln -sf "$(python -c "import imageio_ffmpeg as f; print(f.get_ffmpeg_exe())")" /usr/local/bin/ffmpeg && ffmpeg -version | head -1; fi   # the video is cut with ffmpeg before it is uploaded
       - name: Browser worker tests (session, playbook, engine detection)
         run: pytest -p no:cacheprovider -c /dev/null --rootdir . browser_worker/tests
       - name: Browser worker orchestrator tests (real Chromium + PostgreSQL)

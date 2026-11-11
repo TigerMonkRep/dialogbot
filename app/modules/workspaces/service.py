@@ -42,7 +42,9 @@ def create_workspace(db: OrmSession, *, user: User, name: str, product_intent: s
     number with an SMS code instead of the e-mail address."""
     if require_verified and user.email_verified_at is None:
         raise Forbidden("Bekræft din e-mail, før du opretter et arbejdsrum", code="email_not_verified")
-    intent = product_intent or user.signup_intent or "reception"
+    # «privat» marks a Dialogbot Privat sign-up (identity.service.PRIVAT_INTENT), never a business product: such a
+    # person creating a company gets the default product, not a 422 (F-JE-01)
+    intent = next((i for i in (product_intent, user.signup_intent) if i and i != "privat"), None) or "reception"
     if intent not in INTENTS:
         raise ValidationFailed("Ugyldig produktintention", field_errors=[{"field": "product_intent"}])
     slug = _slugify(name)

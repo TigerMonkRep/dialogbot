@@ -61,7 +61,7 @@ async def stripe_webhook(request: Request, db: OrmSession = Depends(get_db)):
         return {"received": True, "duplicate": True, "outcome": "duplicate"}  # a resent event changes nothing
     outcome = stripe.process_event(db, event)
     if event_id:
-        # Recorded in the same transaction as its effect (e.g. a credit grant), so the effect happens once.
+        # Recorded in the same transaction as its effect (e.g. a top-up of the Opkaldssaldo), so the effect happens once.
         obj = (event.get("data") or {}).get("object") or {}
         db.add(WebhookEvent(provider="stripe", event_id=event_id, event_type=str(event.get("type") or "")[:64] or "unknown",
                             payload={"type": event.get("type"), "object_id": obj.get("id"), "object": obj.get("object")},

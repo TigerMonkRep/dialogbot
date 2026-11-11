@@ -5,8 +5,8 @@ Rules (docs/pricing.md, docs/privat-api.md):
   get their trial row lazily on first read, counted from that moment.
 - Entitled (trial, active or past_due; canceled until the paid period ends): lists and reminders are unlimited
   (paid_by 'plan'), calls draw on the plan's monthly quota (calendar month, Europe/Copenhagen; a call nobody answers
-  or that fails does not count), Shop apps with `included_in` can be switched on. Not entitled: the old free quota
-  (10 tasks a month) and credits apply, unchanged.
+  or that fails does not count), Shop apps with `included_in` can be switched on. Not entitled: the free quota applies
+  (a task beyond it costs 3 kr. from the Opkaldssaldo or a sponsor spot), and «Ring for mig» stops.
 - The ONLY writer of active/past_due/canceled is the signed Stripe webhook (upsert_from_stripe_subscription) or the
   return from Checkout (sync_from_session reads the session from Stripe, never trusts the browser).
 """
@@ -25,7 +25,7 @@ from app.core.errors import Conflict, NotFound, NotImplementedYet, ValidationFai
 from app.models import PrivateCall, PrivateProfile, PrivateSubscription, Workspace
 from app.modules.billing import markets, prices
 from app.modules.billing import stripe as stripe_api
-from app.modules.privat import branding, market, rules
+from app.modules.privat import branding, ledger, market, rules
 
 KIND = "privat_subscription"
 PLANS: dict[str, dict] = {p["key"]: dict(p) for p in prices.PRIVAT_PLANS}
@@ -239,6 +239,7 @@ def checkout(db: OrmSession, ctx, *, plan: str, interval: str, code: str | None 
     currency = market.currency(row.currency, locale)
     if row.currency != currency:
         row.currency = currency  # a customer keeps the currency of its first Checkout
+        ledger.adopt_currency(db, ctx.ws_id, currency)  # the Opkaldssaldo follows (the welcome bonus was in DKK)
     meta = {"kind": KIND, "workspace_id": str(ctx.ws_id), "plan": plan, "interval": interval, "currency": currency}
     from app.modules.privat import addons
 
@@ -408,7 +409,9 @@ def upsert_from_stripe_subscription(db: OrmSession, obj: dict, *, session_meta: 
     row.interval = interval or row.interval
     cur = str(obj.get("currency") or meta.get("currency") or "").upper()
     if cur in markets.CURRENCIES:
-        row.currency = cur  # what Stripe actually charges in
+        if row.currency != cur:
+            row.currency = cur  # what Stripe actually charges in
+            ledger.adopt_currency(db, row.workspace_id, cur)
     cust = obj.get("customer")
     if isinstance(cust, dict):
         cust = cust.get("id")

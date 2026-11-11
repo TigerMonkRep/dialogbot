@@ -186,7 +186,7 @@ def test_shared_link_preview_is_public_but_shows_no_wishes_or_reservations(api, 
 
 @pytest.mark.xfail(strict=True, reason="F-PQ-03-X09: needs-decision – open finding (status new), not fixed in c3bed12")
 def test_recipient_without_subscription_cannot_make_own_tasks_live_through_the_api(api, pv, db):
-    """The web hides «Brug 1 credit» and «Se et sponsorindslag» from an account without a plan (status none) and says
+    """The web hides «Brug 3 kr. fra saldoen» and «Se et sponsorindslag» from an account without a plan (status none) and says
     «Uden plan kan du se og reservere på lister, andre deler med dig – egne opgaver, lister og opkald kræver en plan»
     (privat.json account.freeNote / plan.noteNone). The API must hold the same line, or the paywall is a UI-only gate."""
     _mette, ole, _anna, _tid, _other, _inv = _setup(api, pv)
@@ -194,9 +194,9 @@ def test_recipient_without_subscription_cannot_make_own_tasks_live_through_the_a
     d1 = next(m["task_id"] for m in out["messages"] if m.get("task_id"))
     out = pv.say(ole, "Lav en liste med mælk")
     d2 = next(m["task_id"] for m in out["messages"] if m.get("task_id"))
-    r1 = api.post(ole, f"/privat/tasks/{d1}/activate", {"method": "credit"})
+    r1 = api.post(ole, f"/privat/tasks/{d1}/activate", {"method": "balance"})
     r2 = api.post(ole, "/privat/sponsor/claim", {"task_id": d2})
     db.expire_all()
     live = db.query(PrivateTask).filter(PrivateTask.workspace_id == pv.ws(ole), PrivateTask.status != "draft").count()
     assert (r1.status_code, r2.status_code, live) == (409, 409, 0), \
-        f"credit → {r1.status_code} {r1.json().get('usage_text')}; sponsor → {r2.status_code} {r2.json().get('usage_text')}"
+        f"balance → {r1.status_code} {r1.json().get('usage_text')}; sponsor → {r2.status_code} {r2.json().get('usage_text')}"

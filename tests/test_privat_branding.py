@@ -14,7 +14,7 @@ def _env(monkeypatch, base="https://dialogbot.app"):
     get_settings.cache_clear()
 
 
-def test_subscription_and_credit_checkouts_carry_the_privat_branding(api, pv, monkeypatch):
+def test_subscription_and_topup_checkouts_carry_the_privat_branding(api, pv, monkeypatch):
     tok = pv.account("mette@testmail.dk", trial=False)  # no running subscription: checkout allowed (PC-SUB-07)
     _env(monkeypatch)
     sent = []
@@ -25,7 +25,7 @@ def test_subscription_and_credit_checkouts_carry_the_privat_branding(api, pv, mo
 
     monkeypatch.setattr(stripe_api, "request", fake)
     assert api.post(tok, "/privat/subscription/checkout", {"plan": "plus", "interval": "month"}).status_code == 200
-    assert api.post(tok, "/privat/credits/checkout").status_code in (200, 201)
+    assert api.post(tok, "/privat/balance/checkout").status_code in (200, 201)
     sent = [x for x in sent if x[0] == "/checkout/sessions"]  # (the VAT tax rate is looked up first, once)
     assert len(sent) == 2
     for p, d, k in sent:

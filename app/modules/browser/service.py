@@ -23,6 +23,7 @@ from app.config import get_settings
 from app.core import outbox
 from app.core.errors import Conflict, Forbidden, NotFound, ValidationFailed
 from app.models import BrowserRun, PrivateMessage, PrivateTask
+from app.modules.billing import markets, prices
 from app.modules.browser import storage
 from app.modules.browser.events import BROWSER_EVENT_TYPES, EVENT_DECISION, EVENT_RUN  # noqa: F401
 from app.modules.privat import ledger, sharing
@@ -33,10 +34,15 @@ FINAL = ("done", "failed", "fallback_phone")
 APPROVAL_MAX_AGE = timedelta(hours=24)  # a yes older than a day no longer fits the slot that was shown
 INTENTS = ("book", "flyt", "aflys")
 SAME_AS_APPROVED_KEYS = ("service", "date", "time", "price", "name", "staff")
-# What a browser booking costs, in credits. ONE constant on purpose: a call costs rules.CALL_CREDITS (3) today and the two are
-# not priced differently by decision yet; change this when they are. Reserved at start, spent when the run ends in a booking
-# (or in a click that may have booked), released when nothing was booked.
-BROWSER_BOOKING_CREDITS = 1
+# What a browser booking costs on the Opkaldssaldo (øre, DKK; markets.privat_from_dkk for other currencies). It cost
+# 1 credit until 2026-11-11 and has no price of its own by decision yet, so it is the converted 2,90 kr.
+# (prices.PRIVAT_BROWSER_BOOKING_MINOR). Reserved at start, spent when the run ends in a booking (or in a click that
+# may have booked), released when nothing was booked.
+BROWSER_BOOKING_MINOR = prices.PRIVAT_BROWSER_BOOKING_MINOR
+
+
+def booking_price(db: OrmSession, ws_id) -> int:
+    return markets.privat_from_dkk(BROWSER_BOOKING_MINOR, ledger.currency(db, ws_id))
 SPENT_ERROR_CODES = ("unexpected_commit", "commit_unconfirmed")
 
 
@@ -88,11 +94,13 @@ def start_run(db: OrmSession, task: PrivateTask, *, goal: dict, allowed_domains:
                      max_steps=s.browser_max_steps, max_seconds=s.browser_max_seconds)
     db.add(run)
     db.flush()
-    if ledger.balance(db, task.workspace_id) < BROWSER_BOOKING_CREDITS:
-        raise Conflict("En booking på hjemmesiden reserverer 1 credit", code="insufficient_credits")
-    ledger.add(db, task.workspace_id, kind="reserve", amount=-BROWSER_BOOKING_CREDITS, source_ref=f"browser:{run.id}:reserve",
-               task_id=task.id, text="Booking på hjemmeside – reserveret")
-    task.usage_text = f"{BROWSER_BOOKING_CREDITS} credit reserveret"
+    price, cur = booking_price(db, task.workspace_id), ledger.currency(db, task.workspace_id)
+    if ledger.balance(db, task.workspace_id) < price:
+        raise Conflict(f"Fyld op: en booking på hjemmesiden reserverer {markets.fmt(price, cur)} på din opkaldssaldo",
+                       code="insufficient_balance", extra={"needed_minor": price, "currency": cur})
+    ledger.reserve(db, task.workspace_id, f"browser:{run.id}", price, task_id=task.id,
+                   text="Booking på hjemmeside – reserveret")
+    task.usage_text = f"{markets.fmt(price, cur)} reserveret"
     task.status, task.next_step, task.who = "in_progress", "Booker online – intet bliver bekræftet uden dit ja", "Dialogbot"
     privat_service.event(db, task, "Dialogbot går i gang med at finde en tid på virksomhedens bookingside")
     privat_service.touch(task)
@@ -174,15 +182,16 @@ def cas(db: OrmSession, run_id: uuid.UUID, from_: tuple[str, ...] | str, to: str
     return res.rowcount == 1
 
 
-def _settle_credit(db: OrmSession, run: BrowserRun, task: PrivateTask, *, spent: bool) -> None:
-    """The reserved credit becomes the price (capture) or comes back (release). Idempotent per run (unique source_ref)."""
+def _settle_balance(db: OrmSession, run: BrowserRun, task: PrivateTask, *, spent: bool) -> None:
+    """The reservation becomes the price (capture) or comes back (release). Idempotent per run (unique source_ref)."""
     if spent:
-        ledger.add(db, run.workspace_id, kind="capture", amount=0, source_ref=f"browser:{run.id}:capture", task_id=task.id,
-                   text="Booking på hjemmeside")
-        task.usage_text = f"{BROWSER_BOOKING_CREDITS} credit · booking på hjemmeside"
+        held = -(ledger.amount_of(db, f"browser:{run.id}:reserve") or 0)
+        if ledger.settle(db, run.workspace_id, f"browser:{run.id}", held, task_id=task.id,
+                         text="Booking på hjemmeside") is not None:
+            task.usage_text = f"{markets.fmt(held, ledger.currency(db, run.workspace_id))} · booking på hjemmeside"
     else:
-        ledger.add(db, run.workspace_id, kind="release", amount=BROWSER_BOOKING_CREDITS, source_ref=f"browser:{run.id}:release",
-                   task_id=task.id, text="Booking på hjemmeside ikke gennemført – reservation frigivet")
+        ledger.settle(db, run.workspace_id, f"browser:{run.id}", None, task_id=task.id,
+                      text="Booking på hjemmeside ikke gennemført – reservation frigivet")
         task.usage_text = "Intet forbrug"
 
 
@@ -256,7 +265,7 @@ def finish_done(db: OrmSession, run: BrowserRun, result: dict) -> None:
     price = s.get("price") or ba.get("price")
     run.status, run.finished_at, run.error_code, run.result = "done", _now(), None, result
     task.status, task.next_step, task.who = "done", confirmed, f"{_business(run, task)} har bekræftet"
-    _settle_credit(db, run, task, spent=True)
+    _settle_balance(db, run, task, spent=True)
     privat_service.event(db, task, f"Booket: {confirmed}" + (f" · pris {price}" if price else "")
                          + (f" · bookingnr. {result['reference']}" if result.get("reference") else ""))
     ev = run.evidence_urls or []
@@ -292,7 +301,7 @@ def finish_failed(db: OrmSession, run: BrowserRun, error_code: str, *, details: 
     if details:
         run.result = {**(run.result or {}), "error_details": details}
     biz = _business(run, task)
-    _settle_credit(db, run, task, spent=error_code in SPENT_ERROR_CODES)
+    _settle_balance(db, run, task, spent=error_code in SPENT_ERROR_CODES)
     if error_code == "declined":
         task.status, task.next_step, task.who = "declined", "Afvist – der er ikke booket", "Dig"
         privat_service.event(db, task, "Du afviste bookingen. Intet er booket")
@@ -339,7 +348,7 @@ def finish_fallback(db: OrmSession, run: BrowserRun, error_code: str, found: dic
     run.status, run.finished_at, run.error_code = "fallback_phone", _now(), error_code[:40]
     run.result = {**(run.result or {}), "found": found or {}}
     phone_fallback.apply(db, run, task, found, error_code)
-    _settle_credit(db, run, task, spent=False)
+    _settle_balance(db, run, task, spent=False)
     task.usage_text = calls_pending_usage(db, task)
     switched = error_code == "user_switched"
     privat_service.event(db, task, "Du bad om et opkald i stedet for en booking på hjemmesiden" if switched else

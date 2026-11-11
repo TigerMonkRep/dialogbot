@@ -369,7 +369,7 @@ def process_event(db: OrmSession, event: dict) -> str:
     if kind.startswith("checkout.session."):
         from app.modules.privat.payments import on_checkout_event
 
-        privat = on_checkout_event(db, kind, obj)  # Dialogbot Privat credit packs (mode=payment)
+        privat = on_checkout_event(db, kind, obj)  # Dialogbot Privat Opkaldssaldo top-ups (mode=payment)
         if privat is not None:
             return privat
         if kind == "checkout.session.completed":

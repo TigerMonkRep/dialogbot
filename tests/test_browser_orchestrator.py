@@ -650,12 +650,12 @@ def test_a_browser_failure_goes_straight_to_a_call_proposal_without_asking_again
 
     tok, tid, rid = new_run(db, pv, site, variant="booking-captcha")
     ws = pv.ws(tok)
-    assert ledger.balance(db, ws) == 2                                      # the booking's credit is reserved
+    assert ledger.balance(db, ws) == 1000 - 290                             # the booking's 2,90 kr. are reserved
     orchestrator.drive(rid)
     ms = msgs(db, tid)
     assert any(m.kind == "call_proposal" for m in ms)                       # the proposal is there at once ...
     assert not any(m.kind == "clarify" or "Skal jeg ringe i stedet" in m.text for m in ms)   # ... nobody asks «skal jeg ringe?»
-    assert ledger.balance(db, ws) == 3                                      # nothing was booked: the credit is back
+    assert ledger.balance(db, ws) == 1000                                   # nothing was booked: it is back
 
 
 def test_ring_i_stedet_while_the_browser_waits_for_the_yes_lets_go_of_the_browser(api, db, pv, site):

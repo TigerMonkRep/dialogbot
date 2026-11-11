@@ -171,8 +171,8 @@ def test_closed_now_schedules_for_next_opening(api, pv, db, fake_places, dial):
     assert r.json()["next_open_text"] == "I morgen kl. 9.00"
     t = api.post(tok, f"/privat/calls/{tid}/approve", {"share_phone": False, "at_next_open": True}).json()
     assert t["status"] == "planned" and t["call"]["status"] == "scheduled" and dial == []
-    me = pv.me(tok)  # in the trial the scheduled call is one of the plan's calls: nothing is reserved in credits
-    assert me["reserved"] == 0 and me["calls_used"] == 1 and t["usage_text"] == "Opkald 1 af 10 i Plus"
+    me = pv.me(tok)  # in the trial the scheduled call is one of the plan's calls: nothing is reserved on the balance
+    assert me["held_minor"] == 0 and me["calls_used"] == 1 and t["usage_text"] == "Opkald 1 af 10 i Plus"
     c = db.query(PrivateCall).one()
     assert c.place_id == "fona-1" and c.scheduled_for == THU_9
     due = db.query(OutboxEvent).filter_by(event_type="privat.call_due").one()
@@ -211,7 +211,7 @@ def test_scheduled_call_can_be_cancelled(api, pv, fake_places, dial):
     tid = msgs[-1]["task_id"]
     api.post(tok, f"/privat/calls/{tid}/approve", {"share_phone": False, "at_next_open": True})
     t = api.post(tok, f"/privat/calls/{tid}/decline").json()
-    assert t["status"] == "declined" and pv.me(tok)["credits"] == 3 and pv.me(tok)["reserved"] == 0
+    assert t["status"] == "declined" and pv.me(tok)["balance_minor"] == 1000 and pv.me(tok)["held_minor"] == 0
 
 
 # --------------------------------------------------------------------------- web push

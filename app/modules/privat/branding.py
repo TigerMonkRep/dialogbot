@@ -1,7 +1,7 @@
 """Dialogbot Privat's own look on Stripe's hosted pages.
 
-The Stripe account is branded for Dialogbot Erhverv (blue logo). A private customer who pays for a plan or a credit
-pack must not land on an Erhverv-looking page, so every Privat Checkout Session carries `branding_settings`
+The Stripe account is branded for Dialogbot Erhverv (blue logo). A private customer who pays for a plan or fills up
+the Opkaldssaldo must not land on an Erhverv-looking page, so every Privat Checkout Session carries `branding_settings`
 (orange button, warm paper, the orange logo mark and the name "Dialogbot Privat"). The parameter exists from Stripe
 API version 2025-09-30.clover, so the create call is pinned to that version; the session's `url` is all we read.
 

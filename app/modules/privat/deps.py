@@ -55,7 +55,8 @@ def find_profile(db: OrmSession, user_id: uuid.UUID) -> PrivateProfile | None:
 
 
 def ensure_account(db: OrmSession, user: User, *, signup_source: str | None = None) -> tuple[PrivateProfile, bool]:
-    """The user's personal workspace, created once (owner membership, NO business seed rows, 3 welcome credits,
+    """The user's personal workspace, created once (owner membership, NO business seed rows, 10 kr. welcome bonus on
+    the Opkaldssaldo,
     the 14-day trial, default add-ons). Idempotent: the user row is locked, and private_profiles.user_id is unique.
 
     Proof of identity: a verified e-mail OR a verified mobile number (users.phone_verified_at, set by the quiz-funnel
@@ -78,8 +79,8 @@ def ensure_account(db: OrmSession, user: User, *, signup_source: str | None = No
     p = PrivateProfile(workspace_id=ws.id, user_id=user.id)
     db.add(p)
     db.flush()
-    ledger.add(db, ws.id, kind="grant", amount=rules.WELCOME_CREDITS, source_ref=f"welcome:{ws.id}",
-               text="Velkomstcredits (én gang)")
+    ledger.add(db, ws.id, kind="grant", amount=rules.WELCOME_BONUS_MINOR, source_ref=f"welcome:{ws.id}", cur="DKK",
+               text="Velkomstbonus på opkaldssaldoen (én gang)")
     from app.modules.privat import addons, subscriptions
 
     subscriptions.start_free(db, ws.id)  # no rights yet: the 14-day trial starts at Stripe Checkout, with a card

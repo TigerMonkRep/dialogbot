@@ -29,18 +29,41 @@ def kr(minor: int) -> str:
     whole = f"{minor // 100:,}".replace(",", ".")
     return whole + (f",{minor % 100:02d}" if minor % 100 else "")
 
-# Dialogbot Privat: a pack of credits, bought by consumers with Stripe Checkout (mode=payment). Prices incl. VAT.
-PRIVAT_CREDIT_PACK_CREDITS = 10
-PRIVAT_CREDIT_PACK_NET_MINOR = 2320       # 23,20 kr. excl. VAT
-PRIVAT_CREDIT_PACK_GROSS_MINOR = PRIVAT_CREDIT_PACK_NET_MINOR * (10000 + TAX_BASIS_POINTS) // 10000  # 29 kr.
-PRIVAT_CALL_CREDITS = 3                   # an approved call reserves 3 credits; released if nobody answers
+# Outbound call price by outcome (Fürster's decision 2026-11-10; same names and values as on
+# qa/decisions-2026-11-10, where Erhverv bills them after the package). Excl. VAT. Dialogbot Privat's extra calls are
+# priced from these (markets.privat_extra_call): the same net price + 25 % moms (Fürster's decision 2026-11-11).
+OUTBOUND_CALL_ANSWERED_NET_MINOR = 400    # 4 kr. – the person answered
+OUTBOUND_CALL_VOICEMAIL_NET_MINOR = 100   # 1 kr. – voicemail (Vapi voicemail detection; no message is left)
+OUTBOUND_CALL_NO_ANSWER_NET_MINOR = 25    # 0,25 kr. – unanswered, busy or failed to connect
+# Erhverv's honest maximum per contact (2 attempts answered + 3 started minutes = 14 kr. excl. VAT): the most one extra
+# Privat call can cost (17,50 kr. incl. VAT) and what is reserved before it is dialled.
+MAX_PER_CONTACT_ATTEMPTS = 2
+MAX_PER_CONTACT_MINUTES = 3
+
+
+def gross_minor(net_minor: int, rate_bp: int = TAX_BASIS_POINTS) -> int:
+    """Net → incl. VAT, rounded half up to a whole øre (cent). THE rounding of Privat's consumer prices: 0,25 kr. net →
+    0,3125 → 0,31 kr.; 5,90 kr → 7,375 → 7,38 kr."""
+    if net_minor < 0:
+        return -gross_minor(-net_minor, rate_bp)
+    return (net_minor * (10000 + rate_bp) + 5000) // 10000
+
+
+# Dialogbot Privat's «Opkaldssaldo» (app/modules/privat/ledger.py): a prepaid balance in kroner, in øre. INCL. VAT.
+PRIVAT_TOPUPS_GROSS_MINOR = (5_000, 10_000, 20_000)  # top-ups at Stripe Checkout (mode=payment): 50, 100, 200 kr.
+PRIVAT_WELCOME_BONUS_MINOR = 1_000        # 10 kr. once, when the account is created
+PRIVAT_REFERRAL_BONUS_MINOR = 1_000       # 10 kr. to each, after the invitee's first paid period
+PRIVAT_EXTRA_TASK_MINOR = 300             # 3 kr. for a task beyond the month's limit (or a sponsor spot)
+# The old credits were converted at 1 credit = 2,90 kr. (29 kr. for 10). A website booking (browser worker) cost
+# 1 credit and has no price of its own yet, so it costs the converted 2,90 kr. until Fürster decides one.
+PRIVAT_CREDIT_VALUE_MINOR = 290
+PRIVAT_BROWSER_BOOKING_MINOR = PRIVAT_CREDIT_VALUE_MINOR
 PRIVAT_FREE_TASKS_PER_MONTH = 0  # the free tier only receives shared lists; a plan (14-day card trial) does the rest
-PRIVAT_WELCOME_CREDITS = 3
 
 # Dialogbot Privat subscriptions (app/modules/privat/subscriptions.py). Consumer prices, so INCL. 25 % VAT, in øre.
 # The yearly plan is paid once a year (yearly_total); yearly_monthly is what that comes to per month (~20 % off).
-# Calls are per calendar month (Europe/Copenhagen); a call nobody answers does not count. Beyond the quota the
-# credit pack above is sold as "ekstra opkald" (3 credits per call).
+# Calls are per calendar month (Europe/Copenhagen); a call nobody answers does not count. Beyond the quota an extra
+# call is paid from the Opkaldssaldo at the outcome price above + moms (markets.privat_extra_call).
 PRIVAT_TRIAL_DAYS = 14
 PRIVAT_PLANS: tuple[dict, ...] = (
     {"key": "basis", "name": "Basis", "monthly_minor": 4900, "yearly_monthly_minor": 3900, "yearly_total_minor": 46800,

@@ -3,7 +3,7 @@
 EXPORT. POST /privat/data-export queues a job; the worker (event privat.data_export) collects every piece of Privat
 data that belongs to the caller – account, plan, household, apps and their data, own tasks with items and history,
 lists and wishlists shared with them (only what is theirs there: their own items and reservations), messages with
-the assistant, call log with the business's reply, appointments, birthdays, bills, credit movements, invitations,
+the assistant, call log with the business's reply, appointments, birthdays, bills, Opkaldssaldo movements, invitations,
 referrals, groups, browser bookings – into JSON plus a readable overview (oversigt.txt), and e-mails a link. The
 link needs the token from the e-mail AND the same login, works for EXPORT_DAYS days, after which the content is wiped.
 Never in an export: other people's data (who reserved the owner's wishes stays secret; shared lists only show what
@@ -208,7 +208,7 @@ def collect(db: OrmSession, user: User) -> dict:
         select(PrivateBirthday).where(PrivateBirthday.workspace_id == ws))]
     out["bills"] = [_row(b, skip=("workspace_id", "name_key")) for b in db.scalars(
         select(PrivateBill).where(PrivateBill.workspace_id == ws))]
-    out["credits"] = [_row(r, only=("kind", "amount", "text", "created_at")) for r in db.scalars(
+    out["call_balance"] = [_row(r, only=("kind", "amount", "currency", "text", "created_at")) for r in db.scalars(
         select(CreditLedger).where(CreditLedger.workspace_id == ws).order_by(CreditLedger.created_at))]
     out["bookings"] = [_row(r, only=("engine", "goal", "status", "before_after", "result", "created_at", "finished_at"))
                        for r in db.scalars(select(BrowserRun).where(BrowserRun.workspace_id == ws))]
@@ -400,7 +400,7 @@ def delete_message(db: OrmSession, ctx, message_id: uuid.UUID) -> None:
 def delete_call(db: OrmSession, ctx, task_id: uuid.UUID) -> None:
     """A call the user no longer wants kept: the task, every call attempt with its summary, its history and the chat
     lines about it, and Vapi's copy. Owner only (404 otherwise); not while the call is approved or running (409).
-    Credit movements stay (bookkeeping; they hold no summary) and an appointment it created stays in the calendar."""
+    Opkaldssaldo movements stay (bookkeeping; they hold no summary) and an appointment it created stays in the calendar."""
     from app.modules.privat import sharing
     from app.modules.sales.recordings import delete_at_vapi
 

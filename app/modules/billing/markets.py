@@ -52,14 +52,22 @@ LOCALE_COUNTRY: dict[str, str | None] = {"da": "DK", "sv": "SE", "no": "NO", "de
                                          "it": "IT", "en": None}
 
 # --------------------------------------------------------------------------- Erhverv (excl. VAT, minor units)
-# monthly · campaign call · campaign minute · inbound minute above the included 300 · specialist setup
+# monthly · campaign call · campaign minute · inbound minute above the included 300 · specialist setup ·
+# call_* = the outbound call price by outcome decided 2026-11-10 (prices.OUTBOUND_CALL_*; the same keys and values as
+# on qa/decisions-2026-11-10: the DKK price × the market's factor SEK 1,475, NOK 1,575, EUR 0,135, rounded to 5 öre /
+# 5 øre / 1 cent). Dialogbot Privat's extra calls are priced from call_* and minute (privat_extra_call).
 ERHVERV: dict[Currency, dict[str, int]] = {
     "DKK": {"monthly": prices.SUBSCRIPTION_MONTHLY_NET_MINOR, "call": prices.CAMPAIGN_CALL_NET_MINOR,
             "minute": prices.CAMPAIGN_MINUTE_NET_MINOR, "extra_minute": prices.INBOUND_EXTRA_MINUTE_NET_MINOR,
-            "setup": prices.SPECIALIST_SETUP_NET_MINOR},
-    "SEK": {"monthly": 369_500, "call": 590, "minute": 295, "extra_minute": 220, "setup": 729_500},
-    "NOK": {"monthly": 399_500, "call": 630, "minute": 315, "extra_minute": 235, "setup": 789_500},
-    "EUR": {"monthly": 32_900, "call": 55, "minute": 27, "extra_minute": 20, "setup": 66_900},
+            "call_answered": prices.OUTBOUND_CALL_ANSWERED_NET_MINOR,
+            "call_voicemail": prices.OUTBOUND_CALL_VOICEMAIL_NET_MINOR,
+            "call_no_answer": prices.OUTBOUND_CALL_NO_ANSWER_NET_MINOR, "setup": prices.SPECIALIST_SETUP_NET_MINOR},
+    "SEK": {"monthly": 369_500, "call": 590, "minute": 295, "extra_minute": 220, "call_answered": 590,
+            "call_voicemail": 150, "call_no_answer": 35, "setup": 729_500},
+    "NOK": {"monthly": 399_500, "call": 630, "minute": 315, "extra_minute": 235, "call_answered": 630,
+            "call_voicemail": 160, "call_no_answer": 40, "setup": 789_500},
+    "EUR": {"monthly": 32_900, "call": 55, "minute": 27, "extra_minute": 20, "call_answered": 55,
+            "call_voicemail": 14, "call_no_answer": 3, "setup": 66_900},
 }
 INBOUND_INCLUDED_MINUTES = prices.INBOUND_INCLUDED_MINUTES
 
@@ -79,9 +87,56 @@ PRIVAT: dict[Currency, dict[str, dict[str, int]]] = {
             "plus": {"monthly": 1349, "yearly_monthly": 1079, "yearly_total": 12948},
             "familie": {"monthly": 2249, "yearly_monthly": 1799, "yearly_total": 21588}},
 }
-# Ten Privat credits ("ekstra opkald"), incl. VAT.
-PRIVAT_CREDIT_PACK: dict[Currency, int] = {"DKK": prices.PRIVAT_CREDIT_PACK_GROSS_MINOR, "SEK": 4500, "NOK": 4500,
-                                           "EUR": 399}
+# Dialogbot Privat's extra calls (beyond the plan's calls a month), Fürster's decision 2026-11-11: Erhverv's net price
+# by outcome (decided 2026-11-10) + 25 % moms – the Privat rule in every currency (the same gross price in every
+# country of a currency, Danish VAT, see the module docstring) – rounded half up to a whole øre/öre/cent ONCE, in
+# prices.gross_minor.
+# answered / voicemail / no_answer: the call by outcome; minute: per started minute of conversation (answered calls);
+# max: the most one extra call costs (Erhverv's max per contact: 2 attempts answered + 3 minutes) = what is reserved.
+EXTRA_CALL_OUTCOMES = ("answered", "voicemail", "no_answer")
+
+
+def privat_extra_call(currency: str) -> dict[str, int]:
+    e = ERHVERV[_cur(currency)]
+    cap = prices.MAX_PER_CONTACT_ATTEMPTS * e["call_answered"] + prices.MAX_PER_CONTACT_MINUTES * e["minute"]
+    return {"answered": prices.gross_minor(e["call_answered"]), "voicemail": prices.gross_minor(e["call_voicemail"]),
+            "no_answer": prices.gross_minor(e["call_no_answer"]), "minute": prices.gross_minor(e["minute"]),
+            "max": prices.gross_minor(cap)}
+
+
+def privat_extra_call_price(currency: str, outcome: str, minutes: int) -> int:
+    """What one extra call costs: its outcome price + started minutes (only an answered call has minutes), never more
+    than `max`."""
+    p = privat_extra_call(currency)
+    if outcome not in EXTRA_CALL_OUTCOMES:
+        raise ValueError(f"unknown outcome {outcome!r}")
+    return min(p[outcome] + (max(0, minutes) * p["minute"] if outcome == "answered" else 0), p["max"])
+
+
+def privat_extra_call_text(currency: str = "DKK") -> str:
+    """«5 kr. besvaret, 1,25 kr. telefonsvarer, 0,31 kr. ubesvaret + 2,50 kr. pr. påbegyndt minut, højst 17,50 kr.»"""
+    p = privat_extra_call(currency)
+    f = lambda k: fmt(p[k], currency)  # noqa: E731
+    return (f"{f('answered')} besvaret, {f('voicemail')} telefonsvarer, {f('no_answer')} ubesvaret + {f('minute')} pr. "
+            f"påbegyndt minut, højst {f('max')}")
+
+
+def privat_from_dkk(dkk_minor: int, currency: str, *, whole: bool = False) -> int:
+    """A Privat amount set in DKK (top-ups, bonuses, the extra task) in another currency: × the market's factor (the
+    ratio of Erhverv's minute price to the Danish one: SEK 1,475, NOK 1,575, EUR 0,135), rounded half up to a whole
+    öre/øre/cent – or with `whole` to a whole krona/krone/euro (top-ups are round amounts)."""
+    c = _cur(currency)
+    num, den = ERHVERV[c]["minute"], ERHVERV["DKK"]["minute"]
+    unit = 100 if whole else 1
+    return (dkk_minor * num + den * unit // 2) // (den * unit) * unit
+
+
+def privat_topups(currency: str) -> tuple[int, ...]:
+    return tuple(privat_from_dkk(a, currency, whole=True) for a in prices.PRIVAT_TOPUPS_GROSS_MINOR)
+
+
+PRIVAT_EXTRA_CALL: dict[Currency, dict[str, int]] = {}
+PRIVAT_TOPUPS: dict[Currency, tuple[int, ...]] = {}
 
 
 def currency_for_country(country: str | None) -> Currency:
@@ -105,6 +160,10 @@ def _cur(currency: str) -> Currency:
     if c not in CURRENCIES:
         raise ValueError(f"unknown currency {currency!r}")
     return c  # type: ignore[return-value]
+
+
+PRIVAT_EXTRA_CALL.update({c: privat_extra_call(c) for c in CURRENCIES})
+PRIVAT_TOPUPS.update({c: privat_topups(c) for c in CURRENCIES})
 
 
 # --------------------------------------------------------------------------- VAT
@@ -196,5 +255,6 @@ def export() -> dict:
         "privatTrialDays": prices.PRIVAT_TRIAL_DAYS,
         "erhverv": ERHVERV,
         "privat": PRIVAT,
-        "privatCreditPack": PRIVAT_CREDIT_PACK,
+        "privatExtraCall": PRIVAT_EXTRA_CALL,
+        "privatTopups": {c: list(v) for c, v in PRIVAT_TOPUPS.items()},
     }

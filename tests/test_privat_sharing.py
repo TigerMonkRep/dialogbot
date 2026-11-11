@@ -293,11 +293,13 @@ def test_referral_once(api, pv, db):
     assert _referral_ledger(db, pv.ws(nina)) == [] and _referral_ledger(db, pv.ws(mette)) == []
     pv.set_plan(nina, "plus")  # the first real period is paid
     pv.make_list(nina, "Lav en liste med mel")
-    assert _referral_ledger(db, pv.ws(nina)) == [(3, f"referral:{nid}:invitee")]
-    assert _referral_ledger(db, pv.ws(mette)) == [(3, f"referral:{nid}:inviter")]
+    # 10 kr. on the Opkaldssaldo to each (F-PDEC-01), in øre
+    assert _referral_ledger(db, pv.ws(nina)) == [(1000, f"referral:{nid}:invitee")]
+    assert _referral_ledger(db, pv.ws(mette)) == [(1000, f"referral:{nid}:inviter")]
     assert db.query(PrivateReferral).count() == 1
     s = api.get(mette, "/privat/referrals").json()
-    assert s == {"invited": 2, "joined": 1, "activated": 1, "credits_earned": 3, "monthly_left": 9}
+    assert s == {"invited": 2, "joined": 1, "activated": 1, "earned_minor": 1000, "currency": "DKK",
+                 "reward_minor": 1000, "monthly_left": 9}
     from app.models import User
 
     assert db.get(User, nid).signup_source.startswith("invite:")

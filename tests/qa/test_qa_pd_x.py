@@ -194,7 +194,7 @@ def test_px_call_06a_scheduled_call_after_addon_disabled(api, pv, db, dialler):
 
 def test_px_call_06b_scheduled_call_after_plan_expired(api, pv, db, dialler):
     """PC-CALL-06: planlagt plan-opkald (paid_via=plan) – prøveperioden udløber inden mandag. Forventet: intet opkald
-    (eller ny godkendelse/credits)."""
+    (eller ny godkendelse)."""
     tok = pv.account("px-call06b@example.com")
     tid, ev = _scheduled_call(api, pv, db, tok)
     assert _call_row(db, tid).paid_via == "plan"

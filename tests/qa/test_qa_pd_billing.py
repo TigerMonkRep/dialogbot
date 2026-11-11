@@ -42,7 +42,9 @@ EXPECTED_PLANS = {  # currency: plan: (monthly, yearly per month, yearly total)
     "EUR": {"basis": (649, 519, 6228), "plus": (1349, 1079, 12948), "familie": (2249, 1799, 21588)},
 }
 EXPECTED_QUOTA = {"basis": (3, 1, False), "plus": (10, 1, True), "familie": (25, 5, True)}  # calls, people, all apps
-EXPECTED_PACK = {"DKK": 2900, "SEK": 4500, "NOK": 4500, "EUR": 399}  # 10 credits incl. moms
+# Opkaldssaldo top-ups incl. moms (F-PDEC-01): 50/100/200 kr.; other currencies × the market factor, whole units
+EXPECTED_TOPUP = {"DKK": (5000, 10000, 20000), "SEK": (7400, 14800, 29500), "NOK": (7900, 15800, 31500),
+                  "EUR": (700, 1400, 2700)}
 # The 8 Privat languages → (currency, Stripe locale, inclusive tax rate id on the line in the default «danish» mode)
 EXPECTED_LOCALE = {"da": ("DKK", "da", ["txr_dk_vat_2500_incl"]), "en": ("EUR", "en", ["txr_dk_vat_2500_incl"]),
                    "de": ("EUR", "de", ["txr_dk_vat_2500_incl"]), "es": ("EUR", "es", ["txr_dk_vat_2500_incl"]),
@@ -359,13 +361,13 @@ def test_pc_sub_12_ent_04_chat_05_expired_local_trial(api, client, pv, db, monke
     assert [m["kind"] for m in out["messages"]][-1] == "draft"
     t = db.get(PrivateTask, uuid.UUID(tid))
     assert (t.status, t.paid_by, t.usage_text) == ("draft", "none", "Ikke betalt endnu")
-    # ENT-04 – changed by decision Fürster 2026-11-11: without a plan «Ring for mig» STOPS, also with credits (the 3
-    # welcome credits). No proposal, nothing reserved; the chat offers the app (whose «Slå til» answers needs_plan).
+    # ENT-04 – changed by decision Fürster 2026-11-11: without a plan «Ring for mig» STOPS, also with a balance (the
+    # 10 kr. welcome bonus). No proposal, nothing reserved; the chat offers the app (whose «Slå til» answers needs_plan).
     out = pv.say(tok, "Ring til cykelværkstedet og find en tid torsdag efter klokken tre")
     assert not any(m["kind"] in ("call_proposal", "clarify") for m in out["messages"]), out["messages"]
     assert db.query(PrivateCall).filter_by(workspace_id=pv.ws(tok)).count() == 0
     assert [(r.kind, r.amount) for r in db.query(CreditLedger).filter_by(workspace_id=pv.ws(tok))
-            .order_by(CreditLedger.created_at)] == [("grant", 3)]
+            .order_by(CreditLedger.created_at)] == [("grant", 1000)]
     r = api.post(tok, "/privat/addons/ring-for-mig/enable")
     assert r.status_code == 409 and r.json()["code"] == "needs_plan"
 
@@ -474,7 +476,11 @@ def test_pc_sub_17_plans_in_all_currencies_match_independent_table_and_web_catal
             assert yt == 12 * ym and ym * 100 <= m * 80  # «spar 20 %» is true (at least 20 % below monthly)
             assert (p["calls"], p["people"], p["apps_included"]) == EXPECTED_QUOTA[p["key"]]
             assert web[cur][p["key"]] == {"monthly": m, "yearly_monthly": ym, "yearly_total": yt}, (cur, p["key"])
-    assert json.loads((ROOT / "web/src/lib/prices.json").read_text())["privatCreditPack"] == EXPECTED_PACK
+    table = json.loads((ROOT / "web/src/lib/prices.json").read_text())
+    assert "privatCreditPack" not in table
+    assert table["privatTopups"] == {c: list(v) for c, v in EXPECTED_TOPUP.items()}
+    assert table["privatExtraCall"]["DKK"] == {"answered": 500, "voicemail": 125, "no_answer": 31, "minute": 250,
+                                               "max": 1750}
 
 
 @pytest.mark.parametrize("locale", list(EXPECTED_LOCALE))
@@ -539,17 +545,17 @@ def test_pc_sub_19_discount_codes(api, pv, stripe, db):
     assert "stripe_promotion_code_id" in cols
 
 
-# =============================================================================================== credits
+# =============================================================================================== Opkaldssaldo
 
-def test_pc_sub_21_credit_pack_once_per_session_all_currencies(api, client, pv, stripe, db):
+def test_pc_sub_21_topup_once_per_session_all_currencies(api, client, pv, stripe, db):
     for cur, loc in (("DKK", "da"), ("SEK", "sv"), ("NOK", "no"), ("EUR", "de")):
         tok = pv.account(f"pbq21{cur.lower()}@testmail.dk", trial=False)
         ws = pv.ws(tok)
-        assert api.post(tok, "/privat/credits/checkout", {"locale": loc}).status_code == 200
+        assert api.post(tok, "/privat/balance/checkout", {"locale": loc}).status_code == 200
         d = stripe.payload()
-        assert d["line_items"][0]["price_data"]["unit_amount"] == EXPECTED_PACK[cur]
+        assert d["line_items"][0]["price_data"]["unit_amount"] == EXPECTED_TOPUP[cur][0]
         sid = list(stripe.sessions)[-1]
-        base = {"id": sid, "mode": "payment", "currency": cur.lower(), "amount_total": EXPECTED_PACK[cur],
+        base = {"id": sid, "mode": "payment", "currency": cur.lower(), "amount_total": EXPECTED_TOPUP[cur][0],
                 "metadata": d["metadata"]}
         # abandoned / unpaid → 0
         assert _event(client, _evt("checkout.session.completed", base | {"payment_status": "unpaid"}))["outcome"] == "ignored"
@@ -559,36 +565,36 @@ def test_pc_sub_21_credit_pack_once_per_session_all_currencies(api, client, pv, 
         assert _event(client, _evt("checkout.session.async_payment_succeeded", base | {"payment_status": "paid"}))[
             "outcome"] == "ignored"
         db.expire_all()
-        rows = [(r.kind, r.amount) for r in db.query(CreditLedger).filter_by(workspace_id=ws).order_by(CreditLedger.created_at)]
-        assert rows == [("grant", 3), ("purchase", 10)], (cur, rows)
+        rows = [(r.kind, r.amount, r.currency) for r in db.query(CreditLedger).filter_by(workspace_id=ws, kind="purchase")]
+        assert rows == [("purchase", EXPECTED_TOPUP[cur][0], cur)], (cur, rows)
 
 
-def test_pc_sub_21_no_promotion_codes_on_the_credit_pack(api, client, pv, stripe, db):
-    """F-PBQ-03-PC-SUB-21 (S0, fixed by «no codes on the credit pack»): the credit Checkout must not show Stripe's code
-    field, so nobody can pay less than the list price. An underpaid session (should never happen now) is still
-    ignored – fix-engineer logs it as privat.credit_pack_underpaid for a manual refund."""
+def test_pc_sub_21_no_promotion_codes_on_the_topup(api, client, pv, stripe, db):
+    """F-PBQ-03-PC-SUB-21 (S0, fixed by «no codes on the credit pack», kept for the top-ups): the top-up Checkout must
+    not show Stripe's code field, so nobody can pay less than the amount. An underpaid session (should never happen
+    now) is still ignored – logged as privat.topup_underpaid for a manual refund."""
     tok = pv.account("pbq21promo@testmail.dk", trial=False)
-    assert api.post(tok, "/privat/credits/checkout", {}).status_code == 200
+    assert api.post(tok, "/privat/balance/checkout", {}).status_code == 200
     d = stripe.payload()
     assert "allow_promotion_codes" not in d and "discounts" not in d
-    obj = {"id": list(stripe.sessions)[-1], "mode": "payment", "currency": "dkk", "amount_total": 1450,
-           "amount_subtotal": 2900, "total_details": {"amount_discount": 1450}, "payment_status": "paid",
+    obj = {"id": list(stripe.sessions)[-1], "mode": "payment", "currency": "dkk", "amount_total": 2500,
+           "amount_subtotal": 5000, "total_details": {"amount_discount": 2500}, "payment_status": "paid",
            "metadata": d["metadata"]}
     assert _event(client, _evt("checkout.session.completed", obj))["outcome"] == "ignored"
     db.expire_all()
     assert not db.query(CreditLedger).filter_by(workspace_id=pv.ws(tok), kind="purchase").count()
 
 
-def test_credit_pack_refund_takes_the_credits_back(api, client, pv, stripe, db):
-    """F-PBQ-05-PC-SUB-21 (S2): a refunded credit pack (charge.refunded) changes nothing in the ledger."""
+def test_topup_refund_takes_the_amount_back(api, client, pv, stripe, db):
+    """F-PBQ-05-PC-SUB-21 (S2): a refunded top-up (charge.refunded) changes nothing in the ledger."""
     tok = pv.account("pbq21refund@testmail.dk", trial=False)
-    api.post(tok, "/privat/credits/checkout", {})
+    api.post(tok, "/privat/balance/checkout", {})
     d = stripe.payload()
     sid = list(stripe.sessions)[-1]
     _event(client, _evt("checkout.session.completed", {"id": sid, "mode": "payment", "currency": "dkk",
-                                                        "amount_total": 2900, "payment_status": "paid",
+                                                        "amount_total": 5000, "payment_status": "paid",
                                                         "payment_intent": "pi_pbq", "metadata": d["metadata"]}))
-    refund = {"id": "ch_pbq", "object": "charge", "payment_intent": "pi_pbq", "amount": 2900, "amount_refunded": 2900,
+    refund = {"id": "ch_pbq", "object": "charge", "payment_intent": "pi_pbq", "amount": 5000, "amount_refunded": 5000,
               "refunded": True, "metadata": d["metadata"]}
     try:
         _event(client, _evt("charge.refunded", refund))
@@ -596,7 +602,7 @@ def test_credit_pack_refund_takes_the_credits_back(api, client, pv, stripe, db):
         pass  # the fake has no /invoice_payments – the handler looks for an Erhverv invoice
     db.expire_all()
     bal = sum(r.amount for r in db.query(CreditLedger).filter_by(workspace_id=pv.ws(tok)))
-    assert bal == 3, f"after a full refund the balance is {bal} (3 welcome + 10 refunded pack)"
+    assert bal == 1000, f"after a full refund the balance is {bal} øre (10 kr. welcome + 50 kr. refunded top-up)"
 
 
 # =============================================================================================== entitlements
@@ -688,15 +694,17 @@ def test_pc_ent_05_call_09_basis_quota_unanswered_failed_and_replay(api, client,
         replay = _report(client, called[0], "customer-ended-call", msgs, seconds=61, call_id=f"c_ok{n}")
         assert replay.get("duplicate") is True or replay.get("outcome") in ("duplicate", "ignored"), replay
     me = pv.me(tok)
-    assert (me["calls_used"], me["calls_left"], me["credits"], me["reserved"]) == (3, 0, 3, 0)
+    assert (me["calls_used"], me["calls_left"], me["balance_minor"], me["held_minor"]) == (3, 0, 1000, 0)
+    pv.top_up(tok, 1000)
     _t, t, called = _approve_plan(api, pv, tok, monkeypatch, "c_4")
-    assert t["usage_text"] == "3 credits reserveret"
+    assert t["usage_text"] == "Ekstra opkald · højst 17,50\u00a0kr. reserveret"
     _report(client, called[0], "customer-ended-call", msgs, seconds=61, call_id="c_4")
     _report(client, called[0], "customer-ended-call", msgs, seconds=61, call_id="c_4")  # replay
     db.expire_all()
-    rows = [(r.kind, r.amount) for r in db.query(CreditLedger).filter_by(workspace_id=pv.ws(tok)).order_by(CreditLedger.created_at)]
-    assert rows == [("grant", 3), ("reserve", -3), ("capture", 0)] or sum(a for _k, a in rows) == 0, rows
-    assert pv.me(tok)["credits"] == 0 and pv.me(tok)["reserved"] == 0
+    rows = sorted((r.kind, r.amount) for r in db.query(CreditLedger).filter_by(workspace_id=pv.ws(tok)))
+    # answered, 61 s = 2 started minutes: 5 kr. + 2 × 2,50 kr. = 10 kr.; the rest of the 17,50 kr. comes back, once
+    assert rows == [("capture", 750), ("grant", 1000), ("purchase", 1000), ("reserve", -1750)], rows
+    assert pv.me(tok)["balance_minor"] == 1000 and pv.me(tok)["held_minor"] == 0
 
 
 def _call_row(db, ws, task_id, approved_at, result="answered"):
@@ -732,12 +740,12 @@ def test_pc_ent_06_quota_month_is_copenhagen_incl_dst(api, pv, db, approved_utc,
 
 
 @pytest.mark.xfail(strict=True, reason="F-PQ-03-X09 (open, needs-decision): a free account activates drafts via welcome "
-                                       "credit / simulated sponsor – regression only, no duplicate")
+                                       "bonus / simulated sponsor – regression only, no duplicate")
 def test_pc_ent_07_free_account_cannot_activate_drafts(api, pv, db):
     tok = pv.account("pbq-ent07@testmail.dk", trial=False)
     t1, t2 = (next(m["task_id"] for m in pv.say(tok, x)["messages"] if m["kind"] == "draft")
               for x in ("Lav en liste med æbler", "Lav en liste med pærer"))
-    r1 = api.post(tok, f"/privat/tasks/{t1}/activate", {"method": "credit"})
+    r1 = api.post(tok, f"/privat/tasks/{t1}/activate", {"method": "balance"})
     r2 = api.post(tok, "/privat/sponsor/claim", {"task_id": t2})
     assert r1.status_code in (403, 409) and r2.status_code in (403, 409)
 
@@ -849,7 +857,7 @@ def test_pc_gift_01_pledge_bounds(api, pv):
 # =============================================================================================== referrals
 
 @pytest.mark.xfail(strict=True, reason="F-PQ-03-X09 consequence (no duplicate): via welcome-credit activation a FREE "
-                                       "alt-account becomes an 'active invitee' and pays the inviter +3 credits")
+                                       "alt-account becomes an 'active invitee' and pays the inviter a referral bonus")
 def test_pc_inv_08_self_referral_farm_without_any_plan(api, pv, db):
     from tests.test_privat_sharing import _accept
 
@@ -860,11 +868,11 @@ def test_pc_inv_08_self_referral_farm_without_any_plan(api, pv, db):
         _accept(api, alt, link["token"])
         out = pv.say(alt, f"Lav en liste med ting{i}")  # draft (no plan)
         tid = next(m["task_id"] for m in out["messages"] if m["kind"] == "draft")
-        assert api.post(alt, f"/privat/tasks/{tid}/activate", {"method": "credit"}).status_code == 200  # F-PQ-03
+        assert api.post(alt, f"/privat/tasks/{tid}/activate", {"method": "balance"}).status_code == 200  # F-PQ-03
         pv.say(alt, f"Lav en liste med mere{i}")  # any next message → referrals.try_activate sees an own active task
     db.expire_all()
     earned = sum(r.amount for r in db.query(CreditLedger).filter_by(workspace_id=pv.ws(teen), kind="referral"))
-    assert earned == 0, f"inviter farmed {earned} credits from 3 free alt-accounts"
+    assert earned == 0, f"inviter farmed {earned} øre from 3 free alt-accounts"
 
 
 def test_pc_inv_08_referral_caps_hold(api, pv, db):

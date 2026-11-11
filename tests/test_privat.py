@@ -39,7 +39,11 @@ def test_account_is_personal_idempotent_and_flagged(api, pv, db, monkeypatch):
     assert api.get(tok, "/workspaces").json() == []  # never listed as a business workspace
     assert api.get(tok, f"/workspaces/{ws.id}/business-profile").status_code == 404
     # a fresh account is the free tier: no rights until the 14-day trial starts at Stripe Checkout, with a card
-    assert pv.me(tok) == {"free_used": 0, "free_limit": 0, "credits": 3, "reserved": 0, "sponsor_left_today": 2,
+    assert pv.me(tok) == {"free_used": 0, "free_limit": 0, "sponsor_left_today": 2,
+                          # the Opkaldssaldo (F-PDEC-01): 10 kr. welcome bonus, extra-call prices and top-ups in øre
+                          "balance_minor": 1000, "held_minor": 0, "currency": "DKK",
+                          "extra_call": {"answered": 500, "voicemail": 125, "no_answer": 31, "minute": 250, "max": 1750},
+                          "topups_minor": [5000, 10000, 20000], "extra_task_minor": 300,
                           "phone_display": None, "phone_verified": False, "push_enabled": False,
                           "location_city": None, "assistant_name": "Peter", "assistant_pronoun": "han",
                           "plan": "none", "plan_status": "none", "trial_days_left": 0, "calls_quota": 0,
@@ -47,7 +51,7 @@ def test_account_is_personal_idempotent_and_flagged(api, pv, db, monkeypatch):
     pv.start_trial(tok)  # … as the webhook mirrors it after the checkout
     me = pv.me(tok)
     assert (me["plan"], me["plan_status"], me["trial_days_left"], me["calls_quota"], me["entitled"]) == ("plus", "trial", 14, 10, True)
-    assert _ledger(db, ws.id) == [("grant", 3, f"welcome:{ws.id}")]
+    assert _ledger(db, ws.id) == [("grant", 1000, f"welcome:{ws.id}")]
     # pilot allow-list and the feature flag
     monkeypatch.setenv("PRIVAT_ALLOWED_EMAILS", "someone@else.dk")
     get_settings.cache_clear()
@@ -84,7 +88,7 @@ def test_isolation(api, pv, two_workspaces):
     for path in (f"/privat/tasks/{tid}", f"/privat/messages?task_id={tid}"):
         assert api.get(other, path).status_code == 404
     assert api.post(other, f"/privat/tasks/{tid}/items", {"text": "x"}).status_code == 404
-    assert api.post(other, f"/privat/tasks/{tid}/activate", {"method": "credit"}).status_code == 404
+    assert api.post(other, f"/privat/tasks/{tid}/activate", {"method": "balance"}).status_code == 404
     assert api.post(other, f"/privat/calls/{tid}/approve", {"share_phone": False}).status_code == 404
     assert api.get(other, "/privat/tasks").json() == []
     # and the other way round: the private user cannot use business endpoints on their personal workspace,
@@ -124,12 +128,13 @@ def test_free_task_11(api, pv, db):
     assert t11["status"] == "draft" and t11["usage_text"] == "Ikke betalt endnu"
     assert db.query(OutboxEvent).filter(OutboxEvent.event_type == "privat.reminder",
                                         OutboxEvent.dedupe_key.like(f"privat-reminder:{t11['id']}:%")).count() == 0
-    t = api.post(tok, f"/privat/tasks/{t11['id']}/activate", {"method": "credit"}).json()
-    assert t["status"] == "planned" and t["usage_text"] == "1 credit"
-    assert api.post(tok, f"/privat/tasks/{t11['id']}/activate", {"method": "credit"}).json()["status"] == "planned"
+    assert api.post(tok, f"/privat/tasks/{t11['id']}/activate", {"method": "credit"}).status_code == 422  # no credits
+    t = api.post(tok, f"/privat/tasks/{t11['id']}/activate", {"method": "balance"}).json()
+    assert t["status"] == "planned" and t["usage_text"] == "Ekstra opgave · 3\u00a0kr."  # F-PDEC-01: 3 kr., not 1 credit
+    assert api.post(tok, f"/privat/tasks/{t11['id']}/activate", {"method": "balance"}).json()["status"] == "planned"
     ws = pv.ws(tok)
-    assert [r for r in _ledger(db, ws) if r[0] == "spend"] == [("spend", -1, f"spend:{t11['id']}")]
-    assert pv.me(tok)["credits"] == 2
+    assert [r for r in _ledger(db, ws) if r[0] == "spend"] == [("spend", -300, f"spend:{t11['id']}")]
+    assert pv.me(tok)["balance_minor"] == 700
     # sponsor: at most 2 a day
     drafts = [next(m for m in pv.say(tok, f"Lav en liste med x{i}")["messages"] if m["kind"] == "draft")["task_id"]
               for i in range(3)]
@@ -198,22 +203,37 @@ def test_payment_signal_twice(api, client, pv, db, monkeypatch):
 
     monkeypatch.setattr(stripe, "request", lambda m, p, d=None, **k: sent.append((p, d)) or
                         {"id": "cs_test_1", "url": "https://checkout.stripe.com/c/pay/cs_test_1"})
-    assert api.post(tok, "/privat/credits/checkout").json() == {"url": "https://checkout.stripe.com/c/pay/cs_test_1"}
+    assert api.post(tok, "/privat/credits/checkout").status_code == 404  # no credit packs any more (F-PDEC-01)
+    assert api.post(tok, "/privat/balance/checkout", {"amount_minor": 7000}).status_code == 422  # only 50/100/200 kr.
+    assert api.post(tok, "/privat/balance/checkout", {"amount_minor": 10000}).json() == {
+        "url": "https://checkout.stripe.com/c/pay/cs_test_1"}
     data = next(d for p, d in sent if p == "/checkout/sessions")  # (the VAT tax rate is looked up first)
     assert data["mode"] == "payment" and data["metadata"]["workspace_id"] == str(ws)
-    assert data["line_items"][0]["price_data"]["unit_amount"] == 2900
+    assert data["metadata"] == {"workspace_id": str(ws), "kind": "privat_topup", "amount_minor": "10000", "currency": "DKK"}
+    assert data["line_items"][0]["price_data"]["unit_amount"] == 10000
+    assert data["line_items"][0]["price_data"]["product_data"]["name"] == "Opkaldssaldo – Dialogbot Privat"
+    meta = {"workspace_id": str(ws), "kind": "privat_topup", "amount_minor": "10000", "currency": "DKK"}
+    # paid less than the top-up it was opened for: nothing is added (the webhook checks the amount paid)
+    under = {"id": "cs_test_0", "object": "checkout.session", "mode": "payment", "payment_status": "paid",
+             "amount_total": 5000, "metadata": meta}
+    assert _stripe(client, {"id": "evt_privat_0", "type": "checkout.session.completed",
+                            "data": {"object": under}})["outcome"] == "ignored"
+    # metadata that is not one of the top-ups is never trusted
+    odd = under | {"id": "cs_test_9", "amount_total": 7000, "metadata": meta | {"amount_minor": "7000"}}
+    assert _stripe(client, {"id": "evt_privat_9", "type": "checkout.session.completed",
+                            "data": {"object": odd}})["outcome"] == "ignored"
     session = {"id": "cs_test_1", "object": "checkout.session", "mode": "payment", "payment_status": "paid",
-               "amount_total": 2900, "metadata": {"workspace_id": str(ws), "kind": "privat_credits", "credits": "10"}}
+               "amount_total": 10000, "metadata": meta}
     ev = {"id": "evt_privat_1", "type": "checkout.session.completed", "data": {"object": session}}
     assert _stripe(client, ev)["outcome"] == "applied"
     assert _stripe(client, ev)["duplicate"] is True  # the same event again
     ev2 = {"id": "evt_privat_2", "type": "checkout.session.async_payment_succeeded", "data": {"object": session}}
     assert _stripe(client, ev2)["outcome"] == "ignored"  # another event, same session
-    assert [r for r in _ledger(db, ws) if r[0] == "purchase"] == [("purchase", 10, "stripe:cs_test_1")]
-    assert pv.me(tok)["credits"] == 13
+    assert [r for r in _ledger(db, ws) if r[0] == "purchase"] == [("purchase", 10000, "stripe:cs_test_1")]
+    assert pv.me(tok)["balance_minor"] == 11000
     from app.models import WebhookEvent
 
-    assert db.query(WebhookEvent).filter_by(provider="stripe").count() == 2
+    assert db.query(WebhookEvent).filter_by(provider="stripe").count() == 4
 
 
 # --------------------------------------------------------------------------- calls
@@ -239,7 +259,7 @@ def test_no_call_without_approval(api, pv, db, monkeypatch):
     t = pv.task(tok, tid).json()
     assert t["status"] == "awaiting_user" and t["call"]["business_name"] == "Cykelmageren"
     assert t["call"]["window"] == "torsdag efter kl. 15" and t["call"]["phone_display"] == "86 12 34 56"
-    assert called == [] and pv.me(tok)["reserved"] == 0
+    assert called == [] and pv.me(tok)["held_minor"] == 0
     # a number the user never wrote is never used
     from app.models import User
     from app.modules.privat import chat, deps
@@ -256,11 +276,12 @@ def test_no_call_without_approval(api, pv, db, monkeypatch):
     assert called == []
 
 
-def test_needs_phone_insufficient_credits_outside_hours(api, pv, db, monkeypatch):
+def test_needs_phone_insufficient_balance_outside_hours(api, pv, db, monkeypatch):
     called = []
     monkeypatch.setattr(campaigns, "create_call", lambda p: called.append(p) or {"id": "x"})
     tok = pv.account("mette@testmail.dk")
-    pv.use_up_calls(tok)  # the trial's calls are used: an extra call needs credits (plan calls: test_privat_subscription.py)
+    pv.use_up_calls(tok)  # the trial's calls are used: an extra call is paid from the Opkaldssaldo (plan calls: test_privat_subscription.py)
+    pv.top_up(tok, 1000)
     tid = _propose(pv, tok)
     path = f"/privat/calls/{tid}/approve"
     assert api.post(tok, path, {"share_phone": False}).json()["code"] == "needs_phone"
@@ -272,25 +293,31 @@ def test_needs_phone_insufficient_credits_outside_hours(api, pv, db, monkeypatch
     assert api.post(tok, path, {"share_phone": False}).json()["code"] == "outside_hours"
     pv.clock.at = datetime(2026, 11, 4, 9, 0, tzinfo=UTC)
     ws = pv.ws(tok)
-    db.add(CreditLedger(workspace_id=ws, kind="spend", amount=-1, source_ref="test:spend", text="test"))
+    # 17,49 kr. on the balance does not cover the maximum of an extra call (17,50 kr.): «Fyld op»
+    db.add(CreditLedger(workspace_id=ws, kind="spend", amount=-251, source_ref="test:spend", text="test"))
     db.commit()
     r = api.post(tok, path, {"share_phone": False})
-    assert r.status_code == 409 and r.json()["code"] == "insufficient_credits"
+    assert r.status_code == 409 and r.json()["code"] == "insufficient_balance", r.json()
     assert r.json()["calls_left"] == 0 and r.json()["needs_plan"] is False  # without a plan: needs_plan (2026-11-11)
-    assert called == [] and pv.me(tok)["reserved"] == 0
+    assert (r.json()["balance_minor"], r.json()["needed_minor"], r.json()["currency"]) == (1749, 1750, "DKK")
+    assert r.json()["cta"] == {"label": "Fyld op", "href": "/privat/konto#saldo"}
+    assert r.json()["message"].startswith("Fyld op")
+    assert called == [] and pv.me(tok)["held_minor"] == 0
 
 
 def _approve(api, pv, tok, monkeypatch, vapi_id="call_v1", name="Mette Hansen"):
-    """Approve on the credits path (an extra call: the trial's calls are used): 3 credits reserved. Without a plan there
-    is no credits path any more (decision 2026-11-11, tests/test_privat_subscription.py)."""
+    """Approve an EXTRA call (the trial's calls are used): its maximum, 17,50 kr., is reserved on the Opkaldssaldo
+    (10 kr. welcome bonus + 10 kr. topped up). Without a plan it stops (decision 2026-11-11, test_privat_subscription.py)."""
     called = []
     monkeypatch.setattr(campaigns, "create_call", lambda p: called.append(p) or {"id": vapi_id})
     pv.use_up_calls(tok)
+    pv.top_up(tok, 1000)
     pv.verify_phone(tok)
     tid = _propose(pv, tok)
+    assert pv.task(tok, tid).json()["usage_text"] == "Ekstra opkald: højst 17,50\u00a0kr., når du godkender"
     t = api.post(tok, f"/privat/calls/{tid}/approve", {"window": "torsdag efter kl. 15", "share_phone": False},
                  **{"Idempotency-Key": "k1"}).json()
-    assert t["status"] == "in_progress" and t["usage_text"] == "3 credits reserveret"
+    assert t["status"] == "in_progress" and t["usage_text"] == "Ekstra opkald · højst 17,50\u00a0kr. reserveret"
     again = api.post(tok, f"/privat/calls/{tid}/approve", {"window": "torsdag efter kl. 15", "share_phone": False},
                      **{"Idempotency-Key": "k1"}).json()
     assert again["id"] == tid and len(called) == 1
@@ -301,7 +328,7 @@ def _approve(api, pv, tok, monkeypatch, vapi_id="call_v1", name="Mette Hansen"):
     assert a["maxDurationSeconds"] == 180 and a["voicemailDetection"] == {"provider": "vapi"}
     assert a["metadata"]["private_call_id"] and a["metadata"]["private_task_id"] == tid
     assert "Du må IKKE" in a["model"]["messages"][0]["content"]
-    assert pv.me(tok)["credits"] == 0 and pv.me(tok)["reserved"] == 3
+    assert pv.me(tok)["balance_minor"] == 250 and pv.me(tok)["held_minor"] == 1750
     return tid, p
 
 
@@ -321,15 +348,17 @@ def test_unanswered_call(api, client, pv, db, monkeypatch):
     assert out["outcome"] == "applied"
     t = pv.task(tok, tid).json()
     assert t["status"] == "awaiting_user" and t["call"]["result"] == "no_answer"
-    assert t["events"][-1]["text"] == "Ingen tog telefonen – dine 3 credits er frigivet"
-    assert pv.me(tok)["credits"] == 3 and pv.me(tok)["reserved"] == 0
+    # an unanswered EXTRA call costs the unanswered price (0,3125 → 0,31 kr.); the rest of the 17,50 kr. comes back
+    assert t["events"][-1]["text"] == "Ingen tog telefonen – 0,31\u00a0kr. er trukket fra din opkaldssaldo, resten er frigivet"
+    assert t["usage_text"] == "Ekstra opkald · ubesvaret · 0,31\u00a0kr."
+    assert pv.me(tok)["balance_minor"] == 2000 - 31 and pv.me(tok)["held_minor"] == 0
     ws = pv.ws(tok)
     before = _ledger(db, ws)
     assert _report(client, p, "customer-did-not-answer", [], seconds=0)["duplicate"] is True
     assert _ledger(db, ws) == before
     c = db.query(PrivateCall).one()
-    assert sorted(r for r in before if r[0] in ("reserve", "release")) == [
-        ("release", 3, f"call:{c.id}:release"), ("reserve", -3, f"call:{c.id}:reserve")]
+    assert sorted(r for r in before if r[0] in ("reserve", "capture", "release")) == [
+        ("capture", 1750 - 31, f"call:{c.id}:capture"), ("reserve", -1750, f"call:{c.id}:reserve")]
     from app.models import Call
 
     assert db.query(Call).count() == 0  # never stored as a business call
@@ -348,11 +377,12 @@ def test_answered_call(api, client, pv, db, monkeypatch):
     t = pv.task(tok, tid).json()
     assert t["status"] == "done" and t["call"]["result"] == "answered"
     assert t["call"]["confirmed_text"] == "Torsdag kl. 15.30" and t["call"]["duration_seconds"] == 130
-    assert t["usage_text"] == "3 credits · besvaret opkald, 2 min. 10 sek."
+    # answered: 5 kr. + 3 started minutes (130 s from Vapi) × 2,50 kr. = 12,50 kr.; 5,00 kr. of the 17,50 kr. come back
+    assert t["usage_text"] == "Ekstra opkald · besvaret, 2 min. 10 sek. · 12,50\u00a0kr."
     ws = pv.ws(tok)
     c = db.query(PrivateCall).one()
-    assert [r for r in _ledger(db, ws) if r[0] == "capture"] == [("capture", 0, f"call:{c.id}:capture")]
-    assert pv.me(tok) | {} == pv.me(tok) and pv.me(tok)["credits"] == 0 and pv.me(tok)["reserved"] == 0
+    assert [r for r in _ledger(db, ws) if r[0] == "capture"] == [("capture", 1750 - 1250, f"call:{c.id}:capture")]
+    assert pv.me(tok)["balance_minor"] == 2000 - 1250 and pv.me(tok)["held_minor"] == 0
     msgs = api.get(tok, f"/privat/messages?task_id={tid}").json()
     assert msgs[-1]["text"] == "Opkaldet er slut. Cykelmageren har bekræftet torsdag kl. 15.30."
 
@@ -442,7 +472,8 @@ def test_chat_basics_waiting_and_clarify(api, pv):
     b = pv.say(tok, "Lav en liste med kage", key="same")
     assert a == b and len(api.get(tok, "/privat/tasks").json()) == 2
     led = api.get(tok, "/privat/ledger").json()
-    assert led[0]["kind"] == "grant" and led[0]["amount"] == 3
+    assert led[0]["kind"] == "grant" and led[0]["amount_minor"] == 1000 and led[0]["currency"] == "DKK"
+    assert "amount" not in led[0]
 
 
 def test_stale_call_released(api, pv, db, monkeypatch):
@@ -452,7 +483,7 @@ def test_stale_call_released(api, pv, db, monkeypatch):
 
     pv.clock.at += timedelta(minutes=31)
     assert calls.sweep_stale(db) == 1
-    assert pv.me(tok)["credits"] == 3 and pv.task(tok, tid).json()["status"] == "awaiting_user"
+    assert pv.me(tok)["balance_minor"] == 2000 and pv.task(tok, tid).json()["status"] == "awaiting_user"
     assert db.query(PrivateTask).count() == 1
 
 
@@ -464,18 +495,19 @@ def test_failed_tool_is_explained(api, pv):
 
 def test_provider_crash_never_leaves_the_call_dialling(api, pv, db, monkeypatch):
     """PB (harness 500): any failure while asking Vapi for the call – also a non-ApiError – ends honestly as failed,
-    the credits come back, and the user can try again (never stuck in «dialling»)."""
+    the whole reservation comes back, and the user can try again (never stuck in «dialling»)."""
     def boom(p):
         raise RuntimeError("harness 500")
 
     monkeypatch.setattr(campaigns, "create_call", boom)
     tok = pv.account("mette@testmail.dk")
     pv.use_up_calls(tok)
+    pv.top_up(tok, 1000)
     pv.verify_phone(tok)
     tid = _propose(pv, tok)
     t = api.post(tok, f"/privat/calls/{tid}/approve", {"share_phone": False}).json()
     assert t["status"] == "awaiting_user" and t["call"]["status"] == "failed", t
-    assert pv.me(tok)["reserved"] == 0
+    assert pv.me(tok)["held_minor"] == 0 and pv.me(tok)["balance_minor"] == 2000  # Vapi failed: all released
     assert api.post(tok, f"/privat/calls/{tid}/retry").status_code == 200
 
 

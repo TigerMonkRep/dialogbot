@@ -89,7 +89,8 @@ class Pv:
         return self.api.get(tok, "/privat/me").json()
 
     def expire_trial(self, tok: str) -> None:
-        """Put the account past its 14-day trial (no plan): the free quota and credits apply, as before subscriptions."""
+        """Put the account past its 14-day trial (no plan): the free quota applies (an extra task: 3 kr. from the
+        Opkaldssaldo or a sponsor spot), and «Ring for mig» stops."""
         ws = self.ws(tok)
         with get_session_factory()() as db:
             row = db.get(PrivateSubscription, ws)
@@ -97,8 +98,8 @@ class Pv:
             db.commit()
 
     def use_up_calls(self, tok: str) -> None:
-        """The plan's (or trial's) calls this month are used: an extra call reserves 3 credits – since 2026-11-11 the
-        ONLY credits path of «Ring for mig» (without a plan it stops: 409 needs_plan)."""
+        """The plan's (or trial's) calls this month are used: an extra call reserves its maximum (17,50 kr.) on the
+        Opkaldssaldo (F-PDEC-01; without a plan «Ring for mig» stops: 409 needs_plan)."""
         from app.modules.privat import subscriptions
 
         if not self._used_up:
@@ -106,6 +107,16 @@ class Pv:
             self._mp.setattr(subscriptions, "calls_used",
                              lambda db, ws_id, at=None: 99 if ws_id in self._used_up else orig(db, ws_id, at))
         self._used_up.add(self.ws(tok))
+
+    def top_up(self, tok: str, minor: int, ref: str | None = None) -> None:
+        """Øre on the Opkaldssaldo, as a paid top-up would add them (payments.on_checkout_event)."""
+        from app.modules.privat import ledger
+
+        ws = self.ws(tok)
+        with get_session_factory()() as db:
+            assert ledger.add(db, ws, kind="purchase", amount=minor, source_ref=ref or f"test:topup:{uuid.uuid4()}",
+                              text="test")
+            db.commit()
 
     def set_plan(self, tok: str, plan: str, *, status: str = "active", interval: str = "month",
                  period_days: int = 30) -> None:

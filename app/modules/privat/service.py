@@ -4,8 +4,8 @@ Rules:
 - With the trial or a plan (subscriptions.entitlements → entitled) lists and reminders are unlimited (paid_by 'plan').
 - Otherwise 10 new digital tasks (lists, reminders) per calendar month, Europe/Copenhagen. Editing, ticking, reading
   and clarifying are free; a shared list is ONE task for its owner, whatever its members do.
-- Task #11 in a month is saved as a draft until activated with 1 credit (spend:<task_id>) or a sponsor spot (max 2 a
-  day, sponsor:<task_id>). A draft reminder never fires.
+- Task #11 in a month is saved as a draft until activated with 3 kr. from the Opkaldssaldo (spend:<task_id>) or a
+  sponsor spot (max 2 a day, sponsor:<task_id>). A draft reminder never fires.
 - A reminder is one outbox event (privat.reminder) due at remind_at; moving it cancels the old event and creates
   exactly one new one (dedupe key includes reminder_version).
 """
@@ -30,6 +30,7 @@ from app.models import (
     PrivateTaskMember,
     User,
 )
+from app.modules.billing import markets
 from app.modules.privat import ledger, naming, rules, sharing
 
 ACTIVE_STATUSES = ("planned", "in_progress", "awaiting_business")
@@ -63,13 +64,15 @@ def balance_out(db: OrmSession, ctx) -> dict:
     p = ctx.profile
     ent = subscriptions.entitlements(db, ctx.ws_id)
     return {"free_used": free_used(db, ctx.ws_id), "free_limit": rules.FREE_LIMIT,
-            "credits": ledger.balance(db, ctx.ws_id), "reserved": ledger.reserved(db, ctx.ws_id),
+            # the Opkaldssaldo (ledger.summary): balance_minor, held_minor, currency, extra_call prices, topups
+            **ledger.summary(db, ctx.ws_id),
             "sponsor_left_today": max(0, rules.SPONSOR_PER_DAY - ledger.sponsor_used_today(db, ctx.ws_id)),
             "phone_display": rules.phone_display(p.phone_e164) if p.phone_verified_at else None,
             "phone_verified": p.phone_verified_at is not None, "push_enabled": _push_enabled(db, ctx.user_id),
             "location_city": p.location_city, "assistant_name": naming.of(p),
             "assistant_pronoun": naming.pronoun_of(p),
-            # the subscription (docs/privat-api.md): trial counts as Plus; credits are "ekstra opkald" beyond the quota
+            # the subscription (docs/privat-api.md): trial counts as Plus; beyond the quota an extra call is paid from
+            # the Opkaldssaldo
             "plan": ent["plan"], "plan_status": ent["status"], "trial_days_left": ent["trial_days_left"],
             "calls_quota": ent["calls_quota"], "calls_used": ent["calls_used"], "calls_left": ent["calls_left"],
             "entitled": ent["entitled"]}
@@ -82,7 +85,7 @@ def _push_enabled(db: OrmSession, user_id: uuid.UUID) -> bool:
 
 
 def _lock_profile(db: OrmSession, ws_id: uuid.UUID) -> PrivateProfile:
-    """Serialises quota and credit decisions per account."""
+    """Serialises quota and balance decisions per account."""
     return db.scalar(select(PrivateProfile).where(PrivateProfile.workspace_id == ws_id).with_for_update())
 
 
@@ -295,19 +298,25 @@ def activate_drafts_with_plan(db: OrmSession, ws_id: uuid.UUID) -> int:
 
 
 def activate(db: OrmSession, ctx, task: PrivateTask, method: str) -> PrivateTask:
-    """Draft → active, paid with 1 credit or a sponsor spot. Repeating it on an active task changes nothing."""
+    """Draft → active, paid with 3 kr. from the Opkaldssaldo or a sponsor spot. Repeating it on an active task changes
+    nothing."""
     if task.workspace_id != ctx.ws_id:
         raise NotFound("Opgaven findes ikke")
     _lock_profile(db, ctx.ws_id)
     db.refresh(task)
     if task.status != "draft":
         return task
-    if method == "credit":
-        if ledger.balance(db, ctx.ws_id) < 1:
-            raise Conflict("Du har ingen credits", code="insufficient_credits")
-        ledger.add(db, ctx.ws_id, kind="spend", amount=-1, source_ref=f"spend:{task.id}", task_id=task.id,
+    if method == "balance":
+        cur = ledger.currency(db, ctx.ws_id)
+        price = markets.privat_from_dkk(rules.EXTRA_TASK_MINOR, cur)
+        if (have := ledger.balance(db, ctx.ws_id)) < price:
+            raise Conflict(f"Fyld op: en ekstra opgave koster {markets.fmt(price, cur)}, og du har "
+                           f"{markets.fmt(have, cur)} på din opkaldssaldo.", code="insufficient_balance",
+                           extra={"balance_minor": have, "needed_minor": price, "currency": cur,
+                                  "cta": {"label": "Fyld op", "href": "/privat/konto#saldo"}})
+        ledger.add(db, ctx.ws_id, kind="spend", amount=-price, source_ref=f"spend:{task.id}", task_id=task.id,
                    text="Ny opgave efter månedsgrænsen")
-        task.paid_by, task.usage_text = "credit", "1 credit"
+        task.paid_by, task.usage_text = "balance", f"Ekstra opgave · {markets.fmt(price, cur)}"
     elif method == "sponsor":
         if ledger.sponsor_used_today(db, ctx.ws_id) >= rules.SPONSOR_PER_DAY:
             raise Conflict("Du har set dagens 2 sponsorindslag", code="sponsor_limit")
@@ -315,7 +324,7 @@ def activate(db: OrmSession, ctx, task: PrivateTask, method: str) -> PrivateTask
                    text="Sponsorindslag set – 1 ekstra opgave")
         task.paid_by, task.usage_text = "sponsor", "Sponsorindslag (+1 opgave)"
     else:
-        raise ValidationFailed("Vælg credit eller sponsor", field_errors=[{"field": "method"}])
+        raise ValidationFailed("Vælg saldo eller sponsor", field_errors=[{"field": "method"}])
     task.status, task.pending_status = task.pending_status or "planned", None
     if task.kind == "reminder" and task.remind_at:
         task.next_step = "Påmindelse " + rules.lower_first(rules.when_text(task.remind_at))
@@ -469,7 +478,7 @@ def call_out(c: PrivateCall | None) -> dict | None:
         return None
     return {"business_name": c.business_name, "address": c.business_address,
             "phone_display": rules.phone_display(c.business_phone_e164) or "", "may_ask": c.may_ask,
-            "may_agree": c.may_agree, "may_not": c.may_not, "window": c.window, "max_credits": rules.CALL_CREDITS,
+            "may_agree": c.may_agree, "may_not": c.may_not, "window": c.window, "paid_via": c.paid_via,
             "share_phone": c.share_phone, "result": c.result, "confirmed_text": c.confirmed_text,
             "business_reply": c.business_reply, "business_price_text": c.business_price_text,
             "duration_seconds": c.duration_seconds, "status": c.status, **_call_extra(c)}

@@ -19,7 +19,8 @@
       "ActivateIn": {
         "properties": {
           "method": {
-            "pattern": "^(credit|sponsor)$",
+            "description": "balance = 3 kr. fra opkaldssaldoen, sponsor = et frivilligt sponsorindslag",
+            "pattern": "^(balance|sponsor)$",
             "title": "Method",
             "type": "string"
           }
@@ -1416,25 +1417,6 @@
           "kind"
         ],
         "title": "CreateIn",
-        "type": "object"
-      },
-      "CreditsCheckoutIn": {
-        "properties": {
-          "locale": {
-            "anyOf": [
-              {
-                "pattern": "^(da|en|de|es|fr|it|no|sv)$",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "sidens sprog: Checkout-sprog og valuta (kundens abonnementsvaluta vinder)",
-            "title": "Locale"
-          }
-        },
-        "title": "CreditsCheckoutIn",
         "type": "object"
       },
       "DataRequestIn": {
@@ -5098,6 +5080,38 @@
           "token"
         ],
         "title": "TokenIn",
+        "type": "object"
+      },
+      "TopupCheckoutIn": {
+        "properties": {
+          "amount_minor": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "optankningen i øre inkl. moms – et af beløbene i /privat/me topups_minor (DKK: 5000, 10000, 20000). Tom = det mindste",
+            "title": "Amount Minor"
+          },
+          "locale": {
+            "anyOf": [
+              {
+                "pattern": "^(da|en|de|es|fr|it|no|sv)$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "sidens sprog: Checkout-sprog og valuta (kundens valuta vinder)",
+            "title": "Locale"
+          }
+        },
+        "title": "TopupCheckoutIn",
         "type": "object"
       },
       "TripSearchIn": {
@@ -17557,7 +17571,7 @@
     },
     "/api/v1/privat/account": {
       "post": {
-        "description": "Create (idempotently) the caller's personal workspace: owner membership, no business rows, 3 welcome credits.",
+        "description": "Create (idempotently) the caller's personal workspace: owner membership, no business rows, 10 kr. welcome bonus\non the Opkaldssaldo.",
         "operationId": "create_account_api_v1_privat_account_post",
         "parameters": [
           {
@@ -18643,6 +18657,71 @@
         "summary": "App Overview",
         "tags": [
           "privat-apps"
+        ]
+      }
+    },
+    "/api/v1/privat/balance/checkout": {
+      "post": {
+        "description": "Stripe Checkout (mode=payment): fill up the Opkaldssaldo with 50, 100 or 200 kr. incl. moms (or the currency's\namounts, markets.PRIVAT_TOPUPS). The amount arrives with the webhook, only when it was paid in full.",
+        "operationId": "balance_checkout_api_v1_privat_balance_checkout_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/TopupCheckoutIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Balance Checkout",
+        "tags": [
+          "privat"
         ]
       }
     },
@@ -19874,71 +19953,6 @@
         "summary": "Put Car",
         "tags": [
           "privat-apps"
-        ]
-      }
-    },
-    "/api/v1/privat/credits/checkout": {
-      "post": {
-        "description": "Stripe Checkout (mode=payment): 10 credits, 29 kr. incl. moms (or the currency's price, markets.PRIVAT_CREDIT_PACK).\nCredits arrive with the webhook.",
-        "operationId": "credits_checkout_api_v1_privat_credits_checkout_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "anyOf": [
-                  {
-                    "$ref": "#/components/schemas/CreditsCheckoutIn"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ],
-                "title": "Body"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Credits Checkout",
-        "tags": [
-          "privat"
         ]
       }
     },
@@ -21264,6 +21278,7 @@
     },
     "/api/v1/privat/ledger": {
       "get": {
+        "description": "The Opkaldssaldo's movements, newest first: amount_minor in øre of `currency` (incl. moms).",
         "operationId": "ledger_rows_api_v1_privat_ledger_get",
         "parameters": [
           {

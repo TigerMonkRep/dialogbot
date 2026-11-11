@@ -4,14 +4,17 @@ Flow:
 1. The chat only PROPOSES a call (task awaiting_user + private_calls row status proposed). Nothing is dialled.
 2. approve() locks recipient, number, may_ask/may_agree/may_not, window and share_phone, and requires a verified mobile
    (409 needs_phone) and a weekday 08–18 Copenhagen time (409 outside_hours). A plan (or the trial) is required: without
-   one «Ring for mig» stops – 409 needs_plan with a CTA to Konto, and there is NO credits path (decision Fürster
-   2026-11-11). Payment: with quota left, the call is one of the month's plan calls (paid_via 'plan', no credits move);
-   once the month's calls are used, an extra call reserves 3 credits (409 insufficient_credits, extra carries
-   calls_left) (call:<id>:reserve, paid_via 'credits'). Then it dials like sales/outbound.dial: the status is committed BEFORE the Vapi request; no answer from
-   Vapi = "unknown" (never redialled automatically).
-3. The end-of-call report (routed by metadata.private_call_id) captures (call:<id>:capture) when the business
-   answered and spoke, or releases (+3, call:<id>:release) on no answer / failure. A plan call moves no credits: a
-   lost one simply does not count against the quota. Replays change nothing.
+   one «Ring for mig» stops – 409 needs_plan with a CTA to Konto, and the Opkaldssaldo cannot pay instead (decision Fürster
+   2026-11-11). Payment: with quota left, the call is one of the month's plan calls (paid_via 'plan', nothing moves on
+   the Opkaldssaldo); once the month's calls are used, an EXTRA call (paid_via 'balance', F-PDEC-01) reserves its
+   maximum price (markets.privat_extra_call max: 17,50 kr.) on the Opkaldssaldo (call:<id>:reserve) – without that on
+   the balance 409 insufficient_balance «Fyld op» with a CTA to Konto. Then it dials like sales/outbound.dial: the
+   status is committed BEFORE the Vapi request; no answer from Vapi = "unknown" (never redialled automatically).
+3. The end-of-call report (routed by metadata.private_call_id) settles an extra call ONCE (ledger.settle): the price
+   by outcome – answered 5 kr. + 2,50 kr. per started minute (Vapi's durationSeconds), voicemail 1,25 kr.,
+   unanswered/busy 0,31 kr. – is captured and the rest released (call:<id>:capture). When the call failed at Vapi
+   (create_call error, an error endedReason, no report within 30 min) everything is released (call:<id>:release).
+   A plan call moves nothing: a lost one simply does not count against the quota. Replays change nothing.
 4. A business calling a pool number back is routed by ITS number to the newest open call to it (14 days).
 Pool numbers come from PRIVAT_POOL_NUMBERS; Dialogbot never buys numbers here.
 """
@@ -29,14 +32,16 @@ from sqlalchemy.orm import Session as OrmSession
 from app.config import get_settings
 from app.core.errors import ApiError, Conflict, NotFound, NotImplementedYet, ValidationFailed
 from app.models import PhoneNumber, PrivateCall, PrivateProfile, PrivateTask, User, Workspace
+from app.modules.billing import markets
 from app.modules.privat import addons, ledger, rules, service, sharing, subscriptions
 
 ADDON = "ring-for-mig"
 MAX_SECONDS = 180
 STALE = timedelta(minutes=30)
 FINAL = ("answered", "no_answer", "failed", "declined")
-NO_ANSWER_TEXT = "Ingen tog telefonen – dine 3 credits er frigivet"
-FAILED_TEXT = "Opkaldet gik ikke igennem – dine 3 credits er frigivet"
+NO_ANSWER_TEXT = "Ingen tog telefonen – {price} er trukket fra din opkaldssaldo, resten er frigivet"
+VOICEMAIL_TEXT = "Telefonsvareren tog den – {price} er trukket fra din opkaldssaldo, resten er frigivet"
+FAILED_TEXT = "Opkaldet gik ikke igennem – reservationen på din opkaldssaldo er frigivet"
 PLAN_NO_ANSWER_TEXT = "Ingen tog telefonen – opkaldet tæller ikke"
 PLAN_FAILED_TEXT = "Opkaldet gik ikke igennem – opkaldet tæller ikke"
 OUTCOME_SYSTEM = """PRIVAT_CALL_OUTCOME
@@ -101,11 +106,22 @@ def problem(db: OrmSession, c: PrivateCall) -> str | None:
 # --------------------------------------------------------------------------- proposal
 
 NEEDS_PLAN_CTA = {"label": "Kræver en plan", "href": "/privat/konto"}
+TOPUP_CTA = {"label": "Fyld op", "href": "/privat/konto#saldo"}
+
+
+def extra_call_prices(db: OrmSession, ws_id: uuid.UUID) -> dict:
+    """The extra-call prices in the account's currency (øre incl. moms) – what the card shows before approval."""
+    cur = ledger.currency(db, ws_id)
+    return markets.privat_extra_call(cur) | {"currency": cur}
+
+
+def started_minutes(seconds: int | float | None) -> int:
+    return int((int(seconds) + 59) // 60) if seconds and seconds > 0 else 0
 
 
 def require_plan(db: OrmSession, ws_id: uuid.UUID, ent: dict | None = None) -> dict:
     """«Ring for mig» needs a plan or the trial (decision Fürster 2026-11-11): 409 needs_plan with a CTA to Konto –
-    never a credits path without one. Returns the entitlements."""
+    the Opkaldssaldo never pays for a call without one. Returns the entitlements."""
     ent = ent or subscriptions.entitlements(db, ws_id)
     if not ent["entitled"]:
         raise Conflict("«Ring for mig» kræver en plan. Opkald er med i alle planer – vælg en under Konto.",
@@ -158,14 +174,15 @@ def propose(db: OrmSession, ctx, *, business_name: str, phone: str | None, addre
 
 
 def pending_usage_text(db: OrmSession, ws_id: uuid.UUID) -> str:
-    """What approving will cost: the next plan call, 3 credits for an extra call, or – without a plan – nothing is
-    possible yet."""
+    """What approving will cost: the next plan call, an extra call (at most its maximum), or – without a plan – nothing
+    is possible yet."""
     ent = subscriptions.entitlements(db, ws_id)
     if not ent["entitled"]:
         return "Kræver en plan"
     if ent["calls_left"] > 0:
         return f"Opkald {ent['calls_used'] + 1} af {ent['calls_quota']} i {subscriptions.plan_label(ent)}, når du godkender"
-    return "Højst 3 credits, når du godkender"
+    p = extra_call_prices(db, ws_id)
+    return f"Ekstra opkald: højst {markets.fmt(p['max'], p['currency'])}, når du godkender"
 
 
 DEFAULT_MAY_NOT = "Betale, give andre oplysninger end dit navn, eller sige ja til ekstra arbejde eller andre tider"
@@ -233,10 +250,13 @@ def approve(db: OrmSession, ctx, task_id: uuid.UUID, *, window: str | None, shar
         raise Conflict("Bekræft dit mobilnummer, før assistenten ringer for dig", code="needs_phone")
     ent = require_plan(db, ctx.ws_id)  # again, under the profile lock: the plan may have lapsed meanwhile
     use_plan = ent["calls_left"] > 0
-    if not use_plan and ledger.balance(db, ctx.ws_id) < rules.CALL_CREDITS:
-        raise Conflict("Månedens opkald er brugt – et ekstra opkald reserverer 3 credits", code="insufficient_credits",
-                       extra={"credits": ledger.balance(db, ctx.ws_id), "needed": rules.CALL_CREDITS,
-                              "calls_left": ent["calls_left"], "needs_plan": False})
+    extra = extra_call_prices(db, ctx.ws_id)
+    held, cur = extra["max"], extra["currency"]
+    if not use_plan and (have := ledger.balance(db, ctx.ws_id)) < held:
+        raise Conflict(f"Fyld op: månedens opkald er brugt, og et ekstra opkald kræver {markets.fmt(held, cur)} på din "
+                       f"opkaldssaldo (du har {markets.fmt(have, cur)}).", code="insufficient_balance",
+                       extra={"balance_minor": have, "needed_minor": held, "currency": cur, "prices": extra,
+                              "calls_left": ent["calls_left"], "needs_plan": False, "cta": TOPUP_CTA})
     now = _now()
     closed = c.next_open_at is not None and c.next_open_at > now
     later = None
@@ -269,10 +289,10 @@ def approve(db: OrmSession, ctx, task_id: uuid.UUID, *, window: str | None, shar
         c.paid_via = "plan"
         usage = f"Opkald {ent['calls_used'] + 1} af {ent['calls_quota']} i {subscriptions.plan_label(ent)}"
     else:
-        c.paid_via = "credits"
-        ledger.add(db, ctx.ws_id, kind="reserve", amount=-rules.CALL_CREDITS, source_ref=f"call:{c.id}:reserve",
-                   task_id=task.id, text=f"Reserveret til opkald til {c.business_name}")
-        usage = "3 credits reserveret"
+        c.paid_via = "balance"
+        ledger.reserve(db, ctx.ws_id, f"call:{c.id}", held, task_id=task.id,
+                       text=f"Ekstra opkald til {c.business_name} – højst {markets.fmt(held, cur)} reserveret")
+        usage = f"Ekstra opkald · højst {markets.fmt(held, cur)} reserveret"
     if later is not None:  # approved «ved næste åbningstid»: the worker dials then (call_due), not before
         c.status, c.scheduled_for = "scheduled", later
         _schedule(db, "privat.call_due", c, later)
@@ -302,14 +322,13 @@ def _next_window(after):
 def decline(db: OrmSession, ctx, task_id: uuid.UUID) -> PrivateTask:
     addons.require(db, ctx.ws_id, ADDON)
     task, c = _own_call_task(db, ctx, task_id)
-    if c.status == "scheduled":  # a planned call can still be cancelled: nothing was dialled, credits come back
+    if c.status == "scheduled":  # a planned call can still be cancelled: nothing was dialled, the reservation comes back
         c.status, c.result = "declined", "declined"
         if c.paid_via == "plan":
             freed = "Opkaldet tæller ikke"
         else:
-            ledger.add(db, c.workspace_id, kind="release", amount=rules.CALL_CREDITS, source_ref=f"call:{c.id}:release",
-                       task_id=task.id, text="Planlagt opkald annulleret – reservation frigivet")
-            freed = "3 credits frigivet"
+            settle_extra(db, c, task, None, text="Planlagt opkald annulleret – reservation frigivet")
+            freed = "Reservationen på din opkaldssaldo er frigivet"
         task.status, task.next_step, task.usage_text, task.who, task.due_at = "declined", \
             "Annulleret – der er ikke ringet", "Intet forbrug", "Dig", None
         service.event(db, task, f"Du annullerede det planlagte opkald. {freed}.")
@@ -452,18 +471,41 @@ def dial(db: OrmSession, call_id: uuid.UUID) -> None:
 
 # --------------------------------------------------------------------------- results
 
-def _release(db: OrmSession, c: PrivateCall, task: PrivateTask, *, result: str, reason: str | None) -> None:
+def settle_extra(db: OrmSession, c: PrivateCall, task: PrivateTask, outcome: str | None, *, text: str,
+                 minutes: int = 0) -> int | None:
+    """Settle an extra call's reservation once: `outcome` answered | voicemail | no_answer captures that price (+
+    started minutes when answered, at most the maximum) and releases the rest; None (failed, cancelled) releases it
+    all. Returns the price spent (øre), None for a plan call or when it was settled before."""
+    if c.paid_via == "plan":
+        return None
+    price = None if outcome is None else markets.privat_extra_call_price(ledger.currency(db, c.workspace_id), outcome,
+                                                                         minutes)
+    return ledger.settle(db, c.workspace_id, f"call:{c.id}", price, text=text, task_id=task.id)
+
+
+def _fmt(db: OrmSession, c: PrivateCall, minor: int) -> str:
+    return markets.fmt(minor, ledger.currency(db, c.workspace_id))
+
+
+def _release(db: OrmSession, c: PrivateCall, task: PrivateTask, *, result: str, reason: str | None,
+             outcome: str | None = None) -> None:
+    """The call ended without a conversation. `outcome` voicemail | no_answer = it rang (an extra call costs that
+    price); None = it failed (at Vapi, or no report): nothing is spent."""
     c.status, c.result, c.ended_reason, c.ended_at = result, result, (reason or "")[:100] or None, _now()
     if c.paid_via == "plan":
         # nothing was reserved: a lost plan call is simply left out of the month's count (subscriptions.calls_used)
         text = PLAN_NO_ANSWER_TEXT if result == "no_answer" else PLAN_FAILED_TEXT
+        usage = "Intet forbrug – ingen svarede" if result == "no_answer" else "Intet forbrug"
+    elif outcome is None:
+        settle_extra(db, c, task, None, text="Opkaldet gik ikke igennem – reservation frigivet")
+        text, usage = FAILED_TEXT, "Intet forbrug"
     else:
-        ledger.add(db, c.workspace_id, kind="release", amount=rules.CALL_CREDITS, source_ref=f"call:{c.id}:release",
-                   task_id=task.id, text="Ingen svar – reservation frigivet" if result == "no_answer"
-                   else "Opkaldet gik ikke igennem – reservation frigivet")
-        text = NO_ANSWER_TEXT if result == "no_answer" else FAILED_TEXT
-    task.status, task.next_step, task.who, task.usage_text = "awaiting_user", "Prøv igen eller annullér", "Dig", \
-        "Intet forbrug – ingen svarede" if result == "no_answer" else "Intet forbrug"
+        word = "telefonsvarer" if outcome == "voicemail" else "ubesvaret"
+        spent = settle_extra(db, c, task, outcome, text=f"Ekstra opkald til {c.business_name} · {word}")
+        price = _fmt(db, c, spent or 0)
+        text = (VOICEMAIL_TEXT if outcome == "voicemail" else NO_ANSWER_TEXT).format(price=price)
+        usage = f"Ekstra opkald · {word} · {price}"
+    task.status, task.next_step, task.who, task.usage_text = "awaiting_user", "Prøv igen eller annullér", "Dig", usage
     service.event(db, task, text)
     service.touch(task)
     service.add_message(db, c.workspace_id, kind="text", text=f"{text}.", task_id=task.id)
@@ -546,10 +588,14 @@ def on_report(db: OrmSession, message: dict) -> str | None:
     transcript, closing = lead_pitch.split_transcript(transcript)   # the errand is judged WITHOUT the closing line (confirmed_text)
     duration = message.get("durationSeconds")
     summary = str(_dig(message, "analysis", "summary") or message.get("summary") or "")[:4000]
-    answered = visitor_lines > 0 and not any(reason.startswith(r) for r in NO_ANSWER_REASONS)
+    rang = any(reason.startswith(r) for r in NO_ANSWER_REASONS)
+    answered = visitor_lines > 0 and not rang
     if not answered:
-        no_answer = any(reason.startswith(r) for r in NO_ANSWER_REASONS) or visitor_lines == 0
-        _release(db, c, task, result="no_answer" if no_answer else "failed", reason=reason)
+        if not rang and "error" in reason:  # the call failed at Vapi / the carrier: nothing is spent (F-PFX-07)
+            _release(db, c, task, result="failed", reason=reason)
+        else:
+            _release(db, c, task, result="no_answer", reason=reason,
+                     outcome="voicemail" if reason.startswith("voicemail") else "no_answer")
         lead_pitch.finalize(db, c, answered=False, ended_reason=reason, closing=closing)
         return "applied"
     c.status, c.result, c.ended_reason, c.ended_at = "answered", "answered", reason[:100] or None, _now()
@@ -560,10 +606,13 @@ def on_report(db: OrmSession, message: dict) -> str | None:
         charged = f"Opkald {subscriptions.plan_call_index(db, c)} af {quota} i {subscriptions.plan_label(ent)}"
         task.usage_text = f"{charged} · besvaret{_dur(c.duration_seconds)}"
     else:
-        ledger.add(db, c.workspace_id, kind="capture", amount=0, source_ref=f"call:{c.id}:capture", task_id=task.id,
-                   text=f"Opkald til {c.business_name} · besvaret{_dur(c.duration_seconds)}")
-        charged = "3 credits trukket"
-        task.usage_text = f"3 credits · besvaret opkald{_dur(c.duration_seconds)}"
+        minutes = started_minutes(c.duration_seconds)
+        spent = settle_extra(db, c, task, "answered", minutes=minutes,
+                             text=f"Ekstra opkald til {c.business_name} · besvaret{_dur(c.duration_seconds)}")
+        price = _fmt(db, c, spent or 0)
+        charged = f"Ekstra opkald: {price} trukket fra din opkaldssaldo ({minutes} påbegyndt"\
+                  f"{'e' if minutes != 1 else ''} min.), resten er frigivet"
+        task.usage_text = f"Ekstra opkald · besvaret{_dur(c.duration_seconds)} · {price}"
     data = classify(db, db.get(Workspace, c.workspace_id), transcript, summary, when=c.dialled_at)
     lead_pitch.finalize(db, c, answered=True, ended_reason=reason, closing=closing, has_transcript=bool(transcript or closing))
     c.business_reply = str(data.get("summary") or summary or "")[:4000] or None
@@ -806,11 +855,9 @@ def _still_allowed(db: OrmSession, c: PrivateCall) -> str | None:
 
 
 def _not_dialled(db: OrmSession, c: PrivateCall, task: PrivateTask, why: str) -> None:
-    """A scheduled call that will not be made: nothing dialled, nothing used (credits released), the user decides."""
+    """A scheduled call that will not be made: nothing dialled, nothing used (reservation released), the user decides."""
     c.status, c.result, c.ended_reason, c.ended_at = "failed", "failed", why[:100], _now()  # failed: never counted
-    if c.paid_via != "plan":
-        ledger.add(db, c.workspace_id, kind="release", amount=rules.CALL_CREDITS, source_ref=f"call:{c.id}:release",
-                   task_id=task.id, text="Planlagt opkald ikke foretaget – reservation frigivet")
+    settle_extra(db, c, task, None, text="Planlagt opkald ikke foretaget – reservation frigivet")
     text = f"Jeg ringede ikke til {c.business_name}: {why}. Der er ikke brugt noget"
     task.status, task.next_step, task.who, task.usage_text, task.due_at = "awaiting_user", "Prøv igen eller annullér", \
         "Dig", "Intet forbrug", None

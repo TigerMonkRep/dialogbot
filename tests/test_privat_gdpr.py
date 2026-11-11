@@ -97,7 +97,7 @@ def test_export_is_complete_and_only_my_own(api, pv, db):
     assert r.status_code == 200 and r.headers["content-type"] == "application/zip"
     data, overview = _unzip(r)
     for key in ("account", "profile", "subscription", "household", "apps", "tasks", "shared_with_me", "messages",
-                "calls", "appointments", "birthdays", "bills", "credits", "invitations_sent", "referrals", "groups"):
+                "calls", "appointments", "birthdays", "bills", "call_balance", "invitations_sent", "referrals", "groups"):
         assert key in data, key
     assert data["account"]["email"] == "mette@testmail.dk"
     assert data["subscription"]["plan"] == "familie" and data["household"]["role"] == "owner"

@@ -93,7 +93,7 @@ def _facts(db, ctx, row: ExternalBusinessContact, *, user_said, intent, concrete
         user_said=user_said, intent=intent, website=row.website, engine=engine, booking_url=booking_url,
         has_name_and_phone=bool((u.display_name or "").strip() and p.phone_e164 and p.phone_verified_at),
         concrete=concrete, worker_enabled=get_settings().browser_worker_enabled,
-        has_credit=ledger.balance(db, ctx.ws_id) >= service.BROWSER_BOOKING_CREDITS)
+        has_balance=ledger.balance(db, ctx.ws_id) >= service.booking_price(db, ctx.ws_id))
     return facts, engine, booking_url
 
 
@@ -156,7 +156,7 @@ def _browser(turn, row: ExternalBusinessContact, svc: str, windows: list[dict], 
             task = _plan_browser(db, ctx, row, svc, windows, when, domains, engine, host_url)
     except ApiError as e:
         log.warning("browser.start_failed", code=e.code)
-        return _phone(turn, row, routing.Decision("phone", 4, "no_credit" if e.code == "insufficient_credits" else "engine_unknown"),
+        return _phone(turn, row, routing.Decision("phone", 4, "no_balance" if e.code == "insufficient_balance" else "engine_unknown"),
                       svc, windows)
     turn.say("text", f"Jeg prøver at booke online hos {row.name} – du får et forslag at godkende. Intet bliver booket, før du "
                      "siger ja. Du kan altid skrive «ring i stedet».", task_id=task.id)

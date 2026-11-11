@@ -1,6 +1,6 @@
 """The add-on shop of Dialogbot Privat.
 
-The core (chat, Min dag, private lists and reminders, quota/credits/account) is always on. Everything else is an
+The core (chat, Min dag, private lists and reminders, quota/Opkaldssaldo/account) is always on. Everything else is an
 add-on: ONE `Addon` object registered in CATALOG below. An add-on brings its own chat tools (`tools`, each pointing at
 a handler "module:function" that is imported only when called) and its endpoints call `require(db, ws_id, key)`.
 Adding a feature = `register(Addon(...))` here (or from the feature's own module) – the shop endpoint, the chat's tool
@@ -8,7 +8,7 @@ list, the gating and the «Slå … til» offer in the chat all read the catalog
 
 Plans: an add-on with `included_in` (plan keys) can only be switched on with the trial or one of those plans
 (409 needs_plan, see subscriptions.py). Once on, it stays on, but it STOPS while the plan has lapsed (data kept) – also
-«Ring for mig»: without a plan there is no credits path (decision Fürster 2026-11-11).
+«Ring for mig»: without a plan the Opkaldssaldo cannot pay instead (decision Fürster 2026-11-11).
 """
 from __future__ import annotations
 
@@ -21,6 +21,7 @@ from sqlalchemy.orm import Session as OrmSession
 from app.config import get_settings
 from app.core.errors import Conflict, Forbidden, NotFound
 from app.models import PrivateAddonEnabled
+from app.modules.billing import markets
 from app.modules.privat import rules
 
 
@@ -43,7 +44,7 @@ class Addon:
     icon: str
     category: str
     price_text: str
-    pricing: str = "free"  # free | credits | monthly
+    pricing: str = "free"  # free | balance (extras paid from the Opkaldssaldo) | monthly
     monthly_price_minor: int | None = None
     status: str = "available"  # available | beta | coming_soon
     # The Shop texts: what it does (1–2 sentences), what you say to Peter, and the setup steps shown before enable.
@@ -94,7 +95,7 @@ CATALOG: dict[str, Addon] = {}
 
 
 def register(addon: Addon) -> Addon:
-    if addon.pricing not in ("free", "credits", "monthly") or addon.status not in ("available", "beta", "coming_soon"):
+    if addon.pricing not in ("free", "balance", "monthly") or addon.status not in ("available", "beta", "coming_soon"):
         raise ValueError(f"invalid add-on {addon.key}")
     CATALOG[addon.key] = addon
     return addon
@@ -117,9 +118,11 @@ register(Addon(
     needs=("Virksomhedens navn eller nummer", "Dit mobilnummer, hvis de skal kunne ringe tilbage"),
     description="Bed assistenten ringe til fx værkstedet, frisøren eller boligforeningen. Du godkender hvert opkald, "
                 "før der bliver ringet, og ser præcis hvad assistenten må spørge om og sige ja til. Opkald er med i "
-                "din plan (prøveperioden tæller som Plus); ud over månedens opkald koster et ekstra opkald 3 credits, "
-                "som du får igen, hvis ingen tager telefonen.",
-    icon="phone", category="opkald", price_text="Med i alle planer – ekstra opkald for 3 credits", pricing="credits",
+                "din plan (prøveperioden tæller som Plus). Ud over månedens opkald betaler du et ekstra opkald fra din "
+                f"opkaldssaldo: {markets.privat_extra_call_text()}.",
+    icon="phone", category="opkald",
+    price_text="Med i alle planer – ekstra opkald betales fra opkaldssaldoen",
+    pricing="balance",
     what="Peter ringer til værkstedet, frisøren eller lægen for dig og aftaler en tid. Du godkender hvert opkald, "
          "før der bliver ringet, og ser bagefter, hvad virksomheden svarede.",
     example="«Ring til cykelværkstedet og find en tid torsdag efter klokken tre»",
@@ -817,7 +820,7 @@ def enabled_keys(db: OrmSession, ws_id: uuid.UUID) -> set[str]:
 
 def _stops_without_plan(a: Addon) -> bool:
     """Needs a plan to RUN: every app with `included_in`. «Ring for mig» too (decision Fürster 2026-11-11): without a
-    plan it stops – no credits path; credits only pay for EXTRA calls once a plan's monthly calls are used."""
+    plan it stops – the Opkaldssaldo only pays for EXTRA calls once a plan's monthly calls are used."""
     return bool(a.included_in)
 
 

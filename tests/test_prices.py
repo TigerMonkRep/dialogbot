@@ -102,10 +102,12 @@ def test_the_website_price_table_is_the_markets_table():
     assert table["erhverv"]["DKK"] == {
         "monthly": prices.SUBSCRIPTION_MONTHLY_NET_MINOR, "call": prices.CAMPAIGN_CALL_NET_MINOR,
         "minute": prices.CAMPAIGN_MINUTE_NET_MINOR, "extra_minute": prices.INBOUND_EXTRA_MINUTE_NET_MINOR,
-        "setup": prices.SPECIALIST_SETUP_NET_MINOR}
+        "call_answered": prices.OUTBOUND_CALL_ANSWERED_NET_MINOR, "call_voicemail": prices.OUTBOUND_CALL_VOICEMAIL_NET_MINOR,
+        "call_no_answer": prices.OUTBOUND_CALL_NO_ANSWER_NET_MINOR, "setup": prices.SPECIALIST_SETUP_NET_MINOR}
     assert table["privat"]["DKK"] == {p["key"]: {"monthly": p["monthly_minor"], "yearly_monthly": p["yearly_monthly_minor"],
                                                  "yearly_total": p["yearly_total_minor"]} for p in prices.PRIVAT_PLANS}
-    assert table["privatCreditPack"]["DKK"] == prices.PRIVAT_CREDIT_PACK_GROSS_MINOR
+    assert table["privatExtraCall"]["DKK"] == {"answered": 500, "voicemail": 125, "no_answer": 31, "minute": 250, "max": 1750}
+    assert table["privatTopups"]["DKK"] == list(prices.PRIVAT_TOPUPS_GROSS_MINOR) and "privatCreditPack" not in table
     assert table["inboundIncludedMinutes"] == prices.INBOUND_INCLUDED_MINUTES and table["privatTrialDays"] == prices.PRIVAT_TRIAL_DAYS
     assert table["localeCurrency"] == {"da": "DKK", "sv": "SEK", "no": "NOK", "en": "EUR", "de": "EUR", "es": "EUR", "fr": "EUR", "it": "EUR"}
 

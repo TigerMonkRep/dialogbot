@@ -53,18 +53,21 @@ export function Blocks({ blocks, vars, ulClassName }: { blocks: Block[]; vars?: 
   })}</>;
 }
 
-export async function LegalPage({ label, title, intro, updated, sections }: {
+/** `audience="privat"`: the Dialogbot Privat frame – orange theme, the logo goes to /privat and «Vilkår» to /privat/vilkaar. */
+export async function LegalPage({ label, title, intro, updated, sections, audience }: {
   label: string; title: string; intro?: React.ReactNode; updated: string; sections: [string, React.ReactNode][];
+  audience?: "privat";
 }) {
   const t = await getT("legal");
   const notice = t("notice");
+  const privat = audience === "privat";
   return (
-    <div className="min-h-dvh bg-panel text-ink">
+    <div className="min-h-dvh bg-panel text-ink" data-theme={privat ? "privat" : undefined}>
       <header className="bg-paper border-b-2 border-ink">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 min-h-16 flex items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-2.5"><LogoMark size={32} /><span className="font-display font-extrabold text-[20px] tracking-[-0.3px] text-ink">Dialogbot</span></Link>
+          <Link href={privat ? "/privat" : "/"} className="flex items-center gap-2.5"><LogoMark size={32} /><span className="font-display font-extrabold text-[20px] tracking-[-0.3px] text-ink">{privat ? "Dialogbot Privat" : "Dialogbot"}</span></Link>
           <nav className="flex items-center gap-1" aria-label={t("shell.nav")}>
-            <Link href="/vilkaar" className="inline-flex items-center min-h-[44px] px-3 rounded-xl text-[14px] font-semibold text-ink hover:bg-panel">{t("shell.terms")}</Link>
+            <Link href={privat ? "/privat/vilkaar" : "/vilkaar"} className="inline-flex items-center min-h-[44px] px-3 rounded-xl text-[14px] font-semibold text-ink hover:bg-panel">{t("shell.terms")}</Link>
             <Link href="/privatliv" className="inline-flex items-center min-h-[44px] px-3 rounded-xl text-[14px] font-semibold text-ink hover:bg-panel">{t("shell.privacy")}</Link>
             <Link href="/kontakt" className="inline-flex items-center min-h-[44px] px-3 rounded-xl text-[14px] font-semibold text-ink hover:bg-panel">{t("shell.contact")}</Link>
           </nav>

@@ -40,6 +40,21 @@ def currency(row_currency: str | None, locale: str | None) -> str:
     return markets.currency_for_locale(norm_locale(locale))
 
 
+# The consumer terms (web /privat/vilkaar, legal.json → privatTerms; F-PDEC-03). The version a customer bought under is
+# written into the Checkout metadata (`terms_version`) of the plan and of a top-up, and the page is linked above the pay
+# button. Must equal privatTerms.version in all 8 languages (tests/test_prices.py).
+TERMS_VERSION = "1"
+TERMS_PATH = "/privat/vilkaar"
+
+
+def terms_note(base_url: str, locale: str | None) -> str:
+    """The line above Checkout's pay button that links the terms (Danish for da, English otherwise, like the rest)."""
+    url = base_url.rstrip("/") + TERMS_PATH
+    if norm_locale(locale) == "da":
+        return f"Handelsbetingelser for Dialogbot Privat (version {TERMS_VERSION}): {url}"
+    return f"Terms of sale for Dialogbot Privat (version {TERMS_VERSION}): {url}"
+
+
 TAX_CODE = "txcd_10103000"  # Stripe Tax: Software as a service (SaaS) - personal use
 
 

@@ -240,7 +240,8 @@ def checkout(db: OrmSession, ctx, *, plan: str, interval: str, code: str | None 
     if row.currency != currency:
         row.currency = currency  # a customer keeps the currency of its first Checkout
         ledger.adopt_currency(db, ctx.ws_id, currency)  # the Opkaldssaldo follows (the welcome bonus was in DKK)
-    meta = {"kind": KIND, "workspace_id": str(ctx.ws_id), "plan": plan, "interval": interval, "currency": currency}
+    meta = {"kind": KIND, "workspace_id": str(ctx.ws_id), "plan": plan, "interval": interval, "currency": currency,
+            "terms_version": market.TERMS_VERSION}  # the Privat terms the customer buys under (F-PDEC-03)
     from app.modules.privat import addons
 
     if app and app in addons.CATALOG:
@@ -277,8 +278,9 @@ def checkout(db: OrmSession, ctx, *, plan: str, interval: str, code: str | None 
         "success_url": f"{base}/privat/konto?abonnement=ok&session_id={{CHECKOUT_SESSION_ID}}"
                        + (f"&app={meta['app']}" if meta.get("app") else ""),
         "cancel_url": f"{base}/privat/konto?abonnement=annulleret"}
-    if trial_note:
-        payload["custom_text"] = {"submit": {"message": trial_note}}
+    # The trial rule (if any) and the link to the consumer terms, above the pay button.
+    payload["custom_text"] = {"submit": {"message": " ".join(
+        x for x in (trial_note, market.terms_note(base, locale)) if x)}}
     if row.stripe_customer_id:
         payload["customer"] = row.stripe_customer_id
     else:

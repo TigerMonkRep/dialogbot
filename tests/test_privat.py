@@ -209,7 +209,10 @@ def test_payment_signal_twice(api, client, pv, db, monkeypatch):
         "url": "https://checkout.stripe.com/c/pay/cs_test_1"}
     data = next(d for p, d in sent if p == "/checkout/sessions")  # (the VAT tax rate is looked up first)
     assert data["mode"] == "payment" and data["metadata"]["workspace_id"] == str(ws)
-    assert data["metadata"] == {"workspace_id": str(ws), "kind": "privat_topup", "amount_minor": "10000", "currency": "DKK"}
+    assert data["metadata"] == {"workspace_id": str(ws), "kind": "privat_topup", "amount_minor": "10000", "currency": "DKK",
+                                "terms_version": "1"}  # F-PDEC-03
+    assert data["custom_text"]["submit"]["message"].startswith("Handelsbetingelser for Dialogbot Privat (version 1): ")
+    assert data["custom_text"]["submit"]["message"].endswith("/privat/vilkaar")
     assert data["line_items"][0]["price_data"]["unit_amount"] == 10000
     assert data["line_items"][0]["price_data"]["product_data"]["name"] == "Opkaldssaldo – Dialogbot Privat"
     meta = {"workspace_id": str(ws), "kind": "privat_topup", "amount_minor": "10000", "currency": "DKK"}

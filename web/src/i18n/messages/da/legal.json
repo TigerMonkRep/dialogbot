@@ -266,5 +266,166 @@
         ]
       }
     ]
+  },
+  "privatTerms": {
+    "meta": {
+      "title": "Vilkår for Dialogbot Privat | Dialogbot",
+      "description": "Handelsbetingelser for Dialogbot Privat: planer, prøveperiode, fortrydelsesret, opkaldssaldo og dine data."
+    },
+    "version": "1",
+    "label": "Vilkår · Dialogbot Privat",
+    "title": "Handelsbetingelser for Dialogbot Privat",
+    "updated": "Version 1 · gældende fra 11. november 2026.",
+    "intro": "Disse vilkår gælder, når du som privatperson opretter en konto og bruger Dialogbot Privat. \"Vi\" er {name} (CVR-nr. {cvr}), {address}. \"Du\" er den person, der har kontoen. Dialogbot til virksomheder har sine egne vilkår.",
+    "sections": [
+      {
+        "title": "1. Aftalen",
+        "body": [
+          {"type": "p", "text": "Aftalen er mellem dig og {name}. Den indgås, når du opretter en konto, og omfatter de køb, du laver i Dialogbot Privat (en plan eller en optankning af opkaldssaldoen). Du skal være fyldt 18 år for at købe en plan eller fylde saldoen op."},
+          {"type": "p", "text": "Vilkårene findes på flere sprog. Er der forskel på sprogversionerne, gælder den danske."}
+        ]
+      },
+      {
+        "title": "2. Hvad Dialogbot Privat er",
+        "body": [
+          {"type": "p", "text": "Dialogbot Privat er en personlig assistent i en app og på nettet. Med den kan du:"},
+          {"type": "ul", "items": [
+            "lave lister, opgaver og påmindelser,",
+            "bruge apps i appens butik, fx kalender, pakker og regninger – hvilke apps der er med, afhænger af din plan,",
+            "dele lister og ønskelister med andre,",
+            [{"b": "«Ring for mig»:"}, " assistenten ringer på dine vegne til en virksomhed eller et sted. Før hvert opkald ser du, hvem der ringes til, hvad assistenten må sige og aftale, og hvad opkaldet højst koster. Der ringes først, når du har godkendt opkaldet,"],
+            [{"b": "Hjemmesidebooking:"}, " assistenten booker en tid via en virksomheds hjemmeside. Intet bookes, før du har godkendt det."]
+          ]},
+          {"type": "p", "text": "Assistenten bruger kunstig intelligens. Den kan tage fejl eller misforstå, så tjek vigtige aftaler. Når den ringer, siger den altid, at den er en AI. Funktioner, der er markeret som \"på vej\", er ikke en del af aftalen, før de er lanceret."}
+        ]
+      },
+      {
+        "title": "3. Gratis konto",
+        "body": [
+          {"type": "p", "text": "Du kan oprette en gratis konto uden betalingskort. Den er til lister, som andre deler med dig: Du kan se dem, krydse af og reservere ønsker. Egne lister, opgaver, påmindelser og opkald kræver en plan eller en prøveperiode – det, du opretter uden, gemmes som udkast, indtil du vælger en plan. Den gratis konto koster intet og kan slettes når som helst."}
+        ]
+      },
+      {
+        "title": "4. Planer og priser",
+        "body": [
+          {"type": "p", "text": "Der er tre planer. Du kan betale månedligt eller årligt. Alle priser er inkl. moms og vises i den valuta, der gælder for dit land."},
+          {"type": "ul", "items": [
+            [{"b": "Basis:"}, " {pBasis} pr. måned, eller {pBasisYearTotal} pr. år (svarer til {pBasisYear} pr. måned)."],
+            [{"b": "Plus:"}, " {pPlus} pr. måned, eller {pPlusYearTotal} pr. år (svarer til {pPlusYear} pr. måned)."],
+            [{"b": "Familie:"}, " {pFamilie} pr. måned, eller {pFamilieYearTotal} pr. år (svarer til {pFamilieYear} pr. måned)."]
+          ]},
+          {"type": "p", "text": "Hvad hver plan indeholder – antal opkald pr. måned, antal personer og apps – står på prissiden og i appen, når du vælger plan. Opkald inden for planen koster ikke ekstra. Planens opkald gælder pr. kalendermåned og overføres ikke til næste måned. Et opkald, som ingen tager, eller som fejler, tæller ikke med."}
+        ]
+      },
+      {
+        "title": "5. Prøveperiode og betaling",
+        "body": [
+          {"type": "p", "text": "En plan starter med {pTrialDays} dages gratis prøveperiode med planens rettigheder. Du lægger et betalingskort, når du starter prøveperioden. Der trækkes intet i prøveperioden; prisen trækkes først, når den er slut, og derefter forud ved starten af hver måned eller hvert år."},
+          {"type": "p", "text": "Der er én prøveperiode pr. konto og pr. betalingskort. Har kortet haft en prøveperiode hos Dialogbot Privat før, starter planen med det samme og betales fra den dag. Det står også på betalingssiden, før du betaler."},
+          {"type": "p", "text": "Betalingen sker via vores betalingsudbyder Stripe. Vi gemmer ikke selv kortoplysninger. Kan en betaling ikke gennemføres, får du besked. Lykkes den ikke, efter at Stripe har prøvet igen, ophører planen."}
+        ]
+      },
+      {
+        "title": "6. Opsigelse og skift af plan",
+        "body": [
+          {"type": "p", "text": "Der er ingen binding. Du kan opsige når som helst i appen under din konto. Planen gælder til udgangen af den periode, du har betalt for (måned eller år), og derefter trækkes der ikke mere. Opsiger du i prøveperioden, betaler du intet."},
+          {"type": "p", "text": "Betalte perioder refunderes ikke, medmindre du har ret til det efter loven, fx efter fortrydelsesretten (punkt 7) eller ved en mangel (punkt 14). Du kan skifte plan og betalingsmåde samme sted; prisen vises, før du bekræfter."},
+          {"type": "p", "text": "Vi kan opsige aftalen med 30 dages varsel. Har du betalt for en periode, der rækker ud over varslet, refunderer vi den forholdsmæssige del. Misbruger du tjenesten groft (punkt 11), kan vi lukke adgangen uden varsel."}
+        ]
+      },
+      {
+        "title": "7. Fortrydelsesret",
+        "body": [
+          {"type": "p", "text": "Som forbruger har du 14 dages fortrydelsesret efter forbrugeraftaleloven, når du køber en plan eller fylder opkaldssaldoen op. Fristen løber fra den dag, købet er gennemført."},
+          {"type": "ul", "items": [
+            [{"b": "Plan med prøveperiode:"}, " Fortrydelsesfristen og prøveperioden løber fra samme dag. Fortryder du inden for de 14 dage, koster det dig intet. Er der alligevel trukket en betaling, får du hele beløbet tilbage."],
+            [{"b": "Plan uden prøveperiode"}, " (kortet har haft en prøveperiode før): Fortryder du inden for 14 dage, får du hele beløbet tilbage."],
+            [{"b": "Optankning af opkaldssaldoen:"}, " Fortryder du inden for 14 dage, får du den del tilbage, der ikke er brugt. Opkald, du selv har godkendt og fået gennemført, betales med den brugte del."]
+          ]},
+          {"type": "p", "parts": ["Du fortryder ved at skrive til ", {"email": true}, " inden fristen. Du kan bruge standardfortrydelsesformularen fra forbrugeraftaleloven, men det er ikke et krav. Vi refunderer senest 14 dage efter, at vi har modtaget din besked, til det betalingsmiddel, du betalte med."]}
+        ]
+      },
+      {
+        "title": "8. Opkaldssaldo og ekstra opkald",
+        "body": [
+          {"type": "p", "text": "Opkaldssaldoen er et forudbetalt beløb i kroner (eller i den valuta, din konto bruger). Du fylder den op med {pTopup1}, {pTopup2} eller {pTopup3} inkl. moms."},
+          {"type": "p", "text": "Når planens opkald for måneden er brugt, kan du godkende et ekstra opkald, som betales fra saldoen:"},
+          {"type": "ul", "items": [
+            "{pXAnswered}, hvis nogen tager telefonen, {pXVoicemail} ved telefonsvarer og {pXNoAnswer}, hvis ingen svarer, det er optaget, eller udfaldet er ukendt,",
+            "plus {pXMinute} pr. påbegyndt samtaleminut, når nogen tager telefonen,",
+            "højst {pXMax} pr. opkald. Når du godkender, reserveres {pXMax} på saldoen. Efter opkaldet trækkes den faktiske pris, og resten frigives. Fejler opkaldet hos os eller vores teleudbyder, trækkes intet."
+          ]},
+          {"type": "p", "text": "Prisen står på opkaldet, før du godkender det. «Ring for mig» kræver en plan; saldoen kan ikke bruges til opkald uden plan. Uden plan kan saldoen bruges til at aktivere en ekstra opgave for {pExtraTask}."},
+          {"type": "p", "text": "Saldoen udløber ikke, så længe kontoen findes. Den kan ikke overføres til andre. Bonusser, som vi lægger på saldoen (fx velkomstbonus på {pWelcome} og henvisningsbonus på {pReferral}), kan kun bruges i Dialogbot Privat og udbetales ikke."},
+          {"type": "p", "parts": ["Ubrugt saldo, som du selv har indbetalt, refunderer vi, når du beder om det i forbindelse med opsigelse eller sletning af kontoen. Skriv til ", {"email": true}, ", før du sletter kontoen. Vi refunderer til det betalingsmiddel, du betalte med, senest 14 dage efter din anmodning."]}
+        ]
+      },
+      {
+        "title": "9. Hjemmesidebooking",
+        "body": [
+          {"type": "p", "text": "Hjemmesidebooking er med i alle planer og i prøveperioden under fair use: almindelig personlig brug for dig (og din husstand på Familie). Bruges funktionen i et omfang, der ikke ligner personlig brug, kan vi begrænse den – vi giver dig besked først."},
+          {"type": "p", "text": "En booking er en aftale mellem dig og virksomheden. Virksomhedens egne regler, fx om afbud og gebyrer, gælder for den."}
+        ]
+      },
+      {
+        "title": "10. Familie og husstand",
+        "body": [
+          {"type": "p", "text": "Familie-planen ejes af den, der har købt den. Ejeren styrer planen og betalingen og kan invitere og fjerne medlemmer, op til det antal personer planen omfatter. Medlemmerne får planens rettigheder og deler planens opkald pr. måned."},
+          {"type": "p", "text": "Hvert medlem har sin egen konto, sin egen opkaldssaldo og sine egne data. Ingen i husstanden – heller ikke ejeren – kan se de andres lister, opgaver, opkald eller saldo, medmindre de selv deler dem. Ophører planen, eller forlader et medlem husstanden, mister medlemmet planens rettigheder, men beholder sine egne data."}
+        ]
+      },
+      {
+        "title": "11. Din brug af tjenesten",
+        "body": [
+          {"type": "p", "text": "Hold dit login for dig selv. Du er ansvarlig for de opgaver og opkald, du beder assistenten om. «Ring for mig» og hjemmesidebooking må kun bruges til lovlige, personlige ærinder – ikke til chikane, salg eller markedsføring, til at udgive dig for en anden eller til at ringe til alarmnumre. Del kun andres oplysninger, fx telefonnumre, når du har lov til det."},
+          {"type": "p", "text": "Vi kan afvise et opkald eller en opgave, der strider mod disse regler eller mod loven."}
+        ]
+      },
+      {
+        "title": "12. Annoncer og affiliate-links",
+        "body": [
+          {"type": "p", "text": "Nogle dele af appen kan vise annoncer, og nogle forslag (fx rejser) kan indeholde affiliate-links, hvor vi får provision, hvis du køber noget. De er altid markeret med «Annonce»."}
+        ]
+      },
+      {
+        "title": "13. Persondata",
+        "body": [
+          {"type": "p", "parts": ["Vi er dataansvarlige for de oplysninger, du gemmer i Dialogbot Privat. Hvordan vi behandler dem, og hvilke underdatabehandlere vi bruger, står i ", {"link": "/privatliv", "text": "privatlivspolitikken"}, ". Kort fortalt:"]},
+          {"type": "ul", "items": [
+            "Chats og opkaldsresuméer gemmes, så længe kontoen findes. Du kan slette dem enkeltvis når som helst.",
+            "Rå transskripter af opkald slettes efter 90 dage. Vi optager ikke lyd.",
+            "Du kan hente en kopi af dine data. Linket til eksporten gælder i 7 dage.",
+            "Sletter du kontoen, slettes dine data med det samme, undtagen det, loven kræver, at vi gemmer (fx bogføring af betalinger). Har du forbundet en Google-kalender, tilbagekalder vi adgangen hos Google. For Microsoft (Outlook) sletter vi nøglerne hos os; du kan selv fjerne Dialogbot under din Microsoft-konto."
+          ]}
+        ]
+      },
+      {
+        "title": "14. Mangler og ansvar",
+        "body": [
+          {"type": "p", "text": "Du har de rettigheder, loven giver dig, hvis tjenesten ikke virker som lovet (reklamation). Kontakt os inden rimelig tid, efter at du har opdaget fejlen, så retter vi den eller finder en anden løsning."},
+          {"type": "p", "text": "Vi er ansvarlige efter dansk rets almindelige regler. Vi er ikke ansvarlige for det, en virksomhed, du har kontaktet via assistenten, gør eller undlader (fx en tid, den ikke overholder), for nedbrud hos teleselskaber og cloududbydere eller for forhold uden for vores kontrol. Intet i disse vilkår begrænser de rettigheder, du har som forbruger efter loven."}
+        ]
+      },
+      {
+        "title": "15. Klage",
+        "body": [
+          {"type": "p", "parts": ["Er du utilfreds, så skriv til ", {"email": true}, " – vi svarer så hurtigt, vi kan. Bliver vi ikke enige, kan du klage til Nævnenes Hus, Forbrugerklagenævnet, Toldboden 2, 8800 Viborg, via ", {"href": "https://www.forbrug.dk", "text": "forbrug.dk"}, "."]},
+          {"type": "p", "parts": ["Bor du i et andet EU-land, kan du få hjælp hos ", {"href": "https://www.forbrugereuropa.dk", "text": "Forbrugereuropa"}, " (det europæiske forbrugercenter i Danmark)."]},
+          {"type": "p", "text": "Aftalen er underlagt dansk ret. Bor du i et andet land, beholder du den beskyttelse, som forbrugerreglerne i dit eget land giver dig, og du kan altid bruge de domstole, loven giver dig ret til."}
+        ]
+      },
+      {
+        "title": "16. Ændringer af vilkårene",
+        "body": [
+          {"type": "p", "text": "Vi kan ændre vilkårene og priserne med 30 dages varsel på e-mail og i appen. Er en ændring til din ugunst, kan du opsige, før den træder i kraft. Hver version har et nummer og en dato øverst på siden."}
+        ]
+      },
+      {
+        "title": "Kontakt",
+        "body": [
+          {"type": "p", "parts": ["{name}, CVR-nr. {cvr}, {address} · ", {"email": true}, " · ", {"link": "/kontakt", "text": "Kontakt og support"}]}
+        ]
+      }
+    ]
   }
 }

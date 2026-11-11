@@ -1,0 +1,22 @@
+{
+  "/privat": {
+    "meta": "#C4461A",
+    "accent": "#c4461a",
+    "themed": 1
+  },
+  "/privat/start/1": {
+    "meta": "#C4461A",
+    "accent": "#c4461a",
+    "themed": 1
+  },
+  "/privat/offline": {
+    "meta": "#C4461A",
+    "accent": "#c4461a",
+    "themed": 1
+  },
+  "/privat/invitation/ikke-et-token": {
+    "meta": "#C4461A",
+    "accent": "#c4461a",
+    "themed": 1
+  }
+}

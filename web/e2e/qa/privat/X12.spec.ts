@@ -5,7 +5,7 @@ import { payFakeStripe, shot } from "./p2-helpers";
 /** X12 (P1): Butikken – hvert app-ikon → «Hvad den gør» → egen installér-flow; installér/afinstallér idempotent.
  *  Real backend (tests/qa/qa_privat_stack.py). API-level idempotency for every app: tests/qa/test_qa_privat_x10_x12.py. */
 
-type Addon = { key: string; name: string; enabled: boolean; status: string; requires_plan: boolean; what: string };
+type Addon = { key: string; name: string; enabled: boolean; status: string; requires_plan: boolean; what: string; disabled_at?: string | null };
 
 test.beforeEach(async ({ request }) => {
   test.skip(!(await needsPrivatStack(request)), "kræver tests/qa/qa_privat_stack.py og next med API_BASE_URL til den");
@@ -22,13 +22,18 @@ test("hvert app-ikon i Butikken åbner sin egen side med «Hvad den gør» og si
     await page.goto("/privat/butik");
     await waitIdle(page);
     const row = page.locator(`[data-testid=app-row-${a.key}]:visible`).first();
-    await expect(row, a.key).toBeVisible();
-    await row.click();
-    if (a.enabled) {
+    if (a.enabled || a.disabled_at) {
+      // Butikken shows only what you do not have (ux-audit #9); an app that is on lives in Mine apps.
+      await expect(row, a.key).toHaveCount(0);
+      await page.goto("/privat/apps");
+      await waitIdle(page);
+      await page.locator(`[data-testid=app-row-${a.key}]:visible`).first().click();
       await expect(page, a.key).toHaveURL(new RegExp(`/privat/apps/${a.key}$`));
       await expect(page.getByTestId("app-page").or(page.getByTestId("app-kept")).first()).toBeVisible();
       continue;
     }
+    await expect(row, a.key).toBeVisible();
+    await row.click();
     await expect(page, a.key).toHaveURL(new RegExp(`/privat/butik/${a.key}$`));
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(a.name);
     await expect(page.getByText("Hvad den gør", { exact: true }).first(), a.key).toBeVisible();

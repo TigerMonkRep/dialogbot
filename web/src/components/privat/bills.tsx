@@ -21,6 +21,8 @@ export function BillsPanel() {
   const [due, setDue] = useState("");
   const [freq, setFreq] = useState<BillFrequency>("monthly");
   const [err, setErr] = useState<string | null>(null);
+  // «Fjern» asks once (notes-PB 7): on 390 px it sits next to the reminder picker, and a removed bill cannot be undone.
+  const [confirm, setConfirm] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     try { setData(await api.bills()); } catch (e) { setErr((e as ApiError).message); }
@@ -64,13 +66,18 @@ export function BillsPanel() {
                   <label className="text-[13px] text-muted flex items-center gap-1.5">
                     {t("bills.remind")}
                     <select value={b.remind_days_before} onChange={(e) => void run(() => api.updateBill(b.id, { remind_days_before: Number(e.target.value) }))}
-                      className="min-h-[40px] rounded-xl border-2 border-ink bg-paper px-2 text-[14px]">
+                      className="min-h-[44px] rounded-xl border-2 border-ink bg-paper px-2 text-[14px]">
                       {Array.from(new Set([...DAYS, b.remind_days_before])).sort((x, y) => x - y).map((d) => (
                         <option key={d} value={d}>{d === 0 ? t("bills.onTheDay") : t("bills.daysBefore", { n: d })}</option>
                       ))}
                     </select>
                   </label>
-                  <Button variant="outline" className="rounded-full border-2" onClick={() => void run(() => api.removeBill(b.id))} aria-label={`${t("bills.remove")}: ${b.name}`}>{t("bills.remove")}</Button>
+                  {confirm === b.id ? (
+                    <span className="flex items-center gap-2 flex-wrap" role="group" aria-label={`${t("bills.remove")}: ${b.name}`}>
+                      <Button variant="danger" className="rounded-full" onClick={() => { setConfirm(null); void run(() => api.removeBill(b.id)); }}>{t("bills.removeYes")}</Button>
+                      <Button variant="outline" className="rounded-full border-2" onClick={() => setConfirm(null)}>{t("wish.cancel")}</Button>
+                    </span>
+                  ) : <Button variant="outline" className="rounded-full border-2" onClick={() => setConfirm(b.id)} aria-label={`${t("bills.remove")}: ${b.name}`}>{t("bills.remove")}</Button>}
                 </span>
               </li>
             ))}

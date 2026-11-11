@@ -522,7 +522,26 @@ def _user_wrote(turn: Turn, phone_e164: str) -> bool:
     texts = [turn.text] + [m.text for m in turn.db.scalars(
         select(PrivateMessage).where(PrivateMessage.workspace_id == turn.ctx.ws_id, PrivateMessage.role == "user")
         .order_by(PrivateMessage.created_at.desc()).limit(HISTORY))]
-    return any(national in _digits(t) for t in texts)
+    return any(national in _phone_numbers(t) for t in texts)
+
+
+_PHONE_RUN = re.compile(r"(?<![\d])(?:\+|00)?[\d][\d \-.]{6,18}[\d](?![\d])")
+
+
+def _phone_numbers(text: str | None) -> set[str]:
+    """The 8-digit national numbers written as a number on their own («20 30 40 50», «+45 20304050», «0045-2030
+    4050») – never 8 digits taken from inside a longer run such as an order or account number (F-PX-01)."""
+    out = set()
+    for m in _PHONE_RUN.finditer(text or ""):
+        d = _digits(m.group(0))
+        if d.startswith("0045"):
+            d = d[4:]
+        elif d.startswith("45") and len(d) == 10:
+            d = d[2:]
+        if len(d) == 8:
+            out.add(d)
+        out |= {tok for tok in re.findall(r"\d+", m.group(0)) if len(tok) == 8}  # «86123456 20304050»
+    return out
 
 
 LOCATION_OPTIONS = [
@@ -652,7 +671,7 @@ def answer_option(db: OrmSession, ctx, message_id: uuid.UUID, option_id: str) ->
     if m is None or not m.options:
         raise NotFound("Beskeden findes ikke")
     opt = next((o for o in m.options if o.get("id") == option_id), None)
-    if opt is None:
+    if opt is None or opt.get("action") == "notice":  # a marker for the app (F-PDEC-02), not an answer
         raise NotFound("Valget findes ikke")
     if m.answered_option_id:
         return []  # answered before: a repeated tap changes nothing
@@ -1174,7 +1193,8 @@ def tool_cancel_subscription(turn: Turn, a: dict) -> str:
                               "may_not": "Sige ja til tilbud om at blive, en ny binding, et andet abonnement eller betale"})
     letter = subs_app.cancellation_letter(row, turn.ctx.user.display_name,
                                           str(a.get("customer_no") or "").strip()[:40] or None)
-    subs_app.mark_cancelling(turn.db, turn.ctx.ws_id, row["id"])
+    # Only a letter so far – the user still has to send it. The subscription stays «active», so the «sidste dag at
+    # opsige» reminder keeps running until they have (F-PA-03; «the status changes only when the user sends …»).
     turn.say("text", f"Her er opsigelsen af {row['name']}. Send den fra din egen mail eller via deres "
                      f"kontaktformular, og gem bekræftelsen:\n\n{letter}{brand.offer_line(row.get('category'))}")
     return "Opsigelsen er skrevet."
@@ -1274,7 +1294,7 @@ def tool_add_purchase(turn: Turn, a: dict) -> str:
 
     row = warranty.add(turn.db, turn.ctx.ws_id, product=str(a.get("product") or ""), bought=a.get("bought"),
                        shop=str(a.get("shop") or ""), price=a.get("price"), warranty_years=a.get("warranty_years"))
-    turn.say("text", f"Gemt: {warranty.line(row)}. Jeg minder dig om det en måned før. Gem selv kvitteringen.")
+    turn.say("text", f"Gemt: {warranty.line(row)}. Jeg minder dig om det en måned før. Tilføj gerne et foto af kvitteringen under Garanti.")
     return "Gemt."
 
 

@@ -19,7 +19,7 @@ from app.config import get_settings
 from app.core.errors import ApiError, Conflict, NotFound
 from app.models import ExternalBusinessContact, PrivateCall, PrivateMessage, PrivateTask
 from app.modules.browser import lookup, profiles, routing, service
-from app.modules.privat import ledger, places, rules, sharing
+from app.modules.privat import places, rules, sharing
 
 log = structlog.get_logger("dialogbot.browser")
 MAX_WINDOWS = 5
@@ -92,8 +92,7 @@ def _facts(db, ctx, row: ExternalBusinessContact, *, user_said, intent, concrete
     facts = routing.Facts(
         user_said=user_said, intent=intent, website=row.website, engine=engine, booking_url=booking_url,
         has_name_and_phone=bool((u.display_name or "").strip() and p.phone_e164 and p.phone_verified_at),
-        concrete=concrete, worker_enabled=get_settings().browser_worker_enabled,
-        has_credit=ledger.balance(db, ctx.ws_id) >= service.BROWSER_BOOKING_CREDITS)
+        concrete=concrete, worker_enabled=get_settings().browser_worker_enabled)
     return facts, engine, booking_url
 
 
@@ -106,6 +105,11 @@ def tool_start_booking(turn, a: dict) -> str:
     if row is None:
         turn.say("text", "Hvilken virksomhed mener du? Skriv navnet og byen.")
         return "Ukendt business_id. Kald find_business først; opfind intet."
+    try:  # without a plan neither track exists (F-PDEC-02): the CTA to Konto, nothing is looked up or started
+        service.require_allowed(db, ctx.ws_id)
+    except ApiError as e:
+        if e.code == "needs_plan":
+            return _blocked(turn, e)
     intent = a.get("intent") if a.get("intent") in service.INTENTS else "book"
     said = a.get("user_said_track") if a.get("user_said_track") in ("ring", "skriv") else None
     svc = " ".join(str(a.get("service") or "").split())[:200]
@@ -120,6 +124,20 @@ def tool_start_booking(turn, a: dict) -> str:
     if d.track == "browser":
         return _browser(turn, row, svc, windows, engine, booking_url)
     return _phone(turn, row, d, svc, windows)
+
+
+def _blocked(turn, e: ApiError) -> str:
+    """No plan (409 needs_plan) or the month's website bookings are used (429 browser_booking_limit): the API's own words
+    in the chat. The option is a marker for the app (CTA «Kræver en plan» → Konto, or the limit text in the user's
+    language), never something to answer. Nothing is started and the Opkaldssaldo never pays instead."""
+    if e.code == "needs_plan":
+        cta = e.extra.get("cta") or {}
+        opt = {"id": "cta:needs_plan", "label": cta.get("label", "Kræver en plan"), "sub": cta.get("href", "/privat/konto"),
+               "action": "notice"}
+    else:
+        opt = {"id": f"notice:{e.code}", "label": "", "action": "notice"}
+    turn.say("text", e.message, options=[opt])
+    return f"Stoppet ({e.code}): {e.message} Der er hverken booket eller ringet. Tilbyd ikke at betale med saldoen."
 
 
 def _phone(turn, row: ExternalBusinessContact, d: routing.Decision, svc: str, windows: list[dict]) -> str:
@@ -148,6 +166,10 @@ def _browser(turn, row: ExternalBusinessContact, svc: str, windows: list[dict], 
 
     db, ctx = turn.db, turn.ctx
     addons.require(db, ctx.ws_id, "ring-for-mig")
+    try:
+        service.require_allowed(db, ctx.ws_id)
+    except ApiError as e:
+        return _blocked(turn, e)
     host_url = booking_url if booking_url and booking_url.startswith("http") else f"https://{booking_url}"
     domains = _allowed_domains(row.website, host_url)
     when = window_text(windows)
@@ -156,8 +178,9 @@ def _browser(turn, row: ExternalBusinessContact, svc: str, windows: list[dict], 
             task = _plan_browser(db, ctx, row, svc, windows, when, domains, engine, host_url)
     except ApiError as e:
         log.warning("browser.start_failed", code=e.code)
-        return _phone(turn, row, routing.Decision("phone", 4, "no_credit" if e.code == "insufficient_credits" else "engine_unknown"),
-                      svc, windows)
+        if e.code in ("needs_plan", "browser_booking_limit"):
+            return _blocked(turn, e)
+        return _phone(turn, row, routing.Decision("phone", 4, "engine_unknown"), svc, windows)
     turn.say("text", f"Jeg prøver at booke online hos {row.name} – du får et forslag at godkende. Intet bliver booket, før du "
                      "siger ja. Du kan altid skrive «ring i stedet».", task_id=task.id)
     return f"Spor: browser. Booking startet (opgave {task.id}). Intet er bekræftet."

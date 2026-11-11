@@ -185,7 +185,7 @@ Se `docs/ADR-004-browser-worker.md` og `browser_worker/README.md`. Branch `feat/
 | LLM-fallback (samme værktøjer og grænser, `ai_usage`, omkostning i `cost_cents`) og telefon-fallback (opgavens opkaldsforslag med det fundne) | testet (scriptet model) | `tests/test_browser_orchestrator.py`, `test_browser_api.py` |
 | DNS-rebinding: opslag via `safe_fetch.resolve_checked` før start (`unsafe_target`), adresser pinnet i Chromium, underdomæner kontrolleret ved brug | testet (simuleret resolver, pinning mod lokal server) | `tests/test_browser_orchestrator.py` |
 | Video klippet til `BROWSER_MAX_SECONDS` før upload (aldrig uklippet), lokale filer slettes | testet | samme |
-| A5 – kørsel fra chatten: værktøjerne `find_business`, `start_booking`, `switch_to_phone`; sporregler 1–4 i kode; opslag i CVR + Google Places gemt i `external_business_contacts` (Alembic `d3e7a2b5c9f1`); 1 credit reserveret/brugt/frigivet; «ring i stedet» | testet (fakes) | `tests/test_browser_assistant.py` |
+| A5 – kørsel fra chatten: værktøjerne `find_business`, `start_booking`, `switch_to_phone`; sporregler 1–4 i kode; opslag i CVR + Google Places gemt i `external_business_contacts` (Alembic `d3e7a2b5c9f1`); booking på hjemmesiden med i alle planer, intet på Opkaldssaldoen, 409 `needs_plan` uden plan, fair use-loft 429 (F-PDEC-02); «ring i stedet» | testet (fakes) | `tests/test_browser_assistant.py` |
 
 **Ikke eksternt verificeret:**
 - **Ingen rigtig bookingside.** Alt er testet mod en lokal HTML-klon bygget efter OnlineBooqs offentlige flow. Selectors, motor-signaturer og tekstmønstre er gæt ud fra flowets form.
@@ -193,7 +193,7 @@ Se `docs/ADR-004-browser-worker.md` og `browser_worker/README.md`. Branch `feat/
 - **Juridisk vurdering ikke gennemgået:** at en agent handler på brugerens vegne på en tredjeparts bookingside (vilkår pr. motor, adgang til data), og opbevaring af evidens med navn/telefon. Skal gennemgås af en jurist, før `BROWSER_WORKER_ENABLED` sættes i prod.
 - Netværksindstillingen uden adgang til cloud-metadata på Render er ikke sat; Render-tjenesten er ikke deployet. Underdomæner kan ikke pinnes mod DNS-rebinding (restrisiko, se ADR).
 - Videoen viser kun de første `BROWSER_MAX_SECONDS` af optagelsen; forslagsbillede, slutbillede og kvitterings-PDF dækker resten.
-- Afgjort ikke: om en plans opkaldskvote skal gælde for browser-bookinger (nu 1 credit for alle).
+- Afgjort 2026-11-11 (F-PDEC-02): browser-bookinger er med i alle planer og bruger hverken opkaldskvoten eller Opkaldssaldoen; skjult fair use-loft pr. måned.
 
 ## Checkpoint 29 — 30. september 2026 (Ambassadørprogrammet)
 

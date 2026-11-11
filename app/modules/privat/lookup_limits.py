@@ -89,8 +89,15 @@ def check(db: OrmSession, ip_hash: str) -> None:
     if (_count(db, ip_hash=ip_hash, outcome="miss", since=minute) >= MISSES_PER_MINUTE
             or _count(db, ip_hash=ip_hash, outcome="miss", since=day) >= MISSES_PER_DAY
             or _count(db, ip_hash=ip_hash, outcome=None, since=minute) >= PER_MINUTE
-            or _count(db, ip_hash=ip_hash, outcome=None, since=day) >= PER_DAY
-            or _count(db, ip_hash=None, outcome="miss", since=hour) >= GLOBAL_MISSES_PER_HOUR):
+            or _count(db, ip_hash=ip_hash, outcome=None, since=day) >= PER_DAY):
+        raise LookupRateLimited(MESSAGE)
+    # The global ceiling (someone is guessing on a large scale) tightens the limits for clients that have missed
+    # themselves in the last hour – it never locks out an invitee with a valid link from a clean address (F-PS-03).
+    if (_count(db, ip_hash=None, outcome="miss", since=hour) >= GLOBAL_MISSES_PER_HOUR
+            and _count(db, ip_hash=ip_hash, outcome="miss", since=hour) > 0):
+        import structlog
+
+        structlog.get_logger("dialogbot.privat.lookups").warning("privat.lookup_global_ceiling", limit=GLOBAL_MISSES_PER_HOUR)
         raise LookupRateLimited(MESSAGE)
 
 

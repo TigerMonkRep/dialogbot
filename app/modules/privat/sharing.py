@@ -143,7 +143,9 @@ def authorize(db: OrmSession, ctx, resource_id: uuid.UUID | None, mode: str | No
     if mode == "wishlist" and task.list_type is None:
         task.list_type = "wishlist"
     task.updated_at = rules.now()
-    return {"mode": mode, "role": "editor" if mode == "wishlist" else role}
+    # A wishlist guest can see and reserve («kan reservere») – never change the owner's wishes: viewer (F-UX-03).
+    # Reserving needs no editor role (reserve() only refuses the owner).
+    return {"mode": mode, "role": "viewer" if mode == "wishlist" else role}
 
 
 def preview(db: OrmSession, inv: PrivateInvite) -> dict:

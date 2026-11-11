@@ -16,16 +16,16 @@ import re
 import uuid
 from datetime import UTC, datetime, timedelta
 
-from sqlalchemy import select, update
+from sqlalchemy import func, select, update
 from sqlalchemy.orm import Session as OrmSession
 
 from app.config import get_settings
 from app.core import outbox
-from app.core.errors import Conflict, Forbidden, NotFound, ValidationFailed
+from app.core.errors import ApiError, Conflict, Forbidden, NotFound, ValidationFailed
 from app.models import BrowserRun, PrivateMessage, PrivateTask
 from app.modules.browser import storage
 from app.modules.browser.events import BROWSER_EVENT_TYPES, EVENT_DECISION, EVENT_RUN  # noqa: F401
-from app.modules.privat import ledger, sharing
+from app.modules.privat import ledger, rules, sharing
 from app.modules.privat import service as privat_service
 
 ACTIVE = ("planned", "running", "awaiting_approval", "approved")
@@ -33,11 +33,36 @@ FINAL = ("done", "failed", "fallback_phone")
 APPROVAL_MAX_AGE = timedelta(hours=24)  # a yes older than a day no longer fits the slot that was shown
 INTENTS = ("book", "flyt", "aflys")
 SAME_AS_APPROVED_KEYS = ("service", "date", "time", "price", "name", "staff")
-# What a browser booking costs, in credits. ONE constant on purpose: a call costs rules.CALL_CREDITS (3) today and the two are
-# not priced differently by decision yet; change this when they are. Reserved at start, spent when the run ends in a booking
-# (or in a click that may have booked), released when nothing was booked.
-BROWSER_BOOKING_CREDITS = 1
-SPENT_ERROR_CODES = ("unexpected_commit", "commit_unconfirmed")
+# A website booking is included in every plan (decision Fürster 2026-11-11, F-PDEC-02): it counts as an ordinary task,
+# moves nothing on the Opkaldssaldo and has no price. Without a plan (or the trial) it is not possible – like «Ring for
+# mig»: 409 needs_plan with the CTA to Konto. Fair use: a hidden cap per Copenhagen calendar month per workspace (one
+# constant, prices.PRIVAT_BROWSER_BOOKINGS_PER_MONTH) – then a friendly 429, never a price.
+BOOKINGS_PER_MONTH = rules.BROWSER_BOOKINGS_PER_MONTH
+LIMIT_TEXT = "Du har brugt månedens hjemmesidebookinger – prøv igen næste måned"
+NEEDS_PLAN_TEXT = "Booking på hjemmesider kræver en plan. Den er med i alle planer – vælg en under Konto."
+
+
+def bookings_this_month(db: OrmSession, ws_id, at: datetime | None = None) -> int:
+    """Website bookings STARTED this calendar month (Europe/Copenhagen) in the workspace, whatever became of them."""
+    from app.modules.privat import subscriptions
+
+    start, end = subscriptions._month_bounds(at or rules.now())
+    return int(db.scalar(select(func.count()).select_from(BrowserRun).where(
+        BrowserRun.workspace_id == ws_id, BrowserRun.created_at >= start, BrowserRun.created_at < end)) or 0)
+
+
+def require_allowed(db: OrmSession, ws_id) -> None:
+    """409 needs_plan without a plan; 429 browser_booking_limit at the month's fair-use cap."""
+    from app.modules.privat import addons, calls, subscriptions
+
+    if not subscriptions.entitlements(db, ws_id)["entitled"]:
+        raise Conflict(NEEDS_PLAN_TEXT, code="needs_plan",
+                       extra={"addon": calls.ADDON, "plans": list(addons.CATALOG[calls.ADDON].included_in),
+                              "cta": calls.NEEDS_PLAN_CTA})
+    if bookings_this_month(db, ws_id) >= BOOKINGS_PER_MONTH:
+        raise ApiError(LIMIT_TEXT, code="browser_booking_limit", status_code=429)
+
+
 
 
 def _now() -> datetime:
@@ -83,16 +108,14 @@ def start_run(db: OrmSession, task: PrivateTask, *, goal: dict, allowed_domains:
                                field_errors=[{"field": "booking_url"}])
     if db.scalar(select(BrowserRun.id).where(BrowserRun.task_id == task.id, BrowserRun.status.in_(ACTIVE))):
         raise Conflict("Der kører allerede en booking for opgaven", code="browser_run_active")
+    privat_service._lock_profile(db, task.workspace_id)  # two starts at once cannot both slip under the month's cap
+    require_allowed(db, task.workspace_id)
     run = BrowserRun(task_id=task.id, workspace_id=task.workspace_id, engine=engine, allowed_domains=domains,
                      goal={**validate_goal(goal), "start_url": booking_url[:1000]}, status="planned",
-                     max_steps=s.browser_max_steps, max_seconds=s.browser_max_seconds)
+                     max_steps=s.browser_max_steps, max_seconds=s.browser_max_seconds, created_at=rules.now())
     db.add(run)
     db.flush()
-    if ledger.balance(db, task.workspace_id) < BROWSER_BOOKING_CREDITS:
-        raise Conflict("En booking på hjemmesiden reserverer 1 credit", code="insufficient_credits")
-    ledger.add(db, task.workspace_id, kind="reserve", amount=-BROWSER_BOOKING_CREDITS, source_ref=f"browser:{run.id}:reserve",
-               task_id=task.id, text="Booking på hjemmeside – reserveret")
-    task.usage_text = f"{BROWSER_BOOKING_CREDITS} credit reserveret"
+    task.paid_by, task.usage_text = "plan", plan_usage_text(db, task.workspace_id)
     task.status, task.next_step, task.who = "in_progress", "Booker online – intet bliver bekræftet uden dit ja", "Dialogbot"
     privat_service.event(db, task, "Dialogbot går i gang med at finde en tid på virksomhedens bookingside")
     privat_service.touch(task)
@@ -174,16 +197,20 @@ def cas(db: OrmSession, run_id: uuid.UUID, from_: tuple[str, ...] | str, to: str
     return res.rowcount == 1
 
 
-def _settle_credit(db: OrmSession, run: BrowserRun, task: PrivateTask, *, spent: bool) -> None:
-    """The reserved credit becomes the price (capture) or comes back (release). Idempotent per run (unique source_ref)."""
-    if spent:
-        ledger.add(db, run.workspace_id, kind="capture", amount=0, source_ref=f"browser:{run.id}:capture", task_id=task.id,
-                   text="Booking på hjemmeside")
-        task.usage_text = f"{BROWSER_BOOKING_CREDITS} credit · booking på hjemmeside"
-    else:
-        ledger.add(db, run.workspace_id, kind="release", amount=BROWSER_BOOKING_CREDITS, source_ref=f"browser:{run.id}:release",
-                   task_id=task.id, text="Booking på hjemmeside ikke gennemført – reservation frigivet")
-        task.usage_text = "Intet forbrug"
+def plan_usage_text(db: OrmSession, ws_id) -> str:
+    """The same words an ordinary task under the plan gets (privat.service): «Med i Plus» / «Med i prøveperioden»."""
+    from app.modules.privat import subscriptions
+
+    ent = subscriptions.entitlements(db, ws_id)
+    return "Med i prøveperioden" if ent["status"] == "trial" else f"Med i {subscriptions.plan_label(ent)}"
+
+
+def _release_old_hold(db: OrmSession, run: BrowserRun, task: PrivateTask) -> None:
+    """A run started before 2026-11-11 (F-PDEC-01) reserved 2,90 kr. on the Opkaldssaldo. A website booking is free now,
+    so that hold comes back whatever the run ended in. Idempotent (ledger.settle runs once per run); no-op for new runs."""
+    if ledger.amount_of(db, f"browser:{run.id}:reserve"):
+        ledger.settle(db, run.workspace_id, f"browser:{run.id}", None, task_id=task.id,
+                      text="Booking på hjemmeside er med i din plan – reservation frigivet")
 
 
 def _owner_message(db: OrmSession, run: BrowserRun, task: PrivateTask, *, kind: str = "text", text: str,
@@ -256,7 +283,7 @@ def finish_done(db: OrmSession, run: BrowserRun, result: dict) -> None:
     price = s.get("price") or ba.get("price")
     run.status, run.finished_at, run.error_code, run.result = "done", _now(), None, result
     task.status, task.next_step, task.who = "done", confirmed, f"{_business(run, task)} har bekræftet"
-    _settle_credit(db, run, task, spent=True)
+    _release_old_hold(db, run, task)
     privat_service.event(db, task, f"Booket: {confirmed}" + (f" · pris {price}" if price else "")
                          + (f" · bookingnr. {result['reference']}" if result.get("reference") else ""))
     ev = run.evidence_urls or []
@@ -292,7 +319,7 @@ def finish_failed(db: OrmSession, run: BrowserRun, error_code: str, *, details: 
     if details:
         run.result = {**(run.result or {}), "error_details": details}
     biz = _business(run, task)
-    _settle_credit(db, run, task, spent=error_code in SPENT_ERROR_CODES)
+    _release_old_hold(db, run, task)
     if error_code == "declined":
         task.status, task.next_step, task.who = "declined", "Afvist – der er ikke booket", "Dig"
         privat_service.event(db, task, "Du afviste bookingen. Intet er booket")
@@ -339,8 +366,8 @@ def finish_fallback(db: OrmSession, run: BrowserRun, error_code: str, found: dic
     run.status, run.finished_at, run.error_code = "fallback_phone", _now(), error_code[:40]
     run.result = {**(run.result or {}), "found": found or {}}
     phone_fallback.apply(db, run, task, found, error_code)
-    _settle_credit(db, run, task, spent=False)
-    task.usage_text = calls_pending_usage(db, task)
+    _release_old_hold(db, run, task)
+    task.paid_by, task.usage_text = "call", calls_pending_usage(db, task)
     switched = error_code == "user_switched"
     privat_service.event(db, task, "Du bad om et opkald i stedet for en booking på hjemmesiden" if switched else
                          f"Booking på hjemmesiden kunne ikke gennemføres ({error_code}). Intet er booket")

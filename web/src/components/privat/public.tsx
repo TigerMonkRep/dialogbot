@@ -82,7 +82,8 @@ export function InvitationPage({ token, loggedIn }: { token: string; loggedIn: b
     try {
       if (simulated) { try { sessionStorage.setItem(FAKE_LOGIN_KEY, "1"); } catch { /* ignore */ } }
       const task = await (isShortCode(token) ? api.acceptInviteByCode(token) : api.acceptInvite(token));
-      router.push(`/privat/opgaver/${encodeURIComponent(task.id)}?velkommen=1`);
+      // Familie (resource_type household): the plan comes along, no task to open – land on Konto → Husstand.
+      router.push(p?.resource_type === "household" ? "/privat/konto" : `/privat/opgaver/${encodeURIComponent(task.id)}?velkommen=1`);
     } catch (e) {
       // Not verified yet (e.g. logged in on another device): one way on – confirm the e-mail; the link returns here and
       // opens the list (F-JP-05). Never a bare 403 text.
@@ -103,6 +104,22 @@ export function InvitationPage({ token, loggedIn }: { token: string; loggedIn: b
   );
   const name = p.inviter_first_name ?? p.owner_first_name;
   const wish = p.share_mode === "wishlist" || p.list_type === "wishlist";
+  if (p.resource_type === "household") return (
+    <PublicFrame>
+      <section className="rounded-[18px] border-2 border-ink bg-paper p-5 shadow-block flex flex-col gap-3" aria-labelledby="inv-title" data-testid="household-invite">
+        <div className="flex items-center gap-3"><Tile name="users" size={48} /><p className="eyebrow m-0">{t("familyHousehold.title")}</p></div>
+        <h1 id="inv-title" className="m-0 font-display font-extrabold text-[30px] leading-[1.1] tracking-[-0.5px] [overflow-wrap:anywhere]">{t("familyHousehold.inviteTitle", { name })}</h1>
+        <p className="m-0 text-[15px] text-ink-soft">{t("familyHousehold.inviteText", { name })}</p>
+        {canAccept
+          ? <Button className={BIG} onClick={accept} disabled={busy}>{busy ? t("invitation.opening") : t("familyHousehold.join")}</Button>
+          : <>
+            <Link href={`/signup?next=${next}`} className={`inline-flex items-center justify-center rounded-xl ${BIG} bg-accent text-white font-semibold hover:bg-accent-deep`}>{t("familyHousehold.join")}</Link>
+            <Link href={`/login?next=${next}`} className="inline-flex items-center justify-center min-h-[44px] rounded-xl border-2 border-ink font-semibold text-[15px] hover:bg-panel">{t("invitation.login")}</Link>
+          </>}
+        {err && <p role="alert" className="m-0 text-[14px] text-danger font-semibold">{err}</p>}
+      </section>
+    </PublicFrame>
+  );
   return (
     <PublicFrame>
       <section className="rounded-[18px] border-2 border-ink bg-paper p-5 shadow-block flex flex-col gap-3" aria-labelledby="inv-title">

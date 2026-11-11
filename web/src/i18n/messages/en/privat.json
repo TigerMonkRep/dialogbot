@@ -5,7 +5,7 @@
     "day": "My day",
     "chat": "Conversation",
     "tasks": "My tasks",
-    "account": "Account and credits",
+    "account": "Account and call balance",
     "addons": "Add-ons",
     "people": "My people",
     "invite": "Invitation",
@@ -129,7 +129,7 @@
       "billedMonthly": "Billed monthly",
       "billedYearly": "Billed yearly: {amount}",
       "cta": "Start 14 days free",
-      "note": "More calls than your plan? Extra calls are bought in the app. No commitment – change plan or stop every month.",
+      "note": "More calls than your plan? Extra calls are paid from your call balance: {pXAnswered} answered, {pXVoicemail} voicemail, {pXNoAnswer} unanswered + {pXMinute} per started minute, at most {pXMax}. No commitment – change plan or stop any month.",
       "tagline": {
         "basis": "For keeping everyday life in order.",
         "plus": "For never having to ring around again.",
@@ -161,8 +161,7 @@
   "header": {
     "skip": "Skip to content",
     "homeAria": "Dialogbot Privat – My day",
-    "credits": "{n} credits",
-    "balanceAria": "{credits} credits. Open account",
+    "balanceAria": "Call balance {amount}. Open account",
     "noPlanBadge": "No plan · try 14 days",
     "noPlanBadgeShort": "No plan",
     "noPlanAria": "No plan. Open account and start 14 days free",
@@ -171,17 +170,19 @@
     "switchLabel": "Switch between business and private",
     "business": "Business",
     "private": "Private",
-    "account": "Account and credits",
+    "account": "Account and balance",
     "addons": "Add-ons",
     "people": "My people",
     "logout": "Log out",
     "right": {
       "tasks": "My tasks",
       "task": "Task",
-      "account": "Account and credits",
+      "account": "Account and balance",
       "addons": "Add-ons",
       "people": "My people"
-    }
+    },
+    "homeSuffix": " – My day",
+    "balance": "Balance {amount}"
   },
   "tabs": {
     "label": "Main menu",
@@ -242,7 +243,7 @@
     "soon": "Coming up",
     "next": "Next step: {next}",
     "myTasks": "My tasks",
-    "accountBtn": "Account and credits",
+    "accountBtn": "Account and balance",
     "welcomeFunnel": "Peter has set up your day – tap Yes, call to take the first call"
   },
   "shortcuts": {
@@ -276,7 +277,8 @@
     "earlier": "Task: {title}. Open the task",
     "googleData": "Data from Google",
     "demoData": "Demo data – fictitious businesses, not from Google",
-    "typing": "Peter is typing …"
+    "typing": "Peter is typing …",
+    "deleteMessage": "Delete message"
   },
   "list": {
     "count": "{n|1 item|# items} · {done} done",
@@ -306,7 +308,9 @@
     "simulateReserve": "{name} reserves a wish",
     "simulateActivated": "{name} creates her first own task",
     "welcomeBanner": "Try it yourself: What can I take care of for you?",
-    "welcomeDismiss": "Close"
+    "welcomeDismiss": "Close",
+    "open": "Open",
+    "shareWish": "Share the wishlist"
   },
   "move": {
     "label": "The reminder has been moved",
@@ -318,7 +322,9 @@
     "label": "Booking on the website · waiting for your yes",
     "before": "Now",
     "after": "Proposal",
-    "note": "Nothing is booked until you approve."
+    "note": "Nothing is booked until you approve.",
+    "needsPlanText": "Website bookings are included in every plan. Without a plan nothing can be booked – not even with your call balance.",
+    "limit": "You've used this month's website bookings – try again next month"
   },
   "call": {
     "proposal": "Proposal · waiting for your yes",
@@ -329,13 +335,12 @@
     "mayAsk": "May ask about",
     "mayAgree": "May agree to",
     "mayNot": "May not",
-    "cost": "The assistant's call: at most {n} credits",
+    "cost": "Extra call: {pXAnswered} answered, {pXVoicemail} voicemail, {pXNoAnswer} unanswered + {pXMinute} per started minute, at most {pXMax}.",
     "costTime": "(up to 3 min.)",
-    "refund": "If nobody answers, the line is busy or it goes to voicemail, you get your credits back.",
+    "refund": "Before the call, {pXMax} is held on your call balance. Afterwards only the price of the outcome is taken and the rest is released. If the call does not go through, all of it is released.",
     "price": "The business's own price is something else – I do not agree to it, but I tell you what they say.",
     "shareQ": "May the business have your number?",
     "shareHint": "Then they can call you if something changes.",
-    "needCredits": "You have {have} credits. The call needs {need}.",
     "phoneStep": "Confirm your mobile number first",
     "phoneStepText": "Before I call for you, your number must be confirmed with an SMS code. It takes a minute and you only do it once.",
     "phoneThenCall": "As soon as the number is confirmed, I will call.",
@@ -353,7 +358,7 @@
     "saveEdit": "Save the change",
     "simulatedCall": "Simulated call",
     "calling": "Calling {name} …",
-    "reserved": "{n} credits are reserved. They are only charged if the business answers.",
+    "reserved": "{pXMax} is held on your call balance. Only the price of the outcome is taken – the rest is released.",
     "realWait": "You will be told here when the call is over.",
     "chooseOutcome": "Simulation: choose the outcome",
     "outcomeAnswered": "The business answers",
@@ -364,10 +369,10 @@
     "priceAt": "Price at the business",
     "priceNote": "(stated in the call)",
     "assistantCall": "The assistant's call",
-    "callUsage": "{n} credits · {duration}",
+    "callUsage": "Extra call · {duration}",
     "duration": "{m} min. {s} sec.",
     "seeTask": "See the whole task",
-    "noAnswerTitle": "Nobody picked up – your {n} credits have been released",
+    "noAnswerTitle": "Nobody answered – only {pXNoAnswer} was taken, the rest is released",
     "noAnswerText": "I did not leave a message. Do you want me to try again?",
     "retry": "Try again",
     "cancel": "Cancel the task",
@@ -388,7 +393,14 @@
     "useNumber": "Use number",
     "isBusiness": "This is a business",
     "isBusinessHint": "The number looks like a mobile number. I only call businesses.",
-    "demoBusiness": "This is a demo business that cannot be called. Choose a real business."
+    "demoBusiness": "This is a demo business that cannot be called. Choose a real business.",
+    "needsPlan": "Requires a plan",
+    "needsPlanText": "Calls are included in every plan. Without a plan no calls can be made – not even with your call balance.",
+    "delete": "Delete the call",
+    "deleteQ": "Delete the call and its summary? This cannot be undone.",
+    "deleteYes": "Yes, delete",
+    "deleteNo": "Keep",
+    "needBalance": "You have {have} on your call balance. An extra call needs {need} – top up under Account."
   },
   "draft": {
     "label": "Draft · ready to save",
@@ -423,8 +435,8 @@
     "orLink": "Or send a link",
     "signWith": "Sign with:",
     "message": "The message (you can edit it)",
-    "smsWishlist": "Hi! I have made a wishlist – see it and reserve here: {link}",
-    "smsGroup": "Hi! I have made a shared list – see it and add here: {link}",
+    "smsWishlist": "Hi! I have made a wishlist - see it and reserve here: {link}",
+    "smsGroup": "Hi! I have made a shared list - see it and add here: {link}",
     "remindWishlist": "Hi! Have you seen my wishlist «{title}»? The link is in my previous message.",
     "remindGroup": "Hi! Have you seen the list «{title}»? The link is in my previous message.",
     "chars": "{n} of {max} characters",
@@ -464,7 +476,8 @@
     "queueNext": "Sent? Next: {name} ({i} of {n})",
     "queueBack": "Welcome back. Tap when you are ready for the next one.",
     "queueDone": "All {n} have been invited.",
-    "done": "Done"
+    "done": "Done",
+    "roleWishGuest": "can reserve"
   },
   "people": {
     "title": "My people",
@@ -555,29 +568,31 @@
   },
   "paywall": {
     "titleDigital": "This needs a plan",
-    "titleCall": "You need more credits for the call",
+    "titleCall": "Top up for an extra call",
     "titleTrial": "This needs a plan",
     "draft": "Draft",
-    "textDigital": "The task is saved as a draft. Choose a plan, continue with 1 credit or watch a voluntary sponsored clip.",
-    "textCall": "A call reserves {n} credits when you approve it. You have {have}.",
+    "textDigital": "The task is saved as a draft. Choose a plan, pay {pExtraTask} from your call balance or watch an optional sponsor clip.",
+    "textCall": "An extra call holds {pXMax} on your call balance when you approve it. You have {have}.",
     "textTrial": "Try Dialogbot Privat free for 14 days. You sign up with a card, and it is only charged once the trial ends – cancel before, and you pay nothing. The task is saved as a draft until you have chosen.",
     "trialNote": "Plus · {pPlus}/month after the trial · cancel any time",
-    "useCredit": "Use 1 credit · you have {n}",
-    "buy": "Buy 10 credits · {pCredits} incl. VAT",
+    "buy": "{pTopup1}, {pTopup2} or {pTopup3}",
     "sponsor": "Watch a sponsored clip · +1 task ({n} left today)",
     "later": "Later – keep the draft",
-    "laterNote": "The draft is under «Waiting for your answer». You can continue whenever you like."
+    "laterNote": "The draft is under «Waiting for your answer». You can continue whenever you like.",
+    "useBalance": "Pay {pExtraTask} from your balance · you have {have}"
   },
   "buy": {
-    "title": "Buy 10 credits",
-    "item": "10 credits",
+    "title": "Top up your call balance",
+    "item": "Top-up",
     "vat": "Of which VAT",
-    "note": "One-off purchase. Credits do not expire during the pilot.",
-    "pay": "Pay {pCredits}",
-    "payReal": "Go to payment · {pCredits}",
+    "note": "One-off payment, no subscription. The balance does not expire during the pilot.",
+    "pay": "Pay {amount}",
+    "payReal": "Go to payment · {amount}",
     "simulatedBuy": "Simulated purchase",
     "redirecting": "Taking you to payment …",
-    "back": "Back"
+    "back": "Back",
+    "have": "You have {have} on your call balance.",
+    "prices": "Extra call: {pXAnswered} answered, {pXVoicemail} voicemail, {pXNoAnswer} unanswered + {pXMinute} per started minute, at most {pXMax}."
   },
   "sponsor": {
     "title": "Voluntary sponsored clip",
@@ -590,7 +605,7 @@
   },
   "login": {
     "title": "Save your task",
-    "text": "To save your own task you need a private account. Your tasks, conversations and credits are kept separate from business accounts.",
+    "text": "To save your own task you need a private account. Your tasks, conversations and call balance are kept separate from business accounts.",
     "signup": "Create a private account",
     "login": "I have an account – log in",
     "simulated": "Continue as test user",
@@ -629,22 +644,20 @@
     "purposeReminder": "Be reminded in time",
     "purposeWishlist": "Share wishes without spoiling the surprise",
     "talk": "Talk about the task",
-    "history": "History"
+    "history": "History",
+    "fromOwner": "From {name}"
   },
   "account": {
-    "title": "Account and credits",
+    "title": "Account",
     "privateLine": "Private account · {email} · separate from business accounts",
     "exampleLine": "You are trying it with example data. Log in when you save your first task.",
     "simulatedLine": "The Privat API is not switched on yet – everything here is a simulation in your browser.",
     "free": "No plan",
     "freeNote": "Without a plan you can view and reserve on lists others share with you – your own tasks, lists and calls need a plan. Try everything free for 14 days.",
-    "credits": "Credits",
-    "creditsWord": "credits",
-    "reserved": "{n} reserved",
-    "creditsNote": "An answered call costs 3 credits (up to 3 min.). 10 credits cost {pCredits} incl. VAT – one-off purchase, no subscription.",
-    "buy": "Buy 10 credits · {pCredits}",
-    "purchased": "The purchase is registered ({ref}).",
-    "purchasedReal": "Thank you for your purchase. Your credits appear here as soon as the payment is confirmed.",
+    "reserved": "{amount} held",
+    "buy": "Top up",
+    "purchased": "The payment is registered ({ref}).",
+    "purchasedReal": "Thank you. The amount appears on your call balance as soon as the payment is confirmed.",
     "purchaseCancelled": "The purchase was cancelled. Nothing has been charged.",
     "ledger": "Transactions",
     "ledgerEmpty": "No transactions yet.",
@@ -657,8 +670,8 @@
     "addons": "Add-ons",
     "addonsText": "Switch extra features on and off – e.g. Call for me, shared lists and wishlists.",
     "addonsBtn": "See add-ons",
-    "repeatNote": "The payment signal {ref} is already registered. No extra credits.",
-    "repeatNone": "There is no payment to repeat yet – buy 10 credits first.",
+    "repeatNote": "The payment signal {ref} is already registered. Nothing extra was added to the balance.",
+    "repeatNone": "There is no payment to repeat yet – top up the balance first.",
     "tools": "Test tools · simulation only",
     "startFree": "Reset to an account without a plan",
     "repeatPay": "Repeat last payment signal",
@@ -666,11 +679,15 @@
     "reset": "Start over",
     "installTitle": "Get the app",
     "languageTitle": "Language",
-    "languageText": "The app and Peter's answers follow the language here."
+    "languageText": "The app and Peter's answers follow the language here.",
+    "groupMe": "You",
+    "groupApp": "The app",
+    "groupExtra": "Call balance",
+    "ledgerAll": "See all ({n})"
   },
   "invite": {
     "title": "Invite friends",
-    "text": "Share Dialogbot with a friend. You both get 3 credits when your friend has created their first task.",
+    "text": "Share Dialogbot with a friend. You both get {pReferral} on your call balance once your friend has paid their first period.",
     "stats": {
       "invited": "Invited",
       "joined": "Joined",
@@ -733,7 +750,10 @@
   "errors": {
     "emailNotVerified": "Confirm your e-mail to use Dialogbot Privat.",
     "verifyLink": "Confirm e-mail",
-    "viewAs": "Private tasks cannot be viewed in «View as customer»."
+    "viewAs": "Private tasks cannot be viewed in «View as customer».",
+    "notEnabled": "Dialogbot Privat is not open for your account yet. Nothing you do here is saved or carried out.",
+    "unavailable": "Dialogbot Privat can't be reached right now. Try again in a moment – nothing has been saved or carried out.",
+    "generic": "Something went wrong. Please try again."
   },
   "location": {
     "useMine": "Use my location",
@@ -779,7 +799,10 @@
     "trialBadge": "{plan} · trial, {n|1 day|# days} left",
     "trialBadgeShort": "{plan} · {n|1 day|# days}",
     "planBadge": "{plan}",
-    "noPlan": "No plan"
+    "noPlan": "No plan",
+    "trialDaysShort": "{n} d",
+    "trialDaysLeft": "{n|1 day|# days} left",
+    "planAriaShort": "open account"
   },
   "day2": {
     "eyebrow": "Your own personal assistant",
@@ -834,17 +857,20 @@
       "trialDays": "{n|1 day|# days} left",
       "trialAria": "{n} of {total} trial days left",
       "noteTrial": "Lists and reminders are unlimited. After the trial you continue on {plan} at {price}/mo. – or pick another plan.",
-      "notePlan": "Lists and reminders are unlimited. More calls than your subscription? Extra calls are bought under Account.",
+      "notePlan": "Lists and reminders are unlimited. More calls than your plan? Extra calls are paid from the call balance under Account.",
       "noteFree": "Without a plan you can view and reserve on lists others share with you. Your own tasks and calls need a plan.",
       "noteNone": "Without a plan you can view and reserve on lists others share with you. Try everything for 14 days – the card is only charged afterwards.",
-      "extraCalls": "Extra calls (credits)",
+      "extraCalls": "Call balance",
       "choosePlan": "Choose plan",
       "changePlan": "Change plan",
       "startTrial": "Start 14 days free",
       "newInStore": "New in the Store",
       "see": "See →"
     },
-    "noAnswerPlan": "Nobody answered – the call does not count"
+    "noAnswerPlan": "Nobody answered – the call does not count",
+    "greetingShort": "I can remind you, make lists and make calls for you. What have you been putting off?",
+    "yourTurnOf": "Your turn · 1 of {n}",
+    "allTasks": "All tasks"
   },
   "store": {
     "metaTitle": "The Store",
@@ -879,7 +905,7 @@
       "title": "Included in Plus",
       "text": "{name} is included in Plus and Familie. Start 14 days free – or choose a plan if your trial is over.",
       "callTitle": "Calls need a plan",
-      "callText": "Peter calls for you with Basis, Plus or Familie – or with extra calls (credits).",
+      "callText": "Peter calls for you with Basis, Plus or Familie. Extra calls beyond the plan are paid from the call balance.",
       "trial": "Start 14 days free",
       "choose": "Choose plan",
       "later": "Not now"
@@ -895,7 +921,7 @@
       "expired": "Trial ended",
       "none": "No plan"
     },
-    "trialLine": "{n|1 day|# days} left of the trial · Plus rights",
+    "trialLine": "{n|1 day|# days} left of the trial · {plan} rights",
     "trialThen": "Then {plan} at {price}/mo.",
     "trialThenNone": "Choose a plan before it ends – otherwise you continue without one.",
     "expiredLine": "Your trial is over. Choose a plan to get calls and all apps back.",
@@ -923,7 +949,7 @@
     "select": "Choose {plan}",
     "startTrial": "Start 14 days free",
     "currentPlan": "Your plan",
-    "pickerNote": "More calls than your subscription? Extra calls are bought here. No commitment.",
+    "pickerNote": "More calls than your plan? Extra calls are paid from the call balance. No commitment.",
     "activated": "Your subscription is active.",
     "notCompleted": "The payment was not completed, so no subscription has started and nothing has been charged.",
     "cancelled": "You cancelled choosing a plan. Nothing was charged.",
@@ -931,20 +957,21 @@
     "portalMissing": "Payments are not set up yet. Write to us to change your subscription.",
     "redirecting": "Sending you to payment …",
     "loginFirst": "Log in to choose a plan.",
-    "extra": "Extra calls",
-    "extraWord": "credits",
-    "extraNote": "3 credits = 1 extra call (up to 3 min.) once the month's calls are used. 10 credits cost {pCredits} incl. VAT – one-off purchase.",
+    "extra": "Call balance",
+    "extraWord": "on your balance",
+    "extraNote": "Extra calls once the month's calls are used: {pXAnswered} answered, {pXVoicemail} voicemail, {pXNoAnswer} unanswered + {pXMinute} per started minute, at most {pXMax}. Top up with {pTopup1}, {pTopup2} or {pTopup3} incl. VAT – a one-off payment.",
     "paywallChoose": "Choose plan",
-    "paywallBuy": "Buy extra calls",
+    "paywallBuy": "Top up your call balance",
     "paywallCallTitlePlan": "This month's calls are used",
-    "paywallCallTextPlan": "You have used {used} of {quota} calls in {plan}. Buy extra calls or switch to a bigger plan.",
-    "paywallCallTextNone": "With Basis, Plus or Familie calls are included. You can also buy extra calls.",
+    "paywallCallTextPlan": "You have used {used} of {quota} calls in {plan}. Top up your call balance for an extra call, or switch to a bigger plan.",
+    "paywallCallTextNone": "With Basis, Plus or Familie calls are included. Extra calls are paid from the call balance.",
     "paywallDigitalPlan": "With a plan, lists and reminders are unlimited.",
     "endTrial": "End the trial",
     "codeAsk": "Have a discount code?",
     "codeLabel": "Discount code",
     "codePlaceholder": "E.g. WELCOME",
-    "codeHint": "The discount is applied on the payment page."
+    "codeHint": "The discount is applied on the payment page.",
+    "householdMember": "You are part of {name}'s Family plan. {name} manages the plan."
   },
   "funnel": {
     "entry": "Try it in 2 minutes",
@@ -1146,7 +1173,10 @@
     "none": "No appointments yet. When Peter gets a time confirmed, or you ask him to add one, it shows up here.",
     "addToCalendar": "Add to calendar",
     "remove": "Remove from calendar",
-    "removeNote": "«Remove from calendar» does not cancel the time with the business."
+    "removeNote": "«Remove from calendar» does not cancel the time with the business.",
+    "whichTitle": "Which calendar do you use?",
+    "iphoneOther": "iPhone or another",
+    "connectName": "Connect {name}"
   },
   "birthdays": {
     "title": "Upcoming birthdays",
@@ -1196,7 +1226,8 @@
       "half_yearly": "every six months",
       "yearly": "every year",
       "once": "once"
-    }
+    },
+    "removeYes": "Yes, remove"
   },
   "assistantName": {
     "pronoun": "Pronoun (Danish texts)",
@@ -1265,6 +1296,7 @@
     "directShort": "direct",
     "stops": "{n} stops",
     "book": "Book",
+    "sponsored": "Ad · Dialogbot earns a commission",
     "overBudget": "{n} trips were over budget.",
     "disclaimer": "Prices come straight from the providers and may change. You book and pay with the provider – Dialogbot does not book."
   },
@@ -1589,7 +1621,56 @@
     "yourApps": "Your apps",
     "all": "All {n}",
     "stripStep": "Step {n} of {total} – continue the setup",
-    "accountLine": "{n|1 app on|# apps on}"
+    "accountLine": "{n|1 app on|# apps on}",
+    "allOn": "You have every app. New ones arrive regularly.",
+    "sayLike": "Say, e.g., “{example}”",
+    "about": "About the app",
+    "planIncludedAll": "Included in every plan.",
+    "planTextTrialAll": "{name} is included in every plan. Try it free for 14 days – your card is only charged when the trial ends.",
+    "planTextEndedAll": "{name} is included in every plan. Choose a plan to use it.",
+    "planTextBasis": "You have Basis. {name} is included in Plus and Family.",
+    "onInMine": "{n|1 app is on|# apps are on} – see My apps",
+    "yourThings": "Your things here ({n})"
+  },
+  "familyHousehold": {
+    "title": "Household",
+    "count": "{count} of {limit} people",
+    "ownerText": "Family covers up to {limit} people. Everyone has their own account – nobody sees the others' things.",
+    "invite": "Invite to the household",
+    "smsText": "You are in my Dialogbot Family - join here: {link}",
+    "me": "you",
+    "remove": "Remove",
+    "removeConfirm": "Remove {name} from the household? {name} loses Family at once but keeps their own things.",
+    "memberLine": "You are in {name}'s Family.",
+    "leave": "Leave the household",
+    "leaveConfirm": "Leave the household? You lose Family at once. Your things stay.",
+    "left": "You have left the household.",
+    "paused": "The household is paused – it needs Family.",
+    "full": "The household is full.",
+    "inviteTitle": "Join {name}'s Family",
+    "inviteText": "You get the Family plan on your own account. {name} cannot see your things.",
+    "join": "Join",
+    "joined": "You are in the household."
+  },
+  "myData": {
+    "title": "Your data",
+    "exportText": "Get everything we keep about you by e-mail.",
+    "export": "Export my data",
+    "queued": "We are gathering your data. You will get an e-mail with a link.",
+    "ready": "Your data is ready.",
+    "download": "Download your data",
+    "expired": "The link has expired. Ask for your data again.",
+    "delete": "Delete my account",
+    "deleteText": "Everything in Dialogbot Privat is deleted and your subscription stops. Any remaining call balance is lost and not refunded. This cannot be undone.",
+    "deleteLabel": "Type your e-mail to confirm",
+    "deleteConfirm": "Delete everything for good",
+    "cancel": "Cancel",
+    "deleting": "Deleting …"
+  },
+  "inviteOg": {
+    "wishlist": "{name} shared their wish list with you",
+    "list": "{name} shared a list with you",
+    "generic": "You are invited to a list"
   },
   "problem": {
     "notFoundTitle": "This page does not exist",

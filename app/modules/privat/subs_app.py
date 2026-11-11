@@ -51,7 +51,7 @@ def add(db: OrmSession, ws_id: uuid.UUID, *, name: str, price=None, period: str 
         raise ValidationFailed("Hvad hedder abonnementet?", field_errors=[{"field": "name"}])
     period = period if period in PERIODS else "monthly"
     rows = kit.items(db, ws_id, ADDON)
-    row = kit.find(rows, name)
+    row = kit.find(rows, name, exact=True)
     created = row is None
     if row is None:
         row = {"id": kit.new_id(), "name": name, "status": "active"}

@@ -60,14 +60,16 @@ export default async function PrivatLanding() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData(t, locale)) }} />
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:px-4 focus:py-2 focus:rounded-full focus:bg-ink focus:text-white">{tc("chrome.skip")}</a>
       <header className="border-b-2 border-ink bg-paper">
-        <div className={`${WRAP} min-h-[72px] py-3 flex flex-wrap items-center gap-3`}>
+        {/* One row at 390 px (ux-audit #12/#15): the wordmark and the language picker join from sm; on a phone the
+            language picker sits in the footer. */}
+        <div className={`${WRAP} min-h-[72px] py-3 flex flex-wrap items-center gap-2.5 sm:gap-3`}>
           <Link href="/privat" className="inline-flex items-center gap-2.5 min-h-11 text-ink no-underline" aria-label="Dialogbot Privat">
             <LogoMark size={36} />
-            <span className="font-display font-extrabold text-[22px] tracking-[-0.3px]">Dialogbot</span>
+            <span className="hidden sm:inline font-display font-extrabold text-[22px] tracking-[-0.3px]">Dialogbot</span>
           </Link>
           <AudienceSwitch current="privat" size="sm" />
           <span className="flex-1" />
-          <LanguageSwitcher compact />
+          <LanguageSwitcher compact className="!hidden sm:!inline-flex" />
           <Link href={`/login?next=${encodeURIComponent(appHref)}`} className="inline-flex items-center min-h-11 px-[18px] rounded-full border-2 border-ink bg-paper text-[15px] font-semibold text-ink no-underline hover:bg-panel">{t("landing.login")}</Link>
         </div>
       </header>
@@ -84,7 +86,6 @@ export default async function PrivatLanding() {
               <Link href="/privat/start" className="inline-flex items-center justify-center min-h-[48px] px-5 rounded-full border-2 border-ink bg-white text-[15px] font-semibold text-ink no-underline hover:bg-panel" data-funnel-entry>{t("funnel.entry")}</Link>
               <span className="text-[14px] text-muted">{t("landing.note")}</span>
             </div>
-            <InstallApp audience="privat" compact />
           </div>
 
           {/* Static demo card */}
@@ -194,15 +195,18 @@ export default async function PrivatLanding() {
           <h2 className={H2}>{t("landing.final.title")}</h2>
           <p className="m-0 text-[16px] text-ink-soft">{t("landing.final.text")}</p>
           <Link href={tryHref} className={PILL_CTA}>{t("landing.final.cta")}</Link>
+          {/* The app download is a secondary step – after the decision, not beside the hero CTA (ux-audit #15). */}
+          <InstallApp audience="privat" compact />
         </section>
       </main>
 
       <footer className="border-t-2 border-ink py-5">
         <div className={`${WRAP} flex flex-wrap justify-center gap-x-7 gap-y-3 text-[13px] text-muted`}>
           <span className="inline-flex items-center min-h-8">{t("landing.footer.brand")}</span>
+          <LanguageSwitcher compact className="sm:!hidden" />
           <SiteLink href="/erhverv" className="inline-flex items-center gap-1 min-h-8 font-semibold text-ink no-underline hover:text-accent">{t("landing.footer.business")} <Ico name="arrow" size={14} stroke={2.6} /></SiteLink>
           <SiteLink href="/privatliv" className="inline-flex items-center min-h-8 text-ink no-underline hover:text-accent">{t("landing.footer.privacy")}</SiteLink>
-          <SiteLink href="/vilkaar" className="inline-flex items-center min-h-8 text-ink no-underline hover:text-accent">{t("landing.footer.terms")}</SiteLink>
+          <SiteLink href="/privat/vilkaar" className="inline-flex items-center min-h-8 text-ink no-underline hover:text-accent">{t("landing.footer.terms")}</SiteLink>
         </div>
       </footer>
     </div>

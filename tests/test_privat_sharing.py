@@ -161,7 +161,7 @@ def test_invite_preview_leaks_nothing(api, pv):
     inv = _share(api, mette, tid, mode="wishlist")
     p = api.c.get(f"/api/v1/privat/invites/{inv['token']}").json()
     assert set(p) == {"title", "owner_first_name", "list_type", "item_count", "share_mode", "inviter_first_name",
-                      "resource_type", "addon_key", "cta_text", "group_gift_count", "design"}
+                      "resource_type", "addon_key", "cta_text", "group_gift_count", "design", "lang"}
     assert set(p["design"]) == {"theme", "accent", "background", "text", "font", "decorations"}  # never the cover
     assert (p["owner_first_name"], p["item_count"], p["list_type"], p["addon_key"]) == ("Mette", 3, "wishlist",
                                                                                           "oenskelister")
@@ -169,6 +169,7 @@ def test_invite_preview_leaks_nothing(api, pv):
     for secret in ("cykel", "bog", "ur.dk", "sort", "ole", "anna", "reserv", "hansen", "@"):
         assert secret not in blob, secret
     assert p["cta_text"].startswith("Mette bruger Dialogbot")
+    assert p["lang"] == "da"  # the invitation's language (the inviter's) – its OG image follows it
     p2 = api.c.get(f"/api/v1/privat/invites/by-code/{inv['short_code']}").json()
     assert p2["title"] == p["title"]
     from app.db import get_session_factory
@@ -248,7 +249,7 @@ def test_addon_catalog_extensible(api, pv, dummy_addon):
                  "description": "Bevis for, at ét objekt er nok.", "icon": "star", "category": "test",
                  "price_text": "Gratis", "pricing": "free", "monthly_price_minor": None, "status": "available",
                  "permissions": ["Ingen"], "requires": [], "enabled": False, "enabled_at": None,
-                 "what": "", "example": "", "steps": [], "included_in": [], "included": True, "requires_plan": False,
+                 "what": "", "example": "", "steps": [], "included_in": [], "included": True, "requires_plan": False, "needs_plan": False,  # PC-ENT-02/03
                  # «Mine apps» (app_status.py): nothing saved, never switched off, no setup steps
                  "needs": [], "summary_line": None, "setup": {"done": 0, "total": 0}, "disabled_at": None,
                  "notify_requested": False, "data_deletable": True}
@@ -287,13 +288,18 @@ def test_referral_once(api, pv, db):
     _accept(api, nina, i1["token"])  # replay
     pv.start_trial(nina)  # own lists need the trial (card at Stripe)
     pv.make_list(nina, "Lav en liste med æg")
-    pv.make_list(nina, "Lav en liste med mel")
     nid = pv.uid(nina)
-    assert _referral_ledger(db, pv.ws(nina)) == [(3, f"referral:{nid}:invitee")]
-    assert _referral_ledger(db, pv.ws(mette)) == [(3, f"referral:{nid}:inviter")]
+    # a trial is not a paid period: no referral reward yet (Fürster 2026-11-10, F-PBQ-02/F-PQ-03)
+    assert _referral_ledger(db, pv.ws(nina)) == [] and _referral_ledger(db, pv.ws(mette)) == []
+    pv.set_plan(nina, "plus")  # the first real period is paid
+    pv.make_list(nina, "Lav en liste med mel")
+    # 10 kr. on the Opkaldssaldo to each (F-PDEC-01), in øre
+    assert _referral_ledger(db, pv.ws(nina)) == [(1000, f"referral:{nid}:invitee")]
+    assert _referral_ledger(db, pv.ws(mette)) == [(1000, f"referral:{nid}:inviter")]
     assert db.query(PrivateReferral).count() == 1
     s = api.get(mette, "/privat/referrals").json()
-    assert s == {"invited": 2, "joined": 1, "activated": 1, "credits_earned": 3, "monthly_left": 9}
+    assert s == {"invited": 2, "joined": 1, "activated": 1, "earned_minor": 1000, "currency": "DKK",
+                 "reward_minor": 1000, "monthly_left": 9}
     from app.models import User
 
     assert db.get(User, nid).signup_source.startswith("invite:")
@@ -308,7 +314,10 @@ def test_referral_needs_activation(api, pv, db):
     assert _referral_ledger(db, pv.ws(nina)) == [] and _referral_ledger(db, pv.ws(mette)) == []
     pv.say(nina, "Mind mig om at ringe til mor i morgen kl 10")  # free tier: a draft, not an own task
     assert _referral_ledger(db, pv.ws(nina)) == []
-    pv.start_trial(nina)  # the trial activates the draft – and that counts
+    pv.start_trial(nina)  # the trial activates the draft – an own task, but nothing is paid yet
+    assert _referral_ledger(db, pv.ws(nina)) == [] and _referral_ledger(db, pv.ws(mette)) == []
+    pv.set_plan(nina, "plus")
+    pv.say(nina, "Mind mig om at købe ind i morgen kl 9")
     assert len(_referral_ledger(db, pv.ws(nina))) == 1 and len(_referral_ledger(db, pv.ws(mette))) == 1
 
 
@@ -318,7 +327,7 @@ def test_referral_monthly_cap(api, pv, db):
     for i in range(11):
         tok = pv.user(f"ny{i}@testmail.dk", f"Ny{i} Person")
         _accept(api, tok, link["token"])
-        pv.start_trial(tok)
+        pv.set_plan(tok, "plus")  # rewards need a paid period (F-PBQ-02)
         pv.make_list(tok, f"Lav en liste med ting{i}")
         assert len(_referral_ledger(db, pv.ws(tok))) == 1  # every invitee is rewarded
     assert len(_referral_ledger(db, pv.ws(mette))) == 10
@@ -344,7 +353,7 @@ def test_growth_operator_only(api, pv):
     api.c.get(f"/api/v1/privat/invites/{inv['token']}")
     nina = pv.user("nina@testmail.dk", "Nina Ny")
     _accept(api, nina, inv["token"])
-    pv.start_trial(nina)
+    pv.set_plan(nina, "plus")  # «activated» = rewarded = has paid a first real period (F-PBQ-02)
     pv.make_list(nina, "Lav en liste med te")
     assert api.get(mette, "/operator/privat/growth").status_code == 403
     g = api.get(api.operator(), "/operator/privat/growth").json()
@@ -580,12 +589,14 @@ def test_public_lookups_are_rate_limited(api, pv, db):
     assert get(good[0], "10.7.7.7").status_code == 429
     # the IP itself is never stored
     assert "10.7.7.7" not in json.dumps([r.ip_hash for r in db.query(PrivateLookup).all()])
-    # a global ceiling on misses stops enumeration spread over many addresses
+    # a global ceiling on misses stops enumeration spread over many addresses: every address that has missed itself
+    # is refused – but an invitee with a valid link from a clean address is never locked out (F-PS-03)
     lookup_limits.GLOBAL_MISSES_PER_HOUR, old = 55, lookup_limits.GLOBAL_MISSES_PER_HOUR
     try:
         for i in range(5):
             get(bad[0], f"10.6.6.{i}")
-        assert get(good[0], "10.5.5.5").status_code == 429
+        assert get(good[0], "10.6.6.1").status_code == 429
+        assert get(good[0], "10.5.5.5").status_code == 200
     finally:
         lookup_limits.GLOBAL_MISSES_PER_HOUR = old
 

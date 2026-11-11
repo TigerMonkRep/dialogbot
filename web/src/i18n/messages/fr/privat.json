@@ -5,7 +5,7 @@
     "day": "Ma journée",
     "chat": "Conversation",
     "tasks": "Mes tâches",
-    "account": "Compte et crédits",
+    "account": "Compte et solde d'appels",
     "addons": "Modules",
     "people": "Mes proches",
     "invite": "Invitation",
@@ -129,7 +129,7 @@
       "billedMonthly": "Facturé chaque mois",
       "billedYearly": "Facturé à l'année : {amount}",
       "cta": "Commencer 14 jours gratuits",
-      "note": "Plus d'appels que votre abonnement ? Les appels supplémentaires s'achètent dans l'appli. Sans engagement – changez de formule ou arrêtez chaque mois.",
+      "note": "Plus d'appels que votre formule ? Les appels supplémentaires sont payés avec votre solde d'appels : {pXAnswered} décroché, {pXVoicemail} messagerie, {pXNoAnswer} sans réponse + {pXMinute} par minute entamée, au plus {pXMax}. Sans engagement – changez ou arrêtez chaque mois.",
       "tagline": {
         "basis": "Pour garder le quotidien en ordre.",
         "plus": "Pour ne plus jamais passer de coups de fil.",
@@ -161,8 +161,7 @@
   "header": {
     "skip": "Aller au contenu",
     "homeAria": "Dialogbot Privat – Ma journée",
-    "credits": "{n} crédits",
-    "balanceAria": "{credits} crédits. Ouvrir le compte",
+    "balanceAria": "Solde d'appels {amount}. Ouvrir le compte",
     "noPlanBadge": "Sans forfait · essayer 14 jours",
     "noPlanBadgeShort": "Sans forfait",
     "noPlanAria": "Sans forfait. Ouvrir le compte et commencer 14 jours gratuits",
@@ -171,17 +170,19 @@
     "switchLabel": "Basculer entre entreprise et privé",
     "business": "Entreprise",
     "private": "Privé",
-    "account": "Compte et crédits",
+    "account": "Compte et solde",
     "addons": "Modules",
     "people": "Mes proches",
     "logout": "Se déconnecter",
     "right": {
       "tasks": "Mes tâches",
       "task": "Tâche",
-      "account": "Compte et crédits",
+      "account": "Compte et solde",
       "addons": "Modules",
       "people": "Mes proches"
-    }
+    },
+    "homeSuffix": " – Ma journée",
+    "balance": "Solde {amount}"
   },
   "tabs": {
     "label": "Menu principal",
@@ -242,7 +243,7 @@
     "soon": "Bientôt",
     "next": "Prochaine étape : {next}",
     "myTasks": "Mes tâches",
-    "accountBtn": "Compte et crédits",
+    "accountBtn": "Compte et solde",
     "welcomeFunnel": "Peter a organisé votre journée – appuyez sur Oui, appelle pour passer le premier appel"
   },
   "shortcuts": {
@@ -276,7 +277,8 @@
     "earlier": "Tâche : {title}. Ouvrir la tâche",
     "googleData": "Données de Google",
     "demoData": "Données de démonstration – entreprises fictives, pas de Google",
-    "typing": "Peter écrit …"
+    "typing": "Peter écrit …",
+    "deleteMessage": "Supprimer le message"
   },
   "list": {
     "count": "{n|1 élément|# éléments} · {done} fait(s)",
@@ -306,7 +308,9 @@
     "simulateReserve": "{name} réserve un souhait",
     "simulateActivated": "{name} crée sa première tâche",
     "welcomeBanner": "Essayez vous-même : que puis-je faire pour vous ?",
-    "welcomeDismiss": "Fermer"
+    "welcomeDismiss": "Fermer",
+    "open": "Ouvrir",
+    "shareWish": "Partager la liste de souhaits"
   },
   "move": {
     "label": "Le rappel a été déplacé",
@@ -318,7 +322,9 @@
     "label": "Réservation sur le site · en attente de votre accord",
     "before": "Actuellement",
     "after": "Proposition",
-    "note": "Rien n'est réservé tant que vous n'avez pas approuvé."
+    "note": "Rien n'est réservé tant que vous n'avez pas approuvé.",
+    "needsPlanText": "Les réservations sur les sites sont incluses dans toutes les formules. Sans formule, aucune réservation n'est possible – pas même avec le solde d'appels.",
+    "limit": "Vous avez utilisé les réservations en ligne de ce mois – réessayez le mois prochain"
   },
   "call": {
     "proposal": "Proposition · attend votre oui",
@@ -329,13 +335,12 @@
     "mayAsk": "Peut demander",
     "mayAgree": "Peut convenir de",
     "mayNot": "Ne peut pas",
-    "cost": "Appel de l'assistant : {n} crédits maximum",
+    "cost": "Appel supplémentaire : {pXAnswered} décroché, {pXVoicemail} messagerie, {pXNoAnswer} sans réponse + {pXMinute} par minute entamée, au plus {pXMax}.",
     "costTime": "(jusqu'à 3 min)",
-    "refund": "Si personne ne répond, si c'est occupé ou si c'est un répondeur, vous récupérez vos crédits.",
+    "refund": "Avant l'appel, {pXMax} sont réservés sur votre solde. Ensuite, seul le prix du résultat est prélevé et le reste est libéré. Si l'appel n'aboutit pas, tout est libéré.",
     "price": "Le prix de l'entreprise est autre chose – je ne le négocie pas, mais je vous dis ce qu'ils disent.",
     "shareQ": "L'entreprise peut-il avoir votre numéro ?",
     "shareHint": "Ainsi, ils peuvent vous appeler si quelque chose change.",
-    "needCredits": "Vous avez {have} crédits. L'appel en demande {need}.",
     "phoneStep": "Confirmez d'abord votre numéro de portable",
     "phoneStepText": "Avant que j'appelle pour vous, votre numéro doit être confirmé par un code SMS. Cela prend une minute, une seule fois.",
     "phoneThenCall": "Dès que le numéro est confirmé, j'appelle.",
@@ -353,7 +358,7 @@
     "saveEdit": "Enregistrer la modification",
     "simulatedCall": "Appel simulé",
     "calling": "Appel de {name} …",
-    "reserved": "{n} crédits sont réservés. Ils ne sont débités que si l'entreprise répond.",
+    "reserved": "{pXMax} sont réservés sur votre solde. Seul le prix du résultat est prélevé – le reste est libéré.",
     "realWait": "Vous serez prévenu ici à la fin de l'appel.",
     "chooseOutcome": "Simulation : choisissez le résultat",
     "outcomeAnswered": "L'entreprise répond",
@@ -364,10 +369,10 @@
     "priceAt": "Prix chez l'entreprise",
     "priceNote": "(indiqué pendant l'appel)",
     "assistantCall": "Appel de l'assistant",
-    "callUsage": "{n} crédits · {duration}",
+    "callUsage": "Appel supplémentaire · {duration}",
     "duration": "{m} min {s} s",
     "seeTask": "Voir toute la tâche",
-    "noAnswerTitle": "Personne n'a décroché – vos {n} crédits sont libérés",
+    "noAnswerTitle": "Personne n'a répondu – seulement {pXNoAnswer} prélevés, le reste est libéré",
     "noAnswerText": "Je n'ai pas laissé de message. Voulez-vous que je réessaie ?",
     "retry": "Réessayer",
     "cancel": "Annuler la tâche",
@@ -388,7 +393,14 @@
     "useNumber": "Utiliser ce numéro",
     "isBusiness": "C'est une entreprise",
     "isBusinessHint": "Le numéro ressemble à un portable. Je n'appelle que des entreprises.",
-    "demoBusiness": "C'est une entreprise de démonstration qu'on ne peut pas appeler. Choisissez une vraie entreprise."
+    "demoBusiness": "C'est une entreprise de démonstration qu'on ne peut pas appeler. Choisissez une vraie entreprise.",
+    "needsPlan": "Nécessite un forfait",
+    "needsPlanText": "Les appels sont inclus dans toutes les formules. Sans formule, aucun appel n'est possible – pas même avec le solde d'appels.",
+    "delete": "Supprimer l'appel",
+    "deleteQ": "Supprimer l'appel et son résumé ? Cette action est définitive.",
+    "deleteYes": "Oui, supprimer",
+    "deleteNo": "Garder",
+    "needBalance": "Vous avez {have} sur votre solde d'appels. Un appel supplémentaire demande {need} – rechargez dans Compte."
   },
   "draft": {
     "label": "Brouillon · prêt à enregistrer",
@@ -423,8 +435,8 @@
     "orLink": "Ou envoyez un lien",
     "signWith": "Signer :",
     "message": "Le message (modifiable)",
-    "smsWishlist": "Coucou ! J'ai fait une liste de souhaits – regarde et réserve ici : {link}",
-    "smsGroup": "Coucou ! J'ai fait une liste partagée – regarde et ajoute ici : {link}",
+    "smsWishlist": "Coucou ! J'ai fait une liste de souhaits - regarde et réserve ici : {link}",
+    "smsGroup": "Coucou ! J'ai fait une liste partagée - regarde et ajoute ici : {link}",
     "remindWishlist": "Coucou ! As-tu vu ma liste de souhaits « {title} » ? Le lien est dans mon message précédent.",
     "remindGroup": "Coucou ! As-tu vu la liste « {title} » ? Le lien est dans mon message précédent.",
     "chars": "{n} sur {max} caractères",
@@ -464,7 +476,8 @@
     "queueNext": "Envoyé ? Suivant : {name} ({i} sur {n})",
     "queueBack": "Bon retour. Appuyez quand vous êtes prêt pour le suivant.",
     "queueDone": "Les {n} sont invités.",
-    "done": "Terminé"
+    "done": "Terminé",
+    "roleWishGuest": "peut réserver"
   },
   "people": {
     "title": "Mes proches",
@@ -555,29 +568,31 @@
   },
   "paywall": {
     "titleDigital": "Il faut un forfait",
-    "titleCall": "Il vous manque des crédits pour l'appel",
+    "titleCall": "Rechargez pour un appel supplémentaire",
     "titleTrial": "Il faut un forfait",
     "draft": "Brouillon",
-    "textDigital": "La tâche est enregistrée comme brouillon. Choisissez un forfait, continuez avec 1 crédit ou regardez un clip sponsorisé facultatif.",
-    "textCall": "Un appel réserve {n} crédits quand vous l'approuvez. Vous en avez {have}.",
+    "textDigital": "La tâche est enregistrée en brouillon. Choisissez une formule, payez {pExtraTask} avec votre solde ou regardez un spot sponsor facultatif.",
+    "textCall": "Un appel supplémentaire réserve {pXMax} sur votre solde quand vous l'approuvez. Vous avez {have}.",
     "textTrial": "Essayez Dialogbot Privat gratuitement pendant 14 jours. Vous vous inscrivez avec une carte, débitée seulement à la fin de l'essai – résiliez avant, et vous ne payez rien. La tâche reste en brouillon jusqu'à votre choix.",
     "trialNote": "Plus · {pPlus}/mois après l'essai · résiliable à tout moment",
-    "useCredit": "Utiliser 1 crédit · vous en avez {n}",
-    "buy": "Acheter 10 crédits · {pCredits}. TTC",
+    "buy": "{pTopup1}, {pTopup2} ou {pTopup3}",
     "sponsor": "Voir une annonce sponsorisée · +1 tâche ({n} restantes aujourd'hui)",
     "later": "Plus tard – garder le brouillon",
-    "laterNote": "Le brouillon se trouve sous « Attend votre réponse ». Vous pouvez continuer quand vous voulez."
+    "laterNote": "Le brouillon se trouve sous « Attend votre réponse ». Vous pouvez continuer quand vous voulez.",
+    "useBalance": "Payer {pExtraTask} avec le solde · vous avez {have}"
   },
   "buy": {
-    "title": "Acheter 10 crédits",
-    "item": "10 crédits",
+    "title": "Recharger votre solde d'appels",
+    "item": "Recharge",
     "vat": "Dont TVA",
-    "note": "Achat unique. Les crédits n'expirent pas pendant le pilote.",
-    "pay": "Payer {pCredits}",
-    "payReal": "Aller au paiement · {pCredits}",
+    "note": "Paiement unique, sans abonnement. Le solde n'expire pas pendant le pilote.",
+    "pay": "Payer {amount}",
+    "payReal": "Aller au paiement · {amount}",
     "simulatedBuy": "Achat simulé",
     "redirecting": "Redirection vers le paiement …",
-    "back": "Retour"
+    "back": "Retour",
+    "have": "Vous avez {have} sur votre solde d'appels.",
+    "prices": "Appel supplémentaire : {pXAnswered} décroché, {pXVoicemail} messagerie, {pXNoAnswer} sans réponse + {pXMinute} par minute entamée, au plus {pXMax}."
   },
   "sponsor": {
     "title": "Annonce sponsorisée facultative",
@@ -590,7 +605,7 @@
   },
   "login": {
     "title": "Enregistrer votre tâche",
-    "text": "Pour enregistrer votre propre tâche, il vous faut un compte privé. Vos tâches, conversations et crédits sont séparés des comptes entreprise.",
+    "text": "Pour enregistrer votre propre tâche, il vous faut un compte privé. Vos tâches, conversations et solde d'appels sont séparés des comptes professionnels.",
     "signup": "Créer un compte privé",
     "login": "J'ai un compte – me connecter",
     "simulated": "Continuer en tant qu'utilisateur test",
@@ -629,22 +644,20 @@
     "purposeReminder": "Être rappelé à temps",
     "purposeWishlist": "Partager des souhaits sans gâcher la surprise",
     "talk": "Parler de la tâche",
-    "history": "Historique"
+    "history": "Historique",
+    "fromOwner": "De la part de {name}"
   },
   "account": {
-    "title": "Compte et crédits",
+    "title": "Compte",
     "privateLine": "Compte privé · {email} · séparé des comptes entreprise",
     "exampleLine": "Vous essayez avec des données d'exemple. Connectez-vous en enregistrant votre première tâche.",
     "simulatedLine": "L'API Privat n'est pas encore activée – tout ici est une simulation dans votre navigateur.",
     "free": "Sans forfait",
     "freeNote": "Sans forfait, vous pouvez voir et réserver sur les listes que d'autres partagent avec vous – vos propres tâches, listes et appels demandent un forfait. Essayez tout gratuitement pendant 14 jours.",
-    "credits": "Crédits",
-    "creditsWord": "crédits",
-    "reserved": "{n} réservés",
-    "creditsNote": "Un appel décroché coûte 3 crédits (jusqu'à 3 min). 10 crédits coûtent {pCredits}. TTC – achat unique, sans abonnement.",
-    "buy": "Acheter 10 crédits · {pCredits}",
-    "purchased": "L'achat est enregistré ({ref}).",
-    "purchasedReal": "Merci pour votre achat. Vos crédits apparaîtront ici dès que le paiement sera confirmé.",
+    "reserved": "{amount} réservé",
+    "buy": "Recharger",
+    "purchased": "Le paiement est enregistré ({ref}).",
+    "purchasedReal": "Merci. Le montant apparaît sur votre solde dès que le paiement est confirmé.",
     "purchaseCancelled": "L'achat a été annulé. Rien n'a été débité.",
     "ledger": "Mouvements",
     "ledgerEmpty": "Pas encore de mouvements.",
@@ -657,8 +670,8 @@
     "addons": "Modules",
     "addonsText": "Activez et désactivez des fonctions supplémentaires – par ex. Appelle pour moi, listes partagées et listes de souhaits.",
     "addonsBtn": "Voir les modules",
-    "repeatNote": "Le signal de paiement {ref} est déjà enregistré. Aucun crédit supplémentaire.",
-    "repeatNone": "Aucun paiement à répéter – achetez d'abord 10 crédits.",
+    "repeatNote": "Le signal de paiement {ref} est déjà enregistré. Rien de plus n'a été ajouté au solde.",
+    "repeatNone": "Il n'y a encore aucun paiement à répéter – rechargez d'abord le solde.",
     "tools": "Outils de test · simulation uniquement",
     "startFree": "Réinitialiser en compte sans forfait",
     "repeatPay": "Répéter le dernier signal de paiement",
@@ -666,11 +679,15 @@
     "reset": "Recommencer",
     "installTitle": "Installer l'app",
     "languageTitle": "Langue",
-    "languageText": "L'application et les réponses de Peter suivent la langue choisie ici."
+    "languageText": "L'application et les réponses de Peter suivent la langue choisie ici.",
+    "groupMe": "Vous",
+    "groupApp": "L’app",
+    "groupExtra": "Solde d'appels",
+    "ledgerAll": "Tout voir ({n})"
   },
   "invite": {
     "title": "Inviter des amis",
-    "text": "Partagez Dialogbot avec un ami. Vous recevez tous les deux 3 crédits quand votre ami a créé sa première tâche.",
+    "text": "Partagez Dialogbot avec un ami. Vous recevez tous les deux {pReferral} sur votre solde dès que votre ami a payé sa première période.",
     "stats": {
       "invited": "Invités",
       "joined": "Inscrits",
@@ -733,7 +750,10 @@
   "errors": {
     "emailNotVerified": "Confirmez votre e-mail pour utiliser Dialogbot Privat.",
     "verifyLink": "Confirmer l'e-mail",
-    "viewAs": "Les tâches privées ne sont pas visibles en « Voir comme le client »."
+    "viewAs": "Les tâches privées ne sont pas visibles en « Voir comme le client ».",
+    "notEnabled": "Dialogbot Privat n'est pas encore ouvert pour ton compte. Rien de ce que tu fais ici n'est enregistré ni exécuté.",
+    "unavailable": "Dialogbot Privat est injoignable pour le moment. Réessaie dans un instant – rien n'a été enregistré ni exécuté.",
+    "generic": "Une erreur s’est produite. Veuillez réessayer."
   },
   "location": {
     "useMine": "Utiliser ma position",
@@ -779,7 +799,10 @@
     "trialBadge": "{plan} · essai, {n|1 jour|# jours} restants",
     "trialBadgeShort": "{plan} · {n|1 jour|# jours}",
     "planBadge": "{plan}",
-    "noPlan": "Sans forfait"
+    "noPlan": "Sans forfait",
+    "trialDaysShort": "{n} j",
+    "trialDaysLeft": "{n|1 jour|# jours} restants",
+    "planAriaShort": "ouvrir le compte"
   },
   "day2": {
     "eyebrow": "Votre assistant personnel",
@@ -834,17 +857,20 @@
       "trialDays": "{n|1 jour|# jours} restants",
       "trialAria": "{n} sur {total} jours d’essai restants",
       "noteTrial": "Listes et rappels sont illimités. Après l’essai, vous continuez sur {plan} à {price}/mois – ou choisissez un autre forfait.",
-      "notePlan": "Listes et rappels sont illimités. Plus d’appels que votre abonnement ? Les appels supplémentaires s’achètent sous Compte.",
+      "notePlan": "Listes et rappels illimités. Plus d'appels que votre formule ? Les appels supplémentaires sont payés avec le solde dans Compte.",
       "noteFree": "Sans forfait, vous pouvez voir et réserver sur les listes que d'autres partagent avec vous. Vos propres tâches et appels demandent un forfait.",
       "noteNone": "Sans forfait, vous pouvez voir et réserver sur les listes que d'autres partagent avec vous. Essayez tout pendant 14 jours – la carte n'est débitée qu'après.",
-      "extraCalls": "Appels supplémentaires (crédits)",
+      "extraCalls": "Solde d'appels",
       "choosePlan": "Choisir un forfait",
       "changePlan": "Changer de forfait",
       "startTrial": "Commencer 14 jours gratuits",
       "newInStore": "Nouveau dans la Boutique",
       "see": "Voir →"
     },
-    "noAnswerPlan": "Personne n’a répondu – l’appel ne compte pas"
+    "noAnswerPlan": "Personne n’a répondu – l’appel ne compte pas",
+    "greetingShort": "Je peux vous rappeler des choses, faire des listes et appeler pour vous. Qu’avez-vous remis à plus tard ?",
+    "yourTurnOf": "À vous · 1 sur {n}",
+    "allTasks": "Toutes les tâches"
   },
   "store": {
     "metaTitle": "La Boutique",
@@ -879,7 +905,7 @@
       "title": "Inclus dans Plus",
       "text": "{name} est inclus dans Plus et Familie. Commencez 14 jours gratuits – ou choisissez un forfait si votre essai est terminé.",
       "callTitle": "Les appels nécessitent un forfait",
-      "callText": "Peter appelle pour vous avec Basis, Plus ou Familie – ou avec des appels supplémentaires (crédits).",
+      "callText": "Peter appelle pour vous avec Basis, Plus ou Familie. Les appels au-delà de la formule sont payés avec le solde d'appels.",
       "trial": "Commencer 14 jours gratuits",
       "choose": "Choisir un forfait",
       "later": "Pas maintenant"
@@ -895,7 +921,7 @@
       "expired": "Essai terminé",
       "none": "Sans forfait"
     },
-    "trialLine": "{n|1 jour|# jours} d’essai restants · droits Plus",
+    "trialLine": "{n|1 jour|# jours} d’essai restants · droits {plan}",
     "trialThen": "Ensuite {plan} à {price}/mois",
     "trialThenNone": "Choisissez un forfait avant la fin – sinon vous continuez sans forfait.",
     "expiredLine": "Votre essai est terminé. Choisissez un forfait pour retrouver les appels et toutes les apps.",
@@ -923,7 +949,7 @@
     "select": "Choisir {plan}",
     "startTrial": "Commencer 14 jours gratuits",
     "currentPlan": "Votre forfait",
-    "pickerNote": "Plus d’appels que votre abonnement ? Les appels supplémentaires s’achètent ici. Sans engagement.",
+    "pickerNote": "Plus d'appels que votre formule ? Les appels supplémentaires sont payés avec le solde d'appels. Sans engagement.",
     "activated": "Votre abonnement est actif.",
     "notCompleted": "Le paiement n’a pas abouti : aucun abonnement n’a commencé et rien n’a été débité.",
     "cancelled": "Vous avez annulé le choix du forfait. Rien n’a été prélevé.",
@@ -931,20 +957,21 @@
     "portalMissing": "Les paiements ne sont pas encore configurés. Écrivez-nous pour modifier votre abonnement.",
     "redirecting": "Redirection vers le paiement …",
     "loginFirst": "Connectez-vous pour choisir un forfait.",
-    "extra": "Appels supplémentaires",
-    "extraWord": "crédits",
-    "extraNote": "3 crédits = 1 appel supplémentaire (jusqu’à 3 min) quand les appels du mois sont épuisés. 10 crédits coûtent {pCredits}. TTC – achat unique.",
+    "extra": "Solde d'appels",
+    "extraWord": "de solde",
+    "extraNote": "Appels supplémentaires une fois ceux du mois utilisés : {pXAnswered} décroché, {pXVoicemail} messagerie, {pXNoAnswer} sans réponse + {pXMinute} par minute entamée, au plus {pXMax}. Rechargez {pTopup1}, {pTopup2} ou {pTopup3} TTC – paiement unique.",
     "paywallChoose": "Choisir un forfait",
-    "paywallBuy": "Acheter des appels supplémentaires",
+    "paywallBuy": "Recharger le solde",
     "paywallCallTitlePlan": "Les appels du mois sont épuisés",
-    "paywallCallTextPlan": "Vous avez utilisé {used} sur {quota} appels dans {plan}. Achetez des appels supplémentaires ou passez à un forfait supérieur.",
-    "paywallCallTextNone": "Avec Basis, Plus ou Familie, les appels sont inclus. Vous pouvez aussi acheter des appels supplémentaires.",
+    "paywallCallTextPlan": "Vous avez utilisé {used} appels sur {quota} dans {plan}. Rechargez votre solde pour un appel supplémentaire ou passez à une formule supérieure.",
+    "paywallCallTextNone": "Avec Basis, Plus ou Familie, les appels sont inclus. Les appels supplémentaires sont payés avec le solde.",
     "paywallDigitalPlan": "Avec un forfait, listes et rappels sont illimités.",
     "endTrial": "Terminer l’essai",
     "codeAsk": "Vous avez un code de réduction ?",
     "codeLabel": "Code de réduction",
     "codePlaceholder": "Ex. BIENVENUE",
-    "codeHint": "La réduction est appliquée sur la page de paiement."
+    "codeHint": "La réduction est appliquée sur la page de paiement.",
+    "householdMember": "Vous faites partie du forfait Famille de {name}. {name} gère le forfait."
   },
   "funnel": {
     "entry": "Essayer en 2 minutes",
@@ -1146,7 +1173,10 @@
     "none": "Pas encore de rendez-vous. Quand Peter obtient une heure confirmée, ou que vous lui demandez d'en ajouter une, elle apparaît ici.",
     "addToCalendar": "Ajouter à l'agenda",
     "remove": "Retirer de l'agenda",
-    "removeNote": "«Retirer de l'agenda» n'annule pas le rendez-vous auprès de l'entreprise."
+    "removeNote": "«Retirer de l'agenda» n'annule pas le rendez-vous auprès de l'entreprise.",
+    "whichTitle": "Quel calendrier utilisez-vous ?",
+    "iphoneOther": "iPhone ou un autre",
+    "connectName": "Connecter {name}"
   },
   "birthdays": {
     "title": "Anniversaires à venir",
@@ -1196,7 +1226,8 @@
       "half_yearly": "chaque semestre",
       "yearly": "chaque année",
       "once": "une fois"
-    }
+    },
+    "removeYes": "Oui, retirer"
   },
   "assistantName": {
     "pronoun": "Pronom (textes danois)",
@@ -1265,6 +1296,7 @@
     "directShort": "direct",
     "stops": "{n} escales",
     "book": "Réserver",
+    "sponsored": "Annonce · Dialogbot touche une commission",
     "overBudget": "{n} voyages dépassaient le budget.",
     "disclaimer": "Les prix viennent directement des fournisseurs et peuvent changer. Vous réservez et payez chez le fournisseur – Dialogbot ne réserve pas."
   },
@@ -1589,7 +1621,56 @@
     "yourApps": "Vos apps",
     "all": "Toutes ({n})",
     "stripStep": "Étape {n} sur {total} – continuer la configuration",
-    "accountLine": "{n|1 app activée|# apps activées}"
+    "accountLine": "{n|1 app activée|# apps activées}",
+    "allOn": "Vous avez toutes les apps. De nouvelles arrivent régulièrement.",
+    "sayLike": "Dites par exemple « {example} »",
+    "about": "À propos de l’app",
+    "planIncludedAll": "Inclus dans tous les forfaits.",
+    "planTextTrialAll": "{name} est inclus dans tous les forfaits. Essayez gratuitement 14 jours – la carte n’est débitée qu’à la fin de l’essai.",
+    "planTextEndedAll": "{name} est inclus dans tous les forfaits. Choisissez un forfait pour l’utiliser.",
+    "planTextBasis": "Vous avez Basis. {name} est inclus dans Plus et Famille.",
+    "onInMine": "{n|1 app activée|# apps activées} – voir Mes apps",
+    "yourThings": "Vos éléments ici ({n})"
+  },
+  "familyHousehold": {
+    "title": "Foyer",
+    "count": "{count} sur {limit} personnes",
+    "ownerText": "Famille couvre jusqu'à {limit} personnes. Chacun a son propre compte – personne ne voit les affaires des autres.",
+    "invite": "Inviter dans le foyer",
+    "smsText": "Tu fais partie de ma Dialogbot Famille - rejoins-nous ici : {link}",
+    "me": "toi",
+    "remove": "Retirer",
+    "removeConfirm": "Retirer {name} du foyer ? {name} perd Famille tout de suite mais garde ses affaires.",
+    "memberLine": "Tu fais partie de la Famille de {name}.",
+    "leave": "Quitter le foyer",
+    "leaveConfirm": "Quitter le foyer ? Tu perds Famille tout de suite. Tes affaires restent.",
+    "left": "Tu as quitté le foyer.",
+    "paused": "Le foyer est en pause – il faut Famille.",
+    "full": "Le foyer est complet.",
+    "inviteTitle": "Rejoins la Famille de {name}",
+    "inviteText": "Tu as le forfait Famille sur ton propre compte. {name} ne voit pas tes affaires.",
+    "join": "Rejoindre",
+    "joined": "Tu fais partie du foyer."
+  },
+  "myData": {
+    "title": "Tes données",
+    "exportText": "Reçois par e-mail tout ce que nous gardons sur toi.",
+    "export": "Exporter mes données",
+    "queued": "Nous rassemblons tes données. Tu recevras un e-mail avec un lien.",
+    "ready": "Tes données sont prêtes.",
+    "download": "Télécharger tes données",
+    "expired": "Le lien a expiré. Redemande tes données.",
+    "delete": "Supprimer mon compte",
+    "deleteText": "Tout est supprimé dans Dialogbot Privat et ton abonnement s'arrête. Le solde d'appels restant est perdu et n'est pas remboursé. C'est définitif.",
+    "deleteLabel": "Saisis ton e-mail pour confirmer",
+    "deleteConfirm": "Tout supprimer définitivement",
+    "cancel": "Annuler",
+    "deleting": "Suppression…"
+  },
+  "inviteOg": {
+    "wishlist": "{name} a partagé sa liste de souhaits avec vous",
+    "list": "{name} a partagé une liste avec vous",
+    "generic": "Vous êtes invité à une liste"
   },
   "problem": {
     "notFoundTitle": "Cette page n'existe pas",

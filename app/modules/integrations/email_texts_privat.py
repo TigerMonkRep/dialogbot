@@ -57,6 +57,13 @@ PRIVAT_TEXTS: dict[str, dict[str, str]] = {
         "welcome_note": "Linket virker i {hours} timer.",
         "welcome_footer": "Du får denne e-mail, fordi der er oprettet en konto hos Dialogbot med din adresse.",
         "privat_sms_code": "Din kode til Dialogbot er {code}. Den gælder i 10 minutter.",
+        # «Eksportér mine data» (PC-ACC-02/03)
+        "privat_export_subject": "Dine data fra Dialogbot Privat er klar",
+        "privat_export_heading": "Dine data er klar",
+        "privat_export_body": "Her er alt, Dialogbot Privat har gemt om dig: som data (JSON) og som en læsbar oversigt.",
+        "privat_export_button": "Hent dine data",
+        "privat_export_note": "Linket virker i {days} dage, og kun når du er logget ind.",
+        "privat_export_footer": "Du får denne e-mail, fordi du bad om dine data i Dialogbot Privat.",
     },
     "en": {
         "welcome_subject": "Welcome to Dialogbot – choose your password",  # Erhverv quiz-funnel (F-JE-08)
@@ -107,6 +114,13 @@ PRIVAT_TEXTS: dict[str, dict[str, str]] = {
         "welcome_footer": "You are receiving this e-mail because an account was created at Dialogbot with your "
                                  "address.",
         "privat_sms_code": "Your Dialogbot code is {code}. It is valid for 10 minutes.",
+        # «Eksportér mine data» (PC-ACC-02/03)
+        "privat_export_subject": "Your Dialogbot Privat data is ready",
+        "privat_export_heading": "Your data is ready",
+        "privat_export_body": "Here is everything Dialogbot Privat keeps about you: as data (JSON) and as a readable overview.",
+        "privat_export_button": "Download your data",
+        "privat_export_note": "The link works for {days} days, and only when you are logged in.",
+        "privat_export_footer": "You get this e-mail because you asked for your data in Dialogbot Privat.",
     },
     "de": {
         "welcome_subject": "Willkommen bei Dialogbot – wählen Sie Ihr Passwort",  # Erhverv quiz-funnel (F-JE-08)
@@ -159,6 +173,13 @@ PRIVAT_TEXTS: dict[str, dict[str, str]] = {
         "welcome_footer": "Sie erhalten diese E-Mail, weil bei Dialogbot ein Konto mit Ihrer Adresse erstellt "
                                  "wurde.",
         "privat_sms_code": "Ihr Code für Dialogbot ist {code}. Er gilt 10 Minuten.",
+        # «Eksportér mine data» (PC-ACC-02/03)
+        "privat_export_subject": "Ihre Daten aus Dialogbot Privat sind bereit",
+        "privat_export_heading": "Ihre Daten sind bereit",
+        "privat_export_body": "Hier ist alles, was Dialogbot Privat über Sie gespeichert hat: als Daten (JSON) und als lesbare Übersicht.",
+        "privat_export_button": "Daten herunterladen",
+        "privat_export_note": "Der Link gilt {days} Tage und nur, wenn Sie angemeldet sind.",
+        "privat_export_footer": "Sie erhalten diese E-Mail, weil Sie Ihre Daten in Dialogbot Privat angefordert haben.",
     },
     "es": {
         "welcome_subject": "Bienvenido a Dialogbot: elija su contraseña",  # Erhverv quiz-funnel (F-JE-08)
@@ -209,6 +230,13 @@ PRIVAT_TEXTS: dict[str, dict[str, str]] = {
         "welcome_footer": "Recibe este correo electrónico porque se ha creado una cuenta en Dialogbot con su "
                                  "dirección.",
         "privat_sms_code": "Su código de Dialogbot es {code}. Es válido durante 10 minutos.",
+        # «Eksportér mine data» (PC-ACC-02/03)
+        "privat_export_subject": "Sus datos de Dialogbot Privat están listos",
+        "privat_export_heading": "Sus datos están listos",
+        "privat_export_body": "Aquí está todo lo que Dialogbot Privat guarda sobre usted: como datos (JSON) y como un resumen legible.",
+        "privat_export_button": "Descargar mis datos",
+        "privat_export_note": "El enlace es válido durante {days} días y solo cuando ha iniciado sesión.",
+        "privat_export_footer": "Recibe este correo porque solicitó sus datos en Dialogbot Privat.",
     },
     "fr": {
         "welcome_subject": "Bienvenue chez Dialogbot – choisissez votre mot de passe",  # Erhverv quiz-funnel (F-JE-08)
@@ -259,6 +287,13 @@ PRIVAT_TEXTS: dict[str, dict[str, str]] = {
         "welcome_note": "Le lien est valable {hours} heures.",
         "welcome_footer": "Vous recevez cet e-mail parce qu'un compte Dialogbot a été créé avec votre adresse.",
         "privat_sms_code": "Votre code Dialogbot est {code}. Il est valable 10 minutes.",
+        # «Eksportér mine data» (PC-ACC-02/03)
+        "privat_export_subject": "Vos données Dialogbot Privat sont prêtes",
+        "privat_export_heading": "Vos données sont prêtes",
+        "privat_export_body": "Voici tout ce que Dialogbot Privat conserve à votre sujet : sous forme de données (JSON) et d'un aperçu lisible.",
+        "privat_export_button": "Télécharger mes données",
+        "privat_export_note": "Le lien est valable {days} jours, et uniquement lorsque vous êtes connecté.",
+        "privat_export_footer": "Vous recevez cet e-mail parce que vous avez demandé vos données dans Dialogbot Privat.",
     },
     "it": {
         "welcome_subject": "Benvenuto in Dialogbot – scelga la Sua password",  # Erhverv quiz-funnel (F-JE-08)
@@ -309,6 +344,13 @@ PRIVAT_TEXTS: dict[str, dict[str, str]] = {
         "welcome_footer": "Riceve questa e-mail perché è stato creato un account su Dialogbot con il Suo "
                                  "indirizzo.",
         "privat_sms_code": "Il Suo codice Dialogbot è {code}. È valido per 10 minuti.",
+        # «Eksportér mine data» (PC-ACC-02/03)
+        "privat_export_subject": "I Suoi dati di Dialogbot Privat sono pronti",
+        "privat_export_heading": "I Suoi dati sono pronti",
+        "privat_export_body": "Ecco tutto ciò che Dialogbot Privat conserva su di Lei: come dati (JSON) e come riepilogo leggibile.",
+        "privat_export_button": "Scarica i miei dati",
+        "privat_export_note": "Il link è valido per {days} giorni e solo quando ha effettuato l'accesso.",
+        "privat_export_footer": "Riceve questa e-mail perché ha richiesto i Suoi dati in Dialogbot Privat.",
     },
     "no": {
         "welcome_subject": "Velkommen til Dialogbot – velg passordet ditt",  # Erhverv quiz-funnel (F-JE-08)
@@ -358,6 +400,13 @@ PRIVAT_TEXTS: dict[str, dict[str, str]] = {
         "welcome_note": "Lenken er gyldig i {hours} timer.",
         "welcome_footer": "Du får denne e-posten fordi det er opprettet en konto hos Dialogbot med adressen din.",
         "privat_sms_code": "Koden din til Dialogbot er {code}. Den gjelder i 10 minutter.",
+        # «Eksportér mine data» (PC-ACC-02/03)
+        "privat_export_subject": "Dataene dine fra Dialogbot Privat er klare",
+        "privat_export_heading": "Dataene dine er klare",
+        "privat_export_body": "Her er alt Dialogbot Privat har lagret om deg: som data (JSON) og som en lesbar oversikt.",
+        "privat_export_button": "Hent dataene dine",
+        "privat_export_note": "Lenken virker i {days} dager, og bare når du er logget inn.",
+        "privat_export_footer": "Du får denne e-posten fordi du ba om dataene dine i Dialogbot Privat.",
     },
     "sv": {
         "welcome_subject": "Välkommen till Dialogbot – välj ditt lösenord",  # Erhverv quiz-funnel (F-JE-08)
@@ -407,5 +456,12 @@ PRIVAT_TEXTS: dict[str, dict[str, str]] = {
         "welcome_footer": "Du får det här mejlet eftersom någon har skapat ett konto hos Dialogbot med din "
                                  "adress.",
         "privat_sms_code": "Din kod till Dialogbot är {code}. Den gäller i 10 minuter.",
+        # «Eksportér mine data» (PC-ACC-02/03)
+        "privat_export_subject": "Dina data från Dialogbot Privat är klara",
+        "privat_export_heading": "Dina data är klara",
+        "privat_export_body": "Här är allt Dialogbot Privat har sparat om dig: som data (JSON) och som en läsbar översikt.",
+        "privat_export_button": "Hämta dina data",
+        "privat_export_note": "Länken fungerar i {days} dagar, och bara när du är inloggad.",
+        "privat_export_footer": "Du får det här mejlet eftersom du bad om dina data i Dialogbot Privat.",
     },
 }

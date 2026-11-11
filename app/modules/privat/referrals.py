@@ -1,5 +1,7 @@
-"""Referral reward: a NEW user who joins through an invite and becomes active (verified e-mail + first OWN task) gives
-+3 credits to the invitee and +3 to the inviter (at most 10 inviter rewards per Copenhagen month).
+"""Referral reward: a NEW user who joins through an invite and becomes active (verified e-mail + first OWN task) AND
+has paid a first real period (subscription active – not a trial; decision Fürster 2026-11-10, F-PQ-03/F-PBQ-02:
+no reward for alt accounts) gives 10 kr. on the Opkaldssaldo to the invitee and 10 kr. to the inviter (at most 10
+inviter rewards per Copenhagen month; F-PDEC-01). Tried after every own task and when the subscription turns active.
 
 - "New" = the account was created after the invite (an existing user never earns anything), and not a self-invite.
 - One referral row per invitee for life (unique invitee_user_id) and ledger source_refs referral:<invitee>:invitee /
@@ -22,9 +24,10 @@ from app.models import (
     PrivateTaskMember,
     User,
 )
+from app.modules.billing import markets, prices
 from app.modules.privat import ledger, rules
 
-REWARD = 3
+REWARD_MINOR = prices.PRIVAT_REFERRAL_BONUS_MINOR  # DKK øre; in each account's own currency: markets.PRIVAT_BALANCE
 MONTHLY_CAP = 10
 
 
@@ -59,6 +62,17 @@ def has_own_task(db: OrmSession, user_id: uuid.UUID) -> bool:
                             PrivateTask.status != "draft").limit(1)) is not None  # a free-tier draft is not activity
 
 
+def paid_once(db: OrmSession, ws_id: uuid.UUID) -> bool:
+    """The invitee has paid a first real period: their Stripe subscription is (or was, until now) active."""
+    from app.models import PrivateSubscription
+
+    row = db.get(PrivateSubscription, ws_id)
+    return row is not None and row.stripe_subscription_id is not None and row.status in ("active", "past_due") \
+        or (row is not None and row.status == "canceled" and row.current_period_end is not None
+            and row.stripe_subscription_id is not None and row.trial_ends_at is not None
+            and row.current_period_end > row.trial_ends_at)
+
+
 def try_activate(db: OrmSession, user_id: uuid.UUID) -> bool:
     """Reward once when the invitee is active. Safe to call after every own task; True when it rewarded now."""
     r = db.scalar(select(PrivateReferral).where(PrivateReferral.invitee_user_id == user_id,
@@ -70,18 +84,24 @@ def try_activate(db: OrmSession, user_id: uuid.UUID) -> bool:
         return False
     me = db.scalar(select(PrivateProfile).where(PrivateProfile.user_id == user_id))
     inviter = db.scalar(select(PrivateProfile).where(PrivateProfile.user_id == r.inviter_user_id))
-    if me is None:
+    if me is None or not paid_once(db, me.workspace_id):
         return False
     now = rules.now()
     r.activated_at = r.activated_at or now
-    ledger.add(db, me.workspace_id, kind="referral", amount=REWARD, source_ref=f"referral:{user_id}:invitee",
+    ledger.add(db, me.workspace_id, kind="referral", amount=_reward(db, me.workspace_id),
+               source_ref=f"referral:{user_id}:invitee",
                text="Velkomstbonus: du kom med via en invitation")
     if inviter is not None and inviter_rewards_this_month(db, inviter.workspace_id) < MONTHLY_CAP:
         r.inviter_rewarded = ledger.add(
-            db, inviter.workspace_id, kind="referral", amount=REWARD, source_ref=f"referral:{user_id}:inviter",
+            db, inviter.workspace_id, kind="referral", amount=_reward(db, inviter.workspace_id),
+            source_ref=f"referral:{user_id}:inviter",
             text=f"{rules.first_name(invitee.display_name)} kom med via din invitation")
     r.rewarded_at = now
     return True
+
+
+def _reward(db: OrmSession, ws_id: uuid.UUID) -> int:
+    return markets.privat_balance_amount(ledger.currency(db, ws_id), "referral")
 
 
 def summary(db: OrmSession, ctx) -> dict:
@@ -95,9 +115,11 @@ def summary(db: OrmSession, ctx) -> dict:
                        .where(PrivateReferral.inviter_user_id == ctx.user_id)) or 0
     activated = db.scalar(select(func.count()).select_from(PrivateReferral).where(
         PrivateReferral.inviter_user_id == ctx.user_id, PrivateReferral.activated_at.is_not(None))) or 0
+    cur = ledger.currency(db, ctx.ws_id)
     earned = db.scalar(select(func.coalesce(func.sum(CreditLedger.amount), 0)).where(
-        CreditLedger.workspace_id == ctx.ws_id, CreditLedger.kind == "referral")) or 0
-    return {"invited": invited, "joined": joined, "activated": activated, "credits_earned": int(earned),
+        CreditLedger.workspace_id == ctx.ws_id, CreditLedger.kind == "referral", CreditLedger.currency == cur)) or 0
+    return {"invited": invited, "joined": joined, "activated": activated, "earned_minor": int(earned), "currency": cur,
+            "reward_minor": _reward(db, ctx.ws_id),
             "monthly_left": max(0, MONTHLY_CAP - inviter_rewards_this_month(db, ctx.ws_id))}
 
 

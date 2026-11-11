@@ -270,7 +270,8 @@ class Settings(BaseSettings):
     # Vapi phone-number id ("+4589871234=3f2a…"); without an id the number must exist as a phone_numbers row.
     # Dialogbot never buys these automatically.
     privat_pool_numbers: str = Field(default="", alias="PRIVAT_POOL_NUMBERS")
-    # Optional Stripe Price id for the credit pack (10 credits, 29 kr. incl. VAT). Unset = inline price_data.
+    # Unused since 2026-11-11 (the credit pack became Opkaldssaldo top-ups of 50/100/200 kr., always inline price_data).
+    # Kept so an existing env var does not break settings; remove it with the env var.
     privat_stripe_price_id: str | None = Field(default=None, alias="PRIVAT_STRIPE_PRICE_ID")
     # Optional Stripe Price ids for the subscriptions (app/modules/privat/subscriptions.py), one per plan and interval.
     # Unset = inline price_data with the amounts from app/modules/billing/prices.py (incl. VAT).

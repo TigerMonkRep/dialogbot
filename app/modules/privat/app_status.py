@@ -89,6 +89,24 @@ def _data_tables(key: str):
     return [(PrivateAppData, lambda ws: (PrivateAppData.workspace_id == ws) & (PrivateAppData.app_key == key))]
 
 
+def _task_ids(data) -> set[uuid.UUID]:
+    """Every `task_id` stored anywhere in an app's data (the lists it created)."""
+    out: set[uuid.UUID] = set()
+    if isinstance(data, dict):
+        for k, v in data.items():
+            if k == "task_id" and isinstance(v, str):
+                try:
+                    out.add(uuid.UUID(v))
+                except ValueError:
+                    pass
+            else:
+                out |= _task_ids(v)
+    elif isinstance(data, list):
+        for v in data:
+            out |= _task_ids(v)
+    return out
+
+
 def deletable(key: str) -> bool:
     return _data_tables(key) is not None
 
@@ -107,16 +125,22 @@ def delete_data(db: OrmSession, ws_id: uuid.UUID, key: str) -> int:
     if tables is None:
         raise Conflict(f"«{a.name}» gemmer sine ting i dine lister og opgaver – slet dem dér", code="not_deletable",
                        extra={"addon": key})
-    from app.models import PrivateAppData
+    from app.models import PrivateAppData, PrivateTask
 
     n = 0
+    made: set[uuid.UUID] = set()
     for model, where in tables:
         if model is PrivateAppData:
             for row in db.scalars(select(PrivateAppData).where(where(ws_id))):
                 for it in (row.data or {}).get("items", []) if isinstance(row.data, dict) else []:
                     if isinstance(it, dict) and it.get("photo"):
                         files.delete(it["photo"])
+                made |= _task_ids(row.data)
         n += db.execute(delete(model).where(where(ws_id))).rowcount or 0
+    # The lists the app itself made (Fælles udgifter: «Udgifter: …», Flytning: «Flytning: …») hold the same data –
+    # amounts, names, the move's checklist – and go with it; members of a shared one lose it too (F-PA-01).
+    if made:
+        n += db.execute(delete(PrivateTask).where(PrivateTask.workspace_id == ws_id, PrivateTask.id.in_(made))).rowcount or 0
     st = state(db, ws_id, key)
     if st is not None:
         st.setup_done, st.disabled_at, st.updated_at = 0, None, rules.now()  # nothing kept any more

@@ -2,7 +2,7 @@
 found, so the call starts smarter («ydelse», «tider, der var ledige på hjemmesiden»).
 
 This only PREPARES the normal call proposal (a `PrivateCall` in status `proposed`). Nothing is dialled: the user approves the
-call exactly as any other call (credits/plan, mobile number, opening hours), see app/modules/privat/calls.py.
+call exactly as any other call (plan or Opkaldssaldo, mobile number, opening hours), see app/modules/privat/calls.py.
 """
 from __future__ import annotations
 

@@ -5,7 +5,7 @@
     "day": "Min dag",
     "chat": "Samtale",
     "tasks": "Mine oppgaver",
-    "account": "Konto og kreditter",
+    "account": "Konto og samtalesaldo",
     "addons": "Tillegg",
     "people": "Mine folk",
     "invite": "Invitasjon",
@@ -129,7 +129,7 @@
       "billedMonthly": "Betales månedlig",
       "billedYearly": "Betales årlig: {amount}",
       "cta": "Start 14 dager gratis",
-      "note": "Flere anrop enn abonnementet ditt? Ekstra anrop kjøpes i appen. Ingen binding – du kan bytte plan eller stoppe hver måned.",
+      "note": "Flere samtaler enn abonnementet? Ekstra samtaler betales fra samtalesaldoen: {pXAnswered} besvart, {pXVoicemail} telefonsvarer, {pXNoAnswer} ubesvart + {pXMinute} per påbegynte minutt, maks. {pXMax}. Ingen binding – du kan bytte plan eller stoppe hver måned.",
       "tagline": {
         "basis": "For deg som vil ha orden på hverdagen.",
         "plus": "For deg som vil slippe å ringe rundt.",
@@ -161,8 +161,7 @@
   "header": {
     "skip": "Hopp til innholdet",
     "homeAria": "Dialogbot Privat – Min dag",
-    "credits": "{n} kreditter",
-    "balanceAria": "{credits} credits. Åpne konto",
+    "balanceAria": "Samtalesaldo {amount}. Åpne konto",
     "noPlanBadge": "Uten plan · prøv 14 dager",
     "noPlanBadgeShort": "Uten plan",
     "noPlanAria": "Uten plan. Åpne konto og start 14 dager gratis",
@@ -171,17 +170,19 @@
     "switchLabel": "Bytt mellom bedrift og privat",
     "business": "Bedrift",
     "private": "Privat",
-    "account": "Konto og kreditter",
+    "account": "Konto og saldo",
     "addons": "Tillegg",
     "people": "Mine folk",
     "logout": "Logg ut",
     "right": {
       "tasks": "Mine oppgaver",
       "task": "Oppgave",
-      "account": "Konto og kreditter",
+      "account": "Konto og saldo",
       "addons": "Tillegg",
       "people": "Mine folk"
-    }
+    },
+    "homeSuffix": " – Min dag",
+    "balance": "Saldo {amount}"
   },
   "tabs": {
     "label": "Hovedmeny",
@@ -242,7 +243,7 @@
     "soon": "Snart",
     "next": "Neste steg: {next}",
     "myTasks": "Mine oppgaver",
-    "accountBtn": "Konto og kreditter",
+    "accountBtn": "Konto og saldo",
     "welcomeFunnel": "Peter har satt opp dagen din – trykk Ja, ring for å ta det første anropet"
   },
   "shortcuts": {
@@ -276,7 +277,8 @@
     "earlier": "Oppgave: {title}. Åpne oppgaven",
     "googleData": "Data fra Google",
     "demoData": "Demodata – fiktive bedrifter, ikke fra Google",
-    "typing": "Peter skriver …"
+    "typing": "Peter skriver …",
+    "deleteMessage": "Slett melding"
   },
   "list": {
     "count": "{n|1 punkt|# punkter} · {done} fullført",
@@ -306,7 +308,9 @@
     "simulateReserve": "{name} reserverer et ønske",
     "simulateActivated": "{name} lager sin første egne oppgave",
     "welcomeBanner": "Prøv selv: Hva kan jeg ordne for deg?",
-    "welcomeDismiss": "Lukk"
+    "welcomeDismiss": "Lukk",
+    "open": "Åpne",
+    "shareWish": "Del ønskelisten"
   },
   "move": {
     "label": "Påminnelsen er flyttet",
@@ -318,7 +322,9 @@
     "label": "Bestilling på nettsiden · venter på ja fra deg",
     "before": "Nå",
     "after": "Forslag",
-    "note": "Ingenting bestilles før du godkjenner."
+    "note": "Ingenting bestilles før du godkjenner.",
+    "needsPlanText": "Bestilling på nettsider er med i alle planer. Uten plan kan det ikke bestilles – heller ikke med samtalesaldoen.",
+    "limit": "Du har brukt månedens bestillinger på nettsider – prøv igjen neste måned"
   },
   "call": {
     "proposal": "Forslag · venter på ditt ja",
@@ -329,13 +335,12 @@
     "mayAsk": "Kan spørre om",
     "mayAgree": "Kan avtale",
     "mayNot": "Kan ikke",
-    "cost": "Assistentens samtale: maks {n} kreditter",
+    "cost": "Ekstra samtale: {pXAnswered} besvart, {pXVoicemail} telefonsvarer, {pXNoAnswer} ubesvart + {pXMinute} per påbegynte minutt, maks. {pXMax}.",
     "costTime": "(opptil 3 min.)",
-    "refund": "Svarer ingen, er det opptatt eller en telefonsvarer, får du kredittene tilbake.",
+    "refund": "Før samtalen reserveres {pXMax} på samtalesaldoen. Etterpå trekkes bare prisen for utfallet, og resten frigis. Går samtalen ikke gjennom, frigis alt.",
     "price": "Prisen hos bedriften er noe annet – den avtaler jeg ikke, men jeg forteller deg hva de sier.",
     "shareQ": "Kan bedriften få nummeret ditt?",
     "shareHint": "Da kan de ringe deg hvis noe endrer seg.",
-    "needCredits": "Du har {have} kreditter. Samtalen krever {need}.",
     "phoneStep": "Bekreft mobilnummeret ditt først",
     "phoneStepText": "Før jeg ringer for deg, må nummeret ditt bekreftes med en SMS-kode. Det tar ett minutt, og du gjør det bare én gang.",
     "phoneThenCall": "Så snart nummeret er bekreftet, ringer jeg.",
@@ -353,7 +358,7 @@
     "saveEdit": "Lagre endringen",
     "simulatedCall": "Simulert samtale",
     "calling": "Ringer {name} …",
-    "reserved": "{n} kreditter er reservert. De trekkes bare hvis bedriften svarer.",
+    "reserved": "{pXMax} er reservert på samtalesaldoen. Bare prisen for utfallet trekkes – resten frigis.",
     "realWait": "Du får beskjed her når samtalen er ferdig.",
     "chooseOutcome": "Simulering: velg utfall",
     "outcomeAnswered": "Bedriften svarer",
@@ -364,10 +369,10 @@
     "priceAt": "Pris hos bedriften",
     "priceNote": "(oppgitt i samtalen)",
     "assistantCall": "Assistentens samtale",
-    "callUsage": "{n} kreditter · {duration}",
+    "callUsage": "Ekstra samtale · {duration}",
     "duration": "{m} min. {s} sek.",
     "seeTask": "Se hele oppgaven",
-    "noAnswerTitle": "Ingen tok telefonen – de {n} kredittene dine er frigitt",
+    "noAnswerTitle": "Ingen tok telefonen – bare {pXNoAnswer} er trukket, resten er frigitt",
     "noAnswerText": "Jeg la ikke igjen noen beskjed. Vil du at jeg prøver igjen?",
     "retry": "Prøv igjen",
     "cancel": "Avbryt oppgaven",
@@ -388,7 +393,14 @@
     "useNumber": "Bruk nummeret",
     "isBusiness": "Det er en bedrift",
     "isBusinessHint": "Nummeret ser ut som et mobilnummer. Jeg ringer bare bedrifter.",
-    "demoBusiness": "Dette er en demobedrift som ikke kan ringes. Velg en ekte bedrift."
+    "demoBusiness": "Dette er en demobedrift som ikke kan ringes. Velg en ekte bedrift.",
+    "needsPlan": "Krever en plan",
+    "needsPlanText": "Samtaler er med i alle planer. Uten plan kan det ikke ringes – heller ikke med samtalesaldoen.",
+    "delete": "Slett samtalen",
+    "deleteQ": "Slette samtalen og sammendraget? Det kan ikke angres.",
+    "deleteYes": "Ja, slett",
+    "deleteNo": "Behold",
+    "needBalance": "Du har {have} på samtalesaldoen. En ekstra samtale krever {need} – fyll på under Konto."
   },
   "draft": {
     "label": "Utkast · klart til å lagres",
@@ -423,8 +435,8 @@
     "orLink": "Eller send en lenke",
     "signWith": "Signer med:",
     "message": "Meldingen (du kan endre den)",
-    "smsWishlist": "Hei! Jeg har laget en ønskeliste – se den og reserver her: {link}",
-    "smsGroup": "Hei! Jeg har laget en felles liste – se den og legg til her: {link}",
+    "smsWishlist": "Hei! Jeg har laget en ønskeliste - se den og reserver her: {link}",
+    "smsGroup": "Hei! Jeg har laget en felles liste - se den og legg til her: {link}",
     "remindWishlist": "Hei! Har du sett ønskelisten min «{title}»? Lenken står i forrige melding.",
     "remindGroup": "Hei! Har du sett listen «{title}»? Lenken står i forrige melding.",
     "chars": "{n} av {max} tegn",
@@ -464,7 +476,8 @@
     "queueNext": "Sendt? Neste: {name} ({i} av {n})",
     "queueBack": "Velkommen tilbake. Trykk når du er klar for den neste.",
     "queueDone": "Alle {n} er invitert.",
-    "done": "Ferdig"
+    "done": "Ferdig",
+    "roleWishGuest": "kan reservere"
   },
   "people": {
     "title": "Mine folk",
@@ -555,29 +568,31 @@
   },
   "paywall": {
     "titleDigital": "Det krever en plan",
-    "titleCall": "Du mangler kreditter til samtalen",
+    "titleCall": "Fyll på for en ekstra samtale",
     "titleTrial": "Det krever en plan",
     "draft": "Utkast",
-    "textDigital": "Oppgaven er lagret som utkast. Velg en plan, fortsett med 1 credit eller se et frivillig sponsorinnslag.",
-    "textCall": "En samtale reserverer {n} kreditter når du godkjenner. Du har {have}.",
+    "textDigital": "Oppgaven er lagret som utkast. Velg en plan, betal {pExtraTask} fra samtalesaldoen eller se et frivillig sponsorinnslag.",
+    "textCall": "En ekstra samtale reserverer {pXMax} på samtalesaldoen når du godkjenner. Du har {have}.",
     "textTrial": "Prøv Dialogbot Privat gratis i 14 dager. Du registrerer deg med kort, og det trekkes først når prøveperioden er over – si opp før, så betaler du ingenting. Oppgaven er lagret som utkast til du har valgt.",
     "trialNote": "Plus · {pPlus}/md. etter prøveperioden · si opp når som helst",
-    "useCredit": "Bruk 1 kreditt · du har {n}",
-    "buy": "Kjøp 10 kreditter · {pCredits} inkl. mva.",
+    "buy": "{pTopup1}, {pTopup2} eller {pTopup3}",
     "sponsor": "Se et sponsorinnslag · +1 oppgave ({n} igjen i dag)",
     "later": "Senere – behold utkastet",
-    "laterNote": "Utkastet ligger under «Venter på svaret ditt». Du kan fortsette når du vil."
+    "laterNote": "Utkastet ligger under «Venter på svaret ditt». Du kan fortsette når du vil.",
+    "useBalance": "Betal {pExtraTask} fra saldoen · du har {have}"
   },
   "buy": {
-    "title": "Kjøp 10 kreditter",
-    "item": "10 kreditter",
+    "title": "Fyll på samtalesaldoen",
+    "item": "Påfylling",
     "vat": "Herav mva.",
-    "note": "Engangskjøp. Kreditter utløper ikke i piloten.",
-    "pay": "Betal {pCredits}",
-    "payReal": "Gå til betaling · {pCredits}",
+    "note": "Engangsbetaling, intet abonnement. Saldoen utløper ikke i piloten.",
+    "pay": "Betal {amount}",
+    "payReal": "Gå til betaling · {amount}",
     "simulatedBuy": "Simulert kjøp",
     "redirecting": "Sender deg til betaling …",
-    "back": "Tilbake"
+    "back": "Tilbake",
+    "have": "Du har {have} på samtalesaldoen.",
+    "prices": "Ekstra samtale: {pXAnswered} besvart, {pXVoicemail} telefonsvarer, {pXNoAnswer} ubesvart + {pXMinute} per påbegynte minutt, maks. {pXMax}."
   },
   "sponsor": {
     "title": "Frivillig sponsorinnslag",
@@ -590,7 +605,7 @@
   },
   "login": {
     "title": "Lagre oppgaven din",
-    "text": "For å lagre din egen oppgave trenger du en privat konto. Oppgavene, samtalene og kredittene dine holdes atskilt fra bedriftskontoer.",
+    "text": "For å lagre din egen oppgave trenger du en privat konto. Oppgavene, samtalene og samtalesaldoen din holdes adskilt fra bedriftskontoer.",
     "signup": "Opprett privat konto",
     "login": "Jeg har en konto – logg inn",
     "simulated": "Fortsett som testbruker",
@@ -629,22 +644,20 @@
     "purposeReminder": "Bli minnet på det i tide",
     "purposeWishlist": "Dele ønsker uten å ødelegge overraskelsen",
     "talk": "Snakk om oppgaven",
-    "history": "Historikk"
+    "history": "Historikk",
+    "fromOwner": "Fra {name}"
   },
   "account": {
-    "title": "Konto og kreditter",
+    "title": "Konto",
     "privateLine": "Privat konto · {email} · atskilt fra bedriftskontoer",
     "exampleLine": "Du prøver med eksempeldata. Logg inn når du lagrer din første oppgave.",
     "simulatedLine": "Privat-API-et er ikke slått på ennå – alt her er en simulering i nettleseren din.",
     "free": "Uten plan",
     "freeNote": "Uten plan kan du se og reservere på lister andre deler med deg – egne oppgaver, lister og anrop krever en plan. Prøv alt gratis i 14 dager.",
-    "credits": "Kreditter",
-    "creditsWord": "kreditter",
-    "reserved": "{n} reservert",
-    "creditsNote": "En besvart samtale koster 3 kreditter (opptil 3 min.). 10 kreditter koster {pCredits} inkl. mva. – engangskjøp, ikke abonnement.",
-    "buy": "Kjøp 10 kreditter · {pCredits}",
-    "purchased": "Kjøpet er registrert ({ref}).",
-    "purchasedReal": "Takk for kjøpet. Kredittene dukker opp her så snart betalingen er bekreftet.",
+    "reserved": "{amount} reservert",
+    "buy": "Fyll på",
+    "purchased": "Betalingen er registrert ({ref}).",
+    "purchasedReal": "Takk for betalingen. Beløpet dukker opp på samtalesaldoen så snart betalingen er bekreftet.",
     "purchaseCancelled": "Kjøpet ble avbrutt. Ingenting er trukket.",
     "ledger": "Bevegelser",
     "ledgerEmpty": "Ingen bevegelser ennå.",
@@ -657,8 +670,8 @@
     "addons": "Tillegg",
     "addonsText": "Slå ekstra funksjoner av og på – f.eks. Ring for meg, delte lister og ønskelister.",
     "addonsBtn": "Se tillegg",
-    "repeatNote": "Betalingssignalet {ref} er allerede registrert. Ingen ekstra kreditter.",
-    "repeatNone": "Det finnes ingen betaling å gjenta ennå – kjøp 10 kreditter først.",
+    "repeatNote": "Betalingssignalet {ref} er allerede registrert. Ingenting ekstra er lagt på saldoen.",
+    "repeatNone": "Det er ingen betaling å gjenta ennå – fyll på saldoen først.",
     "tools": "Testverktøy · bare simulering",
     "startFree": "Tilbakestill til konto uten plan",
     "repeatPay": "Gjenta siste betalingssignal",
@@ -666,11 +679,15 @@
     "reset": "Start på nytt",
     "installTitle": "Hent appen",
     "languageTitle": "Språk",
-    "languageText": "Appen og Peters svar følger språket her."
+    "languageText": "Appen og Peters svar følger språket her.",
+    "groupMe": "Deg",
+    "groupApp": "Appen",
+    "groupExtra": "Samtalesaldo",
+    "ledgerAll": "Se alle ({n})"
   },
   "invite": {
     "title": "Inviter venner",
-    "text": "Del Dialogbot med en venn. Dere får begge 3 kreditter når vennen din har laget sin første oppgave.",
+    "text": "Del Dialogbot med en venn. Dere får begge {pReferral} på samtalesaldoen når vennen din har betalt sin første periode.",
     "stats": {
       "invited": "Invitert",
       "joined": "Ble med",
@@ -733,7 +750,10 @@
   "errors": {
     "emailNotVerified": "Bekreft e-posten din for å bruke Dialogbot Privat.",
     "verifyLink": "Bekreft e-post",
-    "viewAs": "Private oppgaver kan ikke ses i «Se som kunde»."
+    "viewAs": "Private oppgaver kan ikke ses i «Se som kunde».",
+    "notEnabled": "Dialogbot Privat er ikke åpnet for kontoen din ennå. Ingenting du gjør her, blir lagret eller utført.",
+    "unavailable": "Dialogbot Privat kan ikke nås akkurat nå. Prøv igjen om litt – ingenting er lagret eller utført.",
+    "generic": "Noe gikk galt. Prøv igjen."
   },
   "location": {
     "useMine": "Bruk posisjonen min",
@@ -779,7 +799,10 @@
     "trialBadge": "{plan} · prøveperiode, {n|1 dag|# dager} igjen",
     "trialBadgeShort": "{plan} · {n|1 dag|# dager}",
     "planBadge": "{plan}",
-    "noPlan": "Ingen plan"
+    "noPlan": "Ingen plan",
+    "trialDaysShort": "{n} d",
+    "trialDaysLeft": "{n|1 dag|# dager} igjen",
+    "planAriaShort": "åpne konto"
   },
   "day2": {
     "eyebrow": "Din egen personlige assistent",
@@ -834,17 +857,20 @@
       "trialDays": "{n|1 dag|# dager} igjen",
       "trialAria": "{n} av {total} prøvedager igjen",
       "noteTrial": "Lister og påminnelser er ubegrenset. Etter prøveperioden fortsetter du på {plan} til {price}/md. – eller velger en annen plan.",
-      "notePlan": "Lister og påminnelser er ubegrenset. Flere anrop enn abonnementet? Ekstra anrop kjøpes under Konto.",
+      "notePlan": "Lister og påminnelser er ubegrensede. Flere samtaler enn abonnementet? Ekstra samtaler betales fra samtalesaldoen under Konto.",
       "noteFree": "Uten plan kan du se og reservere på lister andre deler med deg. Egne oppgaver og anrop krever en plan.",
       "noteNone": "Uten plan kan du se og reservere på lister andre deler med deg. Prøv alt i 14 dager – kortet trekkes først etterpå.",
-      "extraCalls": "Ekstra anrop (credits)",
+      "extraCalls": "Samtalesaldo",
       "choosePlan": "Velg plan",
       "changePlan": "Bytt plan",
       "startTrial": "Start 14 dager gratis",
       "newInStore": "Nytt i Butikken",
       "see": "Se →"
     },
-    "noAnswerPlan": "Ingen tok telefonen – anropet teller ikke"
+    "noAnswerPlan": "Ingen tok telefonen – anropet teller ikke",
+    "greetingShort": "Jeg kan minne deg på ting, lage lister og ringe for deg. Hva har du utsatt?",
+    "yourTurnOf": "Din tur · 1 av {n}",
+    "allTasks": "Alle oppgaver"
   },
   "store": {
     "metaTitle": "Butikken",
@@ -879,7 +905,7 @@
       "title": "Med i Plus",
       "text": "{name} er med i Plus og Familie. Start 14 dager gratis – eller velg en plan hvis prøveperioden er over.",
       "callTitle": "Anrop krever en plan",
-      "callText": "Peter ringer for deg med Basis, Plus eller Familie – eller med ekstra anrop (credits).",
+      "callText": "Peter ringer for deg med Basis, Plus eller Familie. Ekstra samtaler utover planen betales fra samtalesaldoen.",
       "trial": "Start 14 dager gratis",
       "choose": "Velg plan",
       "later": "Ikke nå"
@@ -895,7 +921,7 @@
       "expired": "Prøveperiode over",
       "none": "Ingen plan"
     },
-    "trialLine": "{n|1 dag|# dager} igjen av prøveperioden · Plus-rettigheter",
+    "trialLine": "{n|1 dag|# dager} igjen av prøveperioden · {plan}-rettigheter",
     "trialThen": "Deretter {plan} til {price}/md.",
     "trialThenNone": "Velg en plan før den slutter – ellers fortsetter du uten plan.",
     "expiredLine": "Prøveperioden er over. Velg en plan for å få anrop og alle apper igjen.",
@@ -923,7 +949,7 @@
     "select": "Velg {plan}",
     "startTrial": "Start 14 dager gratis",
     "currentPlan": "Din plan",
-    "pickerNote": "Flere anrop enn abonnementet? Ekstra anrop kjøpes her. Ingen binding.",
+    "pickerNote": "Flere samtaler enn abonnementet? Ekstra samtaler betales fra samtalesaldoen. Ingen binding.",
     "activated": "Abonnementet ditt er aktivt.",
     "notCompleted": "Betalingen ble ikke fullført, så ingen abonnement er startet, og ingenting er trukket.",
     "cancelled": "Du avbrøt valget av plan. Ingenting er trukket.",
@@ -931,20 +957,21 @@
     "portalMissing": "Betaling er ikke satt opp ennå. Skriv til oss for å endre abonnementet.",
     "redirecting": "Sender deg til betaling …",
     "loginFirst": "Logg inn for å velge en plan.",
-    "extra": "Ekstra anrop",
-    "extraWord": "credits",
-    "extraNote": "3 credits = 1 ekstra anrop (opptil 3 min.) når månedens anrop er brukt. 10 credits koster {pCredits} inkl. mva. – engangskjøp.",
+    "extra": "Samtalesaldo",
+    "extraWord": "på saldoen",
+    "extraNote": "Ekstra samtaler når månedens samtaler er brukt: {pXAnswered} besvart, {pXVoicemail} telefonsvarer, {pXNoAnswer} ubesvart + {pXMinute} per påbegynte minutt, maks. {pXMax}. Fyll på med {pTopup1}, {pTopup2} eller {pTopup3} inkl. mva. – engangsbetaling.",
     "paywallChoose": "Velg plan",
-    "paywallBuy": "Kjøp ekstra anrop",
+    "paywallBuy": "Fyll på samtalesaldoen",
     "paywallCallTitlePlan": "Månedens anrop er brukt",
-    "paywallCallTextPlan": "Du har brukt {used} av {quota} anrop i {plan}. Kjøp ekstra anrop, eller bytt til en større plan.",
-    "paywallCallTextNone": "Med Basis, Plus eller Familie er anrop inkludert. Du kan også kjøpe ekstra anrop.",
+    "paywallCallTextPlan": "Du har brukt {used} av {quota} samtaler i {plan}. Fyll på samtalesaldoen for en ekstra samtale, eller bytt til en større plan.",
+    "paywallCallTextNone": "Med Basis, Plus eller Familie er samtaler inkludert. Ekstra samtaler betales fra samtalesaldoen.",
     "paywallDigitalPlan": "Med en plan er lister og påminnelser ubegrenset.",
     "endTrial": "Avslutt prøveperioden",
     "codeAsk": "Har du en rabattkode?",
     "codeLabel": "Rabattkode",
     "codePlaceholder": "F.eks. VELKOMMEN",
-    "codeHint": "Rabatten trekkes fra på betalingssiden."
+    "codeHint": "Rabatten trekkes fra på betalingssiden.",
+    "householdMember": "Du er med i {name}s Familie-plan. {name} styrer planen."
   },
   "funnel": {
     "entry": "Prøv på 2 minutter",
@@ -1146,7 +1173,10 @@
     "none": "Ingen avtaler ennå. Når Peter får en tid bekreftet, eller du ber ham legge inn en, kommer den her.",
     "addToCalendar": "Legg til i kalender",
     "remove": "Fjern fra kalender",
-    "removeNote": "«Fjern fra kalender» avlyser ikke timen hos bedriften."
+    "removeNote": "«Fjern fra kalender» avlyser ikke timen hos bedriften.",
+    "whichTitle": "Hvilken kalender bruker du?",
+    "iphoneOther": "iPhone eller en annen",
+    "connectName": "Koble til {name}"
   },
   "birthdays": {
     "title": "Kommende bursdager",
@@ -1196,7 +1226,8 @@
       "half_yearly": "hvert halvår",
       "yearly": "hvert år",
       "once": "én gang"
-    }
+    },
+    "removeYes": "Ja, fjern"
   },
   "assistantName": {
     "pronoun": "Kall den",
@@ -1265,6 +1296,7 @@
     "directShort": "direkte",
     "stops": "{n} bytter",
     "book": "Bestill",
+    "sponsored": "Annonse · Dialogbot får provisjon",
     "overBudget": "{n} reiser var over budsjettet.",
     "disclaimer": "Prisene kommer rett fra leverandørene og kan endre seg. Du bestiller og betaler hos leverandøren – Dialogbot bestiller ikke."
   },
@@ -1589,7 +1621,56 @@
     "yourApps": "Appene dine",
     "all": "Alle {n}",
     "stripStep": "Trinn {n} av {total} – fortsett oppsettet",
-    "accountLine": "{n|1 app slått på|# apper slått på}"
+    "accountLine": "{n|1 app slått på|# apper slått på}",
+    "allOn": "Du har alle appene. Nye kommer fortløpende.",
+    "sayLike": "Si for eksempel «{example}»",
+    "about": "Om appen",
+    "planIncludedAll": "Med i alle planer.",
+    "planTextTrialAll": "{name} er med i alle planer. Prøv gratis i 14 dager – kortet belastes først når prøveperioden er over.",
+    "planTextEndedAll": "{name} er med i alle planer. Velg en plan for å bruke den.",
+    "planTextBasis": "Du har Basis. {name} er med i Plus og Familie.",
+    "onInMine": "{n|1 app er slått på|# apper er slått på} – se Mine apper",
+    "yourThings": "Dine ting her ({n})"
+  },
+  "familyHousehold": {
+    "title": "Husstand",
+    "count": "{count} av {limit} personer",
+    "ownerText": "Familie gjelder for opptil {limit} personer. Alle har sin egen konto – ingen ser de andres ting.",
+    "invite": "Inviter til husstanden",
+    "smsText": "Du er med i min Dialogbot Familie - bli med her: {link}",
+    "me": "deg",
+    "remove": "Fjern",
+    "removeConfirm": "Fjerne {name} fra husstanden? {name} mister Familie med en gang, men beholder sine egne ting.",
+    "memberLine": "Du er med i Familie hos {name}.",
+    "leave": "Forlat husstanden",
+    "leaveConfirm": "Forlate husstanden? Du mister Familie med en gang. Tingene dine blir.",
+    "left": "Du har forlatt husstanden.",
+    "paused": "Husstanden er satt på pause – den krever Familie.",
+    "full": "Husstanden er full.",
+    "inviteTitle": "Bli med i Familie hos {name}",
+    "inviteText": "Du får Familie-planen på din egen konto. {name} kan ikke se tingene dine.",
+    "join": "Bli med",
+    "joined": "Du er med i husstanden."
+  },
+  "myData": {
+    "title": "Dine data",
+    "exportText": "Få alt vi har lagret om deg, sendt på e-post.",
+    "export": "Eksporter dataene mine",
+    "queued": "Vi samler dataene dine. Du får en e-post med en lenke.",
+    "ready": "Dataene dine er klare.",
+    "download": "Last ned dataene dine",
+    "expired": "Lenken har utløpt. Be om dataene dine igjen.",
+    "delete": "Slett kontoen min",
+    "deleteText": "Alt i Dialogbot Privat slettes, og abonnementet ditt stopper. En gjenværende samtalesaldo går tapt og refunderes ikke. Det kan ikke angres.",
+    "deleteLabel": "Skriv e-posten din for å bekrefte",
+    "deleteConfirm": "Slett alt for godt",
+    "cancel": "Avbryt",
+    "deleting": "Sletter …"
+  },
+  "inviteOg": {
+    "wishlist": "{name} har delt ønskelisten sin med deg",
+    "list": "{name} har delt en liste med deg",
+    "generic": "Du er invitert til en liste"
   },
   "problem": {
     "notFoundTitle": "Siden finnes ikke",

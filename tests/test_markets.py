@@ -30,9 +30,10 @@ def test_every_currency_has_every_price_and_yearly_is_twelve_months():
         for plan, p in markets.PRIVAT[cur].items():
             assert p["yearly_total"] == 12 * p["yearly_monthly"], (cur, plan)
             assert p["yearly_monthly"] < p["monthly"]
-        assert markets.PRIVAT_CREDIT_PACK[cur] > 0
+        assert set(markets.PRIVAT_EXTRA_CALL[cur]) == {"answered", "voicemail", "no_answer", "minute", "max"}
+        assert len(markets.PRIVAT_TOPUPS[cur]) == 3 and all(a > 0 and a % 100 == 0 for a in markets.PRIVAT_TOPUPS[cur])
     assert markets.ERHVERV["DKK"]["monthly"] == prices.SUBSCRIPTION_MONTHLY_NET_MINOR == 249_500
-    assert markets.PRIVAT["DKK"]["plus"]["monthly"] == 9900 and markets.PRIVAT_CREDIT_PACK["DKK"] == 2900
+    assert markets.PRIVAT["DKK"]["plus"]["monthly"] == 9900 and markets.PRIVAT_TOPUPS["DKK"] == (5000, 10000, 20000)
     assert markets.currency_for_country("se") == "SEK" and markets.currency_for_country("DE") == "EUR"
     assert markets.currency_for_country(None) == "DKK" and markets.currency_for_locale("no") == "NOK"
     assert (markets.fmt(249_500, "DKK"), markets.fmt(55, "EUR"), markets.fmt(32_900, "EUR")) == (

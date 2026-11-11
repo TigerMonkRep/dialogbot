@@ -64,7 +64,9 @@ export function TravelPanel() {
               <span className="font-display font-bold text-[18px]">{kr(o.total_dkk)}</span>
               <span className="text-[14px]">{o.origin} → {o.destination} · {o.depart_at.slice(0, 10)}{o.return_at ? ` – ${o.return_at.slice(0, 10)}` : ""}</span>
               <span className="text-[13px] text-ink-soft">{[o.airline, o.stops === 0 ? t("travel.directShort") : o.stops ? t("travel.stops", { n: o.stops }) : "", o.price_note].filter(Boolean).join(" · ")}</span>
-              <a href={o.book_url} target="_blank" rel="noopener noreferrer" className="self-start mt-1 inline-flex items-center min-h-[44px] px-4 rounded-full bg-accent text-white font-semibold text-[15px]">{t("travel.book")}</a>
+              {/* affiliate (F-PX-04, markedsføringsloven): marked as an ad, rel="sponsored" */}
+              {o.sponsored && <span className="text-[12px] font-semibold text-muted" data-testid="trip-sponsored">{t("travel.sponsored")}</span>}
+              <a href={o.book_url} target="_blank" rel={o.sponsored ? "sponsored noopener noreferrer" : "noopener noreferrer"} className="self-start mt-1 inline-flex items-center min-h-[44px] px-4 rounded-full bg-accent text-white font-semibold text-[15px]">{t("travel.book")}</a>
             </div>
           ))}
           {res.over_budget > 0 && <p className="m-0 text-[13px] text-muted">{t("travel.overBudget", { n: res.over_budget })}</p>}

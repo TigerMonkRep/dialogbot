@@ -131,6 +131,7 @@ export function PrivatProvider({ session, children }: { session: Session; childr
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
+  const tErr = useT("privat");
   const pendingRef = useRef<string | null>(null);
 
   const loggedIn = session.loggedIn || fakeLogin;
@@ -160,8 +161,16 @@ export function PrivatProvider({ session, children }: { session: Session; childr
       } else {
         try { await realPrivat.account(); m = "real"; }
         catch (e) {
-          if (isUnavailable(e)) { m = useFake(FAKE_KEY, "fake"); }
-          else { m = "real"; setError(e as ApiError); }
+          // A logged-in user is NEVER moved into the in-browser simulation: lists, invitations, «calls» and payments
+          // would look real (PC-SEC-03). The API is not there or Privat is not open for them: say so honestly.
+          m = "real";
+          if (isUnavailable(e)) {
+            const err = e as ApiError;
+            setError({ ...err, message: tErr(err.code === "privat_not_enabled" ? "errors.notEnabled" : "errors.unavailable") });
+            if (alive) setMode(m);
+            return;
+          }
+          setError(e as ApiError);
         }
         const pending = ss.get(PENDING_KEY);
         if (pending) { setDraft(pending); ss.del(PENDING_KEY); }

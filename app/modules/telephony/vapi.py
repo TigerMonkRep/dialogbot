@@ -359,12 +359,15 @@ def transcriber_for(db: OrmSession, ws: Workspace | None, extra: list[str] | Non
         from app.modules.telephony import linden
 
         return {**t, **linden.transcriber_config(ws, own, stt, lang)}
+    # Without a business workspace (Dialogbot Privat's calls) the call's OWN names are still given – only the
+    # business's terms are missing (F-PX-03: the names were dropped).
     for d in [t, *t.get("fallbackPlan", {}).get("transcribers", [])]:
-        if ws is None:
+        if ws is None and not own:
             continue
         if (d.get("provider") == "deepgram" and str(d.get("model", "")).startswith(KEYTERM_MODELS)
                 and "keyterm" not in d):
-            terms = own + [t for t in keyterms(db, ws) if t.lower() not in {t.lower() for t in own}]
+            biz = keyterms(db, ws) if ws is not None else []
+            terms = own + [t for t in biz if t.lower() not in {t.lower() for t in own}]
             if terms:
                 d["keyterm"] = terms[:MAX_KEYTERMS]
         elif d.get("provider") == "speechmatics" and not d.get("customVocabulary"):
@@ -375,7 +378,7 @@ def transcriber_for(db: OrmSession, ws: Workspace | None, extra: list[str] | Non
 SPEECHMATICS_MAX_VOCABULARY = 1000  # Speechmatics: up to 1,000 custom-dictionary entries per session
 
 
-def speechmatics_vocabulary(db: OrmSession, ws: Workspace, own: list[str]) -> list[dict]:
+def speechmatics_vocabulary(db: OrmSession, ws: Workspace | None, own: list[str]) -> list[dict]:
     """The custom dictionary for Speechmatics: this call's own names, the business's terms, then the common Danish
     given and family names (telephony.danish_names) up to the provider's cap. A caller's name said on its own is the
     hardest thing a Danish model hears, and a dictionary of real Danish names is what moves it."""
@@ -383,7 +386,7 @@ def speechmatics_vocabulary(db: OrmSession, ws: Workspace, own: list[str]) -> li
 
     items: list[dict] = []
     seen: set[str] = set()
-    for term in [*own, *keyterms(db, ws)]:
+    for term in [*own, *(keyterms(db, ws) if ws is not None else [])]:
         if term.lower() not in seen:
             seen.add(term.lower())
             items.append({"content": term})

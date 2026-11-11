@@ -170,3 +170,36 @@ def test_request_sends_the_form_as_a_mapping(monkeypatch):
     assert isinstance(seen["data"], dict) and seen["params"] is None
     assert seen["data"]["line_items[0][price_data][recurring][interval]"] == "month"
     assert seen["data"]["metadata[kind]"] == "privat_subscription"
+
+
+def test_erhverv_dunning_and_refund_mails_to_the_owner(api, client, two_workspaces, db, monkeypatch):
+    """F-PBQ-08 / E06: a failed payment sends a dunning mail and a refund a «refunderet» mail to the workspace's
+    owners (Dialogbot's branded mail, Erhverv blue) – once per Stripe object. Neither existed before."""
+    from app.models import OutboxEvent
+
+    t = two_workspaces
+    ws = uuid.UUID(t["ws_a"])
+    monkeypatch.setenv("STRIPE_SECRET_KEY", "sk_test_dummy")
+    monkeypatch.setenv("STRIPE_WEBHOOK_SECRET", WH_SECRET)
+    get_settings.cache_clear()
+    db.add(Invoice(workspace_id=ws, month=date(2026, 10, 1), status="open", net_minor=249_500, tax_minor=62_375,
+                   gross_minor=311_875, stripe_invoice_id="in_erh_mail"))
+    db.commit()
+
+    def post(evt_id, kind, obj):
+        body = json.dumps({"id": evt_id, "type": kind, "data": {"object": obj}}).encode()
+        return client.post("/api/v1/webhooks/stripe", content=body, headers={"stripe-signature": _sign(body)}).json()
+
+    failed = {"id": "in_erh_mail", "status": "open", "amount_due": 311_875, "currency": "dkk", "attempt_count": 1}
+    assert post("evt_m1", "invoice.payment_failed", failed)["outcome"] == "applied"
+    post("evt_m1b", "invoice.payment_failed", failed)  # the same attempt again: no second mail
+    assert post("evt_m2", "charge.refunded", {"id": "ch_erh", "invoice": "in_erh_mail", "amount_refunded": 311_875,
+                                              "currency": "dkk"})["outcome"] == "applied"
+    db.expire_all()
+    mails = [e.payload for e in db.query(OutboxEvent).filter_by(event_type="email.branded")
+             if e.dedupe_key.startswith("billing-mail:")]
+    assert [m["email"]["subject"] for m in mails] == ["Betalingen på 3.118,75 kr. gik ikke igennem",
+                                                      "Refusion: 3.118,75 kr. er sendt tilbage"], mails
+    assert {m["email"]["audience"] for m in mails} == {"erhverv"}
+    assert all(m["email"]["button_url"].endswith("/app/konto/abonnement") for m in mails)
+    get_settings.cache_clear()

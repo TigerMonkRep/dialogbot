@@ -3,7 +3,7 @@
 1. The user said «ring» -> phone. The user said «skriv» -> the browser, if it can (otherwise the phone, and we say why). No questions.
 2. The intent is not «book» (flyt/aflys are not automated in v1) -> phone.
 3. A website was found, its engine is known and has a playbook, a booking address exists, and the user has a name and a verified
-   phone on the profile -> browser. (Also needed: the worker is switched on, 1 credit is available, and the user has asked for a
+   phone on the profile -> browser. (Also needed: the worker is switched on, and the user has asked for a
    CONCRETE booking: service + time window. Without the last one nothing starts: the assistant asks.)
 4. Otherwise -> phone.
 
@@ -23,7 +23,6 @@ BLOCKER_TEXT = {
     "no_booking_url": "jeg kan ikke finde bookingsiden",
     "no_contact": "dit navn og dit bekræftede mobilnummer skal stå på din profil",
     "worker_disabled": "booking på hjemmesider er ikke slået til",
-    "no_credit": "du har ikke credits nok",
 }
 
 
@@ -37,7 +36,6 @@ class Facts:
     has_name_and_phone: bool    # the user's own name and VERIFIED mobile number on the profile
     concrete: bool              # service + at least one dated time window
     worker_enabled: bool
-    has_credit: bool
 
 
 @dataclass(frozen=True)
@@ -70,8 +68,6 @@ def blockers(f: Facts) -> list[str]:
         out.append("no_contact")
     if not f.worker_enabled:
         out.append("worker_disabled")
-    if not f.has_credit:
-        out.append("no_credit")
     return out
 
 

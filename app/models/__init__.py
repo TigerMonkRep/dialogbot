@@ -100,11 +100,13 @@ from app.models.privat import (  # noqa: F401, E402
     PrivateBusinessReferral,
     PrivateBusinessSearch,
     PrivateCall,
+    PrivateDataExport,
     PrivateGiftPledge,
     PrivateGroup,
     PrivateGroupGift,
     PrivateGroupLink,
     PrivateGroupMember,
+    PrivateHouseholdMember,
     PrivateInvite,
     PrivateLookup,
     PrivateMessage,
@@ -116,6 +118,7 @@ from app.models.privat import (  # noqa: F401, E402
     PrivateTaskEvent,
     PrivateTaskItem,
     PrivateTaskMember,
+    PrivateTrialCard,
     PushSubscription,
 )
 from app.models.public_api import KEY_PREFIXES, ApiKey, WebhookEndpoint  # noqa: F401

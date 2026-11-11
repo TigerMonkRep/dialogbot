@@ -1,0 +1,6 @@
+live stack :3400 -> :8400
+enable 200
+chat: Gemt: Telia, 199 kr. pr. md., binding til 10. december 2026 (sidste dag at opsige: 10. november 2026). 1 abonnementer – 199 kr. om måneden, 2.388 kr. om året. Jeg minder dig om den sidste dag at opsige.
+overview before: [{'id': '687c259d33', 'text': 'Telia, 199 kr. pr. md., binding til 10. december 2026', 'sub': 'Sidste dag at opsige: 10. november 2026'}]
+chat «Opsig Telia»: Her er opsigelsen af Telia. Send den fra din egen mail eller via deres kontaktformular, og gem bekræftelsen: /  / Emne: Opsigelse af abonnement – Telia /  / Hej Telia /  / 
+overview after (nothing sent by the user): [{'id': '687c259d33', 'text': 'Telia, 199 kr. pr. md., binding til 10. december 2026, under opsigelse', 'sub': 'Sidste dag at opsige: 10. november 2026'}]

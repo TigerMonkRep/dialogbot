@@ -163,16 +163,20 @@ def _token_request(provider: OAuthProvider, data: dict) -> dict:
     return tok
 
 
-def revoke(provider: OAuthProvider, token: str) -> None:
-    """Best effort; Microsoft has no token revocation endpoint (the customer removes the app under their account)."""
+def revoke(provider: OAuthProvider, token: str) -> str:
+    """Best effort, never raises. Returns the outcome for the caller's log: revoked | failed | unsupported.
+    Microsoft has no token revocation endpoint for an app's grant (the customer removes the app under their account):
+    "unsupported" – the stored token is deleted by the caller either way."""
     import httpx
 
     if not provider.revoke_url:
-        return
+        return "unsupported"
     try:
-        httpx.post(provider.revoke_url, params={"token": token}, timeout=10.0)
+        r = httpx.post(provider.revoke_url, params={"token": token}, timeout=10.0)
     except httpx.HTTPError:
-        pass
+        return "failed"
+    # Google answers 400 invalid_token for a token that is already revoked/expired: nothing left to revoke.
+    return "revoked" if r.status_code < 300 or r.status_code == 400 else "failed"
 
 
 def token_secret(tok: dict, previous: dict | None = None) -> tuple[dict, datetime | None]:

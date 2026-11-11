@@ -126,10 +126,78 @@
       }
     }
   },
-  "privatCreditPack": {
-    "DKK": 2900,
-    "SEK": 4500,
-    "NOK": 4500,
-    "EUR": 399
+  "privatExtraCall": {
+    "DKK": {
+      "answered": 500,
+      "voicemail": 125,
+      "no_answer": 31,
+      "minute": 250,
+      "max": 1750
+    },
+    "SEK": {
+      "answered": 738,
+      "voicemail": 188,
+      "no_answer": 44,
+      "minute": 369,
+      "max": 2581
+    },
+    "NOK": {
+      "answered": 788,
+      "voicemail": 200,
+      "no_answer": 50,
+      "minute": 394,
+      "max": 2756
+    },
+    "EUR": {
+      "answered": 69,
+      "voicemail": 18,
+      "no_answer": 4,
+      "minute": 34,
+      "max": 239
+    }
+  },
+  "privatTopups": {
+    "DKK": [
+      5000,
+      10000,
+      20000
+    ],
+    "SEK": [
+      7500,
+      15000,
+      30000
+    ],
+    "NOK": [
+      7500,
+      15000,
+      30000
+    ],
+    "EUR": [
+      700,
+      1500,
+      3000
+    ]
+  },
+  "privatBalance": {
+    "DKK": {
+      "welcome": 1000,
+      "referral": 1000,
+      "extra_task": 300
+    },
+    "SEK": {
+      "welcome": 1500,
+      "referral": 1500,
+      "extra_task": 300
+    },
+    "NOK": {
+      "welcome": 1500,
+      "referral": 1500,
+      "extra_task": 300
+    },
+    "EUR": {
+      "welcome": 150,
+      "referral": 150,
+      "extra_task": 30
+    }
   }
 }

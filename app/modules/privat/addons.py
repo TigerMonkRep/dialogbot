@@ -1,13 +1,14 @@
 """The add-on shop of Dialogbot Privat.
 
-The core (chat, Min dag, private lists and reminders, quota/credits/account) is always on. Everything else is an
+The core (chat, Min dag, private lists and reminders, quota/Opkaldssaldo/account) is always on. Everything else is an
 add-on: ONE `Addon` object registered in CATALOG below. An add-on brings its own chat tools (`tools`, each pointing at
 a handler "module:function" that is imported only when called) and its endpoints call `require(db, ws_id, key)`.
 Adding a feature = `register(Addon(...))` here (or from the feature's own module) – the shop endpoint, the chat's tool
 list, the gating and the «Slå … til» offer in the chat all read the catalog; nothing else changes.
 
 Plans: an add-on with `included_in` (plan keys) can only be switched on with the trial or one of those plans
-(409 needs_plan, see subscriptions.py). Once on, it stays on; calls fall back to credits when the plan lapses.
+(409 needs_plan, see subscriptions.py). Once on, it stays on, but it STOPS while the plan has lapsed (data kept) – also
+«Ring for mig»: without a plan the Opkaldssaldo cannot pay instead (decision Fürster 2026-11-11).
 """
 from __future__ import annotations
 
@@ -20,6 +21,7 @@ from sqlalchemy.orm import Session as OrmSession
 from app.config import get_settings
 from app.core.errors import Conflict, Forbidden, NotFound
 from app.models import PrivateAddonEnabled
+from app.modules.billing import markets
 from app.modules.privat import rules
 
 
@@ -42,7 +44,7 @@ class Addon:
     icon: str
     category: str
     price_text: str
-    pricing: str = "free"  # free | credits | monthly
+    pricing: str = "free"  # free | balance (extras paid from the Opkaldssaldo) | monthly
     monthly_price_minor: int | None = None
     status: str = "available"  # available | beta | coming_soon
     # The Shop texts: what it does (1–2 sentences), what you say to Peter, and the setup steps shown before enable.
@@ -93,7 +95,7 @@ CATALOG: dict[str, Addon] = {}
 
 
 def register(addon: Addon) -> Addon:
-    if addon.pricing not in ("free", "credits", "monthly") or addon.status not in ("available", "beta", "coming_soon"):
+    if addon.pricing not in ("free", "balance", "monthly") or addon.status not in ("available", "beta", "coming_soon"):
         raise ValueError(f"invalid add-on {addon.key}")
     CATALOG[addon.key] = addon
     return addon
@@ -116,9 +118,11 @@ register(Addon(
     needs=("Virksomhedens navn eller nummer", "Dit mobilnummer, hvis de skal kunne ringe tilbage"),
     description="Bed assistenten ringe til fx værkstedet, frisøren eller boligforeningen. Du godkender hvert opkald, "
                 "før der bliver ringet, og ser præcis hvad assistenten må spørge om og sige ja til. Opkald er med i "
-                "din plan (prøveperioden tæller som Plus); ud over månedens opkald koster et ekstra opkald 3 credits, "
-                "som du får igen, hvis ingen tager telefonen.",
-    icon="phone", category="opkald", price_text="Med i alle planer – ekstra opkald for 3 credits", pricing="credits",
+                "din plan (prøveperioden tæller som Plus). Ud over månedens opkald betaler du et ekstra opkald fra din "
+                f"opkaldssaldo: {markets.privat_extra_call_text()}.",
+    icon="phone", category="opkald",
+    price_text="Med i alle planer – ekstra opkald betales fra opkaldssaldoen",
+    pricing="balance",
     what="Peter ringer til værkstedet, frisøren eller lægen for dig og aftaler en tid. Du godkender hvert opkald, "
          "før der bliver ringet, og ser bagefter, hvad virksomheden svarede.",
     example="«Ring til cykelværkstedet og find en tid torsdag efter klokken tre»",
@@ -615,12 +619,15 @@ register(Addon(
                 "reklamationen til butikken, når noget går i stykker.",
     icon="shield", category="hverdag", price_text="Med i Plus og Familie", pricing="free",
     what="Fortæl Peter, når du køber noget dyrt. Han husker butik og dato, minder dig om det, før de 2 års "
-         "reklamationsret udløber, og skriver reklamationen, når noget går i stykker. Gem selv kvitteringen.",
+         "reklamationsret udløber, og skriver reklamationen, når noget går i stykker. Tilføj gerne et foto af "
+         "kvitteringen ved tingen.",
     example="«Jeg købte en vaskemaskine i Elgiganten den 3. maj til 4.999 kr.»",
     steps=("Sig hvad du købte, hvor og hvornår", "Peter minder dig om det, før reklamationsretten udløber",
            "Går noget i stykker, skriver Peter reklamationen til butikken"),
     included_in=("plus", "familie"),
-    permissions=("Gemmer ting, butik, dato og pris, som du selv skriver dem", "Gemmer ikke billeder af kvitteringer"),
+    # PC-APP-01: the app DOES keep a receipt photo when the user adds one (POST apps/garanti/items/{id}/photo).
+    permissions=("Gemmer ting, butik, dato og pris, som du selv skriver dem",
+                 "Gemmer et foto af kvitteringen, hvis du selv tilføjer ét – det slettes med tingen eller appens data"),
     keywords=("garanti", "kvittering", "reklamation", "reklamere", "gået i stykker", "virker ikke"),
     tools=(AddonTool(
         "add_purchase",
@@ -797,8 +804,45 @@ SHARE_MODE_ADDON = {"group": "delte-lister", "wishlist": "oenskelister"}
 # --------------------------------------------------------------------------- state
 
 def enabled_keys(db: OrmSession, ws_id: uuid.UUID) -> set[str]:
+    """The apps that RUN: switched on, live, and – for an app that needs a plan – the plan still applies. Decision
+    Fürster 2026-11-10 (PC-ENT-02/03): when the plan lapses (period over after cancelling, trial ended, unpaid) such an
+    app stops – no tools, no reminders, no scheduled calls – but stays switched on with its data kept, and runs again
+    the moment the plan is back. Free apps are never affected."""
     keys = set(db.scalars(select(PrivateAddonEnabled.key).where(PrivateAddonEnabled.workspace_id == ws_id)))
-    return {k for k in keys if k in CATALOG and CATALOG[k].live_status != "coming_soon"}
+    keys = {k for k in keys if k in CATALOG and CATALOG[k].live_status != "coming_soon"}
+    if any(_stops_without_plan(CATALOG[k]) for k in keys):
+        from app.modules.privat import subscriptions
+
+        ent = subscriptions.entitlements(db, ws_id)
+        keys = {k for k in keys if not _stops_without_plan(CATALOG[k]) or subscriptions.covers(ent, CATALOG[k].included_in)}
+    return keys
+
+
+def _stops_without_plan(a: Addon) -> bool:
+    """Needs a plan to RUN: every app with `included_in`. «Ring for mig» too (decision Fürster 2026-11-11): without a
+    plan it stops – the Opkaldssaldo only pays for EXTRA calls once a plan's monthly calls are used."""
+    return bool(a.included_in)
+
+
+def needs_plan_again(db: OrmSession, ws_id: uuid.UUID, key: str, ent: dict | None = None) -> bool:
+    """Switched on, but stopped because its plan no longer applies (data kept; «Kræver plan»)."""
+    a = CATALOG.get(key)
+    if a is None or not _stops_without_plan(a) or db.get(PrivateAddonEnabled, (ws_id, key)) is None:
+        return False
+    return not included(db, ws_id, a, ent)
+
+
+def running_rows(db: OrmSession, rows: list, key: str) -> list:
+    """Worker jobs: keep only the rows (with a workspace_id) whose app runs for that workspace right now."""
+    cache: dict = {}
+    out = []
+    for r in rows:
+        ws = r.workspace_id
+        if ws not in cache:
+            cache[ws] = key in enabled_keys(db, ws)
+        if cache[ws]:
+            out.append(r)
+    return out
 
 
 def is_enabled(db: OrmSession, ws_id: uuid.UUID, key: str) -> bool:
@@ -808,6 +852,11 @@ def is_enabled(db: OrmSession, ws_id: uuid.UUID, key: str) -> bool:
 def require(db: OrmSession, ws_id: uuid.UUID, key: str) -> None:
     if not is_enabled(db, ws_id, key):
         a = CATALOG.get(key)
+        if needs_plan_again(db, ws_id, key):
+            names = [n for n in ("Plus", "Familie", "Basis") if n.lower() in a.included_in]
+            raise Forbidden(f"«{a.name}» kræver {' eller '.join(names[:2]) if names else 'et abonnement'} – dine data "
+                            "er gemt og kommer tilbage, når planen er aktiv igen", code="needs_plan",
+                            extra={"addon": key, "plans": list(a.included_in)})
         raise Forbidden(f"Slå tilføjelsen «{a.name if a else key}» til først", code="addon_disabled",
                         extra={"addon": key})
 
@@ -844,8 +893,12 @@ def out(db: OrmSession, ws_id: uuid.UUID, a: Addon, ent: dict | None = None) -> 
     row = db.get(PrivateAddonEnabled, (ws_id, a.key))
     on = row is not None and a.live_status != "coming_soon"
     st = app_status.state(db, ws_id, a.key)
-    return {"needs": p(list(a.needs)), "summary_line": app_status.summary_line(db, ws_id, a.key) if on else None,
-            "setup": {"done": min(st.setup_done if st else 0, len(a.steps)), "total": len(a.steps)},
+    line = app_status.summary_line(db, ws_id, a.key) if on else None
+    # the app already holds data (Sofie's birthday, a packing list …): its first step – telling Peter – is done,
+    # whether or not «Trinnet er klaret» was tapped (F-UX-04)
+    done = max(st.setup_done if st else 0, 1 if line and a.steps else 0)
+    return {"needs": p(list(a.needs)), "summary_line": line,
+            "setup": {"done": min(done, len(a.steps)), "total": len(a.steps)},
             "disabled_at": st.disabled_at.isoformat() if st and st.disabled_at and not on else None,
             "notify_requested": bool(st and st.notify_requested_at), "data_deletable": app_status.deletable(a.key),
             "key": a.key, "name": a.name, "tagline": p(a.tagline), "description": p(a.description), "icon": a.icon,
@@ -853,7 +906,9 @@ def out(db: OrmSession, ws_id: uuid.UUID, a: Addon, ent: dict | None = None) -> 
             "monthly_price_minor": a.monthly_price_minor, "status": a.live_status, "permissions": p(list(a.permissions)),
             "requires": list(a.requires), "enabled": on, "enabled_at": row.enabled_at.isoformat() if on else None,
             "what": p(a.what), "example": p(a.example), "steps": p(list(a.steps)), "included_in": list(a.included_in),
-            "included": included(db, ws_id, a, ent), "requires_plan": bool(a.included_in)}
+            "included": included(db, ws_id, a, ent), "requires_plan": bool(a.included_in),
+            # switched on, data kept, but stopped until the plan is back (PC-ENT-02/03) – the card says «Kræver plan»
+            "needs_plan": bool(on and _stops_without_plan(a) and not included(db, ws_id, a, ent))}
 
 
 def catalog_out(db: OrmSession, ws_id: uuid.UUID) -> list[dict]:
@@ -867,10 +922,19 @@ def enable(db: OrmSession, ws_id: uuid.UUID, key: str) -> Addon:
     a = get(key)
     if a.live_status == "coming_soon":
         raise Conflict(f"«{a.name}» kommer snart", code="coming_soon", extra={"addon": key})
-    if not included(db, ws_id, a):
+    from app.modules.privat import subscriptions
+
+    ent = subscriptions.entitlements(db, ws_id)
+    if not included(db, ws_id, a, ent):
         names = [n for n in ("Plus", "Familie", "Basis") if n.lower() in a.included_in]
-        raise Conflict(f"«{a.name}» er med i {' og '.join(names[:2]) if names else 'et abonnement'} – start 14 dage "
-                       "gratis eller vælg en plan", code="needs_plan", extra={"addon": key, "plans": list(a.included_in)})
+        # every plan: say so («alle planer», F-PB-02) – not just the first two
+        where = "alle planer" if len(names) == 3 else (' og '.join(names[:2]) if names else 'et abonnement')
+        # Already in a trial or on a plan (e.g. Basis): «start 14 dage gratis» would be wrong – they need another
+        # plan (F-UX-01).
+        msg = (f"«{a.name}» er med i {where} – skift plan under Konto" if ent.get("entitled")
+               else f"«{a.name}» er med i {where} – start 14 dage gratis eller vælg en plan")
+        raise Conflict(msg, code="needs_plan", extra={"addon": key, "plans": list(a.included_in),
+                                                      "upgrade": bool(ent.get("entitled"))})
     for dep in a.requires:
         if not is_enabled(db, ws_id, dep):
             enable(db, ws_id, dep)

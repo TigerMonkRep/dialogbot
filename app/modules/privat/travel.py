@@ -146,7 +146,8 @@ def to_dkk(amount: float, currency: str) -> float | None:
 
 
 def _offer(provider: str, dest: str, total: float | None, currency: str, *, airline: str = "", depart_at: str = "",
-           return_at: str = "", stops: int | None = None, book_url: str = "", per_person: bool = False, p: dict) -> dict:
+           return_at: str = "", stops: int | None = None, book_url: str = "", per_person: bool = False, p: dict,
+           sponsored: bool = False) -> dict:
     travellers = p["adults"] + p["children"]
     total_dkk, note = None, "pris pr. person × antal rejsende (cache)" if per_person else "samlet pris for alle rejsende"
     if total is not None and currency:
@@ -159,7 +160,9 @@ def _offer(provider: str, dest: str, total: float | None, currency: str, *, airl
     return {"id": uuid.uuid4().hex[:10], "provider": provider, "origin": p["origin"], "destination": dest,
             "total_dkk": total_dkk, "currency": currency.upper(), "airline": AIRLINES.get(code.upper(), code)[:80],
             "depart_at": depart_at[:25], "return_at": return_at[:25], "stops": stops, "book_url": book_url[:1000],
-            "price_note": note}
+            "price_note": note,
+            # an affiliate link (Dialogbot earns a commission): shown as «Annonce» with rel="sponsored" (F-PX-04)
+            "sponsored": bool(sponsored and book_url)}
 
 
 class Duffel:
@@ -269,7 +272,7 @@ class Travelpayouts:
             out.append(_offer("travelpayouts", dest, float(x["price"]) if x.get("price") is not None else None, "DKK",
                               airline=x.get("airline") or "", depart_at=x.get("departure_at") or "",
                               return_at=x.get("return_at") or "", stops=x.get("transfers"), book_url=url,
-                              per_person=True, p=p))
+                              per_person=True, p=p, sponsored=bool(self.marker)))
         return out
 
 

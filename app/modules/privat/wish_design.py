@@ -30,7 +30,7 @@ THEMES: dict[str, dict] = {
     "student":      {"accent": "#B0102A", "background": "#F5F6F8", "text": "#14213D", "font": "outfit"},
     "jubilaeum":    {"accent": "#7D6214", "background": "#F8F5EC", "text": "#2B2618", "font": "serif"},
     "indflytning":  {"accent": "#3F6B2E", "background": "#F3F5EF", "text": "#24301F", "font": "inter"},
-    "neutral":      {"accent": "#2456F6", "background": "#FFFFFF", "text": "#1A1A1A", "font": "outfit"},
+    "neutral":      {"accent": "#C4461A", "background": "#FFFFFF", "text": "#1A1A1A", "font": "outfit"},
 }
 DEFAULT_THEME = "neutral"
 FONTS = ("outfit", "inter", "serif", "rounded")

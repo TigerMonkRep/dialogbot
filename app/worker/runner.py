@@ -126,6 +126,7 @@ HANDLERS = {
     "privat.call_due": lambda db, ev: _privat("handle_call_due", db, ev),
     "privat.call_ask": lambda db, ev: _privat("handle_call_ask", db, ev),
     "privat.calendar_sync": lambda db, ev: _privat_calendar(db, ev),
+    "privat.data_export": lambda db, ev: _privat_export(db, ev),
     "push.send": lambda db, ev: _push_send(db, ev),
 }
 
@@ -134,6 +135,12 @@ def _privat(name: str, db: OrmSession, ev: OutboxEvent) -> None:
     from app.modules.privat import calls
 
     getattr(calls, name)(db, ev)
+
+
+def _privat_export(db: OrmSession, ev: OutboxEvent) -> None:
+    from app.modules.privat.gdpr import handle_export
+
+    handle_export(db, ev)
 
 
 def _privat_calendar(db: OrmSession, ev: OutboxEvent) -> None:
@@ -392,6 +399,17 @@ def run_schedules() -> None:
             from app.modules.privat.lookup_limits import prune
 
             prune(db)  # rate-limit rows older than two days
+            from app.modules.privat.gdpr import purge_expired as purge_exports
+
+            purge_exports(db)  # «Eksportér mine data»: expired links lose their content
+            from app.modules.privat import rules as privat_rules
+
+            today = privat_rules.local(privat_rules.now()).date()
+            if _RETENTION_RAN.get("privat_transcripts") != today:
+                from app.modules.privat.gdpr import purge_transcripts
+
+                purge_transcripts(db)  # raw call transcripts after 90 days (ours and Vapi's copy), once a day
+                _RETENTION_RAN["privat_transcripts"] = today
             from app.modules.browser.lookup import scrub_expired
             from app.modules.privat.places import scrub_cached
 

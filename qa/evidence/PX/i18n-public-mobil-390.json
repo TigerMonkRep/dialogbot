@@ -1,0 +1,106 @@
+{
+  "cookie:da:/privat": {
+    "lang": "da",
+    "leaks": []
+  },
+  "cookie:da:/privat/start/1": {
+    "lang": "da",
+    "leaks": []
+  },
+  "cookie:da:/privat/offline": {
+    "lang": "da",
+    "leaks": []
+  },
+  "accept:da": "da",
+  "cookie:en:/privat": {
+    "lang": "en",
+    "leaks": []
+  },
+  "cookie:en:/privat/start/1": {
+    "lang": "en",
+    "leaks": []
+  },
+  "cookie:en:/privat/offline": {
+    "lang": "en",
+    "leaks": []
+  },
+  "accept:en": "en",
+  "cookie:de:/privat": {
+    "lang": "de",
+    "leaks": []
+  },
+  "cookie:de:/privat/start/1": {
+    "lang": "de",
+    "leaks": []
+  },
+  "cookie:de:/privat/offline": {
+    "lang": "de",
+    "leaks": []
+  },
+  "accept:de": "de",
+  "cookie:es:/privat": {
+    "lang": "es",
+    "leaks": []
+  },
+  "cookie:es:/privat/start/1": {
+    "lang": "es",
+    "leaks": []
+  },
+  "cookie:es:/privat/offline": {
+    "lang": "es",
+    "leaks": []
+  },
+  "accept:es": "es",
+  "cookie:fr:/privat": {
+    "lang": "fr",
+    "leaks": []
+  },
+  "cookie:fr:/privat/start/1": {
+    "lang": "fr",
+    "leaks": []
+  },
+  "cookie:fr:/privat/offline": {
+    "lang": "fr",
+    "leaks": []
+  },
+  "accept:fr": "fr",
+  "cookie:it:/privat": {
+    "lang": "it",
+    "leaks": []
+  },
+  "cookie:it:/privat/start/1": {
+    "lang": "it",
+    "leaks": []
+  },
+  "cookie:it:/privat/offline": {
+    "lang": "it",
+    "leaks": []
+  },
+  "accept:it": "it",
+  "cookie:no:/privat": {
+    "lang": "nb",
+    "leaks": []
+  },
+  "cookie:no:/privat/start/1": {
+    "lang": "nb",
+    "leaks": []
+  },
+  "cookie:no:/privat/offline": {
+    "lang": "nb",
+    "leaks": []
+  },
+  "accept:no": "nb",
+  "cookie:sv:/privat": {
+    "lang": "sv",
+    "leaks": []
+  },
+  "cookie:sv:/privat/start/1": {
+    "lang": "sv",
+    "leaks": []
+  },
+  "cookie:sv:/privat/offline": {
+    "lang": "sv",
+    "leaks": []
+  },
+  "accept:sv": "sv"
+}

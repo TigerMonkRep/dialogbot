@@ -1,0 +1,9 @@
+checkout basis 200
+checkout plus 200
+pay 303
+pay 303
+subs [('sub_qa_6578c3eb5a65', 'trialing', 'basis'), ('sub_qa_91bc0b8516dc', 'trialing', 'plus')]
+deletes [['DELETE', '/subscriptions/sub_qa_10573f6f665e'], ['DELETE', '/subscriptions/sub_qa_91bc0b8516dc']]
+sub {'plan': 'basis', 'status': 'trial', 'entitled': True}
+3rd checkout 409 subscription_exists
+credit allow_promotion_codes None amount 2900

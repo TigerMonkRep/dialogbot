@@ -110,6 +110,24 @@ def remove(db: OrmSession, ws_id: uuid.UUID, item_id: str) -> bool:
     return kit.remove_item(db, ws_id, ADDON, item_id)
 
 
+def due_for(db: OrmSession, data: dict, today: date) -> list[tuple[str, str]]:
+    """`due`, but only for checklist points still OPEN on the move's list – ticked off or deleted means done
+    (F-PA-04). Without the list (deleted) nothing is reminded either."""
+    out = []
+    for m in data.get("items", []):
+        task = db.get(PrivateTask, uuid.UUID(m["task_id"])) if m.get("task_id") else None
+        open_items = _open_items(db, m) if task is not None else None
+        for tag, text in due({"items": [m]}, today):
+            n = int(tag.rsplit(":", 1)[1])
+            point = next((t for k, t, _ in CHECKLIST if k == n), "")
+            if open_items is None and m.get("task_id"):
+                continue  # the list is gone
+            if open_items is not None and not any(i.startswith(point) for i in open_items):
+                continue
+            out.append((tag, text))
+    return out
+
+
 def due(data: dict, today: date) -> list[tuple[str, str]]:
     out = []
     for m in data.get("items", []):

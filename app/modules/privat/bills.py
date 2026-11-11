@@ -246,6 +246,7 @@ def due(db: OrmSession, now: datetime | None = None) -> list[PrivateBill]:
     rows = list(db.scalars(select(PrivateBill).join(
         PrivateAddonEnabled, (PrivateAddonEnabled.workspace_id == PrivateBill.workspace_id)
         & (PrivateAddonEnabled.key == ADDON))))
+    rows = addons.running_rows(db, rows, ADDON)  # a plan app whose plan has lapsed sends nothing (PC-ENT-02)
     out_ = []
     for b in rows:
         roll(b, today)

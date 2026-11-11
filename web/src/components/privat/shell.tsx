@@ -3,7 +3,8 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LogoMark } from "@/components/ui";
-import { AssistantNameProvider, useT } from "@/i18n/client";
+import { AssistantNameProvider, useLocale, useT } from "@/i18n/client";
+import { saldo } from "@/lib/privat/saldo";
 import { AccountPane } from "./account";
 import { AppPage, MyAppsPage, ShopItemPage, ShopPage, Toast } from "./apps";
 import { PeoplePage } from "./people";
@@ -105,41 +106,59 @@ function AccountNotice() {
   return null;
 }
 
+/** A guest = logged in, no plan, and nothing of their own – only lists others shared (ux-audit #5, brief: «kan åbne
+ *  listen, men ikke meget andet»). A guest gets Min dag · Opgaver · Konto; Apps and Folk come with a plan. */
+function useGuest(): boolean {
+  const { tasks, loggedIn, mode } = usePrivat();
+  const p = usePlan();
+  return loggedIn && mode === "real" && !p.entitled && p.status === "none" && tasks.length > 0 && tasks.every((x) => !!x.my_role && x.my_role !== "owner");
+}
+
 /** Header: logo + PRIVAT pill, the pill navigation (wide screens), the plan badge and the account avatar. */
 function Header() {
   const t = useT("privat");
   const { balance, go, mode, simulated, loggedIn, session, screen } = usePrivat();
   const p = usePlan();
+  const locale = useLocale();
   const free = balance ? Math.max(0, balance.free_limit - balance.free_used) : null;
   const active: Screen = screen === "task" ? "tasks" : screen === "chat" ? "day" : APP_SCREENS.includes(screen) ? "apps" : screen;
-  const nav: [Screen, string][] = [["day", "nav.day"], ["tasks", "nav.tasks"], ["apps", "apps.tab"]];
-  // The badge: «Plus · prøveperiode, 9 dage tilbage», the plan name, or (without rights) credits and free tasks.
+  const guest = useGuest();
+  const nav: [Screen, string][] = ([["day", "nav.day"], ["tasks", "nav.tasks"], ["apps", "apps.tab"], ["people", "nav.people"], ["account", "nav.account"]] as [Screen, string][])
+    .filter(([k]) => !guest || (k !== "apps" && k !== "people"));
+  // The badge: «Plus · prøveperiode, 9 dage tilbage», the plan name, or (without rights) the Opkaldssaldo in kroner.
+  const saldoText = balance ? t("header.balance", { amount: saldo(balance, locale).fmt(balance.balance_minor) }) : "";
   const badge = p.entitled
     ? (p.status === "trial" ? t("nav.trialBadge", { plan: p.rightsName, n: p.trialDays }) : t("nav.planBadge", { plan: p.rightsName }))
-    : balance ? (p.status === "none" ? t("header.noPlanBadge") : t("header.credits", { n: balance.credits })) : "";
-  const badgeShort = p.entitled && p.status === "trial" ? t("nav.trialBadgeShort", { plan: p.rightsName, n: p.trialDays }) : p.entitled ? p.rightsName : balance ? (p.status === "none" ? t("header.noPlanBadgeShort") : t("header.credits", { n: balance.credits })) : "";
+    : balance ? (p.status === "none" ? t("header.noPlanBadge") : saldoText) : "";
+  // Phone: as short as possible, so the logo and the PRIVAT mark are never covered (F-UX-05); the aria-label says it all.
+  const badgeShort = p.entitled && p.status === "trial" ? t("nav.trialDaysShort", { n: p.trialDays }) : p.entitled ? p.rightsName : balance ? (p.status === "none" ? t("header.noPlanBadgeShort") : saldoText) : "";
   return (
-    <header className="flex-none flex items-center gap-2.5 px-4 py-3 min-h-16 border-b-2 border-ink bg-paper pt-safe">
+    <header className="flex-none flex items-center gap-2 sm:gap-2.5 px-4 py-3 min-h-16 border-b-2 border-ink bg-paper pt-safe">
       <StandaloneBack roots={["/privat/dag", "/privat/samtale", "/privat/opgaver", "/privat/apps", "/privat/butik", "/privat/folk", "/privat/konto"]} />
-      <Link href="/privat/dag" aria-label={t("header.homeAria")} className="flex items-center gap-2.5 min-w-0 min-h-[44px]">
+      <Link href="/privat/dag" className="flex items-center gap-2 shrink-0 min-h-[44px]">
         <LogoMark size={36} />
-        <span className="font-display font-extrabold text-[22px] tracking-[-0.3px] hidden min-[380px]:inline">Dialogbot</span>
+        <span className={`font-display font-extrabold text-[22px] tracking-[-0.3px] hidden ${simulated || (balance && !p.entitled) ? "min-[420px]:inline" : "min-[380px]:inline"}`}>Dialogbot</span>
         <span className="text-[11px] font-bold tracking-[0.08em] uppercase text-accent border-[1.5px] border-accent rounded-full px-2 py-0.5">{t("brand.privat")}</span>
+        {/* WCAG 2.5.3 (F-PX-06): the name starts with what is visible – «Dialogbot Privat» – and adds where it goes. */}
+        <span className="sr-only">{t("header.homeSuffix")}</span>
       </Link>
-      {simulated && <span className="hidden sm:inline-flex"><Sim /></span>}
+      {/* Simulated data is said on every width (F-PS-07); on a phone the wordmark gives way (the mark stays). */}
+      {simulated && <span className="inline-flex shrink-0"><Sim /></span>}
       <nav aria-label={t("nav.primary")} className="hidden xl:flex items-center gap-1 ml-4 p-1 rounded-full border-2 border-ink bg-paper">
         {nav.map(([k, label]) => (
           <button key={k} type="button" onClick={() => go(k)} aria-current={active === k ? "page" : undefined}
-            className={`min-h-[38px] px-4 rounded-full text-[14px] font-semibold whitespace-nowrap ${active === k ? "bg-ink text-paper" : "text-ink hover:bg-panel"}`}>{t(label)}</button>
+            className={`min-h-[44px] px-4 rounded-full text-[14px] font-semibold whitespace-nowrap ${active === k ? "bg-ink text-paper" : "text-ink hover:bg-panel"}`}>{t(label)}</button>
         ))}
       </nav>
       <span className="flex-1" />
       {balance && (
-        <button type="button" onClick={() => go("account")} aria-label={p.entitled ? t("nav.planAria", { text: badge }) : (p.status === "none" ? t("header.noPlanAria") : t("header.balanceAria", { credits: balance.credits }))}
-          data-credits={balance.credits} data-free={free ?? 0} data-plan={p.plan} data-status={p.status} data-calls-left={p.callsLeft}
-          className={`inline-flex items-center gap-2 min-h-[44px] px-3.5 rounded-full border-2 border-ink text-[14px] font-semibold whitespace-nowrap ${p.entitled ? "bg-accent-soft hover:bg-panel-deep" : "bg-paper hover:bg-panel"}`} data-testid="balance-chip">
-          <span className={`w-2.5 h-2.5 rounded-full border-[1.5px] border-ink ${p.entitled ? "bg-accent" : "bg-highlight"}`} aria-hidden />
-          <span className="hidden sm:inline">{badge}</span><span className="sm:hidden">{badgeShort}</span>
+        <button type="button" onClick={() => go("account")}
+          data-balance-minor={balance.balance_minor} data-free={free ?? 0} data-plan={p.plan} data-status={p.status} data-calls-left={p.callsLeft}
+          className={`inline-flex items-center gap-1.5 sm:gap-2 min-h-[44px] shrink-0 px-3 sm:px-3.5 rounded-full border-2 border-ink text-[14px] font-semibold whitespace-nowrap ${p.entitled ? "bg-accent-soft hover:bg-panel-deep" : "bg-paper hover:bg-panel"}`} data-testid="balance-chip">
+          <span className={`hidden min-[400px]:inline-block w-2.5 h-2.5 rounded-full border-[1.5px] border-ink ${p.entitled ? "bg-accent" : "bg-highlight"}`} aria-hidden />
+          <span className="hidden sm:inline">{badge}</span><span className="sm:hidden" aria-hidden>{badgeShort}</span>
+          <span className="sr-only sm:hidden">{badge}</span>
+          <span className="sr-only">{" – "}{t("nav.planAriaShort")}</span>
         </button>
       )}
       {loggedIn && mode !== "loading" ? <AccountMenu session={session} /> : mode === "demo" ? (
@@ -179,7 +198,7 @@ function AccountMenu({ session }: { session: Session }) {
   const name = session.name ?? (simulated ? "Mette" : session.email ?? "?");
   return (
     <div className="relative shrink-0" ref={ref}>
-      <button type="button" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen(!open)} aria-label={t("header.menu")} className="w-11 h-11 rounded-full inline-flex items-center justify-center">
+      <button type="button" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen(!open)} aria-label={`${initials(name)} – ${t("header.menu")}`} className="w-11 h-11 rounded-full inline-flex items-center justify-center">
         <span className="w-10 h-10 rounded-full bg-highlight border-2 border-ink font-display font-extrabold text-[15px] inline-flex items-center justify-center">{initials(name)}</span>
       </button>
       {open && (
@@ -205,7 +224,9 @@ function Tabs() {
   const t = useT("privat");
   const { screen } = usePrivat();
   const active: Screen = screen === "task" ? "tasks" : screen === "chat" ? "day" : APP_SCREENS.includes(screen) ? "apps" : screen;
-  const tabs: [Screen, string, string, string][] = [["day", "/privat/dag", "nav.day", "home"], ["tasks", "/privat/opgaver", "tabs.tasks", "list"], ["apps", "/privat/apps", "apps.tab", "grid"], ["people", "/privat/folk", "nav.people", "users"], ["account", "/privat/konto", "nav.account", "user"]];
+  const guest = useGuest();
+  const tabs = ([["day", "/privat/dag", "nav.day", "home"], ["tasks", "/privat/opgaver", "tabs.tasks", "list"], ["apps", "/privat/apps", "apps.tab", "grid"], ["people", "/privat/folk", "nav.people", "users"], ["account", "/privat/konto", "nav.account", "user"]] as [Screen, string, string, string][])
+    .filter(([k]) => !guest || (k !== "apps" && k !== "people"));
   return (
     <nav aria-label={t("tabs.label")} className="xl:hidden flex-none flex border-t-2 border-ink bg-paper pb-safe">
       {tabs.map(([k, href, label, icon]) => (

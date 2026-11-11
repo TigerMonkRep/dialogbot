@@ -174,6 +174,7 @@ def poll(db: OrmSession, now: datetime | None = None) -> int:
     rows = list(db.scalars(select(PrivateAppData).join(
         PrivateAddonEnabled, (PrivateAddonEnabled.workspace_id == PrivateAppData.workspace_id)
         & (PrivateAddonEnabled.key == ADDON)).where(PrivateAppData.app_key == ADDON)))
+    rows = addons.running_rows(db, rows, ADDON)  # a plan app whose plan has lapsed is not polled (PC-ENT-02)
     t = tracker()
     n = 0
     for row in rows:

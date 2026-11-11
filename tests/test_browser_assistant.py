@@ -1,4 +1,5 @@
-"""A5: how a browser booking is started from the chat. The track rules (1-4) one by one, the lookup cache, credits, «ring i stedet».
+"""A5: how a browser booking is started from the chat. The track rules (1-4) one by one, the lookup cache, «ring i stedet».
+A website booking is included in every plan and moves nothing on the Opkaldssaldo (F-PDEC-02: tests/test_browser_booking_plan.py).
 No browser, no network: CVR, Google Places and the website are fakes; the model is a script."""
 from __future__ import annotations
 
@@ -32,8 +33,7 @@ SITE_NONE = "<html><body><p>Velkommen til Salon Test</p></body></html>"
 
 def facts(**kw) -> routing.Facts:
     base = dict(user_said=None, intent="book", website="https://salon-test.dk", engine="onlinebooq",
-                booking_url="https://booking.salon-test.dk/start", has_name_and_phone=True, concrete=True, worker_enabled=True,
-                has_credit=True)
+                booking_url="https://booking.salon-test.dk/start", has_name_and_phone=True, concrete=True, worker_enabled=True)
     return routing.Facts(**{**base, **kw})
 
 
@@ -79,7 +79,6 @@ def test_rule_3_browser_when_every_condition_holds():
     ({"booking_url": None}, "no_booking_url"),
     ({"has_name_and_phone": False}, "no_contact"),
     ({"worker_enabled": False}, "worker_disabled"),
-    ({"has_credit": False}, "no_credit"),
 ])
 def test_rule_4_everything_else_is_the_phone(change, reason):
     d = routing.decide(facts(**change))
@@ -207,7 +206,7 @@ def runs(db):
 
 # --- through the chat ---------------------------------------------------------------------------------------------------
 
-def test_browser_track_says_so_reserves_a_credit_and_queues_the_run(api, db, pv, user, world):
+def test_browser_track_says_so_and_queues_the_run_without_touching_the_balance(api, db, pv, user, world):
     out = book(pv, user)
     assert "Jeg prøver at booke online hos Salon Test – du får et forslag at godkende" in texts(out)
     assert "ring i stedet" in texts(out)
@@ -218,8 +217,8 @@ def test_browser_track_says_so_reserves_a_credit_and_queues_the_run(api, db, pv,
     assert run.goal["contact"] == {"name": "Mette Hansen", "phone": "+4520304050"}      # ONLY name + verified mobile: no e-mail
     assert run.goal["service"] == "herreklip" and run.goal["preferred_windows"] == WINDOWS
     assert set(run.allowed_domains) == {"booking.salon-test.dk", "salon-test.dk"} or "salon-test.dk" in run.allowed_domains
-    [res] = [e for e in db.scalars(select(CreditLedger)) if e.source_ref == f"browser:{run.id}:reserve"]
-    assert res.amount == -service.BROWSER_BOOKING_CREDITS == -1
+    assert not [e for e in db.scalars(select(CreditLedger)) if (e.source_ref or "").startswith("browser:")]  # F-PDEC-02
+    assert task.paid_by == "plan" and task.usage_text == "Med i prøveperioden"
     assert len([e for e in db.scalars(select(OutboxEvent)) if e.event_type in BROWSER_EVENT_TYPES]) == 1
     call = db.scalar(select(PrivateCall).where(PrivateCall.task_id == task.id))
     assert call.status == "proposed" and call.business_name == "Salon Test"      # the hidden fallback proposal, never dialled
@@ -274,13 +273,12 @@ def test_the_profile_must_have_a_verified_mobile(api, db, pv, world):
     assert not runs(db) and "bekræftede mobilnummer" in texts(out)
 
 
-def test_without_credits_the_phone_is_the_track(api, db, pv, user, world):
-    with_db = db
+def test_an_empty_balance_does_not_stop_the_browser_track(api, db, pv, user, world):
     ws = pv.ws(user)
-    ledger.add(with_db, ws, kind="spend", amount=-ledger.balance(with_db, ws), source_ref="test:drain", text="drain")
-    with_db.commit()
+    ledger.add(db, ws, kind="spend", amount=-ledger.balance(db, ws), source_ref="test:drain", text="drain")
+    db.commit()
     out = book(pv, user)
-    assert not runs(db) and "credits" in texts(out) and any(m["kind"] == "call_proposal" for m in out["messages"])
+    assert len(runs(db)) == 1 and "booke online" in texts(out) and ledger.balance(db, ws) == 0
 
 
 def test_a_booking_that_cannot_be_planned_falls_to_the_phone_and_leaves_nothing_behind(api, db, pv, user, world, monkeypatch):
@@ -359,19 +357,19 @@ def say_switch(pv, tok, tid):
     return pv.say(tok, "Ring i stedet", about=str(tid))
 
 
-def test_ring_i_stedet_cancels_the_run_releases_the_credit_and_prepares_the_call(api, db, pv, user, world):
+def test_ring_i_stedet_cancels_the_run_and_prepares_the_call(api, db, pv, user, world):
     rid, tid = awaiting_run(db, pv, user, world)
-    assert ledger.balance(db, pv.ws(user)) == 2                                          # 3 welcome credits - 1 reserved
+    assert ledger.balance(db, pv.ws(user)) == 1000                                       # nothing reserved (F-PDEC-02)
     out = say_switch(pv, user, tid)
     db.expire_all()
     run = db.get(BrowserRun, rid)
     assert (run.status, run.error_code) == ("fallback_phone", "user_switched")
     assert "Okay, jeg ringer til Salon Test i stedet" in texts(out) and any(m["kind"] == "call_proposal" for m in out["messages"])
-    assert ledger.balance(db, pv.ws(user)) == 3                                          # the credit is back
+    assert ledger.balance(db, pv.ws(user)) == 1000                                       # still nothing moved
     task = api.get(user, f"/privat/tasks/{tid}").json()
     assert task["status"] == "awaiting_user" and task["call"]["result"] is None          # a proposal, nothing dialled
     again = say_switch(pv, user, tid)                                                    # a second «ring i stedet» changes nothing
-    assert ledger.balance(db, pv.ws(user)) == 3 and len(list(db.scalars(select(PrivateCall)))) == 1
+    assert ledger.balance(db, pv.ws(user)) == 1000 and len(list(db.scalars(select(PrivateCall)))) == 1
     assert "ingen booking" in texts(again).lower()
 
 
@@ -385,10 +383,10 @@ def test_ring_i_stedet_is_refused_once_the_confirming_click_may_be_made(api, db,
     db.expire_all()
     assert db.get(BrowserRun, rid).status == "running"
     assert "kan ikke fortrydes" in texts(out) and "Tjek hos virksomheden" in texts(out)
-    assert ledger.balance(db, pv.ws(user)) == 2
+    assert ledger.balance(db, pv.ws(user)) == 1000
 
 
-# --- credits through the whole life of a run -----------------------------------------------------------------------------------
+# --- the Opkaldssaldo is never touched through the whole life of a run (F-PDEC-02) ---------------------------------------
 
 def _run(db, pv, user, world):
     book(pv, user)
@@ -397,38 +395,20 @@ def _run(db, pv, user, world):
     return r.id
 
 
-@pytest.mark.parametrize("finish,args,balance", [
-    (service.finish_done, ({"summary": {}},), 2),                                         # spent: the reserved credit is the price
-    (service.finish_failed, ("unexpected_commit",), 2),                                   # may have booked: spent
-    (service.finish_failed, ("commit_unconfirmed",), 2),
-    (service.finish_failed, ("declined",), 3),                                            # nothing booked: released
-    (service.finish_failed, ("forbidden_field",), 3),
-    (service.finish_fallback, ("captcha", {}), 3),
+@pytest.mark.parametrize("finish,args", [
+    (service.finish_done, ({"summary": {}},)),
+    (service.finish_failed, ("unexpected_commit",)),
+    (service.finish_failed, ("commit_unconfirmed",)),
+    (service.finish_failed, ("declined",)),
+    (service.finish_failed, ("forbidden_field",)),
+    (service.finish_fallback, ("captcha", {})),
 ])
-def test_the_credit_is_spent_or_released_exactly_once(api, db, pv, user, world, finish, args, balance):
+def test_no_end_of_a_run_moves_the_balance(api, db, pv, user, world, finish, args):
     rid = _run(db, pv, user, world)
-    assert ledger.balance(db, pv.ws(user)) == 2
-    for _ in range(2):                                                                    # a repeat moves nothing twice
+    for _ in range(2):
         finish(db, db.get(BrowserRun, rid), *args)
         db.commit()
-    assert ledger.balance(db, pv.ws(user)) == balance
-    assert ledger.reserved(db, pv.ws(user)) == 0                                          # no reservation is left hanging
-
-
-def test_a_run_needs_a_credit_to_start(api, db, pv, user, world):
-    from app.core.errors import Conflict
-
-    ws = pv.ws(user)
-    ledger.add(db, ws, kind="spend", amount=-3, source_ref="test:drain", text="drain")
-    db.commit()
-    task = PrivateTask(workspace_id=ws, kind="call", title="x", status="awaiting_user", next_step="", paid_by="call")
-    db.add(task)
-    db.flush()
-    with pytest.raises(Conflict) as e:
-        service.start_run(db, task, goal={"intent": "book", "service": "x", "contact": {"name": "M"}},
-                          allowed_domains=["salon-test.dk"], engine="onlinebooq", booking_url="https://salon-test.dk/b")
-    assert e.value.code == "insufficient_credits"
-    db.rollback()
+    assert ledger.balance(db, pv.ws(user)) == 1000 and ledger.reserved(db, pv.ws(user)) == 0
 
 
 def test_find_business_never_invents(api, db, pv, user, world, monkeypatch):

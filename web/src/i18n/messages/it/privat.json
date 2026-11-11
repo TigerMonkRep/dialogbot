@@ -5,7 +5,7 @@
     "day": "La mia giornata",
     "chat": "Conversazione",
     "tasks": "Le mie attività",
-    "account": "Account e crediti",
+    "account": "Account e saldo chiamate",
     "addons": "Componenti aggiuntivi",
     "people": "Le mie persone",
     "invite": "Invito",
@@ -129,7 +129,7 @@
       "billedMonthly": "Addebito mensile",
       "billedYearly": "Addebito annuale: {amount}",
       "cta": "Inizia 14 giorni gratis",
-      "note": "Più chiamate del tuo abbonamento? Le chiamate extra si acquistano nell'app. Nessun vincolo – cambia piano o interrompi ogni mese.",
+      "note": "Più chiamate del tuo piano? Le chiamate extra si pagano con il saldo chiamate: {pXAnswered} con risposta, {pXVoicemail} segreteria, {pXNoAnswer} senza risposta + {pXMinute} per minuto iniziato, al massimo {pXMax}. Nessun vincolo: cambi piano o smetti ogni mese.",
       "tagline": {
         "basis": "Per chi vuole la quotidianità sotto controllo.",
         "plus": "Per chi non vuole più fare telefonate.",
@@ -161,8 +161,7 @@
   "header": {
     "skip": "Vai al contenuto",
     "homeAria": "Dialogbot Privat – La mia giornata",
-    "credits": "{n} crediti",
-    "balanceAria": "{credits} crediti. Apri l'account",
+    "balanceAria": "Saldo chiamate {amount}. Apri account",
     "noPlanBadge": "Senza piano · prova 14 giorni",
     "noPlanBadgeShort": "Senza piano",
     "noPlanAria": "Senza piano. Apri l'account e inizia 14 giorni gratis",
@@ -171,17 +170,19 @@
     "switchLabel": "Passa tra azienda e privato",
     "business": "Azienda",
     "private": "Privato",
-    "account": "Account e crediti",
+    "account": "Account e saldo",
     "addons": "Componenti aggiuntivi",
     "people": "Le mie persone",
     "logout": "Esci",
     "right": {
       "tasks": "Le mie attività",
       "task": "Attività",
-      "account": "Account e crediti",
+      "account": "Account e saldo",
       "addons": "Componenti aggiuntivi",
       "people": "Le mie persone"
-    }
+    },
+    "homeSuffix": " – La mia giornata",
+    "balance": "Saldo {amount}"
   },
   "tabs": {
     "label": "Menu principale",
@@ -242,7 +243,7 @@
     "soon": "Prossimamente",
     "next": "Prossimo passo: {next}",
     "myTasks": "Le mie attività",
-    "accountBtn": "Account e crediti",
+    "accountBtn": "Account e saldo",
     "welcomeFunnel": "Peter ha organizzato la tua giornata: tocca Sì, chiama per fare la prima chiamata"
   },
   "shortcuts": {
@@ -276,7 +277,8 @@
     "earlier": "Attività: {title}. Apri l'attività",
     "googleData": "Dati da Google",
     "demoData": "Dati dimostrativi – aziende fittizie, non da Google",
-    "typing": "Peter sta scrivendo …"
+    "typing": "Peter sta scrivendo …",
+    "deleteMessage": "Elimina messaggio"
   },
   "list": {
     "count": "{n|1 voce|# voci} · {done} fatte",
@@ -306,7 +308,9 @@
     "simulateReserve": "{name} prenota un desiderio",
     "simulateActivated": "{name} crea la sua prima attività",
     "welcomeBanner": "Prova tu: cosa posso sbrigare per te?",
-    "welcomeDismiss": "Chiudi"
+    "welcomeDismiss": "Chiudi",
+    "open": "Apri",
+    "shareWish": "Condividi la lista dei desideri"
   },
   "move": {
     "label": "Il promemoria è stato spostato",
@@ -318,7 +322,9 @@
     "label": "Prenotazione sul sito · in attesa del tuo sì",
     "before": "Ora",
     "after": "Proposta",
-    "note": "Non viene prenotato nulla finché non approvi."
+    "note": "Non viene prenotato nulla finché non approvi.",
+    "needsPlanText": "Le prenotazioni sui siti sono incluse in tutti i piani. Senza piano non si può prenotare, nemmeno con il saldo chiamate.",
+    "limit": "Hai già usato le prenotazioni sul sito di questo mese – riprova il mese prossimo"
   },
   "call": {
     "proposal": "Proposta · attende il tuo sì",
@@ -329,13 +335,12 @@
     "mayAsk": "Può chiedere",
     "mayAgree": "Può concordare",
     "mayNot": "Non può",
-    "cost": "Chiamata dell'assistente: massimo {n} crediti",
+    "cost": "Chiamata extra: {pXAnswered} con risposta, {pXVoicemail} segreteria, {pXNoAnswer} senza risposta + {pXMinute} per minuto iniziato, al massimo {pXMax}.",
     "costTime": "(fino a 3 min.)",
-    "refund": "Se nessuno risponde, è occupato o risponde la segreteria, riavrai i tuoi crediti.",
+    "refund": "Prima della chiamata vengono riservati {pXMax} sul tuo saldo. Poi si addebita solo il prezzo dell'esito e il resto viene liberato. Se la chiamata non va a buon fine, si libera tutto.",
     "price": "Il prezzo dell'azienda è un'altra cosa – non lo concordo io, ma ti riferisco cosa dicono.",
     "shareQ": "L'azienda può avere il tuo numero?",
     "shareHint": "Così possono chiamarti se qualcosa cambia.",
-    "needCredits": "Hai {have} crediti. La chiamata ne richiede {need}.",
     "phoneStep": "Prima conferma il tuo numero di cellulare",
     "phoneStepText": "Prima che io chiami per te, il tuo numero deve essere confermato con un codice SMS. Ci vuole un minuto e si fa una volta sola.",
     "phoneThenCall": "Appena il numero è confermato, chiamo.",
@@ -353,7 +358,7 @@
     "saveEdit": "Salva la modifica",
     "simulatedCall": "Chiamata simulata",
     "calling": "Sto chiamando {name} …",
-    "reserved": "{n} crediti sono riservati. Vengono addebitati solo se l'azienda risponde.",
+    "reserved": "{pXMax} sono riservati sul tuo saldo. Si addebita solo il prezzo dell'esito: il resto viene liberato.",
     "realWait": "Ti avviseremo qui quando la chiamata sarà finita.",
     "chooseOutcome": "Simulazione: scegli l'esito",
     "outcomeAnswered": "L'azienda risponde",
@@ -364,10 +369,10 @@
     "priceAt": "Prezzo dell'azienda",
     "priceNote": "(indicato nella chiamata)",
     "assistantCall": "Chiamata dell'assistente",
-    "callUsage": "{n} crediti · {duration}",
+    "callUsage": "Chiamata extra · {duration}",
     "duration": "{m} min. {s} sec.",
     "seeTask": "Vedi tutta l'attività",
-    "noAnswerTitle": "Nessuno ha risposto – i tuoi {n} crediti sono stati liberati",
+    "noAnswerTitle": "Nessuno ha risposto: addebitati solo {pXNoAnswer}, il resto è liberato",
     "noAnswerText": "Non ho lasciato messaggi. Vuoi che riprovi?",
     "retry": "Riprova",
     "cancel": "Annulla l'attività",
@@ -388,7 +393,14 @@
     "useNumber": "Usa il numero",
     "isBusiness": "È un'azienda",
     "isBusinessHint": "Il numero sembra un cellulare. Chiamo solo aziende.",
-    "demoBusiness": "È un'azienda dimostrativa che non si può chiamare. Scegli un'azienda reale."
+    "demoBusiness": "È un'azienda dimostrativa che non si può chiamare. Scegli un'azienda reale.",
+    "needsPlan": "Richiede un piano",
+    "needsPlanText": "Le chiamate sono incluse in tutti i piani. Senza piano non si può chiamare, nemmeno con il saldo chiamate.",
+    "delete": "Elimina la chiamata",
+    "deleteQ": "Eliminare la chiamata e il riepilogo? Non si può annullare.",
+    "deleteYes": "Sì, elimina",
+    "deleteNo": "Mantieni",
+    "needBalance": "Hai {have} di saldo chiamate. Una chiamata extra richiede {need}: ricarica in Account."
   },
   "draft": {
     "label": "Bozza · pronta da salvare",
@@ -423,8 +435,8 @@
     "orLink": "Oppure invia un link",
     "signWith": "Firma come:",
     "message": "Il messaggio (puoi modificarlo)",
-    "smsWishlist": "Ciao! Ho fatto una lista dei desideri – guardala e prenota qui: {link}",
-    "smsGroup": "Ciao! Ho fatto una lista comune – guardala e aggiungi qui: {link}",
+    "smsWishlist": "Ciao! Ho fatto una lista dei desideri - guardala e prenota qui: {link}",
+    "smsGroup": "Ciao! Ho fatto una lista comune - guardala e aggiungi qui: {link}",
     "remindWishlist": "Ciao! Hai visto la mia lista dei desideri «{title}»? Il link è nel mio messaggio precedente.",
     "remindGroup": "Ciao! Hai visto la lista «{title}»? Il link è nel mio messaggio precedente.",
     "chars": "{n} di {max} caratteri",
@@ -464,7 +476,8 @@
     "queueNext": "Inviato? Prossimo: {name} ({i} di {n})",
     "queueBack": "Bentornato. Tocca quando sei pronto per il prossimo.",
     "queueDone": "Tutti i {n} sono invitati.",
-    "done": "Fatto"
+    "done": "Fatto",
+    "roleWishGuest": "può prenotare"
   },
   "people": {
     "title": "Le mie persone",
@@ -555,29 +568,31 @@
   },
   "paywall": {
     "titleDigital": "Serve un piano",
-    "titleCall": "Ti mancano crediti per la chiamata",
+    "titleCall": "Ricarica per una chiamata extra",
     "titleTrial": "Serve un piano",
     "draft": "Bozza",
-    "textDigital": "Il compito è salvato come bozza. Scegli un piano, continua con 1 credito o guarda un clip sponsorizzato facoltativo.",
-    "textCall": "Una chiamata riserva {n} crediti quando la approvi. Ne hai {have}.",
+    "textDigital": "L'attività è salvata come bozza. Scegli un piano, paga {pExtraTask} dal saldo o guarda uno spot sponsor facoltativo.",
+    "textCall": "Una chiamata extra riserva {pXMax} sul tuo saldo quando la approvi. Hai {have}.",
     "textTrial": "Prova Dialogbot Privat gratis per 14 giorni. Ti registri con una carta, addebitata solo alla fine della prova – disdici prima e non paghi nulla. Il compito resta una bozza finché non scegli.",
     "trialNote": "Plus · {pPlus}/mese dopo la prova · disdici quando vuoi",
-    "useCredit": "Usa 1 credito · ne hai {n}",
-    "buy": "Compra 10 crediti · {pCredits}. IVA incl.",
+    "buy": "{pTopup1}, {pTopup2} o {pTopup3}",
     "sponsor": "Guarda un contenuto sponsorizzato · +1 attività ({n} rimasti oggi)",
     "later": "Più tardi – tieni la bozza",
-    "laterNote": "La bozza è in «Attende la tua risposta». Puoi continuare quando vuoi."
+    "laterNote": "La bozza è in «Attende la tua risposta». Puoi continuare quando vuoi.",
+    "useBalance": "Paga {pExtraTask} dal saldo · hai {have}"
   },
   "buy": {
-    "title": "Compra 10 crediti",
-    "item": "10 crediti",
+    "title": "Ricarica il saldo chiamate",
+    "item": "Ricarica",
     "vat": "di cui IVA",
-    "note": "Acquisto unico. I crediti non scadono durante il pilota.",
-    "pay": "Paga {pCredits}",
-    "payReal": "Vai al pagamento · {pCredits}",
+    "note": "Pagamento unico, nessun abbonamento. Il saldo non scade durante il pilota.",
+    "pay": "Paga {amount}",
+    "payReal": "Vai al pagamento · {amount}",
     "simulatedBuy": "Acquisto simulato",
     "redirecting": "Ti portiamo al pagamento …",
-    "back": "Indietro"
+    "back": "Indietro",
+    "have": "Hai {have} di saldo chiamate.",
+    "prices": "Chiamata extra: {pXAnswered} con risposta, {pXVoicemail} segreteria, {pXNoAnswer} senza risposta + {pXMinute} per minuto iniziato, al massimo {pXMax}."
   },
   "sponsor": {
     "title": "Contenuto sponsorizzato facoltativo",
@@ -590,7 +605,7 @@
   },
   "login": {
     "title": "Salva la tua attività",
-    "text": "Per salvare una tua attività ti serve un account privato. Attività, conversazioni e crediti sono separati dagli account aziendali.",
+    "text": "Per salvare la tua attività ti serve un account privato. Attività, conversazioni e saldo chiamate restano separati dagli account aziendali.",
     "signup": "Crea account privato",
     "login": "Ho un account – accedi",
     "simulated": "Continua come utente di prova",
@@ -629,22 +644,20 @@
     "purposeReminder": "Ricevere il promemoria in tempo",
     "purposeWishlist": "Condividere desideri senza rovinare la sorpresa",
     "talk": "Parla dell'attività",
-    "history": "Cronologia"
+    "history": "Cronologia",
+    "fromOwner": "Da {name}"
   },
   "account": {
-    "title": "Account e crediti",
+    "title": "Account",
     "privateLine": "Account privato · {email} · separato dagli account aziendali",
     "exampleLine": "Stai provando con dati di esempio. Accedi quando salvi la tua prima attività.",
     "simulatedLine": "L'API Privat non è ancora attiva – qui è tutto una simulazione nel tuo browser.",
     "free": "Senza piano",
     "freeNote": "Senza piano puoi vedere e prenotare sulle liste che altri condividono con te – compiti, liste e chiamate tuoi richiedono un piano. Prova tutto gratis per 14 giorni.",
-    "credits": "Crediti",
-    "creditsWord": "crediti",
-    "reserved": "{n} riservati",
-    "creditsNote": "Una chiamata con risposta costa 3 crediti (fino a 3 min.). 10 crediti costano {pCredits}. IVA incl. – acquisto unico, nessun abbonamento.",
-    "buy": "Compra 10 crediti · {pCredits}",
-    "purchased": "L'acquisto è registrato ({ref}).",
-    "purchasedReal": "Grazie per l'acquisto. I crediti compariranno qui appena il pagamento sarà confermato.",
+    "reserved": "{amount} riservato",
+    "buy": "Ricarica",
+    "purchased": "Il pagamento è registrato ({ref}).",
+    "purchasedReal": "Grazie. L'importo compare sul tuo saldo appena il pagamento è confermato.",
     "purchaseCancelled": "L'acquisto è stato annullato. Non è stato addebitato nulla.",
     "ledger": "Movimenti",
     "ledgerEmpty": "Ancora nessun movimento.",
@@ -657,8 +670,8 @@
     "addons": "Componenti aggiuntivi",
     "addonsText": "Attiva e disattiva funzioni extra – ad es. Chiama per me, liste condivise e liste dei desideri.",
     "addonsBtn": "Vedi componenti",
-    "repeatNote": "Il segnale di pagamento {ref} è già registrato. Nessun credito extra.",
-    "repeatNone": "Non c'è ancora nessun pagamento da ripetere – compra prima 10 crediti.",
+    "repeatNote": "Il segnale di pagamento {ref} è già registrato. Al saldo non è stato aggiunto altro.",
+    "repeatNone": "Non c'è ancora nessun pagamento da ripetere: ricarica prima il saldo.",
     "tools": "Strumenti di test · solo simulazione",
     "startFree": "Ripristina ad account senza piano",
     "repeatPay": "Ripeti l'ultimo segnale di pagamento",
@@ -666,11 +679,15 @@
     "reset": "Ricomincia",
     "installTitle": "Installa l'app",
     "languageTitle": "Lingua",
-    "languageText": "L'app e le risposte di Peter seguono la lingua scelta qui."
+    "languageText": "L'app e le risposte di Peter seguono la lingua scelta qui.",
+    "groupMe": "Tu",
+    "groupApp": "L’app",
+    "groupExtra": "Saldo chiamate",
+    "ledgerAll": "Vedi tutto ({n})"
   },
   "invite": {
     "title": "Invita amici",
-    "text": "Condividi Dialogbot con un amico. Ricevete entrambi 3 crediti quando il tuo amico ha creato la sua prima attività.",
+    "text": "Condividi Dialogbot con un amico. Ricevete entrambi {pReferral} di saldo quando il tuo amico ha pagato il primo periodo.",
     "stats": {
       "invited": "Invitati",
       "joined": "Entrati",
@@ -733,7 +750,10 @@
   "errors": {
     "emailNotVerified": "Conferma la tua e-mail per usare Dialogbot Privat.",
     "verifyLink": "Conferma e-mail",
-    "viewAs": "Le attività private non sono visibili in «Vedi come cliente»."
+    "viewAs": "Le attività private non sono visibili in «Vedi come cliente».",
+    "notEnabled": "Dialogbot Privat non è ancora aperto per il tuo account. Niente di ciò che fai qui viene salvato o eseguito.",
+    "unavailable": "Al momento Dialogbot Privat non è raggiungibile. Riprova tra poco – niente è stato salvato o eseguito.",
+    "generic": "Qualcosa è andato storto. Riprova."
   },
   "location": {
     "useMine": "Usa la mia posizione",
@@ -779,7 +799,10 @@
     "trialBadge": "{plan} · prova, {n|1 giorno|# giorni} rimasti",
     "trialBadgeShort": "{plan} · {n|1 giorno|# giorni}",
     "planBadge": "{plan}",
-    "noPlan": "Nessun piano"
+    "noPlan": "Nessun piano",
+    "trialDaysShort": "{n} g",
+    "trialDaysLeft": "{n|1 giorno|# giorni} rimasti",
+    "planAriaShort": "apri account"
   },
   "day2": {
     "eyebrow": "Il tuo assistente personale",
@@ -834,17 +857,20 @@
       "trialDays": "{n|1 giorno|# giorni} rimasti",
       "trialAria": "{n} di {total} giorni di prova rimasti",
       "noteTrial": "Liste e promemoria sono illimitati. Dopo la prova continui con {plan} a {price}/mese – o scegli un altro piano.",
-      "notePlan": "Liste e promemoria sono illimitati. Più chiamate del tuo abbonamento? Le chiamate extra si acquistano in Account.",
+      "notePlan": "Liste e promemoria sono illimitati. Più chiamate del piano? Le chiamate extra si pagano con il saldo in Account.",
       "noteFree": "Senza piano puoi vedere e prenotare sulle liste che altri condividono con te. Compiti e chiamate tuoi richiedono un piano.",
       "noteNone": "Senza piano puoi vedere e prenotare sulle liste che altri condividono con te. Prova tutto per 14 giorni – la carta viene addebitata solo dopo.",
-      "extraCalls": "Chiamate extra (crediti)",
+      "extraCalls": "Saldo chiamate",
       "choosePlan": "Scegli piano",
       "changePlan": "Cambia piano",
       "startTrial": "Inizia 14 giorni gratis",
       "newInStore": "Novità nel Negozio",
       "see": "Vedi →"
     },
-    "noAnswerPlan": "Nessuno ha risposto – la chiamata non conta"
+    "noAnswerPlan": "Nessuno ha risposto – la chiamata non conta",
+    "greetingShort": "Posso ricordarti le cose, fare liste e chiamare per te. Cosa stai rimandando?",
+    "yourTurnOf": "Tocca a te · 1 di {n}",
+    "allTasks": "Tutte le attività"
   },
   "store": {
     "metaTitle": "Il Negozio",
@@ -879,7 +905,7 @@
       "title": "Inclusa in Plus",
       "text": "{name} è inclusa in Plus e Familie. Inizia 14 giorni gratis – o scegli un piano se la tua prova è finita.",
       "callTitle": "Le chiamate richiedono un piano",
-      "callText": "Peter chiama per te con Basis, Plus o Familie – o con chiamate extra (crediti).",
+      "callText": "Peter chiama per te con Basis, Plus o Familie. Le chiamate oltre il piano si pagano con il saldo chiamate.",
       "trial": "Inizia 14 giorni gratis",
       "choose": "Scegli piano",
       "later": "Non ora"
@@ -895,7 +921,7 @@
       "expired": "Prova terminata",
       "none": "Nessun piano"
     },
-    "trialLine": "{n|1 giorno|# giorni} di prova rimasti · diritti Plus",
+    "trialLine": "{n|1 giorno|# giorni} di prova rimasti · diritti {plan}",
     "trialThen": "Poi {plan} a {price}/mese",
     "trialThenNone": "Scegli un piano prima che finisca – altrimenti continui senza piano.",
     "expiredLine": "La tua prova è finita. Scegli un piano per riavere chiamate e tutte le app.",
@@ -923,7 +949,7 @@
     "select": "Scegli {plan}",
     "startTrial": "Inizia 14 giorni gratis",
     "currentPlan": "Il tuo piano",
-    "pickerNote": "Più chiamate del tuo abbonamento? Le chiamate extra si acquistano qui. Nessun vincolo.",
+    "pickerNote": "Più chiamate del piano? Le chiamate extra si pagano con il saldo chiamate. Nessun vincolo.",
     "activated": "Il tuo abbonamento è attivo.",
     "notCompleted": "Il pagamento non è stato completato: nessun abbonamento è stato avviato e non è stato addebitato nulla.",
     "cancelled": "Hai annullato la scelta del piano. Non è stato addebitato nulla.",
@@ -931,20 +957,21 @@
     "portalMissing": "I pagamenti non sono ancora configurati. Scrivici per modificare il tuo abbonamento.",
     "redirecting": "Ti portiamo al pagamento …",
     "loginFirst": "Accedi per scegliere un piano.",
-    "extra": "Chiamate extra",
-    "extraWord": "crediti",
-    "extraNote": "3 crediti = 1 chiamata extra (fino a 3 min) quando le chiamate del mese sono finite. 10 crediti costano {pCredits}. IVA incl. – acquisto unico.",
+    "extra": "Saldo chiamate",
+    "extraWord": "di saldo",
+    "extraNote": "Chiamate extra quando quelle del mese sono finite: {pXAnswered} con risposta, {pXVoicemail} segreteria, {pXNoAnswer} senza risposta + {pXMinute} per minuto iniziato, al massimo {pXMax}. Ricarica {pTopup1}, {pTopup2} o {pTopup3} IVA inclusa, pagamento unico.",
     "paywallChoose": "Scegli piano",
-    "paywallBuy": "Acquista chiamate extra",
+    "paywallBuy": "Ricarica il saldo",
     "paywallCallTitlePlan": "Le chiamate di questo mese sono finite",
-    "paywallCallTextPlan": "Hai usato {used} di {quota} chiamate in {plan}. Acquista chiamate extra o passa a un piano più grande.",
-    "paywallCallTextNone": "Con Basis, Plus o Familie le chiamate sono incluse. Puoi anche acquistare chiamate extra.",
+    "paywallCallTextPlan": "Hai usato {used} di {quota} chiamate in {plan}. Ricarica il saldo per una chiamata extra o passa a un piano più grande.",
+    "paywallCallTextNone": "Con Basis, Plus o Familie le chiamate sono incluse. Le chiamate extra si pagano con il saldo.",
     "paywallDigitalPlan": "Con un piano, liste e promemoria sono illimitati.",
     "endTrial": "Termina la prova",
     "codeAsk": "Hai un codice sconto?",
     "codeLabel": "Codice sconto",
     "codePlaceholder": "Es. BENVENUTO",
-    "codeHint": "Lo sconto viene applicato nella pagina di pagamento."
+    "codeHint": "Lo sconto viene applicato nella pagina di pagamento.",
+    "householdMember": "Fai parte del piano Famiglia di {name}. {name} gestisce il piano."
   },
   "funnel": {
     "entry": "Provalo in 2 minuti",
@@ -1146,7 +1173,10 @@
     "none": "Ancora nessun appuntamento. Quando Peter ottiene un orario confermato, o gli chiedi di inserirne uno, compare qui.",
     "addToCalendar": "Aggiungi al calendario",
     "remove": "Rimuovi dal calendario",
-    "removeNote": "«Rimuovi dal calendario» non disdice l'appuntamento con l'azienda."
+    "removeNote": "«Rimuovi dal calendario» non disdice l'appuntamento con l'azienda.",
+    "whichTitle": "Quale calendario usi?",
+    "iphoneOther": "iPhone o un altro",
+    "connectName": "Collega {name}"
   },
   "birthdays": {
     "title": "Prossimi compleanni",
@@ -1196,7 +1226,8 @@
       "half_yearly": "ogni semestre",
       "yearly": "ogni anno",
       "once": "una volta"
-    }
+    },
+    "removeYes": "Sì, rimuovi"
   },
   "assistantName": {
     "pronoun": "Pronome (testi danesi)",
@@ -1265,6 +1296,7 @@
     "directShort": "diretto",
     "stops": "{n} scali",
     "book": "Prenota",
+    "sponsored": "Annuncio · Dialogbot riceve una commissione",
     "overBudget": "{n} viaggi superavano il budget.",
     "disclaimer": "I prezzi arrivano direttamente dai fornitori e possono cambiare. Prenoti e paghi presso il fornitore: Dialogbot non prenota."
   },
@@ -1589,7 +1621,56 @@
     "yourApps": "Le tue app",
     "all": "Tutte ({n})",
     "stripStep": "Passo {n} di {total} – continua la configurazione",
-    "accountLine": "{n|1 app attiva|# app attive}"
+    "accountLine": "{n|1 app attiva|# app attive}",
+    "allOn": "Hai tutte le app. Ne arrivano di nuove regolarmente.",
+    "sayLike": "Di’ ad esempio «{example}»",
+    "about": "Info sull’app",
+    "planIncludedAll": "Inclusa in tutti i piani.",
+    "planTextTrialAll": "{name} è inclusa in tutti i piani. Provala gratis per 14 giorni: la carta viene addebitata solo alla fine della prova.",
+    "planTextEndedAll": "{name} è inclusa in tutti i piani. Scegli un piano per usarla.",
+    "planTextBasis": "Hai Basis. {name} è inclusa in Plus e Famiglia.",
+    "onInMine": "{n|1 app attiva|# app attive} – vedi Le mie app",
+    "yourThings": "Le tue cose qui ({n})"
+  },
+  "familyHousehold": {
+    "title": "Nucleo familiare",
+    "count": "{count} di {limit} persone",
+    "ownerText": "Famiglia vale per fino a {limit} persone. Ognuno ha il proprio account: nessuno vede le cose degli altri.",
+    "invite": "Invita nel nucleo",
+    "smsText": "Sei nella mia Dialogbot Famiglia - unisciti qui: {link}",
+    "me": "tu",
+    "remove": "Rimuovi",
+    "removeConfirm": "Rimuovere {name} dal nucleo? {name} perde Famiglia subito, ma tiene le proprie cose.",
+    "memberLine": "Sei nella Famiglia di {name}.",
+    "leave": "Lascia il nucleo",
+    "leaveConfirm": "Lasciare il nucleo? Perdi Famiglia subito. Le tue cose restano.",
+    "left": "Hai lasciato il nucleo.",
+    "paused": "Il nucleo è in pausa: serve Famiglia.",
+    "full": "Il nucleo è completo.",
+    "inviteTitle": "Entra nella Famiglia di {name}",
+    "inviteText": "Ricevi il piano Famiglia sul tuo account. {name} non vede le tue cose.",
+    "join": "Entra",
+    "joined": "Sei nel nucleo."
+  },
+  "myData": {
+    "title": "I tuoi dati",
+    "exportText": "Ricevi via e-mail tutto ciò che conserviamo su di te.",
+    "export": "Esporta i miei dati",
+    "queued": "Stiamo raccogliendo i tuoi dati. Riceverai un'e-mail con un link.",
+    "ready": "I tuoi dati sono pronti.",
+    "download": "Scarica i tuoi dati",
+    "expired": "Il link è scaduto. Richiedi di nuovo i tuoi dati.",
+    "delete": "Elimina il mio account",
+    "deleteText": "Tutto in Dialogbot Privat viene eliminato e l'abbonamento si ferma. L'eventuale credito chiamate residuo va perso e non viene rimborsato. Non si può annullare.",
+    "deleteLabel": "Scrivi la tua e-mail per confermare",
+    "deleteConfirm": "Elimina tutto per sempre",
+    "cancel": "Annulla",
+    "deleting": "Eliminazione…"
+  },
+  "inviteOg": {
+    "wishlist": "{name} ha condiviso con te la sua lista dei desideri",
+    "list": "{name} ha condiviso una lista con te",
+    "generic": "Sei invitato a una lista"
   },
   "problem": {
     "notFoundTitle": "Questa pagina non esiste",

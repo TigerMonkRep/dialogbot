@@ -145,6 +145,7 @@
         "body": [
           { "type": "p", "text": "Wenn du Dialogbot Privat nutzt, verarbeiten wir, was du uns selbst gibst: deine Listen, Erinnerungen und Gespräche mit dem Assistenten, die Mobilnummer, die du bestätigst, und – wenn du einen Anruf oder eine Buchung freigibst – Name und Nummer des Unternehmens und das, was der Assistent sagen darf. Zweck ist, zu erledigen, worum du bittest. Rechtsgrundlage ist der Vertrag mit dir (Art. 6 Abs. 1 lit. b DSGVO). Hier ist Dialogbot Verantwortlicher." },
           { "type": "p", "parts": [{ "b": "Kalender." }, " Schaltest du die App Kalender ein, speichern wir die Termine, die du freigegeben hast (Zeit, Ort und was vereinbart wurde). Verbindest du Google Kalender oder Outlook, speichern wir verschlüsselte Zugangsschlüssel und nutzen sie nur, um die Termine zu erstellen, zu verschieben und zu löschen, die Dialogbot selbst in deinen Kalender eingetragen hat. Deine anderen Termine lesen wir nicht. Du kannst die Verbindung jederzeit in der App trennen; dann widerrufen wir den Zugang und löschen die Schlüssel. Erstellst du einen privaten Kalenderlink, kann jeder mit dem Link deine Termine aus Dialogbot sehen; du kannst den Link in der App stoppen."] },
+          { "type": "p", "parts": [{ "b": "Speicherung und Löschung." }, " Deine Unterhaltungen mit dem Assistenten und die Zusammenfassungen von Anrufen speichern wir, solange dein Konto besteht. Du kannst jederzeit in der App eine einzelne Nachricht oder einen einzelnen Anruf mit Zusammenfassung löschen. Rohe Anrufprotokolle (der wörtliche Verlauf) werden nach 90 Tagen gelöscht – auch bei unserem Telefonieanbieter. Der Link zu «Meine Daten exportieren» gilt 7 Tage. Löschst du dein Konto, löschen wir deine Privat-Daten sofort. Nutzt du dasselbe Login für Dialogbot für Unternehmen, löschen wir nur den Privat-Teil; dein Login und dein Zugang zum Arbeitsbereich des Unternehmens bleiben erhalten. Hast du Google Kalender oder Outlook verbunden, bitten wir den Anbieter, den Zugriff zu widerrufen, und löschen die Schlüssel. Microsoft bietet keine Möglichkeit, den Zugriff von außen zu widerrufen; du kannst Dialogbot selbst in deinem Microsoft-Konto entfernen."] },
           { "type": "p", "parts": [{ "b": "Google-Nutzerdaten." }, " Die Nutzung und Weitergabe von Informationen, die Dialogbot von Google-APIs erhält, an andere Apps entspricht der ", { "href": "https://developers.google.com/terms/api-services-user-data-policy", "text": "Google API Services User Data Policy" }, ", einschließlich der Anforderungen an die eingeschränkte Nutzung (Limited Use). Wir verkaufen keine Daten von Google, nutzen sie nicht für Werbung und nicht zum Training von KI-Modellen. Menschen bei Dialogbot lesen sie nur, wenn du uns darum bittest, aus Sicherheitsgründen oder weil das Gesetz es verlangt."] }
         ]
       },
@@ -262,6 +263,167 @@
         "title": "Kontakt",
         "body": [
           { "type": "p", "parts": ["{name}, CVR-Nr. {cvr}, {address} · ", { "email": true }, " · ", { "link": "/kontakt", "text": "Kontakt und Support" }] }
+        ]
+      }
+    ]
+  },
+  "privatTerms": {
+    "meta": {
+      "title": "AGB für Dialogbot Privat | Dialogbot",
+      "description": "Allgemeine Geschäftsbedingungen für Dialogbot Privat: Pläne, Testphase, Widerrufsrecht, Anrufguthaben und deine Daten."
+    },
+    "version": "1",
+    "label": "AGB · Dialogbot Privat",
+    "title": "Allgemeine Geschäftsbedingungen für Dialogbot Privat",
+    "updated": "Version 1 · gültig ab 11. November 2026.",
+    "intro": "Diese Bedingungen gelten, wenn du als Privatperson ein Konto erstellst und Dialogbot Privat nutzt. \"Wir\" sind {name} (CVR-Nr. {cvr}), {address}. \"Du\" bist die Person, der das Konto gehört. Dialogbot für Unternehmen hat eigene Bedingungen.",
+    "sections": [
+      {
+        "title": "1. Der Vertrag",
+        "body": [
+          {"type": "p", "text": "Der Vertrag besteht zwischen dir und {name}. Er kommt zustande, wenn du ein Konto erstellst, und umfasst die Käufe, die du in Dialogbot Privat tätigst (einen Plan oder eine Aufladung deines Anrufguthabens). Für den Kauf eines Plans oder eine Aufladung musst du mindestens 18 Jahre alt sein."},
+          {"type": "p", "text": "Diese Bedingungen gibt es in mehreren Sprachen. Weichen die Sprachfassungen voneinander ab, gilt die dänische Fassung."}
+        ]
+      },
+      {
+        "title": "2. Was Dialogbot Privat ist",
+        "body": [
+          {"type": "p", "text": "Dialogbot Privat ist ein persönlicher Assistent in einer App und im Web. Damit kannst du:"},
+          {"type": "ul", "items": [
+            "Listen, Aufgaben und Erinnerungen anlegen,",
+            "Apps aus dem Shop der App nutzen, z. B. Kalender, Pakete und Rechnungen – welche Apps enthalten sind, hängt von deinem Plan ab,",
+            "Listen und Wunschlisten mit anderen teilen,",
+            [{"b": "«Ruf für mich an»:"}, " Der Assistent ruft in deinem Namen bei einem Unternehmen oder einer Stelle an. Vor jedem Anruf siehst du, wer angerufen wird, was der Assistent sagen und vereinbaren darf und was der Anruf höchstens kostet. Angerufen wird erst, wenn du den Anruf freigegeben hast,"],
+            [{"b": "Buchung über Websites:"}, " Der Assistent bucht einen Termin über die Website eines Unternehmens. Nichts wird gebucht, bevor du es freigegeben hast."]
+          ]},
+          {"type": "p", "text": "Der Assistent nutzt künstliche Intelligenz. Er kann sich irren oder etwas missverstehen, prüfe daher wichtige Vereinbarungen. Wenn er anruft, sagt er immer, dass er eine KI ist. Funktionen, die als \"demnächst\" gekennzeichnet sind, sind erst Teil des Vertrags, wenn sie eingeführt sind."}
+        ]
+      },
+      {
+        "title": "3. Kostenloses Konto",
+        "body": [
+          {"type": "p", "text": "Du kannst ein kostenloses Konto ohne Zahlungskarte erstellen. Es ist für Listen gedacht, die andere mit dir teilen: Du kannst sie ansehen, abhaken und Wünsche reservieren. Eigene Listen, Aufgaben, Erinnerungen und Anrufe erfordern einen Plan oder eine Testphase – was du ohne erstellst, wird als Entwurf gespeichert, bis du einen Plan wählst. Das kostenlose Konto kostet nichts und kann jederzeit gelöscht werden."}
+        ]
+      },
+      {
+        "title": "4. Pläne und Preise",
+        "body": [
+          {"type": "p", "text": "Es gibt drei Pläne. Du kannst monatlich oder jährlich zahlen. Alle Preise verstehen sich inkl. MwSt. und werden in der Währung angezeigt, die für dein Land gilt."},
+          {"type": "ul", "items": [
+            [{"b": "Basis:"}, " {pBasis} pro Monat oder {pBasisYearTotal} pro Jahr (entspricht {pBasisYear} pro Monat)."],
+            [{"b": "Plus:"}, " {pPlus} pro Monat oder {pPlusYearTotal} pro Jahr (entspricht {pPlusYear} pro Monat)."],
+            [{"b": "Familie:"}, " {pFamilie} pro Monat oder {pFamilieYearTotal} pro Jahr (entspricht {pFamilieYear} pro Monat)."]
+          ]},
+          {"type": "p", "text": "Was jeder Plan enthält – Anrufe pro Monat, Anzahl Personen und Apps –, steht auf der Preisseite und in der App, wenn du einen Plan wählst. Anrufe innerhalb deines Plans kosten nichts extra. Die Anrufe des Plans gelten pro Kalendermonat und werden nicht in den nächsten Monat übertragen. Ein Anruf, den niemand annimmt oder der fehlschlägt, zählt nicht."}
+        ]
+      },
+      {
+        "title": "5. Testphase und Zahlung",
+        "body": [
+          {"type": "p", "text": "Ein Plan beginnt mit einer kostenlosen Testphase von {pTrialDays} Tagen mit den Rechten des Plans. Du hinterlegst eine Zahlungskarte, wenn du die Testphase startest. Während der Testphase wird nichts abgebucht; der Preis wird erst abgebucht, wenn sie vorbei ist, und danach im Voraus zu Beginn jedes Monats oder Jahres."},
+          {"type": "p", "text": "Es gibt eine Testphase pro Konto und pro Zahlungskarte. Hatte die Karte schon einmal eine Testphase bei Dialogbot Privat, beginnt der Plan sofort und wird ab diesem Tag bezahlt. Das steht auch auf der Zahlungsseite, bevor du zahlst."},
+          {"type": "p", "text": "Die Zahlung läuft über unseren Zahlungsdienstleister Stripe. Wir speichern selbst keine Kartendaten. Kann eine Zahlung nicht durchgeführt werden, bekommst du Bescheid. Schlägt sie auch nach erneuten Versuchen von Stripe fehl, endet der Plan."}
+        ]
+      },
+      {
+        "title": "6. Kündigung und Planwechsel",
+        "body": [
+          {"type": "p", "text": "Es gibt keine Mindestlaufzeit. Du kannst jederzeit in der App unter deinem Konto kündigen. Der Plan gilt bis zum Ende des bezahlten Zeitraums (Monat oder Jahr), danach wird nichts mehr abgebucht. Kündigst du in der Testphase, zahlst du nichts."},
+          {"type": "p", "text": "Bezahlte Zeiträume werden nicht erstattet, es sei denn, du hast nach dem Gesetz Anspruch darauf, z. B. aufgrund des Widerrufsrechts (Punkt 7) oder eines Mangels (Punkt 14). Plan und Zahlungsart kannst du an derselben Stelle wechseln; der Preis wird angezeigt, bevor du bestätigst."},
+          {"type": "p", "text": "Wir können den Vertrag mit einer Frist von 30 Tagen kündigen. Hast du für einen Zeitraum bezahlt, der über die Frist hinausgeht, erstatten wir den anteiligen Betrag. Missbrauchst du den Dienst grob (Punkt 11), können wir deinen Zugang ohne Frist sperren."}
+        ]
+      },
+      {
+        "title": "7. Widerrufsrecht",
+        "body": [
+          {"type": "p", "text": "Als Verbraucher hast du nach dem dänischen Verbrauchervertragsgesetz (forbrugeraftaleloven) ein Widerrufsrecht von 14 Tagen, wenn du einen Plan kaufst oder dein Anrufguthaben auflädst. Die Frist beginnt an dem Tag, an dem der Kauf abgeschlossen ist."},
+          {"type": "ul", "items": [
+            [{"b": "Plan mit Testphase:"}, " Widerrufsfrist und Testphase beginnen am selben Tag. Widerrufst du innerhalb der 14 Tage, kostet dich das nichts. Wurde trotzdem eine Zahlung abgebucht, bekommst du den vollen Betrag zurück."],
+            [{"b": "Plan ohne Testphase"}, " (die Karte hatte schon eine Testphase): Widerrufst du innerhalb von 14 Tagen, bekommst du den vollen Betrag zurück."],
+            [{"b": "Aufladung des Anrufguthabens:"}, " Widerrufst du innerhalb von 14 Tagen, bekommst du den nicht verbrauchten Teil zurück. Anrufe, die du selbst freigegeben hast und die durchgeführt wurden, werden mit dem verbrauchten Teil bezahlt."]
+          ]},
+          {"type": "p", "parts": ["Du widerrufst, indem du vor Ablauf der Frist an ", {"email": true}, " schreibst. Du kannst das Muster-Widerrufsformular aus dem Verbrauchervertragsgesetz verwenden, musst es aber nicht. Wir erstatten spätestens 14 Tage nach Eingang deiner Nachricht über das Zahlungsmittel, mit dem du bezahlt hast."]}
+        ]
+      },
+      {
+        "title": "8. Anrufguthaben und zusätzliche Anrufe",
+        "body": [
+          {"type": "p", "text": "Das Anrufguthaben ist ein im Voraus bezahlter Betrag in der Währung deines Kontos. Du lädst es mit {pTopup1}, {pTopup2} oder {pTopup3} inkl. MwSt. auf."},
+          {"type": "p", "text": "Sind die Anrufe deines Plans für den Monat aufgebraucht, kannst du einen zusätzlichen Anruf freigeben, der vom Guthaben bezahlt wird:"},
+          {"type": "ul", "items": [
+            "{pXAnswered}, wenn jemand abnimmt, {pXVoicemail} bei Anrufbeantworter und {pXNoAnswer}, wenn niemand abnimmt, besetzt ist oder das Ergebnis unbekannt ist,",
+            "plus {pXMinute} pro angefangene Gesprächsminute, wenn jemand abnimmt,",
+            "höchstens {pXMax} pro Anruf. Bei der Freigabe werden {pXMax} auf deinem Guthaben reserviert. Nach dem Anruf wird der tatsächliche Preis abgezogen und der Rest freigegeben. Schlägt der Anruf bei uns oder unserem Telefonieanbieter fehl, wird nichts abgezogen."
+          ]},
+          {"type": "p", "text": "Der Preis steht beim Anruf, bevor du ihn freigibst. «Ruf für mich an» erfordert einen Plan; ohne Plan kann das Guthaben nicht für Anrufe genutzt werden. Ohne Plan kann das Guthaben genutzt werden, um eine zusätzliche Aufgabe für {pExtraTask} zu aktivieren."},
+          {"type": "p", "text": "Das Guthaben verfällt nicht, solange das Konto besteht. Es kann nicht auf andere übertragen werden. Boni, die wir deinem Guthaben gutschreiben (z. B. der Willkommensbonus von {pWelcome} und der Empfehlungsbonus von {pReferral}), können nur in Dialogbot Privat genutzt und nicht ausgezahlt werden."},
+          {"type": "p", "text": "Nicht genutztes Guthaben wird bei Kündigung oder Löschung deines Kontos nicht erstattet – das gilt für Boni ebenso wie für das, was du selbst eingezahlt hast. Dein Widerrufsrecht gilt weiterhin: Innerhalb von 14 Tagen nach einer Aufladung kannst du den nicht genutzten Teil dieser Aufladung zurückbekommen (Punkt 7)."}
+        ]
+      },
+      {
+        "title": "9. Buchung über Websites",
+        "body": [
+          {"type": "p", "text": "Die Buchung über Websites ist in allen Plänen und in der Testphase im Rahmen einer fairen Nutzung enthalten: normale persönliche Nutzung für dich (und deinen Haushalt bei Familie). Wird die Funktion in einem Umfang genutzt, der nicht nach persönlicher Nutzung aussieht, können wir sie einschränken – wir sagen dir vorher Bescheid."},
+          {"type": "p", "text": "Eine Buchung ist eine Vereinbarung zwischen dir und dem Unternehmen. Dafür gelten die eigenen Regeln des Unternehmens, z. B. zu Absagen und Gebühren."}
+        ]
+      },
+      {
+        "title": "10. Familie und Haushalt",
+        "body": [
+          {"type": "p", "text": "Der Familie-Plan gehört der Person, die ihn gekauft hat. Sie verwaltet Plan und Zahlung und kann Mitglieder einladen und entfernen, bis zu der Anzahl Personen, die der Plan umfasst. Die Mitglieder erhalten die Rechte des Plans und teilen sich die Anrufe des Plans pro Monat."},
+          {"type": "p", "text": "Jedes Mitglied hat ein eigenes Konto, ein eigenes Anrufguthaben und eigene Daten. Niemand im Haushalt – auch nicht die Person, der der Plan gehört – kann die Listen, Aufgaben, Anrufe oder das Guthaben der anderen sehen, außer sie teilen sie selbst. Endet der Plan oder verlässt ein Mitglied den Haushalt, verliert das Mitglied die Rechte des Plans, behält aber seine eigenen Daten."}
+        ]
+      },
+      {
+        "title": "11. Deine Nutzung des Dienstes",
+        "body": [
+          {"type": "p", "text": "Halte deine Zugangsdaten geheim. Du bist für die Aufgaben und Anrufe verantwortlich, um die du den Assistenten bittest. «Ruf für mich an» und die Buchung über Websites dürfen nur für rechtmäßige, persönliche Anliegen genutzt werden – nicht für Belästigung, Verkauf oder Werbung, um dich als jemand anderes auszugeben oder um Notrufnummern anzurufen. Gib Daten anderer, z. B. Telefonnummern, nur weiter, wenn du das darfst."},
+          {"type": "p", "text": "Wir können einen Anruf oder eine Aufgabe ablehnen, die gegen diese Regeln oder gegen das Gesetz verstößt."}
+        ]
+      },
+      {
+        "title": "12. Anzeigen und Affiliate-Links",
+        "body": [
+          {"type": "p", "text": "Manche Bereiche der App können Anzeigen zeigen, und manche Vorschläge (z. B. Reisen) können Affiliate-Links enthalten, bei denen wir eine Provision erhalten, wenn du etwas kaufst. Sie sind immer mit «Anzeige» gekennzeichnet."}
+        ]
+      },
+      {
+        "title": "13. Personenbezogene Daten",
+        "body": [
+          {"type": "p", "parts": ["Wir sind Verantwortliche für die Daten, die du in Dialogbot Privat speicherst. Wie wir sie verarbeiten und welche Auftragsverarbeiter wir einsetzen, steht in der ", {"link": "/privatliv", "text": "Datenschutzerklärung"}, ". Kurz gesagt:"]},
+          {"type": "ul", "items": [
+            "Chats und Anrufzusammenfassungen werden gespeichert, solange das Konto besteht. Du kannst sie jederzeit einzeln löschen.",
+            "Rohe Transkripte von Anrufen werden nach 90 Tagen gelöscht. Wir zeichnen keinen Ton auf.",
+            "Du kannst eine Kopie deiner Daten herunterladen. Der Link zum Export gilt 7 Tage.",
+            "Löschst du dein Konto, werden deine Daten sofort gelöscht, außer dem, was wir nach dem Gesetz aufbewahren müssen (z. B. die Buchführung über Zahlungen). Hast du einen Google-Kalender verbunden, widerrufen wir den Zugriff bei Google. Bei Microsoft (Outlook) löschen wir die Schlüssel bei uns; Dialogbot kannst du selbst in deinem Microsoft-Konto entfernen."
+          ]}
+        ]
+      },
+      {
+        "title": "14. Mängel und Haftung",
+        "body": [
+          {"type": "p", "text": "Funktioniert der Dienst nicht wie versprochen, hast du die Rechte, die dir das Gesetz gibt. Melde dich innerhalb einer angemessenen Frist, nachdem du den Fehler bemerkt hast, dann beheben wir ihn oder finden eine andere Lösung."},
+          {"type": "p", "text": "Wir haften nach den allgemeinen Regeln des dänischen Rechts. Wir haften nicht für das, was ein Unternehmen, das du über den Assistenten kontaktiert hast, tut oder unterlässt (z. B. einen Termin, den es nicht einhält), für Ausfälle bei Telefon- und Cloudanbietern oder für Umstände außerhalb unserer Kontrolle. Nichts in diesen Bedingungen schränkt die Rechte ein, die du als Verbraucher nach dem Gesetz hast."}
+        ]
+      },
+      {
+        "title": "15. Beschwerden",
+        "body": [
+          {"type": "p", "parts": ["Bist du unzufrieden, schreib an ", {"email": true}, " – wir antworten so schnell wie möglich. Einigen wir uns nicht, kannst du dich bei der dänischen Verbraucherbeschwerdestelle (Nævnenes Hus, Forbrugerklagenævnet), Toldboden 2, 8800 Viborg, Dänemark, über ", {"href": "https://www.forbrug.dk", "text": "forbrug.dk"}, " beschweren."]},
+          {"type": "p", "parts": ["Wohnst du in einem anderen EU-Land, bekommst du Hilfe bei ", {"href": "https://www.forbrugereuropa.dk", "text": "Forbrugereuropa"}, " (dem Europäischen Verbraucherzentrum in Dänemark)."]},
+          {"type": "p", "text": "Der Vertrag unterliegt dänischem Recht. Wohnst du in einem anderen Land, behältst du den Schutz, den dir die Verbraucherregeln deines Landes geben, und du kannst immer die Gerichte anrufen, die dir das Gesetz zugesteht."}
+        ]
+      },
+      {
+        "title": "16. Änderungen dieser Bedingungen",
+        "body": [
+          {"type": "p", "text": "Wir können die Bedingungen und Preise mit einer Frist von 30 Tagen per E-Mail und in der App ändern. Ist eine Änderung zu deinem Nachteil, kannst du kündigen, bevor sie wirksam wird. Jede Fassung hat oben auf der Seite eine Nummer und ein Datum."}
+        ]
+      },
+      {
+        "title": "Kontakt",
+        "body": [
+          {"type": "p", "parts": ["{name}, CVR-Nr. {cvr}, {address} · ", {"email": true}, " · ", {"link": "/kontakt", "text": "Kontakt und Support"}]}
         ]
       }
     ]

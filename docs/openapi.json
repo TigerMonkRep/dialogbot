@@ -19,7 +19,8 @@
       "ActivateIn": {
         "properties": {
           "method": {
-            "pattern": "^(credit|sponsor)$",
+            "description": "balance = 3 kr. fra opkaldssaldoen, sponsor = et frivilligt sponsorindslag",
+            "pattern": "^(balance|sponsor)$",
             "title": "Method",
             "type": "string"
           }
@@ -1418,25 +1419,6 @@
         "title": "CreateIn",
         "type": "object"
       },
-      "CreditsCheckoutIn": {
-        "properties": {
-          "locale": {
-            "anyOf": [
-              {
-                "pattern": "^(da|en|de|es|fr|it|no|sv)$",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "sidens sprog: Checkout-sprog og valuta (kundens abonnementsvaluta vinder)",
-            "title": "Locale"
-          }
-        },
-        "title": "CreditsCheckoutIn",
-        "type": "object"
-      },
       "DataRequestIn": {
         "properties": {
           "confirm": {
@@ -1487,6 +1469,22 @@
           }
         },
         "title": "DecideIn",
+        "type": "object"
+      },
+      "DeleteIn": {
+        "properties": {
+          "confirm_email": {
+            "description": "Brugerens e-mail, skrevet igen",
+            "maxLength": 320,
+            "minLength": 3,
+            "title": "Confirm Email",
+            "type": "string"
+          }
+        },
+        "required": [
+          "confirm_email"
+        ],
+        "title": "DeleteIn",
         "type": "object"
       },
       "DesignBody": {
@@ -5136,6 +5134,38 @@
           "token"
         ],
         "title": "TokenIn",
+        "type": "object"
+      },
+      "TopupCheckoutIn": {
+        "properties": {
+          "amount_minor": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "optankningen i øre inkl. moms – et af beløbene i /privat/me topups_minor (DKK: 5000, 10000, 20000). Tom = det mindste",
+            "title": "Amount Minor"
+          },
+          "locale": {
+            "anyOf": [
+              {
+                "pattern": "^(da|en|de|es|fr|it|no|sv)$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "sidens sprog: Checkout-sprog og valuta (kundens valuta vinder)",
+            "title": "Locale"
+          }
+        },
+        "title": "TopupCheckoutIn",
         "type": "object"
       },
       "TripSearchIn": {
@@ -17918,7 +17948,7 @@
     },
     "/api/v1/privat/account": {
       "post": {
-        "description": "Create (idempotently) the caller's personal workspace: owner membership, no business rows, 3 welcome credits.",
+        "description": "Create (idempotently) the caller's personal workspace: owner membership, no business rows, 10 kr. welcome bonus\non the Opkaldssaldo.",
         "operationId": "create_account_api_v1_privat_account_post",
         "parameters": [
           {
@@ -17959,6 +17989,64 @@
           }
         },
         "summary": "Create Account",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
+    "/api/v1/privat/account/delete": {
+      "post": {
+        "description": "«Slet min konto»: cancels a live subscription, deletes all Privat data and the login (unless it is also used\noutside Privat: login_kept). Irreversible.",
+        "operationId": "account_delete_api_v1_privat_account_delete_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Account Delete",
         "tags": [
           "privat"
         ]
@@ -18949,6 +19037,71 @@
         ]
       }
     },
+    "/api/v1/privat/balance/checkout": {
+      "post": {
+        "description": "Stripe Checkout (mode=payment): fill up the Opkaldssaldo with 50, 100 or 200 kr. incl. moms (or the currency's\namounts, markets.PRIVAT_TOPUPS). The amount arrives with the webhook, only when it was paid in full.",
+        "operationId": "balance_checkout_api_v1_privat_balance_checkout_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/TopupCheckoutIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Balance Checkout",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
     "/api/v1/privat/bills": {
       "get": {
         "description": "Every bill by next due date, plus this month's overview (total of the known amounts).",
@@ -19828,6 +19981,59 @@
         ]
       }
     },
+    "/api/v1/privat/calls/{task_id}": {
+      "delete": {
+        "description": "Delete one finished (or never approved) call with its summary and the chat lines about it. 409 call_running\nwhile it is approved, planned or running.",
+        "operationId": "delete_call_api_v1_privat_calls__task_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "task_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Task Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Call",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
     "/api/v1/privat/calls/{task_id}/approve": {
       "post": {
         "operationId": "approve_call_api_v1_privat_calls__task_id__approve_post",
@@ -20127,10 +20333,9 @@
         ]
       }
     },
-    "/api/v1/privat/credits/checkout": {
-      "post": {
-        "description": "Stripe Checkout (mode=payment): 10 credits, 29 kr. incl. moms (or the currency's price, markets.PRIVAT_CREDIT_PACK).\nCredits arrive with the webhook.",
-        "operationId": "credits_checkout_api_v1_privat_credits_checkout_post",
+    "/api/v1/privat/data-export": {
+      "get": {
+        "operationId": "data_export_status_api_v1_privat_data_export_get",
         "parameters": [
           {
             "in": "header",
@@ -20149,23 +20354,6 @@
             }
           }
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "anyOf": [
-                  {
-                    "$ref": "#/components/schemas/CreditsCheckoutIn"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ],
-                "title": "Body"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "content": {
@@ -20186,7 +20374,111 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Credits Checkout",
+        "summary": "Data Export Status",
+        "tags": [
+          "privat"
+        ]
+      },
+      "post": {
+        "description": "Queue «Eksportér mine data»: the worker e-mails a link (7 days, login needed). 429 after 3 a day.",
+        "operationId": "data_export_request_api_v1_privat_data_export_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Data Export Request",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
+    "/api/v1/privat/data-export/download": {
+      "get": {
+        "operationId": "data_export_download_api_v1_privat_data_export_download_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 10,
+              "title": "Token",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Data Export Download",
         "tags": [
           "privat"
         ]
@@ -20975,6 +21267,197 @@
         ]
       }
     },
+    "/api/v1/privat/household": {
+      "get": {
+        "description": "role owner|member|null, active (rights flow now), can_invite, limit (5), count, first names only.",
+        "operationId": "household_get_api_v1_privat_household_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Household Get",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
+    "/api/v1/privat/household/invites": {
+      "post": {
+        "description": "A link for the owner to text from their own phone (suggested_text). 409 needs_plan | household_full |\nhousehold_member.",
+        "operationId": "household_invite_api_v1_privat_household_invites_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Household Invite",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
+    "/api/v1/privat/household/leave": {
+      "post": {
+        "operationId": "household_leave_api_v1_privat_household_leave_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Household Leave",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
+    "/api/v1/privat/household/members/{member_id}": {
+      "delete": {
+        "description": "The owner takes a person out: their Familie rights stop at once; their own data stays theirs.",
+        "operationId": "household_remove_api_v1_privat_household_members__member_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "member_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Member Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Household Remove",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
     "/api/v1/privat/invites/by-code/{code}": {
       "get": {
         "description": "Public (no login): the short link /i/{code}. Same preview as by token; nothing personal beyond first name.\nRate limited per IP, misses (unknown codes) much more strictly (429 rate_limited).",
@@ -21172,6 +21655,7 @@
     },
     "/api/v1/privat/ledger": {
       "get": {
+        "description": "The Opkaldssaldo's movements, newest first: amount_minor in øre of `currency` (incl. moms).",
         "operationId": "ledger_rows_api_v1_privat_ledger_get",
         "parameters": [
           {
@@ -21612,6 +22096,59 @@
           }
         },
         "summary": "Post Message",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
+    "/api/v1/privat/messages/{message_id}": {
+      "delete": {
+        "description": "Delete one chat line (chats are kept as long as the account exists unless the user deletes them).",
+        "operationId": "delete_message_api_v1_privat_messages__message_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "message_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Message Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Message",
         "tags": [
           "privat"
         ]

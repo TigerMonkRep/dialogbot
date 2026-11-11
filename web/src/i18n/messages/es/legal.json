@@ -145,6 +145,7 @@
         "body": [
           { "type": "p", "text": "Si usas Dialogbot Privat, tratamos lo que tú mismo nos das: tus listas, recordatorios y conversaciones con el asistente, el número de móvil que confirmas y – cuando apruebas una llamada o una reserva – el nombre y el número de la empresa y lo que has permitido decir al asistente. La finalidad es hacer lo que pides. La base jurídica es nuestro contrato contigo (art. 6.1.b del RGPD). Aquí Dialogbot es el responsable del tratamiento." },
           { "type": "p", "parts": [{ "b": "Calendario." }, " Si activas la app Calendario, guardamos las citas que has aprobado (hora, lugar y lo acordado). Si conectas Google Calendar u Outlook, guardamos claves de acceso cifradas y solo las usamos para crear, mover y eliminar las citas que Dialogbot ha puesto en tu calendario. No leemos tus otras citas. Puedes desconectar en cualquier momento en la app; entonces revocamos el acceso y eliminamos las claves. Si creas un enlace de calendario privado, cualquiera con el enlace puede ver tus citas de Dialogbot; puedes detener el enlace en la app."] },
+          { "type": "p", "parts": [{ "b": "Conservación y eliminación." }, " Guardamos tus conversaciones con el asistente y los resúmenes de las llamadas mientras exista tu cuenta. Puedes eliminar en cualquier momento un mensaje concreto, o una llamada concreta con su resumen, en la app. Las transcripciones literales de las llamadas se eliminan a los 90 días, también en nuestro proveedor de telefonía. El enlace de «Exportar mis datos» funciona durante 7 días. Si eliminas tu cuenta, eliminamos tus datos de Privat de inmediato. Si usas el mismo inicio de sesión para Dialogbot para empresas, solo eliminamos la parte de Privat; tu inicio de sesión y tu acceso al espacio de trabajo de la empresa se conservan. Si conectaste Google Calendar u Outlook, pedimos al proveedor que revoque el acceso y eliminamos las claves. Microsoft no permite revocar el acceso desde fuera; puedes quitar Dialogbot tú mismo en tu cuenta de Microsoft."] },
           { "type": "p", "parts": [{ "b": "Datos de usuario de Google." }, " El uso que hace Dialogbot de la información recibida de las API de Google, y su transferencia a cualquier otra aplicación, se ajusta a la ", { "href": "https://developers.google.com/terms/api-services-user-data-policy", "text": "Google API Services User Data Policy" }, ", incluidos los requisitos de uso limitado (Limited Use). No vendemos datos de Google, no los usamos para publicidad ni para entrenar modelos de IA. Las personas de Dialogbot solo los leen si nos lo pides, por motivos de seguridad o porque la ley lo exige."] }
         ]
       },
@@ -262,6 +263,167 @@
         "title": "Contacto",
         "body": [
           { "type": "p", "parts": ["{name}, N.º CVR {cvr}, {address} · ", { "email": true }, " · ", { "link": "/kontakt", "text": "Contacto y soporte" }] }
+        ]
+      }
+    ]
+  },
+  "privatTerms": {
+    "meta": {
+      "title": "Condiciones de Dialogbot Privat | Dialogbot",
+      "description": "Condiciones de venta de Dialogbot Privat: planes, prueba gratuita, derecho de desistimiento, saldo de llamadas y tus datos."
+    },
+    "version": "1",
+    "label": "Condiciones · Dialogbot Privat",
+    "title": "Condiciones de venta de Dialogbot Privat",
+    "updated": "Versión 1 · vigente desde el 11 de noviembre de 2026.",
+    "intro": "Estas condiciones se aplican cuando tú, como particular, creas una cuenta y usas Dialogbot Privat. \"Nosotros\" somos {name} (N.º CVR {cvr}), {address}. \"Tú\" eres la persona titular de la cuenta. Dialogbot para empresas tiene sus propias condiciones.",
+    "sections": [
+      {
+        "title": "1. El contrato",
+        "body": [
+          {"type": "p", "text": "El contrato es entre tú y {name}. Se celebra cuando creas una cuenta y abarca las compras que haces en Dialogbot Privat (un plan o una recarga de tu saldo de llamadas). Debes tener al menos 18 años para comprar un plan o recargar el saldo."},
+          {"type": "p", "text": "Estas condiciones existen en varios idiomas. Si las versiones difieren, prevalece la versión danesa."}
+        ]
+      },
+      {
+        "title": "2. Qué es Dialogbot Privat",
+        "body": [
+          {"type": "p", "text": "Dialogbot Privat es un asistente personal en una app y en la web. Con él puedes:"},
+          {"type": "ul", "items": [
+            "crear listas, tareas y recordatorios,",
+            "usar apps de la tienda de la app, como calendario, paquetes y facturas – las apps incluidas dependen de tu plan,",
+            "compartir listas y listas de deseos con otras personas,",
+            [{"b": "«Llama por mí»:"}, " el asistente llama en tu nombre a una empresa o a un lugar. Antes de cada llamada ves a quién se llama, qué puede decir y acordar el asistente y cuánto puede costar como máximo la llamada. Solo se llama cuando has aprobado la llamada,"],
+            [{"b": "Reserva en sitios web:"}, " el asistente reserva una cita a través del sitio web de una empresa. No se reserva nada hasta que lo hayas aprobado."]
+          ]},
+          {"type": "p", "text": "El asistente usa inteligencia artificial. Puede equivocarse o entender mal, así que comprueba las citas importantes. Cuando llama, siempre dice que es una IA. Las funciones marcadas como \"próximamente\" no forman parte del contrato hasta que se lancen."}
+        ]
+      },
+      {
+        "title": "3. Cuenta gratuita",
+        "body": [
+          {"type": "p", "text": "Puedes crear una cuenta gratuita sin tarjeta de pago. Sirve para las listas que otras personas comparten contigo: puedes verlas, marcar elementos y reservar deseos. Tus propias listas, tareas, recordatorios y llamadas requieren un plan o una prueba – lo que crees sin ellos se guarda como borrador hasta que elijas un plan. La cuenta gratuita no cuesta nada y puede eliminarse en cualquier momento."}
+        ]
+      },
+      {
+        "title": "4. Planes y precios",
+        "body": [
+          {"type": "p", "text": "Hay tres planes. Puedes pagar mensual o anualmente. Todos los precios incluyen IVA y se muestran en la moneda de tu país."},
+          {"type": "ul", "items": [
+            [{"b": "Basis:"}, " {pBasis} al mes, o {pBasisYearTotal} al año (equivale a {pBasisYear} al mes)."],
+            [{"b": "Plus:"}, " {pPlus} al mes, o {pPlusYearTotal} al año (equivale a {pPlusYear} al mes)."],
+            [{"b": "Familie:"}, " {pFamilie} al mes, o {pFamilieYearTotal} al año (equivale a {pFamilieYear} al mes)."]
+          ]},
+          {"type": "p", "text": "Lo que incluye cada plan – llamadas al mes, número de personas y apps – figura en la página de precios y en la app cuando eliges un plan. Las llamadas incluidas en tu plan no cuestan nada más. Las llamadas del plan son por mes natural y no se acumulan para el mes siguiente. Una llamada que nadie contesta, o que falla, no cuenta."}
+        ]
+      },
+      {
+        "title": "5. Prueba gratuita y pago",
+        "body": [
+          {"type": "p", "text": "Un plan empieza con una prueba gratuita de {pTrialDays} días con los derechos del plan. Añades una tarjeta de pago al iniciar la prueba. Durante la prueba no se cobra nada; el precio se cobra cuando termina y, después, por adelantado al inicio de cada mes o año."},
+          {"type": "p", "text": "Hay una prueba por cuenta y por tarjeta de pago. Si la tarjeta ya ha tenido una prueba de Dialogbot Privat, el plan empieza de inmediato y se paga desde ese día. También se indica en la página de pago antes de pagar."},
+          {"type": "p", "text": "El pago se gestiona a través de nuestro proveedor de pagos Stripe. Nosotros no guardamos datos de tarjetas. Si un pago no se puede realizar, te avisamos. Si sigue fallando después de que Stripe lo haya vuelto a intentar, el plan termina."}
+        ]
+      },
+      {
+        "title": "6. Cancelación y cambio de plan",
+        "body": [
+          {"type": "p", "text": "No hay permanencia. Puedes cancelar en cualquier momento en la app, en tu cuenta. El plan sigue vigente hasta el final del periodo que has pagado (mes o año) y después no se cobra nada más. Si cancelas durante la prueba, no pagas nada."},
+          {"type": "p", "text": "Los periodos pagados no se reembolsan, salvo que la ley te dé derecho a ello, por ejemplo por el derecho de desistimiento (punto 7) o por una falta de conformidad (punto 14). Puedes cambiar de plan y de forma de pago en el mismo lugar; el precio se muestra antes de confirmar."},
+          {"type": "p", "text": "Podemos resolver el contrato con un preaviso de 30 días. Si has pagado un periodo que va más allá del preaviso, te reembolsamos la parte proporcional. Si haces un uso gravemente abusivo del servicio (punto 11), podemos cerrar tu acceso sin preaviso."}
+        ]
+      },
+      {
+        "title": "7. Derecho de desistimiento",
+        "body": [
+          {"type": "p", "text": "Como consumidor tienes un derecho de desistimiento de 14 días según la ley danesa de contratos con consumidores (forbrugeraftaleloven) cuando compras un plan o recargas tu saldo de llamadas. El plazo cuenta desde el día en que se completa la compra."},
+          {"type": "ul", "items": [
+            [{"b": "Plan con prueba gratuita:"}, " El plazo de desistimiento y la prueba empiezan el mismo día. Si desistes dentro de los 14 días, no te cuesta nada. Si aun así se ha cobrado un pago, te devolvemos el importe íntegro."],
+            [{"b": "Plan sin prueba gratuita"}, " (la tarjeta ya ha tenido una prueba): Si desistes dentro de los 14 días, te devolvemos el importe íntegro."],
+            [{"b": "Recarga del saldo de llamadas:"}, " Si desistes dentro de los 14 días, te devolvemos la parte no utilizada. Las llamadas que tú mismo aprobaste y que se realizaron se pagan con la parte utilizada."]
+          ]},
+          {"type": "p", "parts": ["Para desistir, escribe a ", {"email": true}, " antes de que termine el plazo. Puedes usar el modelo de formulario de desistimiento de la ley de contratos con consumidores, pero no es obligatorio. Te reembolsamos como máximo 14 días después de recibir tu mensaje, en el medio de pago que usaste."]}
+        ]
+      },
+      {
+        "title": "8. Saldo de llamadas y llamadas adicionales",
+        "body": [
+          {"type": "p", "text": "El saldo de llamadas es un importe prepagado en la moneda de tu cuenta. Lo recargas con {pTopup1}, {pTopup2} o {pTopup3} IVA incluido."},
+          {"type": "p", "text": "Cuando hayas usado las llamadas del mes de tu plan, puedes aprobar una llamada adicional, que se paga con el saldo:"},
+          {"type": "ul", "items": [
+            "{pXAnswered} si alguien contesta, {pXVoicemail} si salta el buzón de voz y {pXNoAnswer} si nadie contesta, comunica o el resultado es desconocido,",
+            "más {pXMinute} por minuto de conversación iniciado cuando alguien contesta,",
+            "como máximo {pXMax} por llamada. Al aprobarla, se reservan {pXMax} en tu saldo. Después de la llamada se descuenta el precio real y se libera el resto. Si la llamada falla por nuestra parte o en nuestro proveedor de telefonía, no se descuenta nada."
+          ]},
+          {"type": "p", "text": "El precio aparece en la llamada antes de que la apruebes. «Llama por mí» requiere un plan; sin plan, el saldo no puede usarse para llamadas. Sin plan, el saldo puede usarse para activar una tarea adicional por {pExtraTask}."},
+          {"type": "p", "text": "El saldo no caduca mientras exista la cuenta. No puede transferirse a otras personas. Las bonificaciones que añadimos a tu saldo (por ejemplo, la bonificación de bienvenida de {pWelcome} y la de recomendación de {pReferral}) solo pueden usarse en Dialogbot Privat y no se pagan en efectivo."},
+          {"type": "p", "text": "El saldo no utilizado no se reembolsa cuando cancelas o eliminas tu cuenta; esto se aplica tanto a las bonificaciones como a lo que hayas ingresado tú. Tu derecho de desistimiento se mantiene: en los 14 días siguientes a una recarga puedes recuperar la parte no utilizada de esa recarga (punto 7)."}
+        ]
+      },
+      {
+        "title": "9. Reserva en sitios web",
+        "body": [
+          {"type": "p", "text": "La reserva en sitios web está incluida en todos los planes y en la prueba con un uso razonable: el uso personal normal para ti (y tu hogar con Familie). Si la función se usa en una medida que no parece uso personal, podemos limitarla – te avisaremos antes."},
+          {"type": "p", "text": "Una reserva es un acuerdo entre tú y la empresa. Se aplican las normas propias de la empresa, por ejemplo sobre cancelaciones y cargos."}
+        ]
+      },
+      {
+        "title": "10. Familie y hogar",
+        "body": [
+          {"type": "p", "text": "El plan Familie pertenece a quien lo compró. Esa persona gestiona el plan y el pago y puede invitar y quitar miembros, hasta el número de personas que incluye el plan. Los miembros obtienen los derechos del plan y comparten sus llamadas de cada mes."},
+          {"type": "p", "text": "Cada miembro tiene su propia cuenta, su propio saldo de llamadas y sus propios datos. Nadie en el hogar – ni siquiera el titular del plan – puede ver las listas, tareas, llamadas o el saldo de los demás, salvo que estos los compartan. Si el plan termina, o un miembro sale del hogar, ese miembro pierde los derechos del plan, pero conserva sus propios datos."}
+        ]
+      },
+      {
+        "title": "11. Tu uso del servicio",
+        "body": [
+          {"type": "p", "text": "Guarda tus datos de acceso para ti. Eres responsable de las tareas y llamadas que pides al asistente. «Llama por mí» y la reserva en sitios web solo pueden usarse para gestiones personales y lícitas – no para acosar, vender o hacer marketing, hacerte pasar por otra persona ni llamar a números de emergencia. Comparte datos de otras personas, como números de teléfono, solo si tienes permiso."},
+          {"type": "p", "text": "Podemos rechazar una llamada o una tarea que incumpla estas normas o la ley."}
+        ]
+      },
+      {
+        "title": "12. Anuncios y enlaces de afiliados",
+        "body": [
+          {"type": "p", "text": "Algunas partes de la app pueden mostrar anuncios, y algunas sugerencias (por ejemplo, de viajes) pueden contener enlaces de afiliados, por los que recibimos una comisión si compras algo. Siempre están marcados como «Anuncio»."}
+        ]
+      },
+      {
+        "title": "13. Datos personales",
+        "body": [
+          {"type": "p", "parts": ["Somos responsables del tratamiento de la información que guardas en Dialogbot Privat. Cómo la tratamos y qué encargados del tratamiento usamos se explica en la ", {"link": "/privatliv", "text": "política de privacidad"}, ". En resumen:"]},
+          {"type": "ul", "items": [
+            "Los chats y los resúmenes de llamadas se guardan mientras exista la cuenta. Puedes eliminarlos uno a uno en cualquier momento.",
+            "Las transcripciones brutas de las llamadas se eliminan a los 90 días. No grabamos audio.",
+            "Puedes descargar una copia de tus datos. El enlace de exportación es válido durante 7 días.",
+            "Si eliminas tu cuenta, tus datos se eliminan de inmediato, salvo lo que la ley nos obliga a conservar (por ejemplo, la contabilidad de los pagos). Si has conectado un calendario de Google, revocamos el acceso en Google. En el caso de Microsoft (Outlook), eliminamos las claves en nuestro sistema; puedes quitar Dialogbot tú mismo en tu cuenta de Microsoft."
+          ]}
+        ]
+      },
+      {
+        "title": "14. Faltas de conformidad y responsabilidad",
+        "body": [
+          {"type": "p", "text": "Tienes los derechos que te da la ley si el servicio no funciona como se prometió. Contáctanos en un plazo razonable después de detectar el fallo y lo corregiremos o buscaremos otra solución."},
+          {"type": "p", "text": "Respondemos conforme a las normas generales del derecho danés. No respondemos de lo que haga o deje de hacer una empresa a la que hayas contactado a través del asistente (por ejemplo, una cita que no respete), de las caídas de operadores de telecomunicaciones y proveedores en la nube ni de circunstancias ajenas a nuestro control. Nada en estas condiciones limita los derechos que tienes como consumidor según la ley."}
+        ]
+      },
+      {
+        "title": "15. Reclamaciones",
+        "body": [
+          {"type": "p", "parts": ["Si no estás satisfecho, escribe a ", {"email": true}, " – responderemos lo antes posible. Si no llegamos a un acuerdo, puedes reclamar ante la Junta danesa de reclamaciones de consumo (Nævnenes Hus, Forbrugerklagenævnet), Toldboden 2, 8800 Viborg, Dinamarca, a través de ", {"href": "https://www.forbrug.dk", "text": "forbrug.dk"}, "."]},
+          {"type": "p", "parts": ["Si vives en otro país de la UE, puedes obtener ayuda en ", {"href": "https://www.forbrugereuropa.dk", "text": "Forbrugereuropa"}, " (el Centro Europeo del Consumidor en Dinamarca)."]},
+          {"type": "p", "text": "El contrato se rige por el derecho danés. Si vives en otro país, conservas la protección que te dan las normas de consumo de tu país y siempre puedes acudir a los tribunales a los que la ley te da derecho."}
+        ]
+      },
+      {
+        "title": "16. Cambios en estas condiciones",
+        "body": [
+          {"type": "p", "text": "Podemos cambiar las condiciones y los precios con un preaviso de 30 días por correo electrónico y en la app. Si un cambio te perjudica, puedes cancelar antes de que entre en vigor. Cada versión tiene un número y una fecha en la parte superior de la página."}
+        ]
+      },
+      {
+        "title": "Contacto",
+        "body": [
+          {"type": "p", "parts": ["{name}, N.º CVR {cvr}, {address} · ", {"email": true}, " · ", {"link": "/kontakt", "text": "Contacto y soporte"}]}
         ]
       }
     ]

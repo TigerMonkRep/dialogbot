@@ -369,7 +369,7 @@ def process_event(db: OrmSession, event: dict) -> str:
     if kind.startswith("checkout.session."):
         from app.modules.privat.payments import on_checkout_event
 
-        privat = on_checkout_event(db, kind, obj)  # Dialogbot Privat credit packs (mode=payment)
+        privat = on_checkout_event(db, kind, obj)  # Dialogbot Privat Opkaldssaldo top-ups (mode=payment)
         if privat is not None:
             return privat
         if kind == "checkout.session.completed":
@@ -384,6 +384,12 @@ def process_event(db: OrmSession, event: dict) -> str:
         privat = on_subscription_event(db, kind, obj)
         if privat is not None:
             return privat
+    if kind in ("invoice.paid", "invoice.payment_failed", "charge.refunded"):
+        from app.modules.privat.subscriptions import on_billing_event
+
+        privat = on_billing_event(db, kind, obj)  # Dialogbot Privat customers: receipt / dunning / refund mails
+        if privat is not None:
+            return privat
     if kind == "checkout.session.completed" and obj.get("mode") == "setup" and obj.get("setup_intent"):
         return "applied" if save_card_from_setup_intent(db, str(obj["setup_intent"])) else "ignored"
     if kind.startswith("invoice.") and obj.get("id"):
@@ -394,6 +400,9 @@ def process_event(db: OrmSession, event: dict) -> str:
         apply_stripe_invoice(inv, obj)
         if kind == "invoice.payment_failed" and inv.status not in TERMINAL:
             inv.status = "payment_failed"
+            _owner_mail(db, inv.workspace_id, kind="payment_failed", dedupe=f"{obj['id']}:{obj.get('attempt_count') or 1}",
+                        amount_minor=int(obj.get("amount_due") or inv.gross_minor or 0),
+                        currency=str(obj.get("currency") or "DKK").upper())  # E06 dunning (F-PBQ-08)
         _commission(db, inv, was, kind, obj)
         if inv.status == "paid" and was != "paid":
             from app.modules.sales.offers import on_invoice_paid
@@ -413,8 +422,22 @@ def process_event(db: OrmSession, event: dict) -> str:
             return "applied"  # the same refund seen again (other event type, or a repeat): no second effect
         reverse_for_invoice(db, inv, source_ref=f"{obj.get('id') or kind}:{inv.refunds['applied_minor']}"[:64],
                             fraction=delta / inv.gross_minor, already=already / inv.gross_minor)
+        _owner_mail(db, inv.workspace_id, kind="refund", dedupe=f"{inv.stripe_invoice_id}:{inv.refunds['applied_minor']}",
+                    amount_minor=delta, currency=str(obj.get("currency") or "DKK").upper())  # refund confirmed
         return "applied"
     return "ignored"
+
+
+def _owner_mail(db, workspace_id, *, kind: str, dedupe: str, amount_minor: int, currency: str) -> None:
+    """Erhverv's billing mails to the workspace's owners (F-PBQ-08; E06 dunning and refund-confirmed were missing)."""
+    from app.models import Membership, User
+    from app.modules.billing import customer_mails
+
+    for u in db.scalars(select(User).join(Membership, Membership.user_id == User.id).where(
+            Membership.workspace_id == workspace_id, Membership.role == "owner")):
+        customer_mails.send(db, kind=kind, to_email=u.email, lang=u.interface_language, audience="erhverv",
+                            dedupe=f"{dedupe}:{u.id}", amount_minor=amount_minor, currency=currency,
+                            workspace_id=workspace_id)
 
 
 def _refund_delta(inv: Invoice, kind: str, obj: dict) -> tuple[int, int]:

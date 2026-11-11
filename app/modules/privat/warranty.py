@@ -40,7 +40,16 @@ def add(db: OrmSession, ws_id: uuid.UUID, *, product: str, bought: str, shop: st
         row["price_minor"] = p
     if warranty_years:
         row["warranty_years"] = max(1, min(int(warranty_years), 10))
-    rows = [row] + kit.items(db, ws_id, ADDON)
+    rows = kit.items(db, ws_id, ADDON)
+    # the same purchase again (a retry, a double tap, «jeg sagde det i går») corrects it – never a second row and a
+    # second reminder (F-PA-02): same thing, same shop, same day
+    same = next((r for r in rows if kit.key_of(r.get("name", "")) == kit.key_of(row["name"])
+                 and kit.key_of(r.get("shop", "")) == kit.key_of(row["shop"]) and r.get("bought") == row["bought"]), None)
+    if same is not None:
+        same.update({k: v for k, v in row.items() if k != "id"})
+        kit.save_items(db, ws_id, ADDON, rows)
+        return same
+    rows = [row] + rows
     kit.save_items(db, ws_id, ADDON, rows[:500])
     return row
 

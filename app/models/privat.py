@@ -31,7 +31,7 @@ from app.models.identity import ts_now, uuid_pk
 
 PRIVATE_TASK_KINDS = ("list", "reminder", "call")
 PRIVATE_TASK_STATUSES = ("awaiting_user", "draft", "planned", "in_progress", "awaiting_business", "done", "declined")
-CREDIT_KINDS = ("grant", "purchase", "reserve", "capture", "release", "spend", "sponsor", "referral")
+CREDIT_KINDS = ("grant", "purchase", "reserve", "capture", "release", "spend", "sponsor", "referral", "convert")
 PRIVATE_CALL_STATUSES = ("proposed", "approved", "scheduled", "dialling", "in_progress", "unknown", "answered", "no_answer",
                          "failed", "declined")
 
@@ -73,7 +73,7 @@ class PrivateTask(Base):
         CheckConstraint("kind in ('list','reminder','call')", name="ck_private_tasks_kind"),
         CheckConstraint("status in ('awaiting_user','draft','planned','in_progress','awaiting_business','done',"
                         "'declined')", name="ck_private_tasks_status"),
-        CheckConstraint("paid_by in ('free','credit','sponsor','none','call','plan')", name="ck_private_tasks_paid_by"),
+        CheckConstraint("paid_by in ('free','balance','sponsor','none','call','plan')", name="ck_private_tasks_paid_by"),
         CheckConstraint("list_type is null or list_type in ('shopping','wishlist','todo')",
                         name="ck_private_tasks_list_type"),
         CheckConstraint("share_mode is null or share_mode in ('group','wishlist')", name="ck_private_tasks_share_mode"),
@@ -95,7 +95,8 @@ class PrivateTask(Base):
     reminder_version: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
     who: Mapped[str] = mapped_column(String(200), nullable=False, default="")
     usage_text: Mapped[str] = mapped_column(String(200), nullable=False, default="")
-    # free (one of the month's 10) | credit | sponsor | none (draft, not paid yet) | call (paid by call credits)
+    # free (one of the month's 10) | balance (3 kr. from the Opkaldssaldo) | sponsor | none (draft, not paid yet) |
+    # call (paid with the call: a plan call or an extra call from the Opkaldssaldo) | plan
     # | plan (included in the trial or a subscription: never counts against the free quota)
     paid_by: Mapped[str] = mapped_column(String(16), nullable=False, default="none")
     free_month: Mapped[str | None] = mapped_column(String(7))  # "2026-11" when it used a free task that month
@@ -314,20 +315,24 @@ class PrivateMessage(Base):
 
 
 class CreditLedger(Base):
-    """Append-only credit movements. Balance = SUM(amount). A reserve (-3) is later captured (0, the reserve becomes
-    the spend) or released (+3). `source_ref` is unique, so a replayed webhook or command can never move credits twice."""
+    """The «Opkaldssaldo»: append-only movements in øre (minor units of `currency`, incl. VAT). Balance = SUM(amount).
+    An extra call reserves its maximum (-1750) and is settled once: a capture gives back what the call did not cost
+    (+ reserve − price), a release gives back everything. `source_ref` is unique, so a replayed webhook or command can
+    never move money twice. (Table name from the credits it held until 2026-11-11, migration f3a8c6d2b5e9.)"""
 
     __tablename__ = "credit_ledger"
     __table_args__ = (
-        CheckConstraint("kind in ('grant','purchase','reserve','capture','release','spend','sponsor','referral')",
-                        name="ck_credit_ledger_kind"),
+        CheckConstraint("kind in ('grant','purchase','reserve','capture','release','spend','sponsor','referral',"
+                        "'convert')", name="ck_credit_ledger_kind"),
+        CheckConstraint("currency in ('DKK','SEK','NOK','EUR')", name="ck_credit_ledger_currency"),
         Index("ix_credit_ledger_ws_created", "workspace_id", "created_at"),
     )
 
     id: Mapped[uuid.UUID] = uuid_pk()
     workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
     kind: Mapped[str] = mapped_column(String(16), nullable=False)
-    amount: Mapped[int] = mapped_column(Integer, nullable=False)
+    amount: Mapped[int] = mapped_column(Integer, nullable=False)  # øre (minor units of currency)
+    currency: Mapped[str] = mapped_column(String(3), nullable=False, default="DKK", server_default="DKK")
     source_ref: Mapped[str] = mapped_column(String(200), nullable=False, unique=True)
     task_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("private_tasks.id", ondelete="SET NULL"))
     text: Mapped[str] = mapped_column(String(300), nullable=False, default="")
@@ -341,7 +346,7 @@ class PrivateCall(Base):
     __table_args__ = (
         CheckConstraint("status in ('proposed','approved','scheduled','dialling','in_progress','unknown','answered',"
                         "'no_answer','failed','declined')", name="ck_private_calls_status"),
-        CheckConstraint("paid_via is null or paid_via in ('credits','plan')", name="ck_private_calls_paid_via"),
+        CheckConstraint("paid_via is null or paid_via in ('balance','plan')", name="ck_private_calls_paid_via"),
         CheckConstraint("pitch_outcome is null or pitch_outcome in ('interested','declined','skipped','not_asked')",
                         name="ck_private_calls_pitch_outcome"),
         Index("ix_private_calls_task", "task_id", "created_at"),
@@ -367,8 +372,8 @@ class PrivateCall(Base):
     status: Mapped[str] = mapped_column(String(16), nullable=False, default="proposed")
     # answered | no_answer | failed | declined (null while proposed or running)
     result: Mapped[str | None] = mapped_column(String(16))
-    # Set at approval: credits (3 credits reserved, the pre-subscription path) | plan (one of the month's plan calls).
-    # Null for calls approved before subscriptions existed (they were all paid with credits).
+    # Set at approval: plan (one of the month's plan calls) | balance (an extra call beyond them: its maximum price is
+    # reserved on the Opkaldssaldo). Null for calls approved before subscriptions existed (paid like 'balance').
     paid_via: Mapped[str | None] = mapped_column(String(8))
     pool_number: Mapped[str | None] = mapped_column(String(20))
     vapi_call_id: Mapped[str | None] = mapped_column(String(100), unique=True)
@@ -700,3 +705,62 @@ class PrivateBusinessReferral(Base):
         Index("ix_private_business_referrals_phone", "business_phone_e164"),
         Index("ix_private_business_referrals_ws", "workspace_id"),
     )
+
+
+class PrivateHouseholdMember(Base):
+    """Familie (app/modules/privat/household.py): one person in the household of a Familie subscriber – at most 4
+    members besides the owner («Op til 5 personer»). Membership lends the owner's plan rights (apps, the household's
+    shared call quota); it NEVER gives access to anybody's data: each person keeps their own personal workspace.
+    A person is in at most one household (unique member). Rights are derived live from the owner's subscription, so
+    removal, leaving, a downgrade or a cancellation takes effect at once; the row stays through a downgrade (the
+    household is paused) and is deleted on removal, leaving or account deletion."""
+
+    __tablename__ = "private_household_members"
+    __table_args__ = (
+        CheckConstraint("owner_workspace_id <> member_workspace_id", name="ck_private_household_members_self"),
+        Index("ix_private_household_members_owner", "owner_workspace_id", "joined_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    owner_workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"),
+                                                          nullable=False)
+    member_workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"),
+                                                           nullable=False, unique=True)
+    invite_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("private_invites.id", ondelete="SET NULL"))
+    joined_at: Mapped[datetime] = ts_now()
+
+
+class PrivateDataExport(Base):
+    """«Eksportér mine data» (app/modules/privat/gdpr.py): built by the worker, fetched with a link from an e-mail.
+    Only the SHA-256 of the link's token is kept; the content is wiped when the link expires (or the account is
+    deleted – the row cascades with the user)."""
+
+    __tablename__ = "private_data_exports"
+    __table_args__ = (
+        CheckConstraint("status in ('queued','ready','expired','failed')", name="ck_private_data_exports_status"),
+        Index("ix_private_data_exports_user", "user_id", "requested_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="queued")
+    token_hash: Mapped[str | None] = mapped_column(String(64), unique=True)
+    data: Mapped[dict | None] = mapped_column(JSONB)
+    requested_at: Mapped[datetime] = ts_now()
+    ready_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    downloaded_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class PrivateTrialCard(Base):
+    """One free trial per CARD (decision Fürster 2026-11-10, F-PBQ-02): Stripe's card fingerprint (a hash Stripe makes
+    of the card number – never card data) for every card that has started a Privat trial. A new account whose card is
+    already here gets no trial (subscriptions.upsert_from_stripe_subscription ends it at once). Kept when the account
+    is deleted (workspace_id → NULL), or deleting and re-signing up would buy a new trial."""
+
+    __tablename__ = "private_trial_cards"
+
+    fingerprint: Mapped[str] = mapped_column(String(64), primary_key=True)
+    workspace_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("workspaces.id", ondelete="SET NULL"))
+    stripe_subscription_id: Mapped[str | None] = mapped_column(String(100))
+    first_trial_at: Mapped[datetime] = ts_now()

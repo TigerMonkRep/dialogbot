@@ -1,0 +1,229 @@
+{
+ "before": {
+  "id": "995749d7-6a01-48d7-9076-3dba0b0c900c",
+  "kind": "list",
+  "title": "Ønskeliste",
+  "status": "in_progress",
+  "next_step": "Del ønskelisten",
+  "due_at": null,
+  "who": "Dig",
+  "usage_text": "Med i prøveperioden",
+  "is_example": false,
+  "created_at": "2026-11-11T09:53:11.147696+00:00",
+  "updated_at": "2026-11-11T09:53:11.794605+00:00",
+  "items": [
+   {
+    "id": "fc1addf8-47e5-4cf7-801d-300a0455612d",
+    "text": "Cykelhjelm",
+    "done": false,
+    "note": null,
+    "link": null,
+    "added_by_name": "Mette Hansen",
+    "done_by_name": null,
+    "archived": false,
+    "quantity": 1,
+    "price_minor": null,
+    "currency": null,
+    "price_source": null,
+    "price_fetched_at": null,
+    "shop": null,
+    "size": null,
+    "color": null,
+    "variant": null,
+    "image": null,
+    "image_origin": null,
+    "details": null,
+    "reserved": null,
+    "reserved_by_me": false,
+    "group_gift": {
+     "enabled": false,
+     "target_minor": null,
+     "currency": null
+    }
+   },
+   {
+    "id": "0c8811b4-6a30-41be-8c53-e978eea94ce1",
+    "text": "En god bog",
+    "done": false,
+    "note": null,
+    "link": null,
+    "added_by_name": "Mette Hansen",
+    "done_by_name": null,
+    "archived": false,
+    "quantity": 1,
+    "price_minor": null,
+    "currency": null,
+    "price_source": null,
+    "price_fetched_at": null,
+    "shop": null,
+    "size": null,
+    "color": null,
+    "variant": null,
+    "image": null,
+    "image_origin": null,
+    "details": null,
+    "reserved": null,
+    "reserved_by_me": false,
+    "group_gift": {
+     "enabled": false,
+     "target_minor": null,
+     "currency": null
+    }
+   }
+  ],
+  "remind_at": null,
+  "call": null,
+  "events": [
+   {
+    "at": "2026-11-11T09:53:11.265890+00:00",
+    "text": "Oprettet i samtalen"
+   }
+  ],
+  "list_type": "wishlist",
+  "shared": true,
+  "share_mode": "wishlist",
+  "design": {
+   "theme": "neutral",
+   "accent": "#2456F6",
+   "background": "#FFFFFF",
+   "text": "#1A1A1A",
+   "font": "outfit",
+   "decorations": true,
+   "subtitle": null,
+   "date": null,
+   "cover": null,
+   "overrides": [],
+   "customized": false
+  },
+  "my_role": "owner",
+  "members": [
+   {
+    "id": "d1b6806d-76c8-4c42-87d8-5b830600d8cb",
+    "name": "Mette Hansen",
+    "role": "owner",
+    "is_me": true
+   }
+  ],
+  "appointment": null,
+  "partner": null
+ },
+ "after": {
+  "id": "995749d7-6a01-48d7-9076-3dba0b0c900c",
+  "kind": "list",
+  "title": "Ønskeliste",
+  "status": "in_progress",
+  "next_step": "Del ønskelisten",
+  "due_at": null,
+  "who": "Dig",
+  "usage_text": "Med i prøveperioden",
+  "is_example": false,
+  "created_at": "2026-11-11T09:53:11.147696+00:00",
+  "updated_at": "2026-11-11T09:53:11.794605+00:00",
+  "items": [
+   {
+    "id": "fc1addf8-47e5-4cf7-801d-300a0455612d",
+    "text": "Cykelhjelm",
+    "done": false,
+    "note": null,
+    "link": null,
+    "added_by_name": "Mette Hansen",
+    "done_by_name": null,
+    "archived": false,
+    "quantity": 1,
+    "price_minor": null,
+    "currency": null,
+    "price_source": null,
+    "price_fetched_at": null,
+    "shop": null,
+    "size": null,
+    "color": null,
+    "variant": null,
+    "image": null,
+    "image_origin": null,
+    "details": null,
+    "reserved": null,
+    "reserved_by_me": false,
+    "group_gift": {
+     "enabled": false,
+     "target_minor": null,
+     "currency": null
+    }
+   },
+   {
+    "id": "0c8811b4-6a30-41be-8c53-e978eea94ce1",
+    "text": "En god bog",
+    "done": false,
+    "note": null,
+    "link": null,
+    "added_by_name": "Mette Hansen",
+    "done_by_name": null,
+    "archived": false,
+    "quantity": 1,
+    "price_minor": null,
+    "currency": null,
+    "price_source": null,
+    "price_fetched_at": null,
+    "shop": null,
+    "size": null,
+    "color": null,
+    "variant": null,
+    "image": null,
+    "image_origin": null,
+    "details": null,
+    "reserved": null,
+    "reserved_by_me": false,
+    "group_gift": {
+     "enabled": false,
+     "target_minor": null,
+     "currency": null
+    }
+   }
+  ],
+  "remind_at": null,
+  "call": null,
+  "events": [
+   {
+    "at": "2026-11-11T09:53:11.265890+00:00",
+    "text": "Oprettet i samtalen"
+   },
+   {
+    "at": "2026-11-11T09:53:15.021034+00:00",
+    "text": "Mette er med på listen"
+   }
+  ],
+  "list_type": "wishlist",
+  "shared": true,
+  "share_mode": "wishlist",
+  "design": {
+   "theme": "neutral",
+   "accent": "#2456F6",
+   "background": "#FFFFFF",
+   "text": "#1A1A1A",
+   "font": "outfit",
+   "decorations": true,
+   "subtitle": null,
+   "date": null,
+   "cover": null,
+   "overrides": [],
+   "customized": false
+  },
+  "my_role": "owner",
+  "members": [
+   {
+    "id": "d1b6806d-76c8-4c42-87d8-5b830600d8cb",
+    "name": "Mette Hansen",
+    "role": "owner",
+    "is_me": true
+   },
+   {
+    "id": "67809d64-15c0-44a6-8b03-b0745d1d86c5",
+    "name": "Mette Hansen",
+    "role": "editor",
+    "is_me": false
+   }
+  ],
+  "appointment": null,
+  "partner": null
+ },
+ "guest_reserve": "{\"id\":\"995749d7-6a01-48d7-9076-3dba0b0c900c\",\"kind\":\"list\",\"title\":\"Ønskeliste\",\"status\":\"in_progress\",\"next_step\":\"Del ønskelisten\",\"due_at\":null,\"who\":\"Dig\",\"usage_text\":\"Delt med dig – koster dig ingenting\",\"is_example\":false,\"created_at\":\"2026-11-11T09:53:11.147696+00:00\",\"updated_at\":\"2026-11-11T09:53:11.794605+00:00\",\"items\":[{\"id\":\"fc1addf8-47e5-4cf7-801d-300a0455612d\",\"text\":\"Cykelhjelm\",\"done\":false,\"note\":null,\"link\":null,\"added_by_name\":\"Mette Hansen\",\"done_by_name\":null,\"archived\":false,\"quantity\":1,\"price_minor\":null,\"currency\":null,\"price_source\":null,\"price_fetched_at\":null,\"shop\":null,\"size\":null,\"color\":null,\"variant\":null,\"image\":null,\"image_origin\":null,\"details\":null,\"reserved\":true,\"reserved_by_me\":true,\"group_gift\":null},{\"id\":\"0c8811b4-6a30-41be-8c53-e978eea94ce1\",\"text\":\"En god bog\",\"done\":false,\"note\":null,\"link\":null,\"added_by_name\":\"Mette Hansen\",\"done_by_name\":null,\"archived\":false,\"quantity\":1,\"price_minor\":null,\"currency\":null,\"price_source\":null,\"price_fetched_at\":null,\"shop\":null,\"size\":null,\"color\":null,\"variant\":null,\"image\":null,\"image_origin\":null,\"details\":null,\"reserved\":false,\"reserved_by_me\":false,\"group_gift\":null}],\"remind_at\":null,\"call\":null,\"events\":[],\"list_type\":\"wishlist\",\"shared\":true,\"share_mode\":\"wishlist\",\"design\":{\"theme\":\"neutral\",\"accent\":\"#2456F6\",\"background\":\"#FFFFFF\",\"text\":\"#1A1A1A\",\"font\":\"outfit\",\"decorations\":true,\"subtitle\":null,\"date\":null,\"cover\":null,\"overrides\":[],\"customized\":false},\"my_role\":\"editor\",\"members\":[{\"id\":\"d1b6806d-76c8-4c42-87d8-5b830600d8cb\",\"name\":\"Mette Hansen\",\"role\":\"owner\",\"is_me\":false},{\"id\":\"67809d64-15c0-44a6-8b03-b0745d1d86c5\",\"name\":\"Mette Hansen\",\"role\":\"editor\",\"is_me\":true}],\"appointment\":null,\"partner\":null}"
+}

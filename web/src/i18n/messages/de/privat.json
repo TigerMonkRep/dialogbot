@@ -5,7 +5,7 @@
     "day": "Mein Tag",
     "chat": "Unterhaltung",
     "tasks": "Meine Aufgaben",
-    "account": "Konto und Credits",
+    "account": "Konto und Anrufguthaben",
     "addons": "Erweiterungen",
     "people": "Meine Leute",
     "invite": "Einladung",
@@ -129,7 +129,7 @@
       "billedMonthly": "Monatliche Abrechnung",
       "billedYearly": "Jährliche Abrechnung: {amount}",
       "cta": "14 Tage kostenlos starten",
-      "note": "Mehr Anrufe als im Abo? Zusätzliche Anrufe kaufst du in der App. Keine Bindung – Plan wechseln oder jeden Monat kündigen.",
+      "note": "Mehr Anrufe als im Abo? Zusätzliche Anrufe zahlst du von deinem Anrufguthaben: {pXAnswered} angenommen, {pXVoicemail} Mailbox, {pXNoAnswer} nicht angenommen + {pXMinute} pro angefangene Minute, höchstens {pXMax}. Keine Bindung – du kannst jeden Monat wechseln oder aufhören.",
       "tagline": {
         "basis": "Für alle, die den Alltag im Griff haben wollen.",
         "plus": "Für alle, die nicht mehr herumtelefonieren wollen.",
@@ -161,8 +161,7 @@
   "header": {
     "skip": "Zum Inhalt springen",
     "homeAria": "Dialogbot Privat – Mein Tag",
-    "credits": "{n} Credits",
-    "balanceAria": "{credits} Credits. Konto öffnen",
+    "balanceAria": "Anrufguthaben {amount}. Konto öffnen",
     "noPlanBadge": "Ohne Plan · 14 Tage testen",
     "noPlanBadgeShort": "Ohne Plan",
     "noPlanAria": "Ohne Plan. Konto öffnen und 14 Tage gratis starten",
@@ -171,17 +170,19 @@
     "switchLabel": "Zwischen Firma und privat wechseln",
     "business": "Firma",
     "private": "Privat",
-    "account": "Konto und Credits",
+    "account": "Konto und Guthaben",
     "addons": "Erweiterungen",
     "people": "Meine Leute",
     "logout": "Abmelden",
     "right": {
       "tasks": "Meine Aufgaben",
       "task": "Aufgabe",
-      "account": "Konto und Credits",
+      "account": "Konto und Guthaben",
       "addons": "Erweiterungen",
       "people": "Meine Leute"
-    }
+    },
+    "homeSuffix": " – Mein Tag",
+    "balance": "Guthaben {amount}"
   },
   "tabs": {
     "label": "Hauptmenü",
@@ -242,7 +243,7 @@
     "soon": "Demnächst",
     "next": "Nächster Schritt: {next}",
     "myTasks": "Meine Aufgaben",
-    "accountBtn": "Konto und Credits",
+    "accountBtn": "Konto und Guthaben",
     "welcomeFunnel": "Peter hat deinen Tag eingerichtet – tippe auf Ja, anrufen für den ersten Anruf"
   },
   "shortcuts": {
@@ -276,7 +277,8 @@
     "earlier": "Aufgabe: {title}. Aufgabe öffnen",
     "googleData": "Daten von Google",
     "demoData": "Demodaten – fiktive Unternehmen, nicht von Google",
-    "typing": "Peter schreibt …"
+    "typing": "Peter schreibt …",
+    "deleteMessage": "Nachricht löschen"
   },
   "list": {
     "count": "{n|1 Punkt|# Punkte} · {done} erledigt",
@@ -306,7 +308,9 @@
     "simulateReserve": "{name} reserviert einen Wunsch",
     "simulateActivated": "{name} erstellt ihre erste eigene Aufgabe",
     "welcomeBanner": "Probier es selbst: Was soll ich für dich erledigen?",
-    "welcomeDismiss": "Schließen"
+    "welcomeDismiss": "Schließen",
+    "open": "Öffnen",
+    "shareWish": "Wunschliste teilen"
   },
   "move": {
     "label": "Die Erinnerung wurde verschoben",
@@ -318,7 +322,9 @@
     "label": "Buchung auf der Webseite · wartet auf dein Ja",
     "before": "Jetzt",
     "after": "Vorschlag",
-    "note": "Es wird nichts gebucht, bevor du zustimmst."
+    "note": "Es wird nichts gebucht, bevor du zustimmst.",
+    "needsPlanText": "Buchungen auf Webseiten sind in jedem Abo enthalten. Ohne Abo kann nicht gebucht werden – auch nicht mit dem Anrufguthaben.",
+    "limit": "Du hast die Webseiten-Buchungen dieses Monats aufgebraucht – versuch es nächsten Monat wieder"
   },
   "call": {
     "proposal": "Vorschlag · wartet auf dein Ja",
@@ -329,13 +335,12 @@
     "mayAsk": "Darf fragen nach",
     "mayAgree": "Darf vereinbaren",
     "mayNot": "Darf nicht",
-    "cost": "Anruf des Assistenten: höchstens {n} Credits",
+    "cost": "Zusätzlicher Anruf: {pXAnswered} angenommen, {pXVoicemail} Mailbox, {pXNoAnswer} nicht angenommen + {pXMinute} pro angefangene Minute, höchstens {pXMax}.",
     "costTime": "(bis zu 3 Min.)",
-    "refund": "Wenn niemand antwortet, besetzt ist oder ein Anrufbeantworter drangeht, bekommst du deine Credits zurück.",
+    "refund": "Vor dem Anruf werden {pXMax} auf deinem Anrufguthaben reserviert. Danach wird nur der Preis für das Ergebnis abgebucht, der Rest wird freigegeben. Kommt der Anruf nicht zustande, wird alles freigegeben.",
     "price": "Der Preis beim Unternehmen ist etwas anderes – den vereinbare ich nicht, aber ich sage dir, was sie sagen.",
     "shareQ": "Darf das Unternehmen deine Nummer bekommen?",
     "shareHint": "Dann können sie dich anrufen, falls sich etwas ändert.",
-    "needCredits": "Du hast {have} Credits. Der Anruf braucht {need}.",
     "phoneStep": "Bestätige zuerst deine Handynummer",
     "phoneStepText": "Bevor ich für dich anrufe, muss deine Nummer mit einem SMS-Code bestätigt sein. Das dauert eine Minute und nur einmal.",
     "phoneThenCall": "Sobald die Nummer bestätigt ist, rufe ich an.",
@@ -353,7 +358,7 @@
     "saveEdit": "Änderung speichern",
     "simulatedCall": "Simulierter Anruf",
     "calling": "Rufe {name} an …",
-    "reserved": "{n} Credits sind reserviert. Sie werden nur abgebucht, wenn das Unternehmen antwortet.",
+    "reserved": "{pXMax} sind auf deinem Anrufguthaben reserviert. Nur der Preis für das Ergebnis wird abgebucht – der Rest wird freigegeben.",
     "realWait": "Du bekommst hier Bescheid, wenn der Anruf vorbei ist.",
     "chooseOutcome": "Simulation: Ergebnis wählen",
     "outcomeAnswered": "Das Unternehmen antwortet",
@@ -364,10 +369,10 @@
     "priceAt": "Preis beim Unternehmen",
     "priceNote": "(im Anruf genannt)",
     "assistantCall": "Anruf des Assistenten",
-    "callUsage": "{n} Credits · {duration}",
+    "callUsage": "Zusätzlicher Anruf · {duration}",
     "duration": "{m} Min. {s} Sek.",
     "seeTask": "Ganze Aufgabe ansehen",
-    "noAnswerTitle": "Niemand ist rangegangen – deine {n} Credits sind wieder frei",
+    "noAnswerTitle": "Niemand hat abgenommen – nur {pXNoAnswer} wurden abgebucht, der Rest ist freigegeben",
     "noAnswerText": "Ich habe keine Nachricht hinterlassen. Soll ich es noch einmal versuchen?",
     "retry": "Erneut versuchen",
     "cancel": "Aufgabe abbrechen",
@@ -388,7 +393,14 @@
     "useNumber": "Nummer verwenden",
     "isBusiness": "Das ist ein Unternehmen",
     "isBusinessHint": "Die Nummer sieht wie eine Handynummer aus. Ich rufe nur Unternehmen an.",
-    "demoBusiness": "Das ist ein Demo-Unternehmen, das nicht angerufen werden kann. Wähle ein echtes Unternehmen."
+    "demoBusiness": "Das ist ein Demo-Unternehmen, das nicht angerufen werden kann. Wähle ein echtes Unternehmen.",
+    "needsPlan": "Erfordert einen Plan",
+    "needsPlanText": "Anrufe sind in jedem Abo enthalten. Ohne Abo kann nicht angerufen werden – auch nicht mit dem Anrufguthaben.",
+    "delete": "Anruf löschen",
+    "deleteQ": "Anruf und Zusammenfassung löschen? Das kann nicht rückgängig gemacht werden.",
+    "deleteYes": "Ja, löschen",
+    "deleteNo": "Behalten",
+    "needBalance": "Du hast {have} Anrufguthaben. Ein zusätzlicher Anruf braucht {need} – lade unter Konto auf."
   },
   "draft": {
     "label": "Entwurf · bereit zum Speichern",
@@ -423,8 +435,8 @@
     "orLink": "Oder einen Link senden",
     "signWith": "Unterschreiben mit:",
     "message": "Die Nachricht (du kannst sie ändern)",
-    "smsWishlist": "Hallo! Ich habe eine Wunschliste gemacht – schau sie dir an und reserviere hier: {link}",
-    "smsGroup": "Hallo! Ich habe eine gemeinsame Liste gemacht – schau sie dir an und füg hier etwas hinzu: {link}",
+    "smsWishlist": "Hallo! Ich habe eine Wunschliste gemacht - schau sie dir an und reserviere hier: {link}",
+    "smsGroup": "Hallo! Ich habe eine gemeinsame Liste gemacht - schau sie dir an und füg hier etwas hinzu: {link}",
     "remindWishlist": "Hallo! Hast du meine Wunschliste «{title}» gesehen? Der Link steht in meiner letzten Nachricht.",
     "remindGroup": "Hallo! Hast du die Liste «{title}» gesehen? Der Link steht in meiner letzten Nachricht.",
     "chars": "{n} von {max} Zeichen",
@@ -464,7 +476,8 @@
     "queueNext": "Gesendet? Als Nächstes: {name} ({i} von {n})",
     "queueBack": "Willkommen zurück. Tipp, wenn du für die nächste Person bereit bist.",
     "queueDone": "Alle {n} sind eingeladen.",
-    "done": "Fertig"
+    "done": "Fertig",
+    "roleWishGuest": "kann reservieren"
   },
   "people": {
     "title": "Meine Leute",
@@ -555,29 +568,31 @@
   },
   "paywall": {
     "titleDigital": "Dafür brauchst du einen Plan",
-    "titleCall": "Dir fehlen Credits für den Anruf",
+    "titleCall": "Für einen zusätzlichen Anruf aufladen",
     "titleTrial": "Dafür brauchst du einen Plan",
     "draft": "Entwurf",
-    "textDigital": "Die Aufgabe ist als Entwurf gespeichert. Wähle einen Plan, mach mit 1 Credit weiter oder sieh dir einen freiwilligen Sponsorenclip an.",
-    "textCall": "Ein Anruf reserviert {n} Credits, wenn du ihn freigibst. Du hast {have}.",
+    "textDigital": "Die Aufgabe ist als Entwurf gespeichert. Wähle ein Abo, zahle {pExtraTask} vom Anrufguthaben oder sieh dir einen freiwilligen Sponsorbeitrag an.",
+    "textCall": "Ein zusätzlicher Anruf reserviert {pXMax} auf deinem Anrufguthaben, wenn du ihn freigibst. Du hast {have}.",
     "textTrial": "Teste Dialogbot Privat 14 Tage gratis. Du meldest dich mit Karte an, belastet wird sie erst nach der Testphase – kündige vorher, und du zahlst nichts. Die Aufgabe bleibt als Entwurf gespeichert, bis du gewählt hast.",
     "trialNote": "Plus · {pPlus}/Monat nach der Testphase · jederzeit kündbar",
-    "useCredit": "1 Credit nutzen · du hast {n}",
-    "buy": "10 Credits kaufen · {pCredits} inkl. MwSt.",
+    "buy": "{pTopup1}, {pTopup2} oder {pTopup3}",
     "sponsor": "Sponsorenclip ansehen · +1 Aufgabe ({n} heute übrig)",
     "later": "Später – Entwurf behalten",
-    "laterNote": "Der Entwurf liegt unter «Wartet auf deine Antwort». Du kannst jederzeit weitermachen."
+    "laterNote": "Der Entwurf liegt unter «Wartet auf deine Antwort». Du kannst jederzeit weitermachen.",
+    "useBalance": "{pExtraTask} vom Guthaben zahlen · du hast {have}"
   },
   "buy": {
-    "title": "10 Credits kaufen",
-    "item": "10 Credits",
+    "title": "Anrufguthaben aufladen",
+    "item": "Aufladung",
     "vat": "Davon MwSt.",
-    "note": "Einmalkauf. Credits verfallen im Pilotprojekt nicht.",
-    "pay": "{pCredits} bezahlen",
-    "payReal": "Zur Zahlung · {pCredits}",
+    "note": "Einmalzahlung, kein Abo. Das Guthaben verfällt während der Pilotphase nicht.",
+    "pay": "{amount} zahlen",
+    "payReal": "Zur Zahlung · {amount}",
     "simulatedBuy": "Simulierter Kauf",
     "redirecting": "Weiter zur Zahlung …",
-    "back": "Zurück"
+    "back": "Zurück",
+    "have": "Du hast {have} Anrufguthaben.",
+    "prices": "Zusätzlicher Anruf: {pXAnswered} angenommen, {pXVoicemail} Mailbox, {pXNoAnswer} nicht angenommen + {pXMinute} pro angefangene Minute, höchstens {pXMax}."
   },
   "sponsor": {
     "title": "Freiwilliger Sponsorenclip",
@@ -590,7 +605,7 @@
   },
   "login": {
     "title": "Aufgabe speichern",
-    "text": "Um deine eigene Aufgabe zu speichern, brauchst du ein privates Konto. Deine Aufgaben, Unterhaltungen und Credits sind von Firmenkonten getrennt.",
+    "text": "Um deine eigene Aufgabe zu speichern, brauchst du ein privates Konto. Deine Aufgaben, Gespräche und dein Anrufguthaben sind von Firmenkonten getrennt.",
     "signup": "Privates Konto erstellen",
     "login": "Ich habe ein Konto – anmelden",
     "simulated": "Als Testnutzer fortfahren",
@@ -629,22 +644,20 @@
     "purposeReminder": "Rechtzeitig erinnert werden",
     "purposeWishlist": "Wünsche teilen, ohne die Überraschung zu verderben",
     "talk": "Über die Aufgabe sprechen",
-    "history": "Verlauf"
+    "history": "Verlauf",
+    "fromOwner": "Von {name}"
   },
   "account": {
-    "title": "Konto und Credits",
+    "title": "Konto",
     "privateLine": "Privates Konto · {email} · getrennt von Firmenkonten",
     "exampleLine": "Du testest mit Beispieldaten. Melde dich an, wenn du deine erste Aufgabe speicherst.",
     "simulatedLine": "Die Privat-API ist noch nicht eingeschaltet – alles hier ist eine Simulation in deinem Browser.",
     "free": "Ohne Plan",
     "freeNote": "Ohne Plan kannst du Listen sehen und darauf reservieren, die andere mit dir teilen – eigene Aufgaben, Listen und Anrufe brauchen einen Plan. Teste 14 Tage alles gratis.",
-    "credits": "Credits",
-    "creditsWord": "Credits",
-    "reserved": "{n} reserviert",
-    "creditsNote": "Ein beantworteter Anruf kostet 3 Credits (bis zu 3 Min.). 10 Credits kosten {pCredits} inkl. MwSt. – Einmalkauf, kein Abo.",
-    "buy": "10 Credits kaufen · {pCredits}",
-    "purchased": "Der Kauf ist registriert ({ref}).",
-    "purchasedReal": "Danke für deinen Kauf. Deine Credits erscheinen hier, sobald die Zahlung bestätigt ist.",
+    "reserved": "{amount} reserviert",
+    "buy": "Aufladen",
+    "purchased": "Die Zahlung ist erfasst ({ref}).",
+    "purchasedReal": "Danke. Der Betrag erscheint auf deinem Anrufguthaben, sobald die Zahlung bestätigt ist.",
     "purchaseCancelled": "Der Kauf wurde abgebrochen. Es wurde nichts abgebucht.",
     "ledger": "Bewegungen",
     "ledgerEmpty": "Noch keine Bewegungen.",
@@ -657,8 +670,8 @@
     "addons": "Erweiterungen",
     "addonsText": "Schalte Zusatzfunktionen ein und aus – z. B. Ruf für mich an, geteilte Listen und Wunschlisten.",
     "addonsBtn": "Erweiterungen ansehen",
-    "repeatNote": "Das Zahlungssignal {ref} ist bereits registriert. Keine zusätzlichen Credits.",
-    "repeatNone": "Es gibt noch keine Zahlung zum Wiederholen – kauf zuerst 10 Credits.",
+    "repeatNote": "Das Zahlungssignal {ref} ist bereits erfasst. Dem Guthaben wurde nichts zusätzlich gutgeschrieben.",
+    "repeatNone": "Es gibt noch keine Zahlung zum Wiederholen – lade zuerst das Guthaben auf.",
     "tools": "Testwerkzeuge · nur Simulation",
     "startFree": "Auf Konto ohne Plan zurücksetzen",
     "repeatPay": "Letztes Zahlungssignal wiederholen",
@@ -666,11 +679,15 @@
     "reset": "Von vorn beginnen",
     "installTitle": "App holen",
     "languageTitle": "Sprache",
-    "languageText": "Die App und Peters Antworten folgen der Sprache hier."
+    "languageText": "Die App und Peters Antworten folgen der Sprache hier.",
+    "groupMe": "Du",
+    "groupApp": "Die App",
+    "groupExtra": "Anrufguthaben",
+    "ledgerAll": "Alle anzeigen ({n})"
   },
   "invite": {
     "title": "Freunde einladen",
-    "text": "Teile Dialogbot mit einer Freundin oder einem Freund. Ihr bekommt beide 3 Credits, wenn die eingeladene Person ihre erste Aufgabe erstellt hat.",
+    "text": "Teile Dialogbot mit Freunden. Ihr bekommt beide {pReferral} Anrufguthaben, sobald dein Freund seinen ersten Zeitraum bezahlt hat.",
     "stats": {
       "invited": "Eingeladen",
       "joined": "Dabei",
@@ -733,7 +750,10 @@
   "errors": {
     "emailNotVerified": "Bestätige deine E-Mail, um Dialogbot Privat zu nutzen.",
     "verifyLink": "E-Mail bestätigen",
-    "viewAs": "Private Aufgaben sind in «Als Kunde ansehen» nicht sichtbar."
+    "viewAs": "Private Aufgaben sind in «Als Kunde ansehen» nicht sichtbar.",
+    "notEnabled": "Dialogbot Privat ist für dein Konto noch nicht freigeschaltet. Nichts, was du hier tust, wird gespeichert oder ausgeführt.",
+    "unavailable": "Dialogbot Privat ist gerade nicht erreichbar. Versuch es gleich noch einmal – nichts wurde gespeichert oder ausgeführt.",
+    "generic": "Etwas ist schiefgelaufen. Bitte versuch es noch einmal."
   },
   "location": {
     "useMine": "Meinen Standort verwenden",
@@ -779,7 +799,10 @@
     "trialBadge": "{plan} · Testphase, noch {n|1 Tag|# Tage}",
     "trialBadgeShort": "{plan} · {n|1 Tag|# Tage}",
     "planBadge": "{plan}",
-    "noPlan": "Kein Plan"
+    "noPlan": "Kein Plan",
+    "trialDaysShort": "{n} T",
+    "trialDaysLeft": "{n|1 Tag|# Tage} übrig",
+    "planAriaShort": "Konto öffnen"
   },
   "day2": {
     "eyebrow": "Dein persönlicher Assistent",
@@ -834,17 +857,20 @@
       "trialDays": "noch {n|1 Tag|# Tage}",
       "trialAria": "{n} von {total} Testtagen übrig",
       "noteTrial": "Listen und Erinnerungen sind unbegrenzt. Nach der Testphase geht es mit {plan} für {price}/Monat weiter – oder du wählst einen anderen Plan.",
-      "notePlan": "Listen und Erinnerungen sind unbegrenzt. Mehr Anrufe als dein Abo? Extra-Anrufe kaufst du unter Konto.",
+      "notePlan": "Listen und Erinnerungen sind unbegrenzt. Mehr Anrufe als im Abo? Zusätzliche Anrufe zahlst du vom Anrufguthaben unter Konto.",
       "noteFree": "Ohne Plan kannst du Listen sehen und darauf reservieren, die andere mit dir teilen. Eigene Aufgaben und Anrufe brauchen einen Plan.",
       "noteNone": "Ohne Plan kannst du Listen sehen und darauf reservieren, die andere mit dir teilen. Teste 14 Tage alles – die Karte wird erst danach belastet.",
-      "extraCalls": "Extra-Anrufe (Credits)",
+      "extraCalls": "Anrufguthaben",
       "choosePlan": "Plan wählen",
       "changePlan": "Plan wechseln",
       "startTrial": "14 Tage gratis starten",
       "newInStore": "Neu im Shop",
       "see": "Ansehen →"
     },
-    "noAnswerPlan": "Niemand hat abgenommen – der Anruf zählt nicht"
+    "noAnswerPlan": "Niemand hat abgenommen – der Anruf zählt nicht",
+    "greetingShort": "Ich erinnere dich, schreibe Listen und rufe für dich an. Was schiebst du vor dir her?",
+    "yourTurnOf": "Du bist dran · 1 von {n}",
+    "allTasks": "Alle Aufgaben"
   },
   "store": {
     "metaTitle": "Der Shop",
@@ -879,7 +905,7 @@
       "title": "In Plus enthalten",
       "text": "{name} ist in Plus und Familie enthalten. Starte 14 Tage gratis – oder wähle einen Plan, wenn deine Testphase vorbei ist.",
       "callTitle": "Anrufe brauchen einen Plan",
-      "callText": "Peter ruft für dich mit Basis, Plus oder Familie an – oder mit Extra-Anrufen (Credits).",
+      "callText": "Peter ruft für dich an mit Basis, Plus oder Familie. Zusätzliche Anrufe über das Abo hinaus zahlst du vom Anrufguthaben.",
       "trial": "14 Tage gratis starten",
       "choose": "Plan wählen",
       "later": "Nicht jetzt"
@@ -895,7 +921,7 @@
       "expired": "Testphase beendet",
       "none": "Kein Plan"
     },
-    "trialLine": "Noch {n|1 Tag|# Tage} Testphase · Plus-Rechte",
+    "trialLine": "Noch {n|1 Tag|# Tage} Testphase · {plan}-Rechte",
     "trialThen": "Danach {plan} für {price}/Monat",
     "trialThenNone": "Wähle vorher einen Plan – sonst geht es ohne Plan weiter.",
     "expiredLine": "Deine Testphase ist vorbei. Wähle einen Plan, um Anrufe und alle Apps zurückzubekommen.",
@@ -923,7 +949,7 @@
     "select": "{plan} wählen",
     "startTrial": "14 Tage gratis starten",
     "currentPlan": "Dein Plan",
-    "pickerNote": "Mehr Anrufe als dein Abo? Extra-Anrufe kaufst du hier. Keine Bindung.",
+    "pickerNote": "Mehr Anrufe als im Abo? Zusätzliche Anrufe zahlst du vom Anrufguthaben. Keine Bindung.",
     "activated": "Dein Abonnement ist aktiv.",
     "notCompleted": "Die Zahlung wurde nicht abgeschlossen. Es wurde kein Abonnement gestartet und nichts abgebucht.",
     "cancelled": "Du hast die Planwahl abgebrochen. Es wurde nichts abgebucht.",
@@ -931,20 +957,21 @@
     "portalMissing": "Zahlungen sind noch nicht eingerichtet. Schreib uns, um dein Abonnement zu ändern.",
     "redirecting": "Weiter zur Zahlung …",
     "loginFirst": "Melde dich an, um einen Plan zu wählen.",
-    "extra": "Extra-Anrufe",
-    "extraWord": "Credits",
-    "extraNote": "3 Credits = 1 Extra-Anruf (bis 3 Min.), wenn die Anrufe des Monats verbraucht sind. 10 Credits kosten {pCredits} inkl. MwSt. – Einmalkauf.",
+    "extra": "Anrufguthaben",
+    "extraWord": "Guthaben",
+    "extraNote": "Zusätzliche Anrufe, wenn die Anrufe des Monats verbraucht sind: {pXAnswered} angenommen, {pXVoicemail} Mailbox, {pXNoAnswer} nicht angenommen + {pXMinute} pro angefangene Minute, höchstens {pXMax}. Lade {pTopup1}, {pTopup2} oder {pTopup3} inkl. MwSt. auf – einmalig.",
     "paywallChoose": "Plan wählen",
-    "paywallBuy": "Extra-Anrufe kaufen",
+    "paywallBuy": "Anrufguthaben aufladen",
     "paywallCallTitlePlan": "Die Anrufe dieses Monats sind verbraucht",
-    "paywallCallTextPlan": "Du hast {used} von {quota} Anrufen in {plan} genutzt. Kaufe Extra-Anrufe oder wechsle zu einem größeren Plan.",
-    "paywallCallTextNone": "Mit Basis, Plus oder Familie sind Anrufe inklusive. Du kannst auch Extra-Anrufe kaufen.",
+    "paywallCallTextPlan": "Du hast {used} von {quota} Anrufen in {plan} genutzt. Lade dein Anrufguthaben für einen zusätzlichen Anruf auf oder wechsle zu einem größeren Abo.",
+    "paywallCallTextNone": "Mit Basis, Plus oder Familie sind Anrufe inklusive. Zusätzliche Anrufe zahlst du vom Anrufguthaben.",
     "paywallDigitalPlan": "Mit einem Plan sind Listen und Erinnerungen unbegrenzt.",
     "endTrial": "Testphase beenden",
     "codeAsk": "Hast du einen Rabattcode?",
     "codeLabel": "Rabattcode",
     "codePlaceholder": "Z. B. WILLKOMMEN",
-    "codeHint": "Der Rabatt wird auf der Bezahlseite abgezogen."
+    "codeHint": "Der Rabatt wird auf der Bezahlseite abgezogen.",
+    "householdMember": "Du bist in {name}s Familien-Plan. {name} verwaltet den Plan."
   },
   "funnel": {
     "entry": "In 2 Minuten ausprobieren",
@@ -1146,7 +1173,10 @@
     "none": "Noch keine Termine. Wenn Peter eine Zeit bestätigt bekommt oder du ihn bittest, eine einzutragen, erscheint sie hier.",
     "addToCalendar": "Zum Kalender hinzufügen",
     "remove": "Aus dem Kalender entfernen",
-    "removeNote": "«Aus dem Kalender entfernen» sagt den Termin beim Unternehmen nicht ab."
+    "removeNote": "«Aus dem Kalender entfernen» sagt den Termin beim Unternehmen nicht ab.",
+    "whichTitle": "Welchen Kalender nutzt du?",
+    "iphoneOther": "iPhone oder ein anderer",
+    "connectName": "{name} verbinden"
   },
   "birthdays": {
     "title": "Kommende Geburtstage",
@@ -1196,7 +1226,8 @@
       "half_yearly": "jedes halbe Jahr",
       "yearly": "jedes Jahr",
       "once": "einmal"
-    }
+    },
+    "removeYes": "Ja, entfernen"
   },
   "assistantName": {
     "pronoun": "Pronomen (Dänisch)",
@@ -1265,6 +1296,7 @@
     "directShort": "direkt",
     "stops": "{n} Umstiege",
     "book": "Buchen",
+    "sponsored": "Anzeige · Dialogbot erhält eine Provision",
     "overBudget": "{n} Reisen lagen über dem Budget.",
     "disclaimer": "Die Preise kommen direkt von den Anbietern und können sich ändern. Du buchst und zahlst beim Anbieter – Dialogbot bucht nicht."
   },
@@ -1589,7 +1621,56 @@
     "yourApps": "Deine Apps",
     "all": "Alle {n}",
     "stripStep": "Schritt {n} von {total} – Einrichtung fortsetzen",
-    "accountLine": "{n|1 App an|# Apps an}"
+    "accountLine": "{n|1 App an|# Apps an}",
+    "allOn": "Du hast alle Apps. Neue kommen laufend dazu.",
+    "sayLike": "Sag z. B. „{example}“",
+    "about": "Über die App",
+    "planIncludedAll": "In allen Plänen enthalten.",
+    "planTextTrialAll": "{name} ist in allen Plänen enthalten. Teste 14 Tage gratis – die Karte wird erst nach der Testphase belastet.",
+    "planTextEndedAll": "{name} ist in allen Plänen enthalten. Wähle einen Plan, um sie zu nutzen.",
+    "planTextBasis": "Du hast Basis. {name} ist in Plus und Familie enthalten.",
+    "onInMine": "{n|1 App ist aktiv|# Apps sind aktiv} – siehe Meine Apps",
+    "yourThings": "Deine Einträge hier ({n})"
+  },
+  "familyHousehold": {
+    "title": "Haushalt",
+    "count": "{count} von {limit} Personen",
+    "ownerText": "Familie gilt für bis zu {limit} Personen. Jede Person hat ein eigenes Konto – niemand sieht die Sachen der anderen.",
+    "invite": "In den Haushalt einladen",
+    "smsText": "Du bist in meiner Dialogbot Familie - mach hier mit: {link}",
+    "me": "du",
+    "remove": "Entfernen",
+    "removeConfirm": "{name} aus dem Haushalt entfernen? {name} verliert Familie sofort, behält aber die eigenen Sachen.",
+    "memberLine": "Du bist in der Familie von {name}.",
+    "leave": "Haushalt verlassen",
+    "leaveConfirm": "Haushalt verlassen? Du verlierst Familie sofort. Deine Sachen bleiben.",
+    "left": "Du hast den Haushalt verlassen.",
+    "paused": "Der Haushalt ist pausiert – er braucht Familie.",
+    "full": "Der Haushalt ist voll.",
+    "inviteTitle": "Mach mit in der Familie von {name}",
+    "inviteText": "Du bekommst den Familie-Plan auf deinem eigenen Konto. {name} sieht deine Sachen nicht.",
+    "join": "Mitmachen",
+    "joined": "Du bist im Haushalt."
+  },
+  "myData": {
+    "title": "Deine Daten",
+    "exportText": "Erhalte alles, was wir über dich speichern, per E-Mail.",
+    "export": "Meine Daten exportieren",
+    "queued": "Wir sammeln deine Daten. Du bekommst eine E-Mail mit einem Link.",
+    "ready": "Deine Daten sind bereit.",
+    "download": "Daten herunterladen",
+    "expired": "Der Link ist abgelaufen. Fordere deine Daten erneut an.",
+    "delete": "Mein Konto löschen",
+    "deleteText": "Alles in Dialogbot Privat wird gelöscht, und dein Abo endet. Ein verbleibendes Anrufguthaben verfällt und wird nicht erstattet. Das kann nicht rückgängig gemacht werden.",
+    "deleteLabel": "Gib zur Bestätigung deine E-Mail ein",
+    "deleteConfirm": "Alles endgültig löschen",
+    "cancel": "Abbrechen",
+    "deleting": "Wird gelöscht …"
+  },
+  "inviteOg": {
+    "wishlist": "{name} hat die Wunschliste mit dir geteilt",
+    "list": "{name} hat eine Liste mit dir geteilt",
+    "generic": "Du bist zu einer Liste eingeladen"
   },
   "problem": {
     "notFoundTitle": "Diese Seite gibt es nicht",

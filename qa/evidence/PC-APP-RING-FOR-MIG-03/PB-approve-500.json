@@ -1,0 +1,14 @@
+{
+ "plain": {
+  "status": 500,
+  "body": "{\"code\":\"internal_error\",\"message\":\"Der skete en fejl hos os. Prøv igen.\",\"field_errors\":[],\"request_id\":\"57d7a1d37d5a4c2a85f68c27b0b91ac1\"}",
+  "request_id": "57d7a1d37d5a4c2a85f68c27b0b91ac1",
+  "calls": "dialling/-"
+ },
+ "at_next_open": {
+  "status": 200,
+  "body": "{\"id\":\"c1f69dfe-fe41-49b6-9114-a8f94410766a\",\"kind\":\"call\",\"title\":\"Aflever cyklen hos Cykelværkstedet torsdag efter kl. 15\",\"status\":\"in_progress\",\"next_step\":\"Assistenten ringer op\",\"due_at\":null,\"who\":\"Assistenten\",\"usage_text\":\"Opkald 1 af 10 i Plus\",\"is_example\":false,\"created_at\":\"2026-11-11T1",
+  "request_id": "8d45006d4be846299fead3cd6cde0ada",
+  "calls": "in_progress/qa_call_6"
+ }
+}

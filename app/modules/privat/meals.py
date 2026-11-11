@@ -162,7 +162,10 @@ def save_plan(db: OrmSession, ctx, *, title: str, days: list[dict], shopping: bo
     if shopping and ingredients:
         shop = service.create_digital(db, ctx, kind="list", title=f"Indkøb til {(title or 'madplanen').lower()}"[:300],
                                       items=ingredients, list_type="shopping")
-    appdata.update(db, ctx.ws_id, ADDON, last_plan_id=str(plan.id), last_plan_at=rules.now().isoformat())
+    # The lists this app made, so «Slet appens data» takes them too (app_status.delete_data, F-PA-01).
+    made = list(appdata.get(db, ctx.ws_id, ADDON).get("lists") or [])
+    made += [{"task_id": str(t.id)} for t in (plan, shop) if t is not None]
+    appdata.update(db, ctx.ws_id, ADDON, last_plan_id=str(plan.id), last_plan_at=rules.now().isoformat(), lists=made[-200:])
     return plan, shop
 
 

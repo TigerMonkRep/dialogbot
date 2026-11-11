@@ -16,10 +16,10 @@ export function HomeScreenGuide() {
       <div className="flex gap-3 items-start">
         <svg width="86" height="150" viewBox="0 0 86 150" aria-hidden className="shrink-0">
           <rect x="2" y="2" width="82" height="146" rx="14" fill="#fff" stroke="#14213D" strokeWidth="3" />
-          <rect x="10" y="16" width="66" height="104" rx="4" fill="#EEF4FB" />
-          <rect x="16" y="24" width="20" height="20" rx="5" fill="#2456F6" />
+          <rect x="10" y="16" width="66" height="104" rx="4" className="fill-panel" />
+          <rect x="16" y="24" width="20" height="20" rx="5" className="fill-accent" />
           <rect x="10" y="124" width="66" height="18" rx="3" fill="#fff" stroke="#D6DEEA" strokeWidth="1.5" />
-          <g transform="translate(36 125)" fill="none" stroke="#2456F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <g transform="translate(36 125)" fill="none" className="stroke-accent" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="2" y="6" width="10" height="9" rx="1.5" /><path d="M7 1v9M4 4l3-3 3 3" />
           </g>
           <circle cx="43" cy="133" r="12" fill="none" stroke="#FFCF3F" strokeWidth="3" />

@@ -141,7 +141,9 @@ def test_the_website_price_table_is_the_markets_table():
         "setup": prices.SPECIALIST_SETUP_NET_MINOR}
     assert table["privat"]["DKK"] == {p["key"]: {"monthly": p["monthly_minor"], "yearly_monthly": p["yearly_monthly_minor"],
                                                  "yearly_total": p["yearly_total_minor"]} for p in prices.PRIVAT_PLANS}
-    assert table["privatCreditPack"]["DKK"] == prices.PRIVAT_CREDIT_PACK_GROSS_MINOR
+    assert table["privatExtraCall"]["DKK"] == {"answered": 500, "voicemail": 125, "no_answer": 31, "minute": 250, "max": 1750}
+    assert table["privatTopups"]["DKK"] == list(prices.PRIVAT_TOPUPS_GROSS_MINOR) and "privatCreditPack" not in table
+    assert table["privatBalance"]["DKK"] == {"welcome": 1000, "referral": 1000, "extra_task": 300}
     assert table["includedMinutes"] == prices.INCLUDED_MINUTES and table["privatTrialDays"] == prices.PRIVAT_TRIAL_DAYS
     assert table["localeCurrency"] == {"da": "DKK", "sv": "SEK", "no": "NOK", "en": "EUR", "de": "EUR", "es": "EUR", "fr": "EUR", "it": "EUR"}
 
@@ -209,3 +211,67 @@ def test_a_big_price_figure_carries_its_currency_once():
             assert re.fullmatch(r"\{p\w+\}", amount), (loc, amount_key, amount)
             bare = amount.endswith("Num}")
             assert bare == ("{pCur}" in unit), (loc, amount_key, amount, unit_key, unit)
+
+
+# F-PDEC-03 (Fürster 2026-11-11): Dialogbot Privat's own consumer terms (/privat/vilkaar, legal.json → privatTerms).
+# Every price in them is a {p…} token; each token below names where its amount lives in web/src/lib/prices.json (the
+# export of app/modules/billing/markets.py) – per currency, so every market's terms state its own prices.
+PRIVAT_TERMS_TOKENS = {
+    **{f"p{name}": ("privat", plan, "monthly") for name, plan in (("Basis", "basis"), ("Plus", "plus"), ("Familie", "familie"))},
+    **{f"p{name}Year": ("privat", plan, "yearly_monthly") for name, plan in (("Basis", "basis"), ("Plus", "plus"), ("Familie", "familie"))},
+    **{f"p{name}YearTotal": ("privat", plan, "yearly_total") for name, plan in (("Basis", "basis"), ("Plus", "plus"), ("Familie", "familie"))},
+    "pXAnswered": ("privatExtraCall", "answered"), "pXVoicemail": ("privatExtraCall", "voicemail"),
+    "pXNoAnswer": ("privatExtraCall", "no_answer"), "pXMinute": ("privatExtraCall", "minute"), "pXMax": ("privatExtraCall", "max"),
+    "pTopup1": ("privatTopups", 0), "pTopup2": ("privatTopups", 1), "pTopup3": ("privatTopups", 2),
+    "pWelcome": ("privatBalance", "welcome"), "pReferral": ("privatBalance", "referral"),
+    "pExtraTask": ("privatBalance", "extra_task"), "pTrialDays": ("privatTrialDays",),
+}
+# Amounts written out instead of a token ("49 kr.", "€6.49", "17,50 DKK") – the terms must carry none.
+WRITTEN_AMOUNT = re.compile(r"\d[\d.,  ]*\s?(?:kr\b\.?|DKK|SEK|NOK|EUR|€)|€\s?\d")
+
+
+def test_the_privat_terms_exist_in_every_language_with_every_price_from_prices_json():
+    from app.modules.privat import market
+
+    table = json.loads((ROOT / "web/src/lib/prices.json").read_text(encoding="utf-8"))
+    ts_tokens = set(re.findall(r'"(p\w+)"', re.search(r"PRICE_TOKENS = \[([^\]]*)\]",
+                                                      (ROOT / "web/src/lib/markets.ts").read_text(encoding="utf-8")).group(1)))
+    for token, path in PRIVAT_TERMS_TOKENS.items():
+        assert token in ts_tokens, (token, "not filled in by lib/markets.ts")
+        for cur in table["currencies"]:
+            v = table
+            for i, k in enumerate(path):
+                v = v[k]
+                if i == 0 and k != "privatTrialDays":
+                    v = v[cur]  # every price table is per currency
+            assert isinstance(v, int) and v > 0, (token, cur, path)
+    da = json.loads((ROOT / "web/src/i18n/messages/da/legal.json").read_text(encoding="utf-8"))["privatTerms"]
+    for loc in LOCALES:
+        terms = json.loads((ROOT / f"web/src/i18n/messages/{loc}/legal.json").read_text(encoding="utf-8"))["privatTerms"]
+        text = json.dumps(terms, ensure_ascii=False)
+        used = set(re.findall(r"\{(p[A-Z]\w*)\}", text))
+        assert used <= set(PRIVAT_TERMS_TOKENS), (loc, "token without a prices.json source", used - set(PRIVAT_TERMS_TOKENS))
+        assert used == set(PRIVAT_TERMS_TOKENS), (loc, "price missing from the terms", set(PRIVAT_TERMS_TOKENS) - used)
+        assert not WRITTEN_AMOUNT.search(text), (loc, "a written-out amount", WRITTEN_AMOUNT.search(text).group(0))
+        # versioned like the business terms v2; the version is the one Stripe Checkout records (terms_version)
+        assert terms["version"] == market.TERMS_VERSION, loc
+        assert re.search(rf"\b{market.TERMS_VERSION}\b", terms["updated"]) and "2026" in terms["updated"], loc
+        assert [len(s["body"]) for s in terms["sections"]] == [len(s["body"]) for s in da["sections"]], loc
+        assert "/privatliv" in text and "forbrug.dk" in text and "Forbrugerklagenævnet" in text, loc
+        refund = terms["sections"][7]["body"][5]  # 8. Opkaldssaldo: no refund on cancel/delete, no «write to us first»
+        assert refund["type"] == "p" and "parts" not in refund and "14" in refund["text"], loc
+    assert "Version 1 · gældende fra 11. november 2026." == da["updated"]
+    da_text = json.dumps(da, ensure_ascii=False)
+    for promise in ("14 dages fortrydelsesret", "én prøveperiode pr. konto og pr. betalingskort",
+                    "udløber ikke, så længe kontoen findes", "slettes efter 90 dage", "gælder i 7 dage",
+                    "tilbagekalder vi adgangen hos Google", "«Annonce»", "30 dages varsel", "fair use",
+                    # Fürster 2026-11-11: no refund of unused balance on cancel/delete – only the 14-day withdrawal
+                    "ubrugt saldo refunderes ikke", "den ubrugte del af den optankning"):
+        assert promise.lower() in da_text.lower(), promise
+    # the page, and every Privat place that leads to a Checkout, links the Privat terms – never the business terms
+    page = (ROOT / "web/src/app/privat/vilkaar/page.tsx").read_text(encoding="utf-8")
+    assert '"legal.privatTerms.sections"' in page and 'audience="privat"' in page
+    landing = (ROOT / "web/src/app/privat/page.tsx").read_text(encoding="utf-8")
+    assert 'href="/privat/vilkaar"' in landing and 'href="/vilkaar"' not in landing
+    for f in ("account.tsx", "sheets.tsx"):
+        assert 'href="/privat/vilkaar"' in (ROOT / f"web/src/components/privat/{f}").read_text(encoding="utf-8"), f

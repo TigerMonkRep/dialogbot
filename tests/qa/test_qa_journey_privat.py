@@ -116,7 +116,8 @@ def test_jp_verify_mail_is_privat_and_lands_on_a_privat_route(api, db, mails, pv
     ev, mail = next((e, m) for e, m in mails if e.event_type == "email.verify_address")
     assert_privat_mail(mail, "verify")
     page = (WEB_APP / "verify-email" / "page.tsx").read_text(encoding="utf-8")
-    assert 'setAfter("/privat/konto")' in page and (WEB_APP / "privat" / "(app)" / "konto" / "page.tsx").exists()
+    # qa/privat-deep: without `next` on to the plans, opened (/privat/konto?planer=1)
+    assert 'setAfter("/privat/konto?planer=1")' in page and (WEB_APP / "privat" / "(app)" / "konto" / "page.tsx").exists()
 
 
 def test_jp_verify_mail_in_all_8_languages(api, mails, pv):
@@ -453,8 +454,7 @@ def test_jp08_invite_accepted_has_a_next_action(api, pv, mails):
 
 # --------------------------------------------------------------------------- F-JP-09  billing mails / portal
 
-@pytest.mark.xfail(strict=True, reason="F-JP-09: Dialogbot sends no Privat mail when a renewal fails (only Stripe's "
-                                       "account-level, Erhverv-branded mail, if any)")
+# F-JP-09 (mail part) fixed on qa/privat-deep: billing.customer_mails → privat_mails.billing (F-PBQ-08)
 def test_jp09_failed_renewal_sends_a_privat_mail(api, pv, client, db, monkeypatch):
     fake_stripe(monkeypatch)
     tok = pv.account("mette@testmail.dk")

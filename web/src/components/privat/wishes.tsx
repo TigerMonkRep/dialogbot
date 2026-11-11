@@ -27,7 +27,8 @@ function useMoney(): Fmt {
 }
 
 /** Every error from the API arrives in Danish with a code; the field it belongs to is in field_errors. */
-function errText(e: unknown): string { return (e as ApiError)?.message || "Noget gik galt. Prøv igen."; }
+/** The API's own (translated) message, else the generic one in the user's language (F-PX: no hard-coded Danish). */
+function errText(e: unknown, t: (k: string) => string): string { return (e as ApiError)?.message || t("errors.generic"); }
 
 // ---------------------------------------------------------------- the list
 
@@ -44,7 +45,7 @@ export function WishList({ task, withAdd }: { task: Task; withAdd: boolean }) {
   return (
     <div className="@container flex flex-col gap-3">
       {owner && withAdd && (
-        <Button className={`${BIG} self-start gap-2`} onClick={() => setAdding(true)} data-testid="add-wish"><Ico name="plus" size={18} />{t("wish.add")}</Button>
+        <Button variant="outline" className="self-start gap-2 rounded-full" onClick={() => setAdding(true)} data-testid="add-wish"><Ico name="plus" size={18} />{t("wish.add")}</Button>
       )}
       {items.length === 0 && <p className="m-0 text-[14px] text-muted">{t("list.emptyItems")}</p>}
       <ul className="list-none m-0 p-0 grid grid-cols-1 @lg:grid-cols-2 gap-3" data-testid="wish-grid">
@@ -64,7 +65,7 @@ export function WishList({ task, withAdd }: { task: Task; withAdd: boolean }) {
 }
 
 /** The product picture: never cropped (object-contain on a calm panel), a neutral placeholder without a photo. */
-function WishImage({ item, size = "sm", className = "" }: { item: TaskItem; size?: "sm" | "lg"; className?: string }) {
+function WishImage({ item, size = "sm", className = "", iconSize = 44 }: { item: TaskItem; size?: "sm" | "lg"; className?: string; iconSize?: number }) {
   const t = useT("privat");
   const src = imgSrc(size === "sm" ? item.image?.url_sm : item.image?.url);
   const [failed, setFailed] = useState(false);
@@ -76,7 +77,7 @@ function WishImage({ item, size = "sm", className = "" }: { item: TaskItem; size
           className="absolute inset-0 w-full h-full object-contain p-2" />
       ) : (
         <span className="flex flex-col items-center gap-1 text-muted" role="img" aria-label={t("wish.noImage")}>
-          <Ico name="gift" size={44} stroke={1.6} />
+          <Ico name="gift" size={iconSize} stroke={1.6} />
         </span>
       )}
     </div>
@@ -105,17 +106,22 @@ function WishCard({ task, item, owner, onDetails, onJoin }: { task: Task; item: 
   const ownerGift = !giverGift && g && (g as OwnerGroupGift).enabled;
   return (
     <article className="h-full rounded-[18px] border-2 border-ink bg-paper text-ink p-3 flex flex-col gap-2" data-testid="wish-card" aria-label={item.text}>
-      <button type="button" onClick={onDetails} className="block w-full text-left rounded-[14px] focus-visible:outline-2" aria-label={t("wish.detailsOf", { title: item.text })}>
-        <WishImage item={item} />
-      </button>
-      <div className="flex flex-wrap gap-1.5">
-        {(giverGift || ownerGift) && <Pill tone="highlight">{t("wish.groupGift")}</Pill>}
-        {item.archived && <Pill>{t("wish.removedByOwner")}</Pill>}
+      {/* Compact (ux-audit #6): a thumbnail beside the title – no 200 px empty placeholder; the sheet shows it large. */}
+      <div className="flex items-start gap-3">
+        <button type="button" onClick={onDetails} className="shrink-0 w-[72px] rounded-[12px] focus-visible:outline-2" aria-label={t("wish.detailsOf", { title: item.text })}>
+          <WishImage item={item} className="!aspect-square !rounded-[12px]" iconSize={28} />
+        </button>
+        <div className="flex-1 min-w-0 flex flex-col gap-1">
+          <h4 className="m-0 font-display font-bold text-[17px] leading-tight [overflow-wrap:anywhere]">{item.text}</h4>
+          <PriceLine item={item} className="!text-[15px]" />
+          {(giverGift || ownerGift || item.archived) && <div className="flex flex-wrap gap-1.5">
+            {(giverGift || ownerGift) && <Pill tone="highlight">{t("wish.groupGift")}</Pill>}
+            {item.archived && <Pill>{t("wish.removedByOwner")}</Pill>}
+          </div>}
+          {facts(item, t).length > 0 && <p className="m-0 text-[13px] text-ink-soft [overflow-wrap:anywhere]">{facts(item, t).join(" · ")}</p>}
+          {item.note && <p className="m-0 text-[13px] text-ink-soft line-clamp-2 [overflow-wrap:anywhere]">{item.note}</p>}
+        </div>
       </div>
-      <h4 className="m-0 font-display font-bold text-[17px] leading-tight [overflow-wrap:anywhere]">{item.text}</h4>
-      <PriceLine item={item} />
-      {facts(item, t).length > 0 && <p className="m-0 text-[13px] text-ink-soft [overflow-wrap:anywhere]">{facts(item, t).join(" · ")}</p>}
-      {item.note && <p className="m-0 text-[13px] text-ink-soft line-clamp-2 [overflow-wrap:anywhere]">{item.note}</p>}
       {giverGift && <GiftProgress gift={giverGift} compact />}
       <div className="mt-auto flex flex-wrap gap-2 pt-1">
         {item.link && (
@@ -256,7 +262,7 @@ function GiftPanel({ task, item, gift, onJoin }: { task: Task; item: TaskItem; g
   const [to, setTo] = useState("");
   const act = async (fn: () => Promise<unknown>) => {
     setBusy(true); setErr(null);
-    try { await fn(); await refresh(); } catch (e) { setErr(errText(e)); } finally { setBusy(false); }
+    try { await fn(); await refresh(); } catch (e) { setErr(errText(e, t)); } finally { setBusy(false); }
   };
   const mine = gift.my_pledge_minor != null;
   return (
@@ -339,7 +345,7 @@ function PledgeSheet({ task, item, gift, onClose }: { task: Task; item: TaskItem
       const x = e as ApiError & { remaining_minor?: number };
       key.current = newKey();
       if (x.code === "pledge_exceeds_remaining" && x.remaining_minor) { setProposal(x.remaining_minor); setErr(null); }
-      else setErr(errText(e));
+      else setErr(errText(e, t));
       await refresh().catch(() => {});
     } finally { setBusy(false); }
   };
@@ -429,12 +435,12 @@ function SearchStep({ onPick, onFallback }: { onPick: (imp: WishImport) => void;
     if (q.trim().length < 2) return;
     setState("loading"); setErr("");
     try { const r = await api.searchWishes(q.trim()); setRows(r.results); setState("done"); }
-    catch (x) { const a = x as ApiError; if (a.code === "search_unavailable") setState("unavailable"); else { setErr(errText(x)); setState("error"); } }
+    catch (x) { const a = x as ApiError; if (a.code === "search_unavailable") setState("unavailable"); else { setErr(errText(x, t)); setState("error"); } }
   };
   const pick = async (r: WishSearchResult) => {
     setState("picking");
     try { onPick(await api.importWish(r.link)); }
-    catch (x) { setErr(errText(x)); setState("error"); }
+    catch (x) { setErr(errText(x, t)); setState("error"); }
   };
   if (state === "unavailable") {
     return (
@@ -497,7 +503,7 @@ function LinkStep({ onDone, onManual }: { onDone: (imp: WishImport) => void; onM
     if (!link.trim()) return;
     setBusy(true); setErr("");
     try { onDone(await api.importWish(link.trim())); }
-    catch (x) { setErr(errText(x)); }
+    catch (x) { setErr(errText(x, t)); }
     finally { setBusy(false); }
   };
   return (
@@ -586,14 +592,14 @@ function WishForm({ task, item, imported, linkOnly, onDone, onBack }: { task: Ta
       setOffers(offer);
       if (imp.price_minor != null && !offer.price) setPriceFromShop({ at: imp.fetched_at });
       if (!imp.readable) setErr({ msg: t("wish.couldNotRead") });
-    } catch (x) { setErr({ field: "link", msg: errText(x) }); }
+    } catch (x) { setErr({ field: "link", msg: errText(x, t) }); }
     finally { setFetching(false); }
   };
   const upload = async (file: File | undefined) => {
     if (!file) return;
     setUploading(true); setErr(null);
     try { const r = await api.uploadWishImage(file); setV((x) => ({ ...x, imageKey: r.image_key, image: r.image, imageOrigin: "upload" })); }
-    catch (x) { setErr({ field: "image", msg: errText(x) }); }
+    catch (x) { setErr({ field: "image", msg: errText(x, t) }); }
     finally { setUploading(false); if (fileRef.current) fileRef.current.value = ""; }
   };
   const save = async (e: React.FormEvent) => {
@@ -623,7 +629,7 @@ function WishForm({ task, item, imported, linkOnly, onDone, onBack }: { task: Ta
       onDone();
     } catch (x) {
       const a = x as ApiError;
-      setErr({ field: a.field_errors?.[0]?.field, msg: a.field_errors?.[0]?.message || errText(x) });
+      setErr({ field: a.field_errors?.[0]?.field, msg: a.field_errors?.[0]?.message || errText(x, t) });
     } finally { setBusy(false); }
   };
   const fe = (k: string) => (err?.field === k ? err.msg : null);

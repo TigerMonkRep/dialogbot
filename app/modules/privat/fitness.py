@@ -9,6 +9,7 @@ gym (brand.offer("fitness")), if configured.
 """
 from __future__ import annotations
 
+import re
 import uuid
 from datetime import date, timedelta
 
@@ -29,8 +30,32 @@ DAYS = ("mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag", "søndag"
 KEEP_LOG = 400
 
 
+# Words about the body (GDPR art. 9). The promise «Gemmer aldrig vægt, sygdom … medicin» is kept HERE, on the server,
+# not only in the model's prompt: a sentence that mentions one of them is never stored (PC-APP-03).
+HEALTH = re.compile(
+    r"\b(vej(?:er|ede|e)|vægt|kilo|\d+[.,]?\d*\s*kg|bmi|blodtryk\w*|\w*medicin\w*|pille\w*|tablet\w*|diabet\w*|"
+    r"insulin|blodsukker|kolesterol|sygdom\w*|syg|diagnose\w*|gravid\w*|hjerte\w*|astma|depressi\w*|angst|"
+    r"smerte\w*|skade\w*|skadet|operation\w*|opereret|allergi\w*|migræne|kræft|sclerose|gigt|puls|"
+    r"tab(?:e|t)\s+mig|tage\s+på|menstruation\w*|overvægt\w*|undervægt\w*|spiseforstyrrelse\w*|stress\w*|sygemeld\w*)\b", re.I)
+
+
+def without_health(text: str | None) -> str:
+    """The text with every sentence (or part between commas/«og») that mentions the body removed."""
+    if not text:
+        return ""
+    keep = []
+    for sentence in re.split(r"(?<=[.!?;])\s+|\n+", text):
+        if not HEALTH.search(sentence):
+            keep.append(sentence)
+            continue
+        parts = [p for p in re.split(r",\s*|\s+(?:og|men)\s+", sentence) if p.strip() and not HEALTH.search(p)]
+        if parts and len(parts) < len(re.split(r",\s*|\s+(?:og|men)\s+", sentence)):
+            keep.append(", ".join(parts).strip(" .,"))
+    return " ".join(x.strip() for x in keep if x.strip()).strip(" .,;")
+
+
 def set_goal(db: OrmSession, ws_id: uuid.UUID, goal: str) -> dict:
-    return appdata.update(db, ws_id, ADDON, goal=kit.clean(goal, 200) or None)
+    return appdata.update(db, ws_id, ADDON, goal=kit.clean(without_health(goal), 200) or None)
 
 
 def plan(db: OrmSession, ws_id: uuid.UUID, workouts: list[dict], *, replace: bool = False) -> list[dict]:
@@ -39,7 +64,7 @@ def plan(db: OrmSession, ws_id: uuid.UUID, workouts: list[dict], *, replace: boo
     for w in workouts[:14]:
         day = kit.key_of(str(w.get("day") or ""))
         day = next((d for d in DAYS if day.startswith(d[:3])), None)
-        activity = kit.clean(w.get("activity"), 60)
+        activity = kit.clean(without_health(str(w.get("activity") or "")), 60)
         if not day or not activity:
             raise ValidationFailed("Skriv dag og aktivitet, fx «tirsdag: løb 30 min»", field_errors=[{"field": "day"}])
         row = {"id": kit.new_id(), "day": day, "activity": activity[:1].upper() + activity[1:],
@@ -54,7 +79,7 @@ def plan(db: OrmSession, ws_id: uuid.UUID, workouts: list[dict], *, replace: boo
 
 
 def log(db: OrmSession, ws_id: uuid.UUID, *, activity: str, minutes: int | None = None, when=None) -> dict:
-    activity = kit.clean(activity, 60)
+    activity = kit.clean(without_health(activity), 60)
     if not activity:
         raise ValidationFailed("Hvad trænede du?", field_errors=[{"field": "activity"}])
     d = kit.parse_date(when, "date") or _today().isoformat()

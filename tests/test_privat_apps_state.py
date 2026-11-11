@@ -105,3 +105,39 @@ def test_checkout_carries_the_app(api, pv, monkeypatch):
     assert d["success_url"].endswith("&app=kalender")
     api.post(tok, "/privat/subscription/checkout", {"plan": "plus", "app": "findes-ikke"})
     assert "app" not in _sessions(sent)[-1]["metadata"]
+
+
+def test_plan_app_stops_when_the_plan_lapses_and_comes_back_with_its_data(api, pv, db):
+    """PC-ENT-02/03 (decision Fürster 2026-11-10): an app that needs a plan stops when the plan no longer applies – no
+    use, no reminders – but keeps its data and runs again when the plan is back. Free apps are not affected."""
+    from app.modules.privat import appdata
+
+    tok = pv.account("ent-02@testmail.dk")  # trial = Plus
+    ws = pv.ws(tok)
+    assert api.post(tok, "/privat/addons/kaeledyr/enable").status_code == 200
+    pv.say(tok, "Vores kat Misser skal vaccineres 2027-03-01")
+    assert api.get(tok, "/privat/apps/kaeledyr/overview").status_code == 200
+    pv.expire_trial(tok)
+    r = api.get(tok, "/privat/apps/kaeledyr/overview")
+    assert r.status_code == 403 and r.json()["code"] == "needs_plan", r.text
+    card = next(a for a in api.get(tok, "/privat/addons").json() if a["key"] == "kaeledyr")
+    assert card["needs_plan"] is True
+    db.expire_all()
+    assert "kaeledyr" not in addons.enabled_keys(db, ws)
+    assert appdata.get(db, ws, "kaeledyr").get("items")  # the data is kept
+    pv.set_plan(tok, "plus")
+    db.expire_all()
+    assert "kaeledyr" in addons.enabled_keys(db, ws)
+    over = api.get(tok, "/privat/apps/kaeledyr/overview").json()
+    assert any("Misser" in i["text"] for i in over["items"])
+
+
+def test_first_setup_step_counts_as_done_when_the_app_has_data(api, pv):
+    """F-UX-04: Fødselsdage with Sofie saved stood on «Trin 1 af 3» – an app with data has its first step done."""
+    tok = pv.account("ux04@testmail.dk")
+    assert api.post(tok, "/privat/addons/foedselsdage/enable").status_code == 200
+    card = next(a for a in api.get(tok, "/privat/addons").json() if a["key"] == "foedselsdage")
+    assert card["setup"]["done"] == 0
+    assert api.post(tok, "/privat/birthdays", {"name": "Sofie", "date": "2019-12-03"}).status_code in (200, 201)
+    card = next(a for a in api.get(tok, "/privat/addons").json() if a["key"] == "foedselsdage")
+    assert card["summary_line"] and card["setup"]["done"] >= 1

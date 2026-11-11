@@ -138,6 +138,12 @@ def fake_request(method: str, path: str, data: dict | None = None, **_k) -> dict
             if sub is None:
                 raise stripe_api.StripeFailed("Stripe afviste kaldet: No such subscription")
             return sub
+        if method == "DELETE" and path.startswith("/subscriptions/"):  # cancel now (the duplicate guard, F-PK-01)
+            sub = SUBS.get(path.rsplit("/", 1)[1])
+            if sub is None:
+                raise stripe_api.StripeFailed("Stripe afviste kaldet: No such subscription")
+            sub.update(status="canceled", ended_at=int(rules.now().timestamp()))
+            return sub
         if method == "POST" and path == "/billing_portal/sessions":
             return {"url": f"{FRONT}/privat/konto"}
     raise stripe_api.StripeFailed(f"qa fake Stripe: {method} {path} is not simulated")
@@ -154,7 +160,9 @@ DIALLED: list[dict] = []
 def fake_create_call(payload: dict) -> dict:
     with LOCK:
         DIALLED.append({"at": datetime.now(UTC).isoformat(), "payload": payload})
-        return {"id": f"qa_call_{len(DIALLED)}"}
+        # unique across restarts and DELETE /__qa/calls: the DB keeps private_calls.vapi_call_id (UNIQUE), so a counter
+        # that starts again at 1 made «Godkend opkald» answer 500 UniqueViolation (PB, 2026-11-10)
+        return {"id": f"qa_call_{len(DIALLED)}_{uuid.uuid4().hex[:8]}"}
 
 
 campaigns.create_call = fake_create_call  # type: ignore[assignment]
@@ -230,6 +238,11 @@ def _complete(s: dict) -> str:
                                             "price": {"recurring": {"interval": interval}}}]}}
         s["subscription"] = sub_id
     s.update(status="complete", customer=cust, payment_status="no_payment_required" if trial else "paid")
+    if p.get("mode") == "payment":  # real Stripe always reports what was paid; the top-up webhook checks it
+        items = p.get("line_items") or []
+        s["amount_total"] = sum(int((li.get("price_data") or {}).get("unit_amount") or 0) * int(li.get("quantity") or 1)
+                                for li in items)
+        s.setdefault("currency", ((items[0].get("price_data") or {}).get("currency") if items else None) or "dkk")
     threading.Thread(target=_webhook, args=({"id": f"evt_qa_{uuid.uuid4().hex[:16]}", "type": "checkout.session.completed",
                                              "data": {"object": _session_obj(s)}},), daemon=True).start()
     return (p.get("success_url") or "/").replace("{CHECKOUT_SESSION_ID}", s["id"])

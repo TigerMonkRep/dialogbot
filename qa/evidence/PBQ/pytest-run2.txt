@@ -1,0 +1,592 @@
+.....x......F.......................................................FFx. [ 78%]
+...........x.....xFEFE                                                   [100%]
+==================================== ERRORS ====================================
+____________ ERROR at teardown of test_pc_inv_08_referral_caps_hold ____________
+
+self = <sqlalchemy.engine.base.Connection object at 0x7efcc452f350>
+dialect = <sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg object at 0x7efcc4511a90>
+context = <sqlalchemy.dialects.postgresql.psycopg.PGExecutionContext_psycopg object at 0x7efcc0286360>
+statement = <sqlalchemy.dialects.postgresql.psycopg.PGCompiler_psycopg object at 0x7efcc3dbec10>
+parameters = [{}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -> CursorResult[Unpack[TupleAny]]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        evt_handled: bool = False
+        try:
+            if self._has_events or self.engine._has_events:
+                for fn in self.dispatch.before_cursor_execute:
+                    str_statement, effective_parameters = fn(
+                        self,
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                        context.executemany,
+                    )
+    
+            if self._echo:
+                self._log_info(str_statement)
+    
+                stats = context._get_cache_stats()
+    
+                if not self.engine.hide_parameters:
+                    self._log_info(
+                        "[%s] %r",
+                        stats,
+                        sql_util._repr_params(
+                            effective_parameters,
+                            batches=10,
+                            ismulti=context.executemany,
+                        ),
+                    )
+                else:
+                    self._log_info(
+                        "[%s] [SQL parameters hidden due to "
+                        "hide_parameters=True]",
+                        stats,
+                    )
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+>                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:1943: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py:1180: in do_execute
+    cursor.execute(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <psycopg.Cursor [closed] [IDLE] (host=localhost user=postgres database=qa_pd6) at 0x7efcc1f34110>
+query = 'TRUNCATE telephony_tests, sales_qualifications, sales_open_questions, sales_media_access_log, call_recordings, sales_..._snapshots, private_phone_codes, private_lookups, idempotency_keys, business_booking_profiles RESTART IDENTITY CASCADE'
+params = {}, prepare = None, binary = None
+
+    def execute(
+        self,
+        query: Query,
+        params: Params | None = None,
+        *,
+        prepare: bool | None = None,
+        binary: bool | None = None,
+    ) -> Self:
+        """
+        Execute a query or command to the database.
+        """
+        try:
+            with self._conn.lock:
+                self._conn.wait(
+                    self._execute_gen(query, params, prepare=prepare, binary=binary)
+                )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           psycopg.errors.UndefinedTable: relation "telephony_tests" does not exist
+
+../venv/lib/python3.13/site-packages/psycopg/cursor.py:117: UndefinedTable
+
+The above exception was the direct cause of the following exception:
+
+    @pytest.fixture(autouse=True)
+    def clean_tables():
+        yield
+        engine = get_engine()
+        tables = [t.name for t in reversed(Base.metadata.sorted_tables)]
+        with engine.begin() as conn:
+>           conn.execute(text("TRUNCATE " + ", ".join(tables) + " RESTART IDENTITY CASCADE"))
+
+tests/conftest.py:54: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:1448: in execute
+    return meth(
+../venv/lib/python3.13/site-packages/sqlalchemy/sql/elements.py:533: in _execute_on_connection
+    return connection._execute_clauseelement(
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:1668: in _execute_clauseelement
+    ret = self._execute_context(
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:1822: in _execute_context
+    return self._exec_single_context(
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:1962: in _exec_single_context
+    self._handle_dbapi_exception(
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:2332: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:1943: in _exec_single_context
+    self.dialect.do_execute(
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py:1180: in do_execute
+    cursor.execute(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <psycopg.Cursor [closed] [IDLE] (host=localhost user=postgres database=qa_pd6) at 0x7efcc1f34110>
+query = 'TRUNCATE telephony_tests, sales_qualifications, sales_open_questions, sales_media_access_log, call_recordings, sales_..._snapshots, private_phone_codes, private_lookups, idempotency_keys, business_booking_profiles RESTART IDENTITY CASCADE'
+params = {}, prepare = None, binary = None
+
+    def execute(
+        self,
+        query: Query,
+        params: Params | None = None,
+        *,
+        prepare: bool | None = None,
+        binary: bool | None = None,
+    ) -> Self:
+        """
+        Execute a query or command to the database.
+        """
+        try:
+            with self._conn.lock:
+                self._conn.wait(
+                    self._execute_gen(query, params, prepare=prepare, binary=binary)
+                )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "telephony_tests" does not exist
+E           [SQL: TRUNCATE telephony_tests, sales_qualifications, sales_open_questions, sales_media_access_log, call_recordings, sales_message_requests, sales_meetings, sales_call_events, campaign_calls, calls, sales_simulations, campaign_contacts, sales_scripts, sales_policy_decisions, sales_offers, sales_contact_basis, private_gift_pledges, funnel_drafts, voice_sessions, telephony_setups, tasks, sales_contacts, private_referrals, private_household_members, private_group_gifts, private_business_referrals, own_voice_recordings, external_business_contacts, demo_calls, campaigns, bookings, workspace_voice_settings, webhook_endpoints, voice_versions, sales_source_facts, sales_profiles, private_task_members, private_task_items, private_task_events, private_messages, private_invites, private_calls, private_appointments, phone_numbers, own_voice_projects, leads, knowledge_versions, email_deliveries, credit_ledger, conversation_messages, commission_entries, browser_runs, action_runs, workspace_categories, webchat_settings, voice_usage, voice_profiles, telephony_jobs, telephony_costs, telephony_accounts, stt_test_runs, source_imports, social_media, setup_task_states, sessions, sales_companies, report_settings, referrals, referral_clicks, reception_scripts, reception_agreements, push_subscriptions, private_tasks, private_subscriptions, private_profiles, private_group_members, private_group_links, private_business_searches, private_birthdays, private_bills, private_app_data, private_addon_state, private_addon_enabled, outbox_events, oauth_states, notification_reads, memberships, language_settings, knowledge_items, invoices, invitations, integration_connections, goal_selections, do_not_call, discount_redemptions, daily_reports, conversations, check_results, business_profiles, booking_types, booking_settings, billing_accounts, audit_log, assistant_requests, assistant_proposals, api_keys, ambassador_payouts, ai_usage, workspaces, voice_rights_records, social_prospects, social_posts, site_documents, sales_search_jobs, sales_integration_notes, sales_industries, sales_data_requests, sales_block_list, private_groups, private_data_exports, discount_codes, auth_tokens, ambassadors, webhook_events, waitlist_signups, users, social_credentials, social_account_snapshots, private_phone_codes, private_lookups, idempotency_keys, business_booking_profiles RESTART IDENTITY CASCADE]
+E           (Background on this error at: https://sqlalche.me/e/21/f405)
+
+../venv/lib/python3.13/site-packages/psycopg/cursor.py:117: ProgrammingError
+----------------------------- Captured stdout call -----------------------------
+{"error": "UndefinedTable", "sqlstate": "42P01", "path": "/api/v1/auth/verify-email", "request_id": "a32ac3409cb34398b51e083f2f732aca", "event": "db.error", "method": "POST", "level": "error", "timestamp": "2026-11-10T21:39:36.667261Z"}
+_ ERROR at teardown of test_pc_acc_04_invoices_only_through_the_stripe_portal __
+
+self = <sqlalchemy.engine.base.Connection object at 0x7efcc1f37590>
+dialect = <sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg object at 0x7efcc4511a90>
+context = <sqlalchemy.dialects.postgresql.psycopg.PGExecutionContext_psycopg object at 0x7efcc0286cf0>
+statement = <sqlalchemy.dialects.postgresql.psycopg.PGCompiler_psycopg object at 0x7efcc3dbec10>
+parameters = [{}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -> CursorResult[Unpack[TupleAny]]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        evt_handled: bool = False
+        try:
+            if self._has_events or self.engine._has_events:
+                for fn in self.dispatch.before_cursor_execute:
+                    str_statement, effective_parameters = fn(
+                        self,
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                        context.executemany,
+                    )
+    
+            if self._echo:
+                self._log_info(str_statement)
+    
+                stats = context._get_cache_stats()
+    
+                if not self.engine.hide_parameters:
+                    self._log_info(
+                        "[%s] %r",
+                        stats,
+                        sql_util._repr_params(
+                            effective_parameters,
+                            batches=10,
+                            ismulti=context.executemany,
+                        ),
+                    )
+                else:
+                    self._log_info(
+                        "[%s] [SQL parameters hidden due to "
+                        "hide_parameters=True]",
+                        stats,
+                    )
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+>                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:1943: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py:1180: in do_execute
+    cursor.execute(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <psycopg.Cursor [closed] [IDLE] (host=localhost user=postgres database=qa_pd6) at 0x7efcc21bce90>
+query = 'TRUNCATE telephony_tests, sales_qualifications, sales_open_questions, sales_media_access_log, call_recordings, sales_..._snapshots, private_phone_codes, private_lookups, idempotency_keys, business_booking_profiles RESTART IDENTITY CASCADE'
+params = {}, prepare = None, binary = None
+
+    def execute(
+        self,
+        query: Query,
+        params: Params | None = None,
+        *,
+        prepare: bool | None = None,
+        binary: bool | None = None,
+    ) -> Self:
+        """
+        Execute a query or command to the database.
+        """
+        try:
+            with self._conn.lock:
+                self._conn.wait(
+                    self._execute_gen(query, params, prepare=prepare, binary=binary)
+                )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           psycopg.errors.UndefinedTable: relation "telephony_tests" does not exist
+
+../venv/lib/python3.13/site-packages/psycopg/cursor.py:117: UndefinedTable
+
+The above exception was the direct cause of the following exception:
+
+    @pytest.fixture(autouse=True)
+    def clean_tables():
+        yield
+        engine = get_engine()
+        tables = [t.name for t in reversed(Base.metadata.sorted_tables)]
+        with engine.begin() as conn:
+>           conn.execute(text("TRUNCATE " + ", ".join(tables) + " RESTART IDENTITY CASCADE"))
+
+tests/conftest.py:54: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:1448: in execute
+    return meth(
+../venv/lib/python3.13/site-packages/sqlalchemy/sql/elements.py:533: in _execute_on_connection
+    return connection._execute_clauseelement(
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:1668: in _execute_clauseelement
+    ret = self._execute_context(
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:1822: in _execute_context
+    return self._exec_single_context(
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:1962: in _exec_single_context
+    self._handle_dbapi_exception(
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:2332: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:1943: in _exec_single_context
+    self.dialect.do_execute(
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py:1180: in do_execute
+    cursor.execute(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <psycopg.Cursor [closed] [IDLE] (host=localhost user=postgres database=qa_pd6) at 0x7efcc21bce90>
+query = 'TRUNCATE telephony_tests, sales_qualifications, sales_open_questions, sales_media_access_log, call_recordings, sales_..._snapshots, private_phone_codes, private_lookups, idempotency_keys, business_booking_profiles RESTART IDENTITY CASCADE'
+params = {}, prepare = None, binary = None
+
+    def execute(
+        self,
+        query: Query,
+        params: Params | None = None,
+        *,
+        prepare: bool | None = None,
+        binary: bool | None = None,
+    ) -> Self:
+        """
+        Execute a query or command to the database.
+        """
+        try:
+            with self._conn.lock:
+                self._conn.wait(
+                    self._execute_gen(query, params, prepare=prepare, binary=binary)
+                )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "telephony_tests" does not exist
+E           [SQL: TRUNCATE telephony_tests, sales_qualifications, sales_open_questions, sales_media_access_log, call_recordings, sales_message_requests, sales_meetings, sales_call_events, campaign_calls, calls, sales_simulations, campaign_contacts, sales_scripts, sales_policy_decisions, sales_offers, sales_contact_basis, private_gift_pledges, funnel_drafts, voice_sessions, telephony_setups, tasks, sales_contacts, private_referrals, private_household_members, private_group_gifts, private_business_referrals, own_voice_recordings, external_business_contacts, demo_calls, campaigns, bookings, workspace_voice_settings, webhook_endpoints, voice_versions, sales_source_facts, sales_profiles, private_task_members, private_task_items, private_task_events, private_messages, private_invites, private_calls, private_appointments, phone_numbers, own_voice_projects, leads, knowledge_versions, email_deliveries, credit_ledger, conversation_messages, commission_entries, browser_runs, action_runs, workspace_categories, webchat_settings, voice_usage, voice_profiles, telephony_jobs, telephony_costs, telephony_accounts, stt_test_runs, source_imports, social_media, setup_task_states, sessions, sales_companies, report_settings, referrals, referral_clicks, reception_scripts, reception_agreements, push_subscriptions, private_tasks, private_subscriptions, private_profiles, private_group_members, private_group_links, private_business_searches, private_birthdays, private_bills, private_app_data, private_addon_state, private_addon_enabled, outbox_events, oauth_states, notification_reads, memberships, language_settings, knowledge_items, invoices, invitations, integration_connections, goal_selections, do_not_call, discount_redemptions, daily_reports, conversations, check_results, business_profiles, booking_types, booking_settings, billing_accounts, audit_log, assistant_requests, assistant_proposals, api_keys, ambassador_payouts, ai_usage, workspaces, voice_rights_records, social_prospects, social_posts, site_documents, sales_search_jobs, sales_integration_notes, sales_industries, sales_data_requests, sales_block_list, private_groups, private_data_exports, discount_codes, auth_tokens, ambassadors, webhook_events, waitlist_signups, users, social_credentials, social_account_snapshots, private_phone_codes, private_lookups, idempotency_keys, business_booking_profiles RESTART IDENTITY CASCADE]
+E           (Background on this error at: https://sqlalche.me/e/21/f405)
+
+../venv/lib/python3.13/site-packages/psycopg/cursor.py:117: ProgrammingError
+----------------------------- Captured stdout call -----------------------------
+{"error": "UndefinedTable", "sqlstate": "42P01", "path": "/api/v1/auth/register", "request_id": "9440dac813904666acf9bb53346d2262", "event": "db.error", "method": "POST", "level": "error", "timestamp": "2026-11-10T21:39:37.341000Z"}
+=================================== FAILURES ===================================
+_________ test_pc_sub_13_ui_trial_canceled_does_not_promise_the_charge _________
+
+    def test_pc_sub_13_ui_trial_canceled_does_not_promise_the_charge():
+        """F-PBQ-04-PC-SUB-13 (S2): Konto in a canceled trial still says «Derefter Plus til 99 kr./md.» – the trial line
+        must respect cancelAtPeriodEnd («Opsagt – slutter <dato>»)."""
+        src = (ROOT / "web/src/components/privat/account.tsx").read_text()
+        line = next(x for x in src.splitlines() if 'p.status === "trial" && <p' in x)
+>       assert "cancelAtPeriodEnd" in line, line.strip()[:200]
+E       AssertionError: {p.status === "trial" && <p className="m-0 text-[15px]">{t("plan.trialLine", { n: p.trialDays })} <span className="text-ink-soft">{p.plan === "none" ? t("plan.trialThenNone") : t("plan.trialThen", { p
+E       assert 'cancelAtPeriodEnd' in '        {p.status === "trial" && <p className="m-0 text-[15px]">{t("plan.trialLine", { n: p.trialDays })} <span class... t("plan.trialThenNone") : t("plan.trialThen", { plan: p.rightsName, price: p.monthlyText(p.rightsKey) })}</span></p>}'
+
+tests/qa/test_qa_pd_billing.py:401: AssertionError
+______ test_pc_sub_21_paid_with_a_promotion_code_still_grants_the_credits ______
+
+api = <tests.conftest.Api object at 0x7efcc1fb75f0>
+client = <starlette.testclient.TestClient object at 0x7efcc3124f30>
+pv = <tests.privat_fixtures.Pv object at 0x7efcc02b9f70>
+stripe = <test_qa_pd_billing.FakeStripe object at 0x7efcc1fb7bf0>
+db = <sqlalchemy.orm.session.Session object at 0x7efcc024d220>
+
+    def test_pc_sub_21_paid_with_a_promotion_code_still_grants_the_credits(api, client, pv, stripe, db):
+        """F-PBQ-03-PC-SUB-21 (S1): the credit checkout shows Stripe's code field (allow_promotion_codes=true), but the
+        webhook ignores any session with amount_total below the list price – a customer who pays 14,50 kr. with a valid
+        50 % code gets nothing (paid, no credits). Either grant on payment_status=paid or drop the code field."""
+        tok = pv.account("pbq21promo@testmail.dk", trial=False)
+        assert api.post(tok, "/privat/credits/checkout", {}).status_code == 200
+        d = stripe.payload()
+>       assert d.get("allow_promotion_codes") is True
+E       AssertionError: assert None is True
+E        +  where None = <built-in method get of dict object at 0x7efcc21a87c0>('allow_promotion_codes')
+E        +    where <built-in method get of dict object at 0x7efcc21a87c0> = {'mode': 'payment', 'line_items': [{'quantity': 1, 'price_data': {'currency': 'dkk', 'unit_amount': 2900, 'tax_behavio...kr. moms)'}}, 'tax_rates': ['txr_dk_vat_2500_incl']}], 'locale': 'da', 'customer_email': 'pbq21promo@testmail.dk', ...}.get
+
+tests/qa/test_qa_pd_billing.py:578: AssertionError
+----------------------------- Captured stdout call -----------------------------
+________________ test_credit_pack_refund_takes_the_credits_back ________________
+
+api = <tests.conftest.Api object at 0x7efcc1f00ef0>
+client = <starlette.testclient.TestClient object at 0x7efcc21de190>
+pv = <tests.privat_fixtures.Pv object at 0x7efcc2d07650>
+stripe = <test_qa_pd_billing.FakeStripe object at 0x7efcc1f037d0>
+db = <sqlalchemy.orm.session.Session object at 0x7efcc39846e0>
+
+    def test_credit_pack_refund_takes_the_credits_back(api, client, pv, stripe, db):
+        """F-PBQ-05-PC-SUB-21 (S2): a refunded credit pack (charge.refunded) changes nothing in the ledger."""
+        tok = pv.account("pbq21refund@testmail.dk", trial=False)
+        api.post(tok, "/privat/credits/checkout", {})
+        d = stripe.payload()
+        sid = list(stripe.sessions)[-1]
+        _event(client, _evt("checkout.session.completed", {"id": sid, "mode": "payment", "currency": "dkk",
+                                                            "amount_total": 2900, "payment_status": "paid",
+                                                            "payment_intent": "pi_pbq", "metadata": d["metadata"]}))
+        refund = {"id": "ch_pbq", "object": "charge", "payment_intent": "pi_pbq", "amount": 2900, "amount_refunded": 2900,
+                  "refunded": True, "metadata": d["metadata"]}
+        try:
+            _event(client, _evt("charge.refunded", refund))
+        except AssertionError:
+            pass  # the fake has no /invoice_payments – the handler looks for an Erhverv invoice
+        db.expire_all()
+        bal = sum(r.amount for r in db.query(CreditLedger).filter_by(workspace_id=pv.ws(tok)))
+>       assert bal == 3, f"after a full refund the balance is {bal} (3 welcome + 10 refunded pack)"
+E       AssertionError: after a full refund the balance is 13 (3 welcome + 10 refunded pack)
+E       assert 13 == 3
+
+tests/qa/test_qa_pd_billing.py:605: AssertionError
+----------------------------- Captured stdout call -----------------------------
+______________________ test_pc_inv_08_referral_caps_hold _______________________
+
+api = <tests.conftest.Api object at 0x7efcc1ad9130>
+pv = <tests.privat_fixtures.Pv object at 0x7efcc1adb110>
+db = <sqlalchemy.orm.session.Session object at 0x7efcc1db2c60>
+
+    from tests.test_privat_sharing import _accept
+    
+    teen = pv.account("teen-cap@testmail.dk")
+    link = api.post(teen, "/privat/referrals/link").json()
+    _accept(api, teen, link["token"])  # self
+    for i in range(11):
+        alt = pv.user(f"teen-cap+{i}@testmail.dk", f"Alt{i} Teen")
+>       _accept(api, alt, link["token"])
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/qa/test_qa_pd_billing.py:889: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/privat_fixtures.py:37: in user
+    self.api.verify(tok)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <tests.conftest.Api object at 0x7efcc1ad9130>
+token = 'YJbEcuOX5qF7FcEL9EF4gKecvdJlPkKicu5KL45-RbA'
+
+    def verify(self, token: str) -> None:
+        raw = self.mailbox_link(token, "Bekræft", r"verify-email\?token=([A-Za-z0-9_\-]+)")
+        r = self.c.post(f"{self.base}/auth/verify-email", json={"token": raw})
+>       assert r.status_code == 200, r.text
+E       AssertionError: {"code":"internal_error","message":"Der skete en fejl hos os. Prøv igen.","field_errors":[],"request_id":"a32ac3409cb34398b51e083f2f732aca"}
+E       assert 500 == 200
+E        +  where 500 = <Response [500 Internal Server Error]>.status_code
+
+tests/conftest.py:116: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{"error": "UndefinedTable", "sqlstate": "42P01", "path": "/api/v1/auth/verify-email", "request_id": "a32ac3409cb34398b51e083f2f732aca", "event": "db.error", "method": "POST", "level": "error", "timestamp": "2026-11-10T21:39:36.667261Z"}
+____________ test_pc_acc_04_invoices_only_through_the_stripe_portal ____________
+
+api = <tests.conftest.Api object at 0x7efcc1b01910>
+client = <starlette.testclient.TestClient object at 0x7efcc20392b0>
+pv = <tests.privat_fixtures.Pv object at 0x7efcc1b00770>
+stripe = <test_qa_pd_billing.FakeStripe object at 0x7efcc1b006b0>
+db = <sqlalchemy.orm.session.Session object at 0x7efcc1d2b5c0>
+app = <fastapi.applications.FastAPI object at 0x7efcc5aee0d0>
+
+    tok = pv.account("pbq-acc04@testmail.dk", trial=False)
+>   r = api.post(tok, "/privat/subscription/portal")
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/qa/test_qa_pd_billing.py:907: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/privat_fixtures.py:44: in account
+    tok = self.user(email, name)
+          ^^^^^^^^^^^^^^^^^^^^^^
+tests/privat_fixtures.py:35: in user
+    self.api.register(email, name=name)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <tests.conftest.Api object at 0x7efcc1b01910>
+email = 'pbq-acc04@testmail.dk', name = 'Mette Hansen'
+password = 'CorrectHorse!42', intent = 'reception'
+
+    def register(self, email: str, name: str = "Test", password: str = "CorrectHorse!42", intent="reception"):
+        r = self.c.post(f"{self.base}/auth/register", json={"email": email, "password": password,
+                                                            "display_name": name, "signup_intent": intent})
+>       assert r.status_code == 201, r.text
+E       AssertionError: {"code":"internal_error","message":"Der skete en fejl hos os. Prøv igen.","field_errors":[],"request_id":"9440dac813904666acf9bb53346d2262"}
+E       assert 500 == 201
+E        +  where 500 = <Response [500 Internal Server Error]>.status_code
+
+tests/conftest.py:91: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{"error": "UndefinedTable", "sqlstate": "42P01", "path": "/api/v1/auth/register", "request_id": "9440dac813904666acf9bb53346d2262", "event": "db.error", "method": "POST", "level": "error", "timestamp": "2026-11-10T21:39:37.341000Z"}
+=========================== short test summary info ============================
+FAILED tests/qa/test_qa_pd_billing.py::test_pc_sub_13_ui_trial_canceled_does_not_promise_the_charge
+FAILED tests/qa/test_qa_pd_billing.py::test_pc_sub_21_paid_with_a_promotion_code_still_grants_the_credits
+FAILED tests/qa/test_qa_pd_billing.py::test_credit_pack_refund_takes_the_credits_back
+FAILED tests/qa/test_qa_pd_billing.py::test_pc_inv_08_referral_caps_hold - As...
+FAILED tests/qa/test_qa_pd_billing.py::test_pc_acc_04_invoices_only_through_the_stripe_portal
+XFAIL tests/qa/test_qa_pd_billing.py::test_pc_sub_06_new_email_same_card_is_refused_a_second_trial - F-PBQ-02-PC-SUB-06: needs-decision – a new e-mail with the same card gets a new 14-day trial (one trial per ACCOUNT, no card-fingerprint check)
+XFAIL tests/qa/test_qa_pd_billing.py::test_pc_ent_02_plan_apps_stop_when_the_plan_ends - F-PBQ-06-PC-ENT-02: needs-decision (Fürster) – plan apps keep working after the plan ends: addons.require() checks enabled only (addons.py:9-10, 808-812)
+XFAIL tests/qa/test_qa_pd_billing.py::test_pc_ent_07_free_account_cannot_activate_drafts - F-PQ-03-X09 (open, needs-decision): a free account activates drafts via welcome credit / simulated sponsor – regression only, no duplicate
+XFAIL tests/qa/test_qa_pd_billing.py::test_pc_inv_08_self_referral_farm_without_any_plan - F-PQ-03-X09 consequence (no duplicate): via welcome-credit activation a FREE alt-account becomes an 'active invitee' and pays the inviter +3 credits

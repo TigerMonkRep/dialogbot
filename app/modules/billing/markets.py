@@ -89,9 +89,75 @@ PRIVAT: dict[Currency, dict[str, dict[str, int]]] = {
             "plus": {"monthly": 1349, "yearly_monthly": 1079, "yearly_total": 12948},
             "familie": {"monthly": 2249, "yearly_monthly": 1799, "yearly_total": 21588}},
 }
-# Ten Privat credits ("ekstra opkald"), incl. VAT.
-PRIVAT_CREDIT_PACK: dict[Currency, int] = {"DKK": prices.PRIVAT_CREDIT_PACK_GROSS_MINOR, "SEK": 4500, "NOK": 4500,
-                                           "EUR": 399}
+# Dialogbot Privat's extra calls (beyond the plan's calls a month), Fürster's decision 2026-11-11: Erhverv's net price
+# by outcome (decided 2026-11-10) + 25 % moms – the Privat rule in every currency (the same gross price in every
+# country of a currency, Danish VAT, see the module docstring) – rounded half up to a whole øre/öre/cent ONCE, in
+# prices.gross_minor.
+# answered / voicemail / no_answer: the call by outcome; minute: per started minute of conversation (answered calls);
+# max: the most one extra call costs (Erhverv's max per contact: 2 attempts answered + 3 minutes) = what is reserved.
+EXTRA_CALL_OUTCOMES = ("answered", "voicemail", "no_answer")
+
+
+def privat_extra_call(currency: str) -> dict[str, int]:
+    e = ERHVERV[_cur(currency)]
+    cap = prices.MAX_PER_CONTACT_ATTEMPTS * e["call_answered"] + prices.MAX_PER_CONTACT_MINUTES * e["outbound_extra_minute"]
+    return {"answered": prices.gross_minor(e["call_answered"]), "voicemail": prices.gross_minor(e["call_voicemail"]),
+            "no_answer": prices.gross_minor(e["call_no_answer"]), "minute": prices.gross_minor(e["outbound_extra_minute"]),
+            "max": prices.gross_minor(cap)}
+
+
+def privat_extra_call_price(currency: str, outcome: str, minutes: int) -> int:
+    """What one extra call costs: its outcome price + started minutes (only an answered call has minutes), never more
+    than `max`."""
+    p = privat_extra_call(currency)
+    if outcome not in EXTRA_CALL_OUTCOMES:
+        raise ValueError(f"unknown outcome {outcome!r}")
+    return min(p[outcome] + (max(0, minutes) * p["minute"] if outcome == "answered" else 0), p["max"])
+
+
+def privat_extra_call_text(currency: str = "DKK") -> str:
+    """«5 kr. besvaret, 1,25 kr. telefonsvarer, 0,31 kr. ubesvaret + 2,50 kr. pr. påbegyndt minut, højst 17,50 kr.»"""
+    p = privat_extra_call(currency)
+    f = lambda k: fmt(p[k], currency)  # noqa: E731
+    return (f"{f('answered')} besvaret, {f('voicemail')} telefonsvarer, {f('no_answer')} ubesvaret + {f('minute')} pr. "
+            f"påbegyndt minut, højst {f('max')}")
+
+
+# The Opkaldssaldo's own amounts (INCL. VAT, minor units): top-ups, the welcome and referral bonus, the extra task.
+# Round, explicit numbers per currency (decision Fürster 2026-11-11) – NOT derived from DKK with a factor. DKK stays in
+# prices.py. (The extra-call prices above are not round on purpose: Erhverv's net price × moms.)
+PRIVAT_BALANCE: dict[Currency, dict] = {
+    "DKK": {"topups": prices.PRIVAT_TOPUPS_GROSS_MINOR, "welcome": prices.PRIVAT_WELCOME_BONUS_MINOR,
+            "referral": prices.PRIVAT_REFERRAL_BONUS_MINOR, "extra_task": prices.PRIVAT_EXTRA_TASK_MINOR},
+    "SEK": {"topups": (7_500, 15_000, 30_000), "welcome": 1_500, "referral": 1_500, "extra_task": 300},
+    "NOK": {"topups": (7_500, 15_000, 30_000), "welcome": 1_500, "referral": 1_500, "extra_task": 300},
+    "EUR": {"topups": (700, 1_500, 3_000), "welcome": 150, "referral": 150, "extra_task": 30},
+}
+BALANCE_AMOUNTS = ("welcome", "referral", "extra_task")
+
+
+def privat_balance_amount(currency: str, key: str) -> int:
+    """The welcome bonus, the referral bonus or the extra task in `currency` (PRIVAT_BALANCE)."""
+    if key not in BALANCE_AMOUNTS:
+        raise ValueError(f"unknown amount {key!r}")
+    return PRIVAT_BALANCE[_cur(currency)][key]
+
+
+def privat_from_dkk(dkk_minor: int, currency: str) -> int:
+    """Any OTHER DKK balance in another currency – only `ledger.adopt_currency` (what is left of a DKK balance after the
+    welcome bonus): × the market's factor (the ratio of Erhverv's minute price to the Danish one: SEK 1,475,
+    NOK 1,575, EUR 0,135), rounded half up to a whole öre/øre/cent. Never used for the amounts in PRIVAT_BALANCE."""
+    c = _cur(currency)
+    num, den = ERHVERV[c]["outbound_extra_minute"], ERHVERV["DKK"]["outbound_extra_minute"]
+    return (dkk_minor * num + den // 2) // den
+
+
+def privat_topups(currency: str) -> tuple[int, ...]:
+    return tuple(PRIVAT_BALANCE[_cur(currency)]["topups"])
+
+
+PRIVAT_EXTRA_CALL: dict[Currency, dict[str, int]] = {}
+PRIVAT_TOPUPS: dict[Currency, tuple[int, ...]] = {}
 
 
 def currency_for_country(country: str | None) -> Currency:
@@ -115,6 +181,10 @@ def _cur(currency: str) -> Currency:
     if c not in CURRENCIES:
         raise ValueError(f"unknown currency {currency!r}")
     return c  # type: ignore[return-value]
+
+
+PRIVAT_EXTRA_CALL.update({c: privat_extra_call(c) for c in CURRENCIES})
+PRIVAT_TOPUPS.update({c: privat_topups(c) for c in CURRENCIES})
 
 
 # --------------------------------------------------------------------------- VAT
@@ -206,5 +276,8 @@ def export() -> dict:
         "privatTrialDays": prices.PRIVAT_TRIAL_DAYS,
         "erhverv": ERHVERV,
         "privat": PRIVAT,
-        "privatCreditPack": PRIVAT_CREDIT_PACK,
+        "privatExtraCall": PRIVAT_EXTRA_CALL,
+        "privatTopups": {c: list(v) for c, v in PRIVAT_TOPUPS.items()},
+        # the Opkaldssaldo's bonuses and the extra task in each currency (PRIVAT_BALANCE), for the website's texts
+        "privatBalance": {c: {k: privat_balance_amount(c, k) for k in BALANCE_AMOUNTS} for c in CURRENCIES},
     }

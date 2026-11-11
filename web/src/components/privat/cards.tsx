@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui";
-import { useRaw, useT } from "@/i18n/client";
+import { useLocale, useRaw, useT } from "@/i18n/client";
 import { ADDON, CONFLICT, type Task } from "@/lib/privat/api";
 import type { ApiError, ApiError as ClientApiError } from "@/lib/client";
 import type { ChatMessage } from "@/lib/privat/api";
@@ -13,6 +13,7 @@ import { useFmt, usePlan, usePrivat } from "./store";
 import { addonIncluded, addonText } from "./addons";
 import { PushPrompt } from "./push";
 import { isDanishMobile } from "@/lib/privat/fake";
+import { saldo } from "@/lib/privat/saldo";
 import { platformOf, smsHref } from "@/lib/privat/sms";
 import { WishList } from "./wishes";
 import { DesignButton, WishCover } from "./wish-design";
@@ -29,7 +30,8 @@ const isOwner = (t: Task) => !t.my_role || t.my_role === "owner";
 
 /** A list in all its shapes: own list, shared group list (who added / ticked off), wishlist for the owner (never any
  *  reservation info) and wishlist for the others («Jeg køber den» / «Fortryd» / «Reserveret»). */
-export function ListBody({ task, withAdd = false }: { task: Task; withAdd?: boolean }) {
+/** `compact` (the card in the conversation): a wishlist shows its count, not the cards – the task page has them. */
+export function ListBody({ task, withAdd = false, compact = false }: { task: Task; withAdd?: boolean; compact?: boolean }) {
   const t = useT("privat");
   const { run, simulated, fake, addonOn, openSheet } = usePrivat();
   const wish = isWish(task);
@@ -40,11 +42,16 @@ export function ListBody({ task, withAdd = false }: { task: Task; withAdd?: bool
   const others = (task.members ?? []).filter((m) => !m.is_me);
   return (
     <div className="flex flex-col gap-2.5">
-      {task.shared && (task.members?.length ?? 0) > 0 && (
+      {task.shared && (task.members?.length ?? 0) > 0 && (!owner || others.length > 0) && (
         <div className="flex items-center gap-2.5 flex-wrap">
           <Avatars names={(task.members ?? []).map((m) => m.name)} />
           <span className="text-[13px] text-ink-soft min-w-0">{owner ? t("list.sharedWith", { names: others.map((m) => m.name).join(", ") || "–" }) : t("list.sharedBy", { name: task.members?.find((m) => m.role === "owner")?.name ?? "" })}</span>
         </div>
+      )}
+      {canShare && withAdd && !task.shared && (
+        <Button className={`${BIG} rounded-full self-start gap-2`} onClick={() => openSheet({ kind: "share", taskId: task.id })} data-testid="share-first">
+          <Ico name="share" size={18} />{wish ? t("list.shareWish") : t("list.share")}
+        </Button>
       )}
       {wish && owner && <p className="m-0 text-[13px] text-muted">{t("list.ownerNote")}</p>}
       {!wish && task.items.length === 0 && <p className="m-0 text-[14px] text-muted">{t("list.emptyItems")}</p>}
@@ -56,7 +63,7 @@ export function ListBody({ task, withAdd = false }: { task: Task; withAdd?: bool
           <span className="text-[12px] text-muted">{task.partner.name} · {task.partner.note}</span>
         </a>
       )}
-      {wish && <WishList task={task} withAdd={withAdd && canEdit && owner} />}
+      {wish && !compact && <WishList task={task} withAdd={withAdd && canEdit && owner} />}
       {!wish && <ul className="list-none m-0 p-0 flex flex-col gap-0.5">
         {task.items.map((it) => (
           <li key={it.id} className="flex flex-col">
@@ -85,7 +92,7 @@ export function ListBody({ task, withAdd = false }: { task: Task; withAdd?: bool
             {/* A meal plan's day carries its ingredients; any list item can carry a note or a link. */}
             {!wish && it.note && <span className="pl-10 -mt-1 pb-1 text-[13px] text-ink-soft [overflow-wrap:anywhere]">{it.note}</span>}
             {!wish && it.link && <a href={it.link} target="_blank" rel="noopener noreferrer nofollow" className="pl-10 -mt-1 pb-1 text-[13px] text-accent underline [overflow-wrap:anywhere]">{t("list.openLink")}</a>}
-            {(it.added_by_name || it.done_by_name) && (
+            {task.shared && (it.added_by_name || it.done_by_name) && (
               <span className="pl-10 -mt-1 pb-1 text-[12px] text-muted">
                 {[it.added_by_name ? t("list.addedBy", { name: it.added_by_name, item: it.text.toLowerCase() }) : null, it.done && it.done_by_name ? t("list.doneBy", { name: it.done_by_name }) : null].filter(Boolean).join(" · ")}
               </span>
@@ -97,7 +104,7 @@ export function ListBody({ task, withAdd = false }: { task: Task; withAdd?: bool
       {!withAdd && <span className="text-[13px] text-muted">{t("list.count", { n: task.items.length, done: doneCount })}</span>}
       <div className="flex flex-wrap gap-2 items-center">
         {wish && owner && withAdd && task.list_type === "wishlist" && <DesignButton task={task} />}
-        {canShare && (
+        {canShare && (task.shared || !withAdd) && (
           <Button variant="outline" icon={undefined} onClick={() => openSheet({ kind: "share", taskId: task.id })} className="gap-2">
             <Ico name="share" size={18} />{task.shared ? t("list.shareManage") : t("list.share")}
           </Button>
@@ -192,7 +199,7 @@ function AddItem({ task, wish }: { task: Task; wish: boolean }) {
 
 export function ListCard({ task }: { task: Task }) {
   const t = useT("privat");
-  const { talk } = usePrivat();
+  const { talk, openTask } = usePrivat();
   return (
     <div className={CARD}>
       {task.design && isWish(task) && task.design.customized && <WishCover title={task.title} design={task.design} compact />}
@@ -204,7 +211,8 @@ export function ListCard({ task }: { task: Task }) {
         </div>
         {task.is_example && <Ex />}
       </div>
-      <ListBody task={task} />
+      <ListBody task={task} compact />
+      {isWish(task) && <Button variant="outline" className="rounded-full self-start" onClick={() => openTask(task.id)}>{t("list.open")}</Button>}
       <button type="button" className={LINK} onClick={() => talk(task.id)}>{t("list.talk")}</button>
     </div>
   );
@@ -225,7 +233,6 @@ export function ReminderCard({ task }: { task: Task }) {
         </div>
       </div>
       <PushPrompt moment="reminder" />
-      <span className="text-[13px] text-muted">{task.usage_text}</span>
     </div>
   );
 }
@@ -311,20 +318,25 @@ export function CallCard({ task }: { task: Task }) {
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [isBusiness, setIsBusiness] = useState(false);
+  const [planGone, setPlanGone] = useState(false);
   const [number, setNumber] = useState("");
   useEffect(() => { setWin(c.window); }, [c.window]);
   const mobile = c.is_mobile ?? isDanishMobile(c.phone_e164);
   const noNumber = c.phone_e164 === null || (c.phone_e164 === undefined && !c.phone_display);
   const closed = c.open_now === false;
   const swap = (s: string) => (win && win !== c.window ? s.split(c.window).join(win) : s);
-  const credits = balance?.credits ?? 0;
-  // The plan's monthly quota pays first; credits («ekstra opkald») when it is used up or there is no plan.
+  const locale = useLocale();
+  const sd = saldo(balance, locale);
+  // The plan's monthly quota pays first; an extra call (from the Opkaldssaldo, its maximum reserved) only when a plan's
+  // quota is used up. Without a plan «Ring for mig» stops: only «Kræver en plan» → Konto (decision 2026-11-11).
   const viaPlan = plan.entitled && plan.callsLeft > 0;
+  const needsPlan = !plan.entitled || planGone;
   const approve = async (phoneJustVerified = false) => {
     setErr(null);
+    if (needsPlan) { setPlanGone(true); return; }
     if (!addonOn(ADDON.call)) { openSheet({ kind: "addon", addonKey: ADDON.call }); return; }
     if (!phoneJustVerified && balance && !balance.phone_verified) { setNeedPhone(true); return; }
-    if (!viaPlan && credits < c.max_credits) { openSheet({ kind: "paywall", taskId: task.id }); return; }
+    if (!viaPlan && sd.balance < sd.maxMinor) { openSheet({ kind: "paywall", taskId: task.id }); return; }
     setBusy(true);
     try {
       await api.approveCall(task.id, { window: win, share_phone: share, ...(mobile ? { confirm_business: isBusiness } : {}), ...(closed ? { at_next_open: true } : {}) });
@@ -333,8 +345,8 @@ export function CallCard({ task }: { task: Task }) {
     catch (e) {
       const x = e as ClientApiError;
       if (x.code === CONFLICT.needsPhone) setNeedPhone(true);
-      else if (x.code === CONFLICT.insufficientCredits) openSheet({ kind: "paywall", taskId: task.id });
-      else if (x.code === CONFLICT.needsPlan) openSheet({ kind: "needsPlan", taskId: task.id });
+      else if (x.code === CONFLICT.insufficientBalance) openSheet({ kind: "paywall", taskId: task.id });
+      else if (x.code === CONFLICT.needsPlan) { setPlanGone(true); await refresh(); }
       else if (x.code === CONFLICT.addonDisabled) openSheet({ kind: "addon", addonKey: ADDON.call });
       else if (x.code === CONFLICT.demoBusiness) setErr(t("call.demoBusiness"));
       // The card was stale (no number yet / just closed / mobile number): refresh so it shows the right step, and say why.
@@ -345,9 +357,9 @@ export function CallCard({ task }: { task: Task }) {
     } finally { setBusy(false); }
   };
   const res = c.result;
-  // The backend's usage text («1 af 10 opkald i Plus · 2 min.» or «3 credits · …») wins; the credits line is the fallback.
-  const usage = task.usage_text || t("call.callUsage", { n: c.max_credits, duration: f.duration(c.duration_seconds) });
-  const noAnswerTitle = plan.entitled ? t("day2.noAnswerPlan") : t("call.noAnswerTitle", { n: c.max_credits });
+  // The backend's usage text («Opkald 1 af 10 i Plus · besvaret» or «Ekstra opkald · besvaret · 10 kr.») wins.
+  const usage = task.usage_text || t("call.callUsage", { duration: f.duration(c.duration_seconds) });
+  const noAnswerTitle = plan.entitled && c.paid_via !== "balance" ? t("day2.noAnswerPlan") : t("call.noAnswerTitle");
 
   if (task.status === "declined" || res === "declined") {
     return <div className={BAD}><h3 className="m-0 font-display font-bold text-[18px]">{t("call.declinedTitle")}</h3><p className="m-0 text-[14px] text-ink-soft">{t("call.declinedText")}</p></div>;
@@ -357,7 +369,7 @@ export function CallCard({ task }: { task: Task }) {
       <div className="rounded-[18px] border-2 border-ink bg-paper p-4 flex flex-col gap-3">
         <div className="flex gap-2 items-center flex-wrap"><Pill>{t("status.planned")}</Pill>{simulated && <Sim />}</div>
         <h3 className="m-0 font-display font-bold text-[20px] [overflow-wrap:anywhere]">{t("call.plannedTitle", { name: c.business_name, when: c.next_open_text ?? "" })}</h3>
-        <p className="m-0 text-[14px] text-ink-soft">{task.usage_text || t("call.reserved", { n: c.max_credits })}</p>
+        <p className="m-0 text-[14px] text-ink-soft">{task.usage_text || t("call.reserved", sd.vars)}</p>
         {simulated && fake && (
           <div className="flex gap-2 flex-wrap">
             <Button variant="outline" onClick={() => run((a) => (a as typeof fake).simulateOutcome(task.id, "answered"))}>{t("call.outcomeAnswered")}</Button>
@@ -373,7 +385,7 @@ export function CallCard({ task }: { task: Task }) {
       <div className="rounded-[18px] border-2 border-ink bg-accent-soft p-4 flex flex-col gap-3">
         <div className="flex gap-2 items-center flex-wrap"><Pill>{t("status.in_progress")}</Pill>{simulated && <Sim label={t("call.simulatedCall")} />}</div>
         <h3 className="m-0 font-display font-bold text-[20px] [overflow-wrap:anywhere]">{t("call.calling", { name: c.business_name })}</h3>
-        <p className="m-0 text-[14px] text-ink-soft">{task.usage_text || t("call.reserved", { n: c.max_credits })}</p>
+        <p className="m-0 text-[14px] text-ink-soft">{task.usage_text || t("call.reserved", sd.vars)}</p>
         {simulated && fake ? (
           <>
             <Eyebrow className="mt-1">{t("call.chooseOutcome")}</Eyebrow>
@@ -444,12 +456,19 @@ export function CallCard({ task }: { task: Task }) {
         [t("call.mayAgree"), swap(c.may_agree)],
         [t("call.mayNot"), c.may_not],
       ]} />
+      {needsPlan ? (
+        <div className="rounded-xl border-2 border-ink bg-highlight p-3 flex flex-col gap-2" data-testid="call-needs-plan">
+          <p className="m-0 text-[15px]">{t("call.needsPlanText")}</p>
+          <Link href="/privat/konto" className={`inline-flex items-center justify-center rounded-xl font-semibold ${BIG} bg-accent text-white hover:bg-accent-deep`}>{t("call.needsPlan")}</Link>
+        </div>
+      ) : (
       <div className="rounded-xl border-[1.5px] border-ink bg-panel p-3 flex flex-col gap-1.5">
         {viaPlan ? <span className="text-[15px]"><b>{t("day2.callQuota", { used: plan.callsUsed + 1, quota: plan.callsQuota, plan: plan.rightsName })}</b></span>
-          : <span className="text-[15px]"><b>{t("call.cost", { n: c.max_credits })}</b> {t("call.costTime")}</span>}
-        <span className="text-[14px] text-ink-soft">{t("call.refund")}</span>
+          : <span className="text-[15px]" data-testid="extra-call-price"><b>{t("call.cost", sd.vars)}</b> {t("call.costTime", sd.vars)}</span>}
+        {!viaPlan && <span className="text-[14px] text-ink-soft">{t("call.refund", sd.vars)}</span>}
         <span className="text-[14px] text-ink-soft">{t("call.price")}</span>
       </div>
+      )}
       <label className="flex items-center gap-3 min-h-[44px] cursor-pointer">
         <button type="button" role="switch" aria-checked={share} onClick={() => setShare(!share)}
           className={`relative w-12 h-7 rounded-full border-2 border-ink shrink-0 transition-colors ${share ? "bg-accent" : "bg-paper"}`}>
@@ -474,7 +493,7 @@ export function CallCard({ task }: { task: Task }) {
           <span className="flex flex-col"><span className="text-[15px] font-semibold">{t("call.isBusiness")}</span><span className="text-[13px] text-muted">{t("call.isBusinessHint")}</span></span>
         </label>
       )}
-      {!viaPlan && credits < c.max_credits && <p className="m-0 text-[14px] text-danger font-semibold">{t("call.needCredits", { have: credits, need: c.max_credits })}</p>}
+      {!needsPlan && !viaPlan && sd.balance < sd.maxMinor && <p className="m-0 text-[14px] text-danger font-semibold">{t("call.needBalance", { have: sd.fmt(sd.balance), need: sd.fmt(sd.maxMinor) })}</p>}
       {needPhone && (
         <div className="rounded-xl border-2 border-ink bg-paper p-3 flex flex-col gap-2">
           <p className="m-0 font-semibold">{t("call.phoneStep")}</p>
@@ -485,7 +504,7 @@ export function CallCard({ task }: { task: Task }) {
       )}
       {err && <p role="alert" className="m-0 text-[14px] text-danger font-semibold">{err}</p>}
       <div className="flex gap-2 flex-wrap">
-        <Button className={`${BIG} flex-[1_1_180px]`} onClick={() => approve()} disabled={busy || noNumber || (mobile && !isBusiness)}>{closed ? t("call.approveWhenOpen") : t("call.approve")}</Button>
+        {!needsPlan && <Button className={`${BIG} flex-[1_1_180px]`} onClick={() => approve()} disabled={busy || noNumber || (mobile && !isBusiness)}>{closed ? t("call.approveWhenOpen") : t("call.approve")}</Button>}
         <Button variant="outline" onClick={() => setEditing(true)}>{t("call.edit")}</Button>
         <Button variant="outline" onClick={() => run((a) => a.declineCall(task.id))}>{t("call.decline")}</Button>
       </div>

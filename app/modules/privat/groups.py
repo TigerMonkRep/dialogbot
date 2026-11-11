@@ -376,7 +376,12 @@ def join(db: OrmSession, code: str, *, principal=None, name: str | None, phone: 
             PrivatePhoneCode.created_at >= hour)) or 0
         per_phone = db.scalar(select(func.count()).select_from(PrivatePhoneCode).where(
             PrivatePhoneCode.phone_e164 == e164, PrivatePhoneCode.created_at >= hour)) or 0
-        if per_link >= CODES_PER_LINK_HOUR or per_phone >= CODES_PER_PHONE_HOUR:
+        owner_links = select(PrivateGroupLink.id).join(PrivateGroup, PrivateGroup.id == PrivateGroupLink.group_id).where(
+            PrivateGroup.owner_user_id == g.owner_user_id)
+        per_owner = db.scalar(select(func.count()).select_from(PrivatePhoneCode).where(
+            PrivatePhoneCode.purpose == "group_join", PrivatePhoneCode.ref_id.in_(owner_links),
+            PrivatePhoneCode.created_at >= hour)) or 0
+        if per_link >= CODES_PER_LINK_HOUR or per_phone >= CODES_PER_PHONE_HOUR or per_owner >= CODES_PER_OWNER_HOUR:
             raise _rate_limited("Der er sendt for mange koder. Prøv igen senere.")
         rate_check()
         lookup_limits.sms_budget(db, ip=ip, account=f"user:{g.owner_user_id}", per_account=CODES_PER_OWNER_HOUR)

@@ -1,0 +1,94 @@
+{
+  "id": "/privat/",
+  "name": "Dialogbot Privat",
+  "short_name": "Dialogbot",
+  "description": "Skriv eller sig, hvad du skal have klaret. Dialogbot laver lister, minder dig om ting og ringer for dig – men først når du har sagt ja. Prøv gratis i 14 dage.",
+  "lang": "da",
+  "start_url": "/privat/dag",
+  "scope": "/privat/",
+  "display": "standalone",
+  "display_override": [
+    "standalone"
+  ],
+  "orientation": "portrait",
+  "background_color": "#FFFBF5",
+  "theme_color": "#C4461A",
+  "icons": [
+    {
+      "src": "/icons/privat-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/privat-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/privat-icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Min dag",
+      "url": "/privat/dag",
+      "icons": [
+        {
+          "src": "/icons/privat-icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Ny opgave",
+      "url": "/privat/samtale",
+      "icons": [
+        {
+          "src": "/icons/privat-icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Opgaver",
+      "url": "/privat/opgaver",
+      "icons": [
+        {
+          "src": "/icons/privat-icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/privat-day-narrow.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Dialogbot Privat – Min dag"
+    },
+    {
+      "src": "/screenshots/privat-install-narrow.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Dialogbot Privat – læg appen på hjemmeskærmen"
+    },
+    {
+      "src": "/screenshots/privat-day-wide.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Dialogbot Privat – Min dag"
+    }
+  ]
+}

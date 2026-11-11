@@ -55,7 +55,8 @@ class ApproveIn(BaseModel):
 
 
 class ActivateIn(BaseModel):
-    method: str = Field(pattern="^(credit|sponsor)$")
+    method: str = Field(pattern="^(balance|sponsor)$",
+                        description="balance = 3 kr. fra opkaldssaldoen, sponsor = et frivilligt sponsorindslag")
 
 
 class SponsorIn(BaseModel):
@@ -81,9 +82,11 @@ class SubscriptionCheckoutIn(BaseModel):
                             description="appen (nøgle), der krævede planen: slås til, når planen er på plads")
 
 
-class CreditsCheckoutIn(BaseModel):
+class TopupCheckoutIn(BaseModel):
+    amount_minor: int | None = Field(default=None, ge=1, description="optankningen i øre inkl. moms – et af beløbene i "
+                                     "/privat/me topups_minor (DKK: 5000, 10000, 20000). Tom = det mindste")
     locale: str | None = Field(default=None, pattern=market.LOCALE_PATTERN,
-                               description="sidens sprog: Checkout-sprog og valuta (kundens abonnementsvaluta vinder)")
+                               description="sidens sprog: Checkout-sprog og valuta (kundens valuta vinder)")
 
 
 class ItemIn(BaseModel):
@@ -116,7 +119,8 @@ def _chat_out(db: OrmSession, ctx: PrivateCtx, msgs) -> dict:
 
 @router.post("/account")
 def create_account(principal: Principal = Depends(get_current_principal), db: OrmSession = Depends(get_db)):
-    """Create (idempotently) the caller's personal workspace: owner membership, no business rows, 3 welcome credits."""
+    """Create (idempotently) the caller's personal workspace: owner membership, no business rows, 10 kr. welcome bonus
+    on the Opkaldssaldo."""
     p, created = deps.ensure_account(db, principal.user)
     db.commit()
     return {"workspace_id": str(p.workspace_id), "created": created}
@@ -141,8 +145,7 @@ def bootstrap(ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(g
     out = {
         "me": me, "day": service.day(db, ctx), "tasks": own + shared,
         "messages": [service.message_out(m) for m in service.messages(db, ctx, None)],
-        "ledger": [{"id": str(r.id), "kind": r.kind, "amount": r.amount, "text": r.text, "created_at": r.created_at.isoformat()}
-                   for r in ledger.rows(db, ctx.ws_id)],
+        "ledger": [ledger.row_out(r) for r in ledger.rows(db, ctx.ws_id)],
         "addons": addons.catalog_out(db, ctx.ws_id), "referrals": referrals.summary(db, ctx),
         "groups": [groups.group_out(db, g) for g in groups.list_groups(db, ctx)],
         "subscription": subscriptions.subscription_out(db, ctx.ws_id),
@@ -196,8 +199,8 @@ def day(ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)
 
 @router.get("/ledger")
 def ledger_rows(ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
-    return [{"id": str(r.id), "kind": r.kind, "amount": r.amount, "text": r.text, "created_at": r.created_at.isoformat()}
-            for r in ledger.rows(db, ctx.ws_id)]
+    """The Opkaldssaldo's movements, newest first: amount_minor in øre of `currency` (incl. moms)."""
+    return [ledger.row_out(r) for r in ledger.rows(db, ctx.ws_id)]
 
 
 # --------------------------------------------------------------------------- tasks
@@ -642,6 +645,16 @@ def post_message(body: MessageIn, response: Response, ctx: PrivateCtx = Depends(
     return out
 
 
+@router.delete("/messages/{message_id}", status_code=204)
+def delete_message(message_id: uuid.UUID, ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
+    """Delete one chat line (chats are kept as long as the account exists unless the user deletes them)."""
+    from app.modules.privat import gdpr
+
+    gdpr.delete_message(db, ctx, message_id)
+    db.commit()
+    return Response(status_code=204)
+
+
 @router.post("/messages/{message_id}/options/{option_id}")
 def answer_option(message_id: uuid.UUID, option_id: str, ctx: PrivateCtx = Depends(private_ctx),
                   db: OrmSession = Depends(get_db)):
@@ -681,6 +694,17 @@ def retry_call(task_id: uuid.UUID, ctx: PrivateCtx = Depends(private_ctx), db: O
     t = calls.retry(db, ctx, task_id)
     db.commit()
     return service.task_out(db, t, ctx.user_id)
+
+
+@router.delete("/calls/{task_id}", status_code=204)
+def delete_call(task_id: uuid.UUID, ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
+    """Delete one finished (or never approved) call with its summary and the chat lines about it. 409 call_running
+    while it is approved, planned or running."""
+    from app.modules.privat import gdpr
+
+    gdpr.delete_call(db, ctx, task_id)
+    db.commit()
+    return Response(status_code=204)
 
 
 # --------------------------------------------------------------------------- business search and location
@@ -776,7 +800,7 @@ def push_test(ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(g
     return {"sent": n}
 
 
-# --------------------------------------------------------------------------- phone and credits
+# --------------------------------------------------------------------------- phone and Opkaldssaldo
 
 @router.post("/phone/start")
 def phone_start(body: PhoneStartIn, request: Request, ctx: PrivateCtx = Depends(private_ctx),
@@ -794,9 +818,12 @@ def phone_verify(body: PhoneVerifyIn, ctx: PrivateCtx = Depends(private_ctx), db
     return service.balance_out(db, ctx)
 
 
-@router.post("/credits/checkout")
-def credits_checkout(body: CreditsCheckoutIn | None = None, ctx: PrivateCtx = Depends(private_ctx),
+@router.post("/balance/checkout")
+def balance_checkout(body: TopupCheckoutIn | None = None, ctx: PrivateCtx = Depends(private_ctx),
                      db: OrmSession = Depends(get_db)):
-    """Stripe Checkout (mode=payment): 10 credits, 29 kr. incl. moms (or the currency's price, markets.PRIVAT_CREDIT_PACK).
-    Credits arrive with the webhook."""
-    return {"url": payments.checkout(db, ctx, locale=body.locale if body else None)}
+    """Stripe Checkout (mode=payment): fill up the Opkaldssaldo with 50, 100 or 200 kr. incl. moms (or the currency's
+    amounts, markets.PRIVAT_TOPUPS). The amount arrives with the webhook, only when it was paid in full."""
+    url = payments.checkout(db, ctx, amount_minor=body.amount_minor if body else None,
+                            locale=body.locale if body else None)
+    db.commit()  # a customer without a currency yet keeps the one of this Checkout
+    return {"url": url}

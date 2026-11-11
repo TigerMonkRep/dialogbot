@@ -198,6 +198,7 @@ def due(db: OrmSession, now: datetime | None = None) -> list[PrivateBirthday]:
     rows = db.scalars(select(PrivateBirthday).join(
         PrivateAddonEnabled, (PrivateAddonEnabled.workspace_id == PrivateBirthday.workspace_id)
         & (PrivateAddonEnabled.key == ADDON)))
+    rows = addons.running_rows(db, list(rows), ADDON)  # a plan app whose plan has lapsed sends nothing (PC-ENT-02)
     out_ = []
     for b in rows:
         nxt = next_date(b, today)

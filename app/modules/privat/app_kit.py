@@ -116,12 +116,16 @@ def remove_item(db: OrmSession, ws_id: uuid.UUID, key: str, item_id: str, name: 
     return True
 
 
-def find(rows: list[dict], wanted: str, field: str = "name") -> dict | None:
+def find(rows: list[dict], wanted: str, field: str = "name", *, exact: bool = False) -> dict | None:
+    """The row named `wanted`. Looking something up (`exact=False`) also accepts a part of the name («Mis» → «Misser»);
+    saving/creating must use `exact=True`, or a new «Mis» would overwrite «Misser» (F-PB-01)."""
     w = key_of(wanted)
     if not w:
         return None
-    return next((r for r in rows if key_of(r.get(field, "")) == w), None) or \
-        next((r for r in rows if w in key_of(r.get(field, "")) or key_of(r.get(field, "")) in w), None)
+    hit = next((r for r in rows if key_of(r.get(field, "")) == w), None)
+    if hit is not None or exact:
+        return hit
+    return next((r for r in rows if w in key_of(r.get(field, "")) or key_of(r.get(field, "")) in w), None)
 
 
 # --------------------------------------------------------------------------- reminders
@@ -145,10 +149,12 @@ def send_due(db: OrmSession, now: datetime | None = None) -> int:
         rows = list(db.scalars(select(PrivateAppData).join(
             PrivateAddonEnabled, (PrivateAddonEnabled.workspace_id == PrivateAppData.workspace_id)
             & (PrivateAddonEnabled.key == key)).where(PrivateAppData.app_key == key)))
+        rows = addons.running_rows(db, rows, key)  # a plan app whose plan has lapsed sends nothing (PC-ENT-02)
         for row in rows:
             data = dict(row.data)
             reminded = dict(data.get("reminded") or {})
-            due = [(t, x) for t, x in mod.due(data, today) if t not in reminded]
+            got = mod.due_for(db, data, today) if hasattr(mod, "due_for") else mod.due(data, today)
+            due = [(t, x) for t, x in got if t not in reminded]
             if not due:
                 continue
             owner = db.scalar(select(User).join(PrivateProfile, PrivateProfile.user_id == User.id)

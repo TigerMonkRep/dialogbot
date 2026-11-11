@@ -1,0 +1,48 @@
+---
+id: F-PA-01-PC-APP-FAELLES-UDGIFTER-05
+scenario: PC-APP-FAELLES-UDGIFTER-05
+reported_by: e2e-privat (PA)
+severity: S1
+status: closed
+owner_fix: fix-engineer
+related: [PC-APP-FLYTNING-05, PC-ACC-02]
+---
+
+## Kort
+«Slet appens data» for Fælles udgifter og Flytning siger «Sletter alt, hvad {name} har gemt», men listerne appen selv har oprettet («Udgifter: <gruppe>» med beløb og vennernes navne, «Flytning: <by>» med 12 punkter) bliver liggende.
+
+## Trin til at genskabe
+1. Plus/prøve-konto. Slå Fælles udgifter til.
+2. Chat: «Jeg betalte 1.200 kr. for mad i sommerhuset – vi er Anna, Bo og mig» → appen opretter listen «Udgifter: sommerhuset».
+3. Slå appen fra → appens side → «Slet appens data» → «Ja, slet» (`DELETE /privat/addons/faelles-udgifter/data` → 200, deleted=1).
+4. `GET /privat/tasks`: «Udgifter: sommerhuset» med «Mette: 1.200 kr. – mad» findes stadig (og ligger i Opgaver).
+5. Det samme for Flytning: «Vi flytter til Odense den 2027-04-01» → slå fra → slet data → «Flytning: Odense» med 12 punkter findes stadig.
+
+## Forventet
+UI-teksten `apps.deleteText` / `apps.deleteConfirm`: «Sletter alt, hvad {name} har gemt. Det kan ikke fortrydes.» Scenarie PC-APP-*-05: «Data slettes via «Slet data» → rækker væk … geninstallér → tom tilstand med Trin 1».
+
+## Faktisk
+`app_status._data_tables()` sletter kun `private_app_data` for nøglen. Opgaven (`private_tasks` + items), som `expenses.add_expense` og `moving.plan` opretter via `service.create_digital`, røres ikke. Hvis listen er delt med vennerne, kan de stadig se beløbene. Når appen slås til igen og brugeren skriver et nyt udlæg i «sommerhuset», kommer der en ny liste med samme titel ved siden af den gamle.
+
+## Evidens
+- qa/evidence/PC-APP-FAELLES-UDGIFTER-05/PA-delete-data-leaves-list.txt (live-stak :8400)
+- Test: tests/qa/test_qa_pd_apps_a.py::test_pa_delete_data_removes_the_lists_the_app_made (fejler i dag)
+- Test: web/e2e/qa/privat-deep/apps-a/faelles-udgifter.spec.ts («slå fra → slet data»)
+
+## Forslag
+Enten sletter `delete_data` også de opgaver, appen har oprettet (task_id i appdata – og tilbagekalder evt. delte links), eller teksten siger ærligt, at listen bliver i Opgaver. Det første matcher løftet «alt».
+
+## Rodårsag (udfyldes af fix-engineer)
+
+## Rettelse (udfyldes af fix-engineer)
+- Rodårsag: app_status.delete_data slettede kun private_app_data; listerne, appen selv oprettede (create_digital, med task_id gemt i appens data), blev liggende.
+- Rettelse: delete_data sletter også alle PrivateTask-id'er, der står som `task_id` i appens data (`_task_ids`). Det dækker Fælles udgifter, Flytning og Pakkeliste. Madplan gemmer nu plan og indkøbsliste under `lists` (meals.save_plan). Madplaner fra før rettelsen er ikke registreret og bliver liggende.
+- Filer: app/modules/privat/app_status.py, app/modules/privat/meals.py
+- Test: tests/qa/test_qa_pd_apps_a.py::test_pa_delete_data_removes_the_lists_the_app_made, tests/qa/test_qa_pd_apps_b.py::test_05_* (grønne)
+- Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
+
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_pa_delete_data_removes_the_lists_the_app_made + apps_b test_05_delete_data_of_packing_list/mealplan
+- Fejler testen uden rettelsen? ja – fejler på f2b3d11 (før Privat-rettelserne; HEAD's tests/ lagt oven på, fixture uden signup_intent)
+- Naboscenarier kørt: test_qa_pd_apps_a.py, test_qa_pd_apps_b.py; e2e faelles-udgifter/pakkeliste/madplan
+- Dom: closed

@@ -1,17 +1,17 @@
 "use client";
 /** In-browser simulation of the Privat API (same interface as ./api.ts) with the prototype's example data and rules
  *  (design-reference/privat/Main.dc.html):
- *  - 10 free everyday tasks a month (starts at 8/10), 3 welcome credits;
- *  - edits, ticking off, questions and "what is waiting" are free; task #11 becomes a draft that waits for
- *    credit / purchase / sponsor clip / later;
- *  - approving a call reserves 3 credits; simulated outcome answered (3 credits charged) or no answer (released);
- *  - purchases are simulated, and repeating the last payment signal adds nothing.
+ *  - the Opkaldssaldo in øre (F-PDEC-01): 10 kr. welcome bonus; a task beyond the limit costs 3 kr. (or a sponsor clip);
+ *  - edits, ticking off, questions and "what is waiting" are free; a new task without a plan becomes a draft;
+ *  - approving an EXTRA call (the plan's calls used) reserves its maximum (17,50 kr.); simulated outcome answered
+ *    (5 kr. + 3 started minutes × 2,50 kr.) or no answer (0,31 kr.), the rest released;
+ *  - top-ups (50/100/200 kr.) are simulated, and repeating the last payment signal adds nothing.
  *  Used when NEXT_PUBLIC_PRIVAT_FAKE=1, when the real API is missing (404/feature disabled), and – read-only, as
  *  example data – for visitors who are not logged in. Content text is Danish, like the backend's. State lives in
  *  sessionStorage so it survives navigation and reloads in the tab. */
 import { bareLink, prettyPhone } from "./sms";
 import { PLANS, TRIAL_DAYS, apiPlans } from "./plans";
-import { creditPackPrice, currencyFor, currencyOr, formatPrice, type Currency } from "@/lib/markets";
+import { balanceAmounts, currencyFor, currencyOr, extraCallPrices, formatPrice, topupAmounts, type Currency } from "@/lib/markets";
 import { ADDON, type Addon, type ApproveBody, type Balance, type BillingInterval, type ChatMessage, type ChatOption, type Day, type InvitePreview, type LedgerEntry, type ListType,
   type Member, type Plan, type PlanKey, type PrivatApi, type Referrals, type Group, type GroupMember, type InviteStatus, type ShareGroupResult, type Subscription, type SubscriptionPlan, type SubscriptionStatus,
   type SuggestedPerson, type SendResult, type Task, type TaskItem, type TaskStatus, type GiverGroupGift, type OwnerGroupGift, type WishBody, type WishDesign } from "./api";
@@ -20,7 +20,10 @@ import CATALOG_JSON from "./addons-catalog.json";
 
 export const FAKE_SMS_CODE = "123456";
 const FREE_LIMIT = 0; // no free tasks any more: without a plan the account only reads lists shared with it
-const CALL_CREDITS = 3;
+/** The fake runs in DKK: the prices come from prices.json (markets.py), never written here. */
+const X = extraCallPrices("DKK");
+const B = balanceAmounts("DKK");
+const kr = (minor: number) => formatPrice(minor, "DKK", "da");
 const SPONSOR_PER_DAY = 2;
 
 type Shop = { name: string; address: string; phone: string | null; price: string; open: boolean; next?: string; rating: number; count: number; km: number };
@@ -50,13 +53,13 @@ type Pending = { status: TaskStatus; next: string; intro: string };
 type Sub = { plan: SubscriptionPlan; status: SubscriptionStatus; interval: BillingInterval | null; trialStart: string | null; periodEnd: string | null; cancelAtPeriodEnd: boolean;
   callsMonth: string; callsUsed: number; checkouts: Record<string, { plan: PlanKey; interval: BillingInterval; currency?: Currency; app?: string }>; currency?: Currency };
 type State = {
-  v: 8; sub: Sub; packCurrency?: Currency; quotaCalls: Record<string, true>; location: string | null; push: string[]; joinLinks: Record<string, string>; groups: Group[]; status: Record<string, (InviteStatus & { key: string })[]>; ref: { invited: number; joined: number; activated: number; credits_earned: number; viaInvite: string | null; selfRewarded: boolean; annaJoined: boolean; annaRewarded: boolean };
+  v: 9; sub: Sub; quotaCalls: Record<string, true>; location: string | null; push: string[]; joinLinks: Record<string, string>; groups: Group[]; status: Record<string, (InviteStatus & { key: string })[]>; ref: { invited: number; joined: number; activated: number; earned_minor: number; viaInvite: string | null; selfRewarded: boolean; annaJoined: boolean; annaRewarded: boolean };
   addons: Record<string, boolean>; invites: Record<string, string>; reservations: Record<string, "me" | "other">;
   /** Simulated group gifts on wishes others shared with me: the others' pledges are one simulated sum. */
   gifts?: Record<string, FakeGift>;
   /** Per-app state for «Mine apps»: setup progress, switched off (data kept), «Giv mig besked». */
   appState?: Record<string, AppState>;
-  invitable: Record<string, Task>; n: number; freeUsed: number; credits: number; reserved: number; sponsorDay: string; sponsorUsed: number;
+  invitable: Record<string, Task>; n: number; freeUsed: number; balance: number; held: number; sponsorDay: string; sponsorUsed: number;
   phone: string | null; phoneVerified: boolean; phonePending: string | null;
   tasks: Task[]; msgs: ChatMessage[]; ledger: LedgerEntry[]; paySeq: number; lastPay: string | null;
   meta: Record<string, Meta>; pending: Record<string, Pending>; prices: Record<string, string>;
@@ -99,7 +102,7 @@ function splitItems(str: string): string[] {
 function examples(): Task[] {
   const now = new Date().toISOString();
   const base = { is_example: true, created_at: now, items: [], remind_at: null, call: null };
-  const callBase = { max_credits: CALL_CREDITS, share_phone: true, confirmed_text: null, business_price_text: null };
+  const callBase = { paid_via: null, share_phone: true, confirmed_text: null, business_price_text: null };
   return [
     { ...base, id: "e1", kind: "call", title: "Vælg tid hos Tandlæge Holm", status: "awaiting_user", next_step: "Vælg tirsdag kl. 9.00 eller onsdag kl. 14.30",
       due_at: atDay(0, 18), who: "Dig", usage_text: "1 gratis opgave (oktober)",
@@ -109,7 +112,7 @@ function examples(): Task[] {
       events: [{ at: atDay(-1, 14, 12), text: "Klinikken foreslog to tider" }] },
     { ...base, id: "e2", kind: "call", title: "Spørg boligforeningen, om de har modtaget min klage over den utætte radiator i badeværelset på 2. sal",
       status: "awaiting_business", next_step: "Boligforeningen ringer tilbage", due_at: atDay(daysTo(5), 16), who: "Boligforeningen",
-      usage_text: "3 credits · besvaret opkald, 2 min. 40 sek.",
+      usage_text: `Ekstra opkald · besvaret, 2 min. 40 sek. · ${kr(X.answered + 3 * X.minute)}`,
       call: { ...callBase, business_name: "Boligforeningen Østparken", address: "Østparken 1, 8000 Aarhus C", phone_display: "86 22 33 44",
         may_ask: "Om klagen over radiatoren er modtaget", may_agree: "At de ringer tilbage", may_not: "Aftale håndværkerbesøg", window: "i dag",
         result: "answered", business_reply: "Vi har modtaget klagen. Vi undersøger sagen og ringer tilbage inden fredag.", duration_seconds: 160 },
@@ -136,7 +139,7 @@ function sharedExamples(): { joined: Task[]; invitable: Record<string, Task> } {
   const base = { is_example: true, created_at: atDay(-3, 12), remind_at: null, call: null, due_at: null, shared: true, updated_at: atDay(-1, 20) };
   const anna: Member = { id: "anna", name: FAKE_OTHER, role: "owner", is_me: false };
   const meEditor: Member = { ...ME, role: "editor" };
-  const wish: Task = { ...base, id: "s1", kind: "list", list_type: "wishlist", share_mode: "wishlist", my_role: "editor", title: "Annas ønskeliste",
+  const wish: Task = { ...base, id: "s1", kind: "list", list_type: "wishlist", share_mode: "wishlist", my_role: "viewer", title: "Annas ønskeliste",
     status: "in_progress", next_step: "Vælg en gave", who: FAKE_OTHER, usage_text: "Gratis – delt med dig",
     items: [item("s1a", "Bluetooth-højttaler", { note: "Gerne en lille en til badeværelset", added_by_name: FAKE_OTHER, price_minor: 129900, currency: "DKK", price_source: "user", color: "Sort", quantity: 1 }),
       item("s1b", "Strikkebog", { link: "https://example.com/strikkebog", added_by_name: FAKE_OTHER, price_minor: 24995, currency: "DKK", price_source: "user", shop: "example.com", quantity: 1 }),
@@ -175,14 +178,14 @@ const addDays = (iso: string, n: number) => { const d = new Date(iso); d.setDate
 function fresh(): State {
   const sh = sharedExamples();
   return {
-    v: 8, sub: { plan: "none", status: "trial", interval: null, trialStart: new Date().toISOString(), periodEnd: null, cancelAtPeriodEnd: false, callsMonth: monthKey(), callsUsed: 0, checkouts: {} },
-    quotaCalls: {}, location: null, push: [], joinLinks: {}, groups: [], status: {}, ref: { invited: 0, joined: 0, activated: 0, credits_earned: 0, viaInvite: null, selfRewarded: false, annaJoined: false, annaRewarded: false },
+    v: 9, sub: { plan: "none", status: "trial", interval: null, trialStart: new Date().toISOString(), periodEnd: null, cancelAtPeriodEnd: false, callsMonth: monthKey(), callsUsed: 0, checkouts: {} },
+    quotaCalls: {}, location: null, push: [], joinLinks: {}, groups: [], status: {}, ref: { invited: 0, joined: 0, activated: 0, earned_minor: 0, viaInvite: null, selfRewarded: false, annaJoined: false, annaRewarded: false },
     addons: { [ADDON.call]: true, [ADDON.sharedLists]: true, [ADDON.wishlists]: true }, invites: {}, reservations: { s1c: "other" },
     gifts: { s1d: { target: 300000, currency: "DKK", others: 125000, othersCount: 2, mine: null, status: "open", coordinator: "other", pendingMe: false } },
-    invitable: sh.invitable, n: 1000, freeUsed: 0, credits: 3, reserved: 0, sponsorDay: dayKey(new Date()), sponsorUsed: 0,
+    invitable: sh.invitable, n: 1000, freeUsed: 0, balance: B.welcome, held: 0, sponsorDay: dayKey(new Date()), sponsorUsed: 0,
     phone: null, phoneVerified: false, phonePending: null,
     tasks: [...examples(), ...sh.joined], msgs: [],
-    ledger: [{ id: "l1", kind: "welcome", amount: 3, text: "Velkomstcredits (én gang)", created_at: atDay(-3, 9) }],
+    ledger: [{ id: "l1", kind: "grant", amount_minor: B.welcome, currency: "DKK", text: "Velkomstbonus på opkaldssaldoen (én gang)", created_at: atDay(-3, 9) }],
     paySeq: 1040, lastPay: null, meta: {}, pending: {}, prices: {},
   };
 }
@@ -190,19 +193,19 @@ function fresh(): State {
 export type FakeTools = {
   /** Prototype only: pick the outcome of a call that is in progress. */
   simulateOutcome(taskId: string, outcome: "answered" | "no_answer"): Promise<Task>;
-  /** Simulated Stripe Checkout: +10 credits (a draft waiting for payment is activated with 1 of them). */
-  completePurchase(draftTaskId: string | null): Promise<{ ref: string; activated: boolean }>;
+  /** Simulated Stripe Checkout: the top-up lands on the Opkaldssaldo (a draft waiting for payment is activated). */
+  completePurchase(draftTaskId: string | null, amountMinor?: number): Promise<{ ref: string; activated: boolean }>;
   /** Replays the last payment webhook: already registered, nothing is added. */
   repeatPayment(): Promise<{ ref: string | null }>;
   /** A second member (Anna) acts on a shared list: joins, adds an item (group) or reserves a wish (wishlist). */
   simulateMember(taskId: string): Promise<Task>;
-  /** The invited friend (Anna, a new user) creates her first own task: both get +3 credits (once per person). */
+  /** The invited friend (Anna, a new user) pays her first period: both get the referral bonus (once per person). */
   simulateInviteeActivated(): Promise<{ rewarded: boolean }>;
   /** Moves the next invited person along: «Ikke åbnet endnu» → «Har åbnet» → «Med». */
   simulateInviteProgress(taskId: string): Promise<void>;
   /** Back to a fresh account without a trial (status «none»): only lists shared with it, drafts for the rest. */
   startFree(): Promise<void>;
-  /** Ends the trial now (no plan): the free quota and credits apply again. */
+  /** Ends the trial now (no plan): the free quota and the Opkaldssaldo apply again. */
   endTrial(): Promise<void>;
   emptyDay(): Promise<void>;
   reset(): Promise<void>;
@@ -215,7 +218,7 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
   function load(): State {
     try {
       const raw = sessionStorage.getItem(storageKey);
-      if (raw) { const v = JSON.parse(raw) as State; if (v.v === 8) return v; }
+      if (raw) { const v = JSON.parse(raw) as State; if (v.v === 9) return v; }
     } catch { /* private window, blocked storage: start fresh */ }
     return fresh();
   }
@@ -223,7 +226,7 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
   const nid = (p: string) => { s.n += 1; return `${p}${s.n}`; };
   const find = (id: string) => s.tasks.find((t) => t.id === id) ?? fail(404, "not_found", "Opgaven findes ikke");
   const event = (t: Task, text: string) => { t.events.push({ at: new Date().toISOString(), text }); };
-  const ledger = (kind: string, amount: number, text: string) => { s.ledger.push({ id: nid("l"), kind, amount, text, created_at: new Date().toISOString() }); };
+  const ledger = (kind: string, amount: number, text: string) => { s.ledger.push({ id: nid("l"), kind, amount_minor: amount, currency: "DKK", text, created_at: new Date().toISOString() }); };
   const msg = (o: Partial<ChatMessage> & Pick<ChatMessage, "kind">): ChatMessage => ({
     id: nid("m"), role: "assistant", text: "", task_id: null, about_task_id: null, before: null, after: null, options: null, links: null,
     created_at: new Date().toISOString(), ...o,
@@ -254,14 +257,15 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       people_limit: entitled ? spec.people : 1, apps_included: entitled && spec.appsIncluded, currency, plans: apiPlans(currency) as Plan[] };
   }
   const isEntitled = () => subscription().entitled;
-  /** Usage line on a call proposal: the plan quota while it lasts, otherwise credits. */
-  const proposalUsage = () => { const sb = subscription(); return sb.entitled && sb.calls_left > 0 ? `${sb.calls_used + 1} af ${sb.calls_quota} opkald i ${planName()} · maks. 4 min.` : `Højst ${CALL_CREDITS} credits, når du godkender`; };
+  /** Usage line on a call proposal: the plan quota while it lasts, otherwise an extra call from the Opkaldssaldo. */
+  const proposalUsage = () => { const sb = subscription(); return sb.entitled && sb.calls_left > 0 ? `${sb.calls_used + 1} af ${sb.calls_quota} opkald i ${planName()} · maks. 4 min.` : `Ekstra opkald: højst ${kr(X.max)}, når du godkender`; };
   /** «Plus» (chosen plan, or the trial's Plus rights). */
   const planName = () => { const sb = subscription(); return PLANS.find((p) => p.key === (sb.plan === "none" ? "plus" : sb.plan))!.name; };
   function balance(): Balance {
     rollSponsorDay();
     const sb = subscription();
-    return { free_used: s.freeUsed, free_limit: FREE_LIMIT, credits: s.credits, reserved: s.reserved, sponsor_left_today: SPONSOR_PER_DAY - s.sponsorUsed,
+    return { free_used: s.freeUsed, free_limit: FREE_LIMIT, balance_minor: s.balance, held_minor: s.held, currency: "DKK", extra_call: X,
+      topups_minor: topupAmounts("DKK"), extra_task_minor: B.extra_task, sponsor_left_today: SPONSOR_PER_DAY - s.sponsorUsed,
       phone_display: s.phone, phone_verified: s.phoneVerified, push_enabled: s.push.length > 0, location_city: s.location,
       plan: sb.plan, plan_status: sb.status, trial_days_left: sb.trial_days_left, calls_quota: sb.calls_quota, calls_used: sb.calls_used, calls_left: sb.calls_left, entitled: sb.entitled };
   }
@@ -378,12 +382,12 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
   const result = (messages: ChatMessage[]): SendResult => { s.msgs.push(...messages); return done({ messages, balance: balance() }); };
 
   /** A new list or reminder: free while the month has free tasks left, otherwise a draft that waits for a choice. */
-  const REFERRAL = 3;
+  const REFERRAL = B.referral;
   function newDigital(t: Task, intro: string): ChatMessage[] {
     s.tasks.push(t);
     if (s.ref.viaInvite && !s.ref.selfRewarded) {
-      s.ref.selfRewarded = true; s.credits += REFERRAL;
-      ledger("referral", REFERRAL, `Invitationsbonus: din første egen opgave (${FAKE_OTHER} får også ${REFERRAL})`);
+      s.ref.selfRewarded = true; s.balance += REFERRAL;
+      ledger("referral", REFERRAL, `Invitationsbonus på opkaldssaldoen (${FAKE_OTHER} får også ${kr(REFERRAL)})`);
     }
     if (isEntitled()) {
       // Lists and reminders are unlimited with the trial and every plan.
@@ -395,7 +399,7 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
     const st = subscription().status;
     return [msg({ kind: "draft", task_id: t.id, text: st === "none"
       ? "Det kræver en plan. Prøv Dialogbot Privat gratis i 14 dage – kortet trækkes først, når prøveperioden er slut. Opgaven er gemt som udkast, til du har valgt."
-      : "Din prøveperiode er slut. Vælg en plan, eller brug 1 credit – udkastet venter, mens du vælger." })];
+      : `Din prøveperiode er slut. Vælg en plan, eller betal ${kr(B.extra_task)} fra din opkaldssaldo – udkastet venter, mens du vælger.` })];
   }
 
   function activate(t: Task, usage: string): ChatMessage[] {
@@ -581,9 +585,9 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       const t = find(taskId);
       if (t.status !== "draft") return done(t);
       if (method === "sponsor") return fake.sponsorClaim(taskId);
-      if (s.credits < 1) fail(409, "insufficient_credits", "Du har ingen credits");
-      s.credits -= 1; ledger("task_credit", -1, "Ny opgave efter månedsgrænsen");
-      s.msgs.push(...activate(t, "1 credit"));
+      if (s.balance < B.extra_task) fail(409, "insufficient_balance", `Fyld op: en ekstra opgave koster ${kr(B.extra_task)}`);
+      s.balance -= B.extra_task; ledger("spend", -B.extra_task, "Ny opgave efter månedsgrænsen");
+      s.msgs.push(...activate(t, `Ekstra opgave · ${kr(B.extra_task)}`));
       return done(t);
     },
     async messages(taskId) { await wait(); return done(taskId ? s.msgs.filter((m) => m.task_id === taskId || m.about_task_id === taskId) : s.msgs); },
@@ -631,7 +635,7 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
         items: [], remind_at: null,
         call: { business_name: shop.name, address: shop.address, phone_display: shop.phone ?? "", phone_e164: e164(shop.phone), is_mobile: isDanishMobile(e164(shop.phone)),
           open_now: shop.open, next_open_text: shop.open ? null : shop.next ?? null, source: "demo", status: "proposed", may_ask: `En tid til at aflevere cyklen ${win}`,
-          may_agree: `Aflevering ${win}`, may_not: "Sige ja til reparationer eller priser", window: win, max_credits: CALL_CREDITS, share_phone: true,
+          may_agree: `Aflevering ${win}`, may_not: "Sige ja til reparationer eller priser", window: win, paid_via: null, share_phone: true,
           result: null, confirmed_text: null, business_reply: null, business_price_text: null, duration_seconds: null },
         events: [{ at: new Date().toISOString(), text: "Forslag til opkald oprettet" }] };
       s.tasks.push(t); s.prices[t.id] = shop.price;
@@ -643,10 +647,12 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       gate(ADDON.call);
       if (!t.call || t.status !== "awaiting_user" || t.call.result) fail(409, "conflict", "Opkaldet kan ikke godkendes nu");
       if (!s.phoneVerified) fail(409, "needs_phone", "Bekræft dit telefonnummer først");
-      // Plan quota first (counted when the call is answered); otherwise credits («ekstra opkald»).
+      // Plan quota first (counted when the call is answered); otherwise an extra call from the Opkaldssaldo.
       const sb = subscription();
+      // «Ring for mig» stops without a plan (decision 2026-11-11): the Opkaldssaldo cannot pay then, only «Kræver en plan».
+      if (!sb.entitled) fail(409, "needs_plan", "Opkald kræver en plan");
       const viaPlan = sb.entitled && sb.calls_left > 0;
-      if (!viaPlan && s.credits < t.call!.max_credits) fail(409, "insufficient_credits", `Opkaldet kræver ${t.call!.max_credits} credits`);
+      if (!viaPlan && s.balance < X.max) fail(409, "insufficient_balance", `Fyld op: et ekstra opkald kræver ${kr(X.max)} på din opkaldssaldo`);
       const c = t.call!;
       if (!c.phone_e164) fail(409, "no_number", "Skriv virksomhedens nummer først");
       if ((c.is_mobile ?? isDanishMobile(c.phone_e164)) && !body.confirm_business) fail(409, "confirm_business", "Bekræft, at det er en virksomhed");
@@ -658,12 +664,12 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       c.share_phone = body.share_phone;
       let usage: string;
       if (viaPlan) {
-        s.quotaCalls[t.id] = true;
+        s.quotaCalls[t.id] = true; c.paid_via = "plan";
         usage = `${sb.calls_used + 1} af ${sb.calls_quota} opkald i ${planName()} · maks. 4 min.`;
       } else {
-        s.credits -= c.max_credits; s.reserved += c.max_credits;
-        ledger("reserve", -c.max_credits, "Reserveret til opkald");
-        usage = `${c.max_credits} credits reserveret`;
+        s.balance -= X.max; s.held += X.max; c.paid_via = "balance";
+        ledger("reserve", -X.max, `Ekstra opkald til ${c.business_name} – højst ${kr(X.max)} reserveret`);
+        usage = `Ekstra opkald · højst ${kr(X.max)} reserveret`;
       }
       t.usage_text = usage;
       if (c.open_now === false) {
@@ -694,6 +700,15 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       s.msgs.push(msg({ kind: "call_proposal", task_id: t.id, text: `Skal jeg ringe til ${t.call!.business_name} igen?` }));
       return done(t);
     },
+    async deleteCall(taskId) {
+      await wait();
+      const t = find(taskId);
+      if (t.status === "in_progress" || t.status === "planned") fail(409, "call_running", "Opkaldet er i gang eller planlagt");
+      s.tasks = s.tasks.filter((x) => x.id !== taskId);
+      s.msgs = s.msgs.filter((m) => m.task_id !== taskId && m.about_task_id !== taskId);
+      save();
+    },
+    async deleteMessage(messageId) { await wait(); s.msgs = s.msgs.filter((m) => m.id !== messageId); save(); },
     async phoneStart(phone) {
       await wait();
       const digits = phone.replace(/[^\d+]/g, "");
@@ -708,7 +723,7 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       s.phone = s.phonePending; s.phonePending = null; s.phoneVerified = true;
       return done(balance());
     },
-    async checkout(body) { await wait(); s.packCurrency = currencyFor(body?.locale); save(); return { url: "#simuleret-betaling" }; },
+    async checkout() { await wait(); return { url: "#simuleret-betaling" }; },
     async subscription(sessionId, currency) {
       await wait();
       if (sessionId) {
@@ -847,7 +862,7 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
 
     async referrals() {
       await wait();
-      const r: Referrals = { invited: s.ref.invited, joined: s.ref.joined, activated: s.ref.activated, credits_earned: s.ref.credits_earned,
+      const r: Referrals = { invited: s.ref.invited, joined: s.ref.joined, activated: s.ref.activated, earned_minor: s.ref.earned_minor, currency: "DKK", reward_minor: REFERRAL,
         monthly_left: Math.max(0, 10 - s.ref.activated) };
       return r;
     },
@@ -1150,7 +1165,7 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       const t = find(taskId); const c = t.call;
       if (!c || (t.status !== "in_progress" && !(t.status === "planned" && c.status === "approved"))) fail(409, "conflict", "Opkaldet er ikke i gang");
       const viaPlan = !!s.quotaCalls[t.id];
-      if (!viaPlan) s.reserved -= c!.max_credits;
+      if (!viaPlan) s.held -= X.max;
       if (outcome === "answered") {
         const conf = confirmedFor(c!.window);
         const price = s.prices[t.id] ?? "Ikke oplyst";
@@ -1166,9 +1181,11 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
           ledger("plan_call", 0, `Opkald til ${c!.business_name} · ${sb.calls_used + 1} af ${sb.calls_quota} i ${planName()}`);
           event(t, `Opkald ${sb.calls_used + 1} af ${sb.calls_quota} i ${planName()}`);
         } else {
-          ledger("call_charge", -c!.max_credits, `Opkald til ${c!.business_name} · besvaret, 2 min. 10 sek.`);
-          t.usage_text = `${c!.max_credits} credits · besvaret opkald, 2 min. 10 sek.`;
-          event(t, `${c!.max_credits} credits trukket`);
+          const price = Math.min(X.answered + 3 * X.minute, X.max);  // 130 s = 3 started minutes
+          s.balance += X.max - price;
+          ledger("capture", X.max - price, `Ekstra opkald til ${c!.business_name} · besvaret, 2 min. 10 sek.`);
+          t.usage_text = `Ekstra opkald · besvaret, 2 min. 10 sek. · ${kr(price)}`;
+          event(t, `Ekstra opkald: ${kr(price)} trukket fra din opkaldssaldo, resten er frigivet`);
         }
         s.msgs.push(msg({ kind: "text", about_task_id: t.id, text: `Opkaldet er slut. ${c!.business_name} har bekræftet ${lower1(conf.text)}. Jeg minder dig om det en time før.` }));
       } else {
@@ -1179,24 +1196,26 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
           event(t, "Ingen tog telefonen. Opkaldet tæller ikke.");
           s.msgs.push(msg({ kind: "text", about_task_id: t.id, text: `Ingen tog telefonen hos ${c!.business_name}. Opkaldet tæller ikke på din plan.` }));
         } else {
-          s.credits += c!.max_credits;
-          ledger("release", c!.max_credits, "Ingen svar – reservation frigivet");
-          event(t, `Ingen tog telefonen. ${c!.max_credits} credits frigivet.`);
-          s.msgs.push(msg({ kind: "text", about_task_id: t.id, text: `Ingen tog telefonen hos ${c!.business_name}. Du har fået dine ${c!.max_credits} credits igen.` }));
+          s.balance += X.max - X.no_answer;
+          ledger("capture", X.max - X.no_answer, `Ekstra opkald til ${c!.business_name} · ubesvaret`);
+          t.usage_text = `Ekstra opkald · ubesvaret · ${kr(X.no_answer)}`;
+          event(t, `Ingen tog telefonen – ${kr(X.no_answer)} er trukket fra din opkaldssaldo, resten er frigivet`);
+          s.msgs.push(msg({ kind: "text", about_task_id: t.id, text: `Ingen tog telefonen hos ${c!.business_name}. Et ubesvaret ekstra opkald koster ${kr(X.no_answer)} – resten af reservationen er frigivet.` }));
         }
       }
       return done(t);
     },
-    async completePurchase(draftTaskId) {
+    async completePurchase(draftTaskId, amountMinor) {
       await wait();
       s.paySeq += 1; const ref = `PAY-${s.paySeq}`; s.lastPay = ref;
-      s.credits += 10; const packCur = s.packCurrency ?? "DKK";
-      ledger("purchase", 10, `Købt 10 credits · ${formatPrice(creditPackPrice(packCur), packCur, "da")} inkl. moms · ${ref}`);
+      const amount = topupAmounts("DKK").includes(amountMinor ?? -1) ? amountMinor! : topupAmounts("DKK")[0];
+      s.balance += amount;
+      ledger("purchase", amount, `Opkaldssaldo fyldt op · ${kr(amount)} inkl. moms · ${ref}`);
       const t = draftTaskId ? s.tasks.find((x) => x.id === draftTaskId) : undefined;
       let activated = false;
       if (t && t.status === "draft") {
-        s.credits -= 1; ledger("task_credit", -1, "Ny opgave efter månedsgrænsen");
-        s.msgs.push(...activate(t, "1 credit")); activated = true;
+        s.balance -= B.extra_task; ledger("spend", -B.extra_task, "Ny opgave efter månedsgrænsen");
+        s.msgs.push(...activate(t, `Ekstra opgave · ${kr(B.extra_task)}`)); activated = true;
       }
       save();
       return { ref, activated };
@@ -1205,8 +1224,8 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
     async simulateInviteeActivated() {
       await wait();
       if (!s.ref.annaJoined || s.ref.annaRewarded) return { rewarded: false };
-      s.ref.annaRewarded = true; s.ref.activated += 1; s.ref.credits_earned += REFERRAL; s.credits += REFERRAL;
-      ledger("referral", REFERRAL, `Invitationsbonus: ${FAKE_OTHER} lavede sin første opgave`);
+      s.ref.annaRewarded = true; s.ref.activated += 1; s.ref.earned_minor += REFERRAL; s.balance += REFERRAL;
+      ledger("referral", REFERRAL, `Invitationsbonus: ${FAKE_OTHER} betalte sin første periode`);
       save();
       return { rewarded: true };
     },
@@ -1224,7 +1243,7 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       t.updated_at = new Date().toISOString();
       save();
     },
-    async startFree() { await wait(); s.sub = { ...s.sub, plan: "none", status: "none", interval: null, trialStart: null, periodEnd: null, cancelAtPeriodEnd: false }; s.credits = 0; save(); },
+    async startFree() { await wait(); s.sub = { ...s.sub, plan: "none", status: "none", interval: null, trialStart: null, periodEnd: null, cancelAtPeriodEnd: false }; s.balance = 0; save(); },
     async endTrial() { await wait(); s.sub.trialStart = addDays(new Date().toISOString(), -(TRIAL_DAYS + 1)); if (s.sub.plan === "none") s.sub.status = "expired"; save(); },
     async emptyDay() { await wait(); s.tasks = s.tasks.filter((t) => !t.is_example); save(); },
     async reset() { await wait(); s = fresh(); save(); },

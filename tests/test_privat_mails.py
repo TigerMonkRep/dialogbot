@@ -18,6 +18,8 @@ from app.modules.integrations import privat_mails as pm
 
 ROOT = Path(__file__).resolve().parents[1]
 ERHVERV_WORDS = ("AI-receptionist", "arbejdsrum", "virksomhed", "receptionist", "Rezeption", "réceptionniste")
+# the account mails and the billing mails Privat shares with Erhverv (privat_mails.billing, F-PBQ-08)
+SHARED_PREFIXES = ("verify_", "billing_", "receipt_", "failed_", "refund_", "trial_")
 INFORMAL = {"de": r"\b(du|dein\w*|dich|dir)\b", "es": r"\b(tu|tus|te|podrás|Confirma)\b",
             "fr": r"\b(tu|ton|ta|tes|Confirme)\b", "it": r"\b(tuo|tua|tuoi|Conferma|puoi)\b"}
 
@@ -66,7 +68,7 @@ def test_privat_texts_keep_one_register():
     from app.modules.integrations.email_texts_privat import PRIVAT_TEXTS
 
     for lang, rx in INFORMAL.items():
-        keys = {k: v for k, v in tx.TEXTS[lang].items() if (k in PRIVAT_TEXTS[lang] or k.startswith("verify_"))
+        keys = {k: v for k, v in tx.TEXTS[lang].items() if (k in PRIVAT_TEXTS[lang] or k.startswith(SHARED_PREFIXES))
                 and not k.endswith(("_button", "_open_task"))}  # a button label is a label, not an address
         bad = {k: v for k, v in keys.items() if re.search(rx, v)}
         assert not bad, f"{lang}: {bad}"

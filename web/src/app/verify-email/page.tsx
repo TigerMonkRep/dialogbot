@@ -29,7 +29,7 @@ function Verify({ privat, next }: { privat: boolean; next: string | null }) {
   // to the plans, where the trial starts. Never into the business set-up (F-PK-04, F-JP-01, F-JP-05).
   useEffect(() => {
     if (privat) {
-      if (!next) { setAfter("/privat/konto"); return; }
+      if (!next) { setAfter("/privat/konto?planer=1"); return; }
       setAfter(next);
       // logged out here (another browser): log in first, then on to the same place
       void loggedIn().then((ok) => { if (!ok) setAfter(`/login?next=${encodeURIComponent(next)}`); });

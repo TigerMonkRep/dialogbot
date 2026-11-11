@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui";
 import { useLocale, useT } from "@/i18n/client";
-import { priceVars } from "@/lib/markets";
+import { includedVat } from "@/lib/markets";
+import { saldo } from "@/lib/privat/saldo";
 import { ADDON, type ShareGroupResult, type ShareMode, type ShareResult, type SmsQueueItem } from "@/lib/privat/api";
 import type { ApiError } from "@/lib/client";
 import { SMS_LIMIT, bareLink, contactPickerAvailable, hasEmoji, pickContacts, platformOf, smsHref, whatsappHref, type Platform } from "@/lib/privat/sms";
@@ -103,23 +104,25 @@ function MicSheet({ onClose }: { onClose: () => void }) {
   );
 }
 
-/** Without a trial yet (status «none»): the trial first – one tap to the checkout, card first, no credits or sponsor
- *  spots on the way round it. After the trial: the plan path («Vælg plan»), then credits as «ekstra opkald». With a
- *  plan whose month is used up: buy extra calls or change plan. */
+/** Without a trial yet (status «none»): the trial first – one tap to the checkout, card first, no balance or sponsor
+ *  spots on the way round it. After the trial: the plan path («Vælg plan»), then 3 kr. from the Opkaldssaldo for a
+ *  task. With a plan whose month is used up: fill up the Opkaldssaldo for extra calls, or change plan. */
 function PaywallSheet({ onClose }: { onClose: () => void }) {
   const t = useT("privat");
   const { sheet, task, balance, run, openSheet, setNote, choosePlan: toPlans, startTrial, busy } = usePrivat();
   const p = usePlan();
   const tk = task(sheet?.taskId);
   const call = tk?.kind === "call";
-  const credits = balance?.credits ?? 0;
+  const locale = useLocale();
+  const sd = saldo(balance, locale);
   const later = () => { onClose(); if (tk?.status === "draft") setNote(t("paywall.laterNote")); };
   const choosePlan = () => { onClose(); toPlans(); };
   const trialFirst = !p.entitled && p.status === "none";
   const quotaUsed = call && p.entitled && p.callsQuota > 0;
   const title = trialFirst ? t("paywall.titleTrial") : call ? (quotaUsed ? t("plan.paywallCallTitlePlan") : t("paywall.titleCall")) : t("paywall.titleDigital");
   const text = trialFirst ? t("paywall.textTrial") : call
-    ? (quotaUsed ? t("plan.paywallCallTextPlan", { used: p.callsUsed, quota: p.callsQuota, plan: p.rightsName }) : `${t("plan.paywallCallTextNone")} ${t("paywall.textCall", { n: tk?.call?.max_credits ?? 3, have: credits })}`)
+    ? (quotaUsed ? `${t("plan.paywallCallTextPlan", { used: p.callsUsed, quota: p.callsQuota, plan: p.rightsName })} ${t("paywall.textCall", { ...sd.vars, have: sd.fmt(sd.balance) })}`
+      : p.entitled ? `${t("plan.paywallCallTextNone")} ${t("paywall.textCall", { ...sd.vars, have: sd.fmt(sd.balance) })}` : t("call.needsPlanText"))
     : `${t("paywall.textDigital")} ${t("plan.paywallDigitalPlan")}`;
   if (trialFirst) {
     return (
@@ -128,6 +131,7 @@ function PaywallSheet({ onClose }: { onClose: () => void }) {
         <p className="m-0 text-[15px] leading-normal text-ink-soft">{text}</p>
         <Button className={`${BIG} rounded-full`} disabled={busy} onClick={() => void startTrial()} data-testid="paywall-trial">{t("store.needsPlan.trial")}</Button>
         <p className="m-0 text-[13px] text-muted text-center">{t("paywall.trialNote")}</p>
+        <Link href="/privat/vilkaar" className={`${LINK} self-center text-[13px]`} data-testid="privat-terms-link">{t("landing.footer.terms")}</Link>
         <button type="button" className={`${LINK} self-center`} onClick={later}>{t("paywall.later")}</button>
       </Sheet>
     );
@@ -137,8 +141,9 @@ function PaywallSheet({ onClose }: { onClose: () => void }) {
       {tk && <div className="rounded-[18px] border-2 border-dashed border-ink px-3.5 py-3"><span className="eyebrow text-[11px]">{t("paywall.draft")}</span><div className="font-semibold text-[16px] [overflow-wrap:anywhere]">{tk.title}</div></div>}
       <p className="m-0 text-[15px] leading-normal text-ink-soft">{text}</p>
       {!p.entitled && <Button className={`${BIG} rounded-full`} onClick={choosePlan}>{t("plan.paywallChoose")}</Button>}
-      {!call && <Button className={`${p.entitled ? BIG : "border-2 border-ink"} rounded-full`} variant={p.entitled ? "primary" : "outline"} disabled={credits < 1} onClick={async () => { const r = await run((a) => a.activate(tk!.id, "credit")); if (r) onClose(); }}>{t("paywall.useCredit", { n: credits })}</Button>}
-      <Button variant={quotaUsed ? "primary" : "outline"} className={`${quotaUsed ? BIG : "border-2"} rounded-full`} onClick={() => openSheet({ kind: "buy", taskId: sheet?.taskId })}>{t("plan.paywallBuy")} · {t("paywall.buy")}</Button>
+      {!call && <Button className={`${p.entitled ? BIG : "border-2 border-ink"} rounded-full`} variant={p.entitled ? "primary" : "outline"} disabled={sd.balance < sd.extraTaskMinor} onClick={async () => { const r = await run((a) => a.activate(tk!.id, "balance")); if (r) onClose(); }}>{t("paywall.useBalance", { ...sd.vars, have: sd.fmt(sd.balance) })}</Button>}
+      {/* «Ring for mig» without a plan: the Opkaldssaldo cannot pay instead (decision 2026-11-11) – extra calls only on top of a plan */}
+      {(!call || p.entitled) && <Button variant={quotaUsed ? "primary" : "outline"} className={`${quotaUsed ? BIG : "border-2"} rounded-full`} onClick={() => openSheet({ kind: "buy", taskId: sheet?.taskId })}>{t("plan.paywallBuy")} · {t("paywall.buy")}</Button>}
       {quotaUsed && <Button variant="outline" className="border-2 rounded-full" onClick={choosePlan}>{t("plan.change")}</Button>}
       {!call && <Button variant="outline" className="border-2 rounded-full" disabled={(balance?.sponsor_left_today ?? 0) < 1} onClick={() => openSheet({ kind: "sponsor", taskId: sheet?.taskId })}>{t("paywall.sponsor", { n: balance?.sponsor_left_today ?? 0 })}</Button>}
       <button type="button" className={`${LINK} self-center`} onClick={later}>{t("paywall.later")}</button>
@@ -148,30 +153,40 @@ function PaywallSheet({ onClose }: { onClose: () => void }) {
 
 function BuySheet({ onClose }: { onClose: () => void }) {
   const t = useT("privat");
-  const { sheet, simulated, mode, fake, run, api, openSheet, setNote, setError, go, isDesk } = usePrivat();
+  const { sheet, simulated, mode, fake, run, api, openSheet, setNote, setError, go, isDesk, balance } = usePrivat();
   const [busy, setBusy] = useState(false);
   const locale = useLocale();
-  const pack = priceVars(locale);
+  const sd = saldo(balance, locale);
+  const [amount, setAmount] = useState(sd.topups[1] ?? sd.topups[0]);
   const pay = async () => {
     setBusy(true);
     if (simulated && fake) {
-      const r = await run(() => fake.completePurchase(sheet?.taskId ?? null));
+      const r = await run(() => fake.completePurchase(sheet?.taskId ?? null, amount));
       if (r) { setNote(t("account.purchased", { ref: r.ref })); onClose(); }
       setBusy(false);
       return;
     }
-    try { const { url } = await api.checkout({ locale }); window.location.href = url; }
+    try { const { url } = await api.checkout({ amount_minor: amount, locale }); window.location.href = url; }
     catch (e) { setError(e as ApiError); setBusy(false); }
   };
   void go; void isDesk;
   return (
     <Sheet title={t("buy.title")} onClose={onClose}>
-      <div className="rounded-[18px] border-2 border-ink p-4 flex flex-col gap-1.5">
-        <div className="flex justify-between text-[16px]"><span>{t("buy.item")}</span><b>{pack.pCredits}</b></div>
-        <div className="flex justify-between text-[13px] text-muted"><span>{t("buy.vat")}</span><span>{pack.pCreditsVat}</span></div>
-        <p className="m-0 mt-1 text-[13px] text-muted">{t("buy.note")}</p>
+      <p className="m-0 text-[15px]">{t("buy.have", { have: sd.fmt(sd.balance) })}</p>
+      <div role="radiogroup" aria-label={t("buy.item")} className="grid grid-cols-3 gap-2" data-testid="topups">
+        {sd.topups.map((a) => (
+          <button key={a} type="button" role="radio" aria-checked={amount === a} onClick={() => setAmount(a)}
+            className={`min-h-[52px] rounded-[14px] border-2 border-ink font-display font-bold text-[18px] ${amount === a ? "bg-ink text-paper" : "bg-paper hover:bg-panel"}`}>{sd.fmt(a)}</button>
+        ))}
       </div>
-      <Button className={BIG} onClick={pay} disabled={busy || mode === "demo"}>{simulated ? <>{t("buy.pay")} <Sim label={t("buy.simulatedBuy")} /></> : busy ? t("buy.redirecting") : t("buy.payReal")}</Button>
+      <div className="rounded-[18px] border-2 border-ink p-4 flex flex-col gap-1.5">
+        <div className="flex justify-between text-[16px]"><span>{t("buy.item")}</span><b>{sd.fmt(amount)}</b></div>
+        <div className="flex justify-between text-[13px] text-muted"><span>{t("buy.vat")}</span><span>{sd.fmt(includedVat(amount))}</span></div>
+        <p className="m-0 mt-1 text-[13px] text-muted">{t("buy.prices", sd.vars)}</p>
+        <p className="m-0 text-[13px] text-muted">{t("buy.note")}</p>
+        <Link href="/privat/vilkaar" className={`${LINK} text-[13px]`} data-testid="privat-terms-link">{t("landing.footer.terms")}</Link>
+      </div>
+      <Button className={BIG} onClick={pay} disabled={busy || mode === "demo"}>{simulated ? <>{t("buy.pay", { amount: sd.fmt(amount) })} <Sim label={t("buy.simulatedBuy")} /></> : busy ? t("buy.redirecting") : t("buy.payReal", { amount: sd.fmt(amount) })}</Button>
       <button type="button" className={`${LINK} self-center`} onClick={() => (sheet?.taskId ? openSheet({ kind: "paywall", taskId: sheet.taskId }) : onClose())}>{t("buy.back")}</button>
     </Sheet>
   );
@@ -205,7 +220,9 @@ function ShareSheet({ onClose }: { onClose: () => void }) {
   const { sheet, task, addonOn, run, session, mode } = usePrivat();
   const tk = task(sheet?.taskId);
   const wish = tk?.list_type === "wishlist";
-  const kinds: ShareMode[] = [...(addonOn(ADDON.sharedLists) ? ["group" as const] : []), ...(addonOn(ADDON.wishlists) ? ["wishlist" as const] : [])];
+  // The list decides how it is shared (ux-audit #14 / F-UX-03): a wishlist is always shared as a wishlist – never switched
+  // to a shared list, which would let others tick and edit – and a plain list as a shared list.
+  const kinds: ShareMode[] = wish ? (addonOn(ADDON.wishlists) ? ["wishlist"] : []) : (addonOn(ADDON.sharedLists) ? ["group"] : []);
   const [kind, setKind] = useState<ShareMode | null>(tk?.share_mode ?? (wish && kinds.includes("wishlist") ? "wishlist" : kinds[0] ?? null));
   const [res, setRes] = useState<ShareResult | null>(null);
   const [platform, setPlatform] = useState<Platform>("other");
@@ -226,10 +243,10 @@ function ShareSheet({ onClose }: { onClose: () => void }) {
     setSign(s || (session.name ?? "").split(" ")[0] || (mode === "fake" ? FAKE_ME : ""));
   }, [session.name, mode]);
   const link = res ? bareLink(res.short_url ?? res.invite_url) : "";
-  const suggested = res ? `${t(kind === "wishlist" ? "share.smsWishlist" : "share.smsGroup", { link })}${sign.trim() ? ` – ${sign.trim()}` : ""}` : "";
+  const suggested = res ? `${t(kind === "wishlist" ? "share.smsWishlist" : "share.smsGroup", { link })}${sign.trim() ? ` - ${sign.trim()}` : ""}` : "";
   useEffect(() => { if (!edited) setText(suggested); }, [suggested, edited]);
   if (!tk) return null;
-  const create = async () => { if (!kind) return; const r = await run((a) => a.share(tk.id, { mode: kind, role: "editor" })); if (r) { setRes(r); setEdited(false); } };
+  const create = async () => { if (!kind) return; const r = await run((a) => a.share(tk.id, { mode: kind, role: kind === "wishlist" ? "viewer" : "editor" })); if (r) { setRes(r); setEdited(false); } };
   const saveSign = (v: string) => { setSign(v); try { localStorage.setItem(SIGN_KEY, v); } catch { /* ignore */ } };
   const body = text || suggested;
   const copy = async () => { try { await navigator.clipboard.writeText(res!.short_url ?? res!.invite_url); setCopied(true); setTimeout(() => setCopied(false), 2500); } catch { /* ignore */ } };
@@ -243,7 +260,9 @@ function ShareSheet({ onClose }: { onClose: () => void }) {
       {!res && !groupActive && (
         <>
           {kinds.length > 0 && owner && <Eyebrow className="pt-1">{t("share.orLink")}</Eyebrow>}
-          {kinds.length === 0 ? <p className="m-0 text-[15px] text-ink-soft">{t("share.noKinds")}</p> : (
+          {kinds.length === 0 ? <p className="m-0 text-[15px] text-ink-soft">{t("share.noKinds")}</p> : kinds.length === 1 ? (
+            <p className="m-0 text-[15px] text-ink-soft">{t(`share.${kinds[0]}Sub`)}</p>
+          ) : (
             <fieldset className="m-0 p-0 border-0 flex flex-col gap-2">
               <legend className="text-[15px] font-semibold mb-2">{t("share.chooseKind")}</legend>
               {kinds.map((k) => (
@@ -312,7 +331,7 @@ function Members({ onClose }: { onClose: () => void }) {
         {(tk.members ?? []).map((m) => (
           <li key={m.id} className="flex items-center gap-3 min-h-[48px]">
             <Avatars names={[m.name]} size={30} />
-            <span className="flex-1 min-w-0 text-[15px]">{m.name}{m.is_me ? ` ${t("share.you")}` : ""}<span className="text-muted text-[13px]"> · {t(`share.role.${m.role}`)}</span></span>
+            <span className="flex-1 min-w-0 text-[15px]">{m.name}{m.is_me ? ` ${t("share.you")}` : ""}<span className="text-muted text-[13px]"> · {tk.list_type === "wishlist" && m.role !== "owner" ? t("share.roleWishGuest") : t(`share.role.${m.role}`)}</span></span>
             {owner && !m.is_me && <button type="button" className="min-h-[44px] px-2 text-[14px] font-semibold text-accent underline" aria-label={t("share.removeAria", { name: m.name })} onClick={() => run((a) => a.removeMember(tk.id, m.id))}>{t("share.remove")}</button>}
             {!owner && m.is_me && <button type="button" className="min-h-[44px] px-2 text-[14px] font-semibold text-accent underline" onClick={async () => { await run((a) => a.removeMember(tk.id, m.id)); onClose(); go("tasks"); }}>{t("share.leave")}</button>}
           </li>

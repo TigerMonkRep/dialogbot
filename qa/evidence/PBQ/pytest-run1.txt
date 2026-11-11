@@ -1,0 +1,107 @@
+.....x.....F.......................................................FFx.. [ 79%]
+..........xF....x..                                                      [100%]
+=================================== FAILURES ===================================
+_________ test_pc_sub_13_ui_trial_canceled_does_not_promise_the_charge _________
+
+    def test_pc_sub_13_ui_trial_canceled_does_not_promise_the_charge():
+        """F-PBQ-04-PC-SUB-13 (S2): Konto in a canceled trial still says «Derefter Plus til 99 kr./md.» – the trial line
+        must respect cancelAtPeriodEnd («Opsagt – slutter <dato>»)."""
+        src = (ROOT / "web/src/components/privat/account.tsx").read_text()
+        line = next(x for x in src.splitlines() if 'p.status === "trial" && <p' in x)
+>       assert "cancelAtPeriodEnd" in line, line.strip()[:200]
+E       AssertionError: {p.status === "trial" && <p className="m-0 text-[15px]">{t("plan.trialLine", { n: p.trialDays })} <span className="text-ink-soft">{p.plan === "none" ? t("plan.trialThenNone") : t("plan.trialThen", { p
+E       assert 'cancelAtPeriodEnd' in '        {p.status === "trial" && <p className="m-0 text-[15px]">{t("plan.trialLine", { n: p.trialDays })} <span class... t("plan.trialThenNone") : t("plan.trialThen", { plan: p.rightsName, price: p.monthlyText(p.rightsKey) })}</span></p>}'
+
+tests/qa/test_qa_pd_billing.py:366: AssertionError
+______ test_pc_sub_21_paid_with_a_promotion_code_still_grants_the_credits ______
+
+api = <tests.conftest.Api object at 0x7f9fc69278f0>
+client = <starlette.testclient.TestClient object at 0x7f9fc6bc4750>
+pv = <tests.privat_fixtures.Pv object at 0x7f9fc69269f0>
+stripe = <test_qa_pd_billing.FakeStripe object at 0x7f9fc6925f10>
+db = <sqlalchemy.orm.session.Session object at 0x7f9fc6978aa0>
+
+    def test_pc_sub_21_paid_with_a_promotion_code_still_grants_the_credits(api, client, pv, stripe, db):
+        """F-PBQ-03-PC-SUB-21 (S1): the credit checkout shows Stripe's code field (allow_promotion_codes=true), but the
+        webhook ignores any session with amount_total below the list price – a customer who pays 14,50 kr. with a valid
+        50 % code gets nothing (paid, no credits). Either grant on payment_status=paid or drop the code field."""
+        tok = pv.account("pbq21promo@testmail.dk", trial=False)
+        assert api.post(tok, "/privat/credits/checkout", {}).status_code == 200
+        d = stripe.payload()
+>       assert d.get("allow_promotion_codes") is True
+E       AssertionError: assert None is True
+E        +  where None = <built-in method get of dict object at 0x7f9fc67350c0>('allow_promotion_codes')
+E        +    where <built-in method get of dict object at 0x7f9fc67350c0> = {'mode': 'payment', 'line_items': [{'quantity': 1, 'price_data': {'currency': 'dkk', 'unit_amount': 2900, 'tax_behavio...kr. moms)'}}, 'tax_rates': ['txr_dk_vat_2500_incl']}], 'locale': 'da', 'customer_email': 'pbq21promo@testmail.dk', ...}.get
+
+tests/qa/test_qa_pd_billing.py:543: AssertionError
+----------------------------- Captured stdout call -----------------------------
+________________ test_credit_pack_refund_takes_the_credits_back ________________
+
+api = <tests.conftest.Api object at 0x7f9fc6900650>
+client = <starlette.testclient.TestClient object at 0x7f9fc6952890>
+pv = <tests.privat_fixtures.Pv object at 0x7f9fc8b240b0>
+stripe = <test_qa_pd_billing.FakeStripe object at 0x7f9fc6901910>
+db = <sqlalchemy.orm.session.Session object at 0x7f9fc5407d40>
+
+    def test_credit_pack_refund_takes_the_credits_back(api, client, pv, stripe, db):
+        """F-PBQ-05-PC-SUB-21 (S2): a refunded credit pack (charge.refunded) changes nothing in the ledger."""
+        tok = pv.account("pbq21refund@testmail.dk", trial=False)
+        api.post(tok, "/privat/credits/checkout", {})
+        d = stripe.payload()
+        sid = list(stripe.sessions)[-1]
+        _event(client, _evt("checkout.session.completed", {"id": sid, "mode": "payment", "currency": "dkk",
+                                                            "amount_total": 2900, "payment_status": "paid",
+                                                            "payment_intent": "pi_pbq", "metadata": d["metadata"]}))
+        refund = {"id": "ch_pbq", "object": "charge", "payment_intent": "pi_pbq", "amount": 2900, "amount_refunded": 2900,
+                  "refunded": True, "metadata": d["metadata"]}
+        try:
+            _event(client, _evt("charge.refunded", refund))
+        except AssertionError:
+            pass  # the fake has no /invoice_payments – the handler looks for an Erhverv invoice
+        db.expire_all()
+        bal = sum(r.amount for r in db.query(CreditLedger).filter_by(workspace_id=pv.ws(tok)))
+>       assert bal == 3, f"after a full refund the balance is {bal} (3 welcome + 10 refunded pack)"
+E       AssertionError: after a full refund the balance is 13 (3 welcome + 10 refunded pack)
+E       assert 13 == 3
+
+tests/qa/test_qa_pd_billing.py:570: AssertionError
+----------------------------- Captured stdout call -----------------------------
+_________ test_pc_ent_08_familie_people_limit_has_no_way_to_add_people _________
+
+api = <tests.conftest.Api object at 0x7f9fc67e7350>
+pv = <tests.privat_fixtures.Pv object at 0x7f9fc67e6bd0>
+app = <fastapi.applications.FastAPI object at 0x7f9fcad05090>
+
+    def test_pc_ent_08_familie_people_limit_has_no_way_to_add_people(api, pv, app):
+        """F-PBQ-07-PC-ENT-08 (S1): Familie (169 kr./md.) is sold as «Op til 5 personer», but no endpoint, model or UI
+        attaches other people to the plan: people_limit is only a number."""
+        tok = pv.account("pbq-ent08@testmail.dk")
+        pv.set_plan(tok, "familie")
+        s = pv.subscription(tok)
+        assert s["people_limit"] == 5 and "Op til 5 personer" in next(p for p in s["plans"] if p["key"] == "familie")["features"]
+        routes = _privat_paths(app)
+        assert len(routes) > 50
+        household = [p for p in routes if re.search(r"household|husstand|family|familie|plan/members|subscription/members", p)]
+        src = "\n".join(p.read_text() for p in (ROOT / "app/modules/privat").glob("*.py"))
+        uses = [m for m in re.findall(r"people_limit[^\n]*", src) if "people_limit" in m]
+>       assert household, f"no household/family endpoint among {len(routes)} /privat routes; people_limit used only as: {uses}"
+E       AssertionError: no household/family endpoint among 104 /privat routes; people_limit used only as: ['people_limit": p["people"] if (entitled and p) else 1,']
+E       assert []
+
+tests/qa/test_qa_pd_billing.py:738: AssertionError
+----------------------------- Captured stdout call -----------------------------
+============================= slowest 5 durations ==============================
+55.07s call     tests/qa/test_qa_pd_billing.py::test_pc_inv_08_referral_caps_hold
+18.52s call     tests/qa/test_qa_pd_billing.py::test_pc_inv_08_self_referral_farm_without_any_plan
+18.51s call     tests/qa/test_qa_pd_billing.py::test_pc_sub_21_credit_pack_once_per_session_all_currencies
+14.05s call     tests/qa/test_qa_pd_billing.py::test_pc_gift_01_pledge_bounds
+10.57s call     tests/qa/test_qa_pd_billing.py::test_pc_ent_08_familie_people_limit_has_no_way_to_add_people
+=========================== short test summary info ============================
+FAILED tests/qa/test_qa_pd_billing.py::test_pc_sub_13_ui_trial_canceled_does_not_promise_the_charge
+FAILED tests/qa/test_qa_pd_billing.py::test_pc_sub_21_paid_with_a_promotion_code_still_grants_the_credits
+FAILED tests/qa/test_qa_pd_billing.py::test_credit_pack_refund_takes_the_credits_back
+FAILED tests/qa/test_qa_pd_billing.py::test_pc_ent_08_familie_people_limit_has_no_way_to_add_people
+XFAIL tests/qa/test_qa_pd_billing.py::test_pc_sub_06_new_email_same_card_is_refused_a_second_trial - F-PBQ-02-PC-SUB-06: needs-decision – a new e-mail with the same card gets a new 14-day trial (one trial per ACCOUNT, no card-fingerprint check)
+XFAIL tests/qa/test_qa_pd_billing.py::test_pc_ent_02_plan_apps_stop_when_the_plan_ends - F-PBQ-06-PC-ENT-02: needs-decision (Fürster) – plan apps keep working after the plan ends: addons.require() checks enabled only (addons.py:9-10, 808-812)
+XFAIL tests/qa/test_qa_pd_billing.py::test_pc_ent_07_free_account_cannot_activate_drafts - F-PQ-03-X09 (open, needs-decision): a free account activates drafts via welcome credit / simulated sponsor – regression only, no duplicate
+XFAIL tests/qa/test_qa_pd_billing.py::test_pc_inv_08_self_referral_farm_without_any_plan - F-PQ-03-X09 consequence (no duplicate): via welcome-credit activation a FREE alt-account becomes an 'active invitee' and pays the inviter +3 credits

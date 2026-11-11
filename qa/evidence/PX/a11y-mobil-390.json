@@ -1,0 +1,478 @@
+{
+  "/privat": {
+    "axe": [],
+    "small_targets": [
+      {
+        "tag": "a",
+        "text": "Erhverv",
+        "w": 87,
+        "h": 32
+      },
+      {
+        "tag": "input",
+        "text": "",
+        "w": 140,
+        "h": 24
+      },
+      {
+        "tag": "a",
+        "text": "Send",
+        "w": 91,
+        "h": 38
+      },
+      {
+        "tag": "button",
+        "text": "Månedligt",
+        "w": 101,
+        "h": 40
+      },
+      {
+        "tag": "button",
+        "text": "Årligt · spar 20 %",
+        "w": 153,
+        "h": 40
+      }
+    ],
+    "small_target_count": 5,
+    "small_text": {
+      "small": 22,
+      "total": 30,
+      "ex": [
+        "12px: DIN EGEN PERSONLIGE ASSISTENT",
+        "14px: 14 dage gratis. Opsig når som helst.",
+        "13px: Peter · din personlige assistent",
+        "15px: Ordnet: Cykelkælderen torsdag kl. 15.30. Lagt i di",
+        "15px: Indkøb, pakkeliste, fødselsdage. Sig det, og det s"
+      ]
+    },
+    "fold": {
+      "words": 101,
+      "primary": 1
+    },
+    "hscroll": false
+  },
+  "/privat/start/1": {
+    "axe": [],
+    "small_targets": [],
+    "small_target_count": 0,
+    "small_text": {
+      "small": 2,
+      "total": 3,
+      "ex": [
+        "15px: Hvad skal din assistent hedde? (valgfrit)\nLad felt",
+        "12px: Lad feltet stå tomt, så hedder den Peter. Du kan a"
+      ]
+    },
+    "fold": {
+      "words": 62,
+      "primary": 0
+    },
+    "hscroll": false
+  },
+  "/privat/offline": {
+    "axe": [],
+    "small_targets": [],
+    "small_target_count": 0,
+    "small_text": {
+      "small": 2,
+      "total": 2,
+      "ex": [
+        "15px: Du er offline – siden vises igen, når du har forbi",
+        "14px: Vi prøver selv igen, når nettet er tilbage."
+      ]
+    },
+    "fold": {
+      "words": 46,
+      "primary": 1
+    },
+    "hscroll": false
+  },
+  "/privat/dag": {
+    "axe": [
+      {
+        "id": "label-content-name-mismatch",
+        "impact": "serious",
+        "help": "Elements must have their visible text as part of their accessible name",
+        "n": 1,
+        "targets": [
+          ".min-h-\\[44px\\]"
+        ],
+        "html": [
+          "<a aria-label=\"Dialogbot Privat – Min dag\" class=\"flex items-center gap-2 shrink-0 min-h-[44px]\" href=\"/privat/dag\">"
+        ]
+      }
+    ],
+    "small_targets": [],
+    "small_target_count": 0,
+    "small_text": {
+      "small": 0,
+      "total": 0,
+      "ex": []
+    },
+    "fold": {
+      "words": 19,
+      "primary": 1
+    },
+    "hscroll": false
+  },
+  "/privat/samtale": {
+    "axe": [
+      {
+        "id": "document-title",
+        "impact": "serious",
+        "help": "Documents must have <title> element to aid in navigation",
+        "n": 1,
+        "targets": [
+          "#__next_error__"
+        ],
+        "html": [
+          "<html id=\"__next_error__\">"
+        ]
+      },
+      {
+        "id": "html-has-lang",
+        "impact": "serious",
+        "help": "<html> element must have a lang attribute",
+        "n": 1,
+        "targets": [
+          "#__next_error__"
+        ],
+        "html": [
+          "<html id=\"__next_error__\">"
+        ]
+      }
+    ],
+    "small_targets": [],
+    "small_target_count": 0,
+    "small_text": {
+      "small": 0,
+      "total": 0,
+      "ex": []
+    },
+    "fold": {
+      "words": 13,
+      "primary": 0
+    },
+    "hscroll": false
+  },
+  "/privat/opgaver": {
+    "axe": [
+      {
+        "id": "label-content-name-mismatch",
+        "impact": "serious",
+        "help": "Elements must have their visible text as part of their accessible name",
+        "n": 1,
+        "targets": [
+          "a[aria-label=\"Dialogbot Privat – Min dag\"]"
+        ],
+        "html": [
+          "<a aria-label=\"Dialogbot Privat – Min dag\" class=\"flex items-center gap-2 shrink-0 min-h-[44px]\" href=\"/privat/dag\">"
+        ]
+      }
+    ],
+    "small_targets": [],
+    "small_target_count": 0,
+    "small_text": {
+      "small": 0,
+      "total": 0,
+      "ex": []
+    },
+    "fold": {
+      "words": 13,
+      "primary": 0
+    },
+    "hscroll": false
+  },
+  "/privat/apps": {
+    "axe": [
+      {
+        "id": "document-title",
+        "impact": "serious",
+        "help": "Documents must have <title> element to aid in navigation",
+        "n": 1,
+        "targets": [
+          "#__next_error__"
+        ],
+        "html": [
+          "<html id=\"__next_error__\">"
+        ]
+      },
+      {
+        "id": "html-has-lang",
+        "impact": "serious",
+        "help": "<html> element must have a lang attribute",
+        "n": 1,
+        "targets": [
+          "#__next_error__"
+        ],
+        "html": [
+          "<html id=\"__next_error__\">"
+        ]
+      }
+    ],
+    "small_targets": [],
+    "small_target_count": 0,
+    "small_text": {
+      "small": 0,
+      "total": 0,
+      "ex": []
+    },
+    "fold": {
+      "words": 13,
+      "primary": 0
+    },
+    "hscroll": false
+  },
+  "/privat/butik": {
+    "axe": [
+      {
+        "id": "label-content-name-mismatch",
+        "impact": "serious",
+        "help": "Elements must have their visible text as part of their accessible name",
+        "n": 1,
+        "targets": [
+          "a[aria-label=\"Dialogbot Privat – Min dag\"]"
+        ],
+        "html": [
+          "<a aria-label=\"Dialogbot Privat – Min dag\" class=\"flex items-center gap-2 shrink-0 min-h-[44px]\" href=\"/privat/dag\">"
+        ]
+      }
+    ],
+    "small_targets": [],
+    "small_target_count": 0,
+    "small_text": {
+      "small": 1,
+      "total": 2,
+      "ex": [
+        "15px: Skriv det til Peter. Ønsker lander hos os som udvi"
+      ]
+    },
+    "fold": {
+      "words": 52,
+      "primary": 0
+    },
+    "hscroll": false
+  },
+  "/privat/butik/ring-for-mig": {
+    "axe": [
+      {
+        "id": "label-content-name-mismatch",
+        "impact": "serious",
+        "help": "Elements must have their visible text as part of their accessible name",
+        "n": 1,
+        "targets": [
+          "a[aria-label=\"Dialogbot Privat – Min dag\"]"
+        ],
+        "html": [
+          "<a aria-label=\"Dialogbot Privat – Min dag\" class=\"flex items-center gap-2 shrink-0 min-h-[44px]\" href=\"/privat/dag\">"
+        ]
+      }
+    ],
+    "small_targets": [],
+    "small_target_count": 0,
+    "small_text": {
+      "small": 0,
+      "total": 0,
+      "ex": []
+    },
+    "fold": {
+      "words": 12,
+      "primary": 0
+    },
+    "hscroll": false
+  },
+  "/privat/butik/pakker": {
+    "axe": [
+      {
+        "id": "document-title",
+        "impact": "serious",
+        "help": "Documents must have <title> element to aid in navigation",
+        "n": 1,
+        "targets": [
+          "#__next_error__"
+        ],
+        "html": [
+          "<html id=\"__next_error__\">"
+        ]
+      },
+      {
+        "id": "html-has-lang",
+        "impact": "serious",
+        "help": "<html> element must have a lang attribute",
+        "n": 1,
+        "targets": [
+          "#__next_error__"
+        ],
+        "html": [
+          "<html id=\"__next_error__\">"
+        ]
+      }
+    ],
+    "small_targets": [],
+    "small_target_count": 0,
+    "small_text": {
+      "small": 0,
+      "total": 0,
+      "ex": []
+    },
+    "fold": {
+      "words": 13,
+      "primary": 0
+    },
+    "hscroll": false
+  },
+  "/privat/folk": {
+    "axe": [
+      {
+        "id": "document-title",
+        "impact": "serious",
+        "help": "Documents must have <title> element to aid in navigation",
+        "n": 1,
+        "targets": [
+          "#__next_error__"
+        ],
+        "html": [
+          "<html id=\"__next_error__\">"
+        ]
+      },
+      {
+        "id": "html-has-lang",
+        "impact": "serious",
+        "help": "<html> element must have a lang attribute",
+        "n": 1,
+        "targets": [
+          "#__next_error__"
+        ],
+        "html": [
+          "<html id=\"__next_error__\">"
+        ]
+      }
+    ],
+    "small_targets": [],
+    "small_target_count": 0,
+    "small_text": {
+      "small": 0,
+      "total": 0,
+      "ex": []
+    },
+    "fold": {
+      "words": 13,
+      "primary": 0
+    },
+    "hscroll": false
+  },
+  "/privat/konto": {
+    "axe": [
+      {
+        "id": "label-content-name-mismatch",
+        "impact": "serious",
+        "help": "Elements must have their visible text as part of their accessible name",
+        "n": 1,
+        "targets": [
+          "a[aria-label=\"Dialogbot Privat – Min dag\"]"
+        ],
+        "html": [
+          "<a aria-label=\"Dialogbot Privat – Min dag\" class=\"flex items-center gap-2 shrink-0 min-h-[44px]\" href=\"/privat/dag\">"
+        ]
+      }
+    ],
+    "small_targets": [],
+    "small_target_count": 0,
+    "small_text": {
+      "small": 0,
+      "total": 0,
+      "ex": []
+    },
+    "fold": {
+      "words": 13,
+      "primary": 0
+    },
+    "hscroll": false
+  },
+  "/privat/kalender": {
+    "axe": [
+      {
+        "id": "document-title",
+        "impact": "serious",
+        "help": "Documents must have <title> element to aid in navigation",
+        "n": 1,
+        "targets": [
+          "#__next_error__"
+        ],
+        "html": [
+          "<html id=\"__next_error__\">"
+        ]
+      },
+      {
+        "id": "html-has-lang",
+        "impact": "serious",
+        "help": "<html> element must have a lang attribute",
+        "n": 1,
+        "targets": [
+          "#__next_error__"
+        ],
+        "html": [
+          "<html id=\"__next_error__\">"
+        ]
+      }
+    ],
+    "small_targets": [],
+    "small_target_count": 0,
+    "small_text": {
+      "small": 0,
+      "total": 0,
+      "ex": []
+    },
+    "fold": {
+      "words": 13,
+      "primary": 0
+    },
+    "hscroll": false
+  },
+  "/privat/apps/ring-for-mig": {
+    "axe": [
+      {
+        "id": "document-title",
+        "impact": "serious",
+        "help": "Documents must have <title> element to aid in navigation",
+        "n": 1,
+        "targets": [
+          "#__next_error__"
+        ],
+        "html": [
+          "<html id=\"__next_error__\">"
+        ]
+      },
+      {
+        "id": "html-has-lang",
+        "impact": "serious",
+        "help": "<html> element must have a lang attribute",
+        "n": 1,
+        "targets": [
+          "#__next_error__"
+        ],
+        "html": [
+          "<html id=\"__next_error__\">"
+        ]
+      }
+    ],
+    "small_targets": [],
+    "small_target_count": 0,
+    "small_text": {
+      "small": 0,
+      "total": 0,
+      "ex": []
+    },
+    "fold": {
+      "words": 13,
+      "primary": 0
+    },
+    "hscroll": false
+  },
+  "zoom200": {
+    "/privat/dag": false,
+    "/privat/butik": false,
+    "/privat/butik/ring-for-mig": false,
+    "/privat/konto": false
+  }
+}

@@ -113,6 +113,30 @@ def funnel_welcome(name: str, email: str, link: str, hours: int, lang: str = "da
                  note=t(lang, "welcome_note", hours=hours), footer_reason=t(lang, "welcome_footer"))
 
 
+BILLING_KINDS = {"receipt": "receipt", "payment_failed": "failed", "refund": "refund", "trial_ending": "trial"}
+
+
+def billing(kind: str, amount: str, link: str, lang: str = "da", *, date: str = "", plan: str = "") -> Email:
+    """Dialogbot Privat's own billing mails (F-PBQ-08, via billing.customer_mails): a receipt, a failed payment
+    (dunning), a refund, or the trial ending in 3 days. `amount` is already formatted (billing.markets.fmt); the button
+    opens Konto. The texts are shared with Erhverv's billing mails (email_texts.py), «what» says Dialogbot Privat."""
+    lang = normalize(lang)
+    k = BILLING_KINDS[kind]
+    kw = {"amount": amount, "what": t(lang, "what_privat"), "plan": plan, "date": date}
+    return _mail(lang, subject=t(lang, f"{k}_subject", **kw), heading=t(lang, f"{k}_heading", **kw),
+                 paragraphs=[t(lang, f"{k}_body", **kw)], button_label=t(lang, "manage_button"), button_url=link,
+                 footer_reason=t(lang, "billing_footer"))
+
+
+def data_export(link: str, days: int, lang: str = "da") -> Email:
+    """«Eksportér mine data» is ready (PC-ACC-02/03, privat.gdpr): the link opens Konto, works `days` days, login only."""
+    lang = normalize(lang)
+    return _mail(lang, subject=t(lang, "privat_export_subject"), heading=t(lang, "privat_export_heading"),
+                 paragraphs=[t(lang, "privat_export_body")], button_label=t(lang, "privat_export_button"),
+                 button_url=link, note=t(lang, "privat_export_note", days=days),
+                 footer_reason=t(lang, "privat_export_footer"))
+
+
 def sms_code(code: str, lang: str = "da") -> str:
     """The SMS with a verification code (Privat phone, group join, quiz-funnel)."""
     return t(lang, "privat_sms_code", code=code)
@@ -144,4 +168,9 @@ def samples(lang: str = "da") -> dict[str, Email]:
         "group_gift": group_gift("Der mangler 200 kr. til fællesgaven.", task, lang),
         "funnel_welcome": funnel_welcome("Pia", "pia@example.dk",
                                          url("/password/reset?token=eksempel&for=privat&next=%2Fprivat%2Fdag"), 48, lang),
+        "billing": billing("receipt", "99 kr.", url("/privat/konto"), lang),
+        "billing_failed": billing("payment_failed", "99 kr.", url("/privat/konto"), lang),
+        "billing_refund": billing("refund", "99 kr.", url("/privat/konto"), lang),
+        "billing_trial": billing("trial_ending", "99 kr.", url("/privat/konto"), lang, date="14.11.2026", plan="Plus"),
+        "data_export": data_export(url("/privat/konto?eksport=eksempel"), 7, lang),
     }

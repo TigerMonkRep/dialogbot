@@ -1,10 +1,11 @@
 "use client";
+import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { Button, ErrorBox } from "@/components/ui";
 import { useT } from "@/i18n/client";
-import { LOCATION_OPTION, isDemoPlace, isPlaceOption, type ChatMessage, type Task } from "@/lib/privat/api";
+import { LOCATION_OPTION, NOTICE, isDemoPlace, isPlaceOption, type ChatMessage, type Task } from "@/lib/privat/api";
 import { useState } from "react";
-import { CHIP, ROW, SR, StatusBadge } from "./bits";
+import { BIG, CHIP, ROW, SR, StatusBadge } from "./bits";
 import { AddonCard, BrowserApprovalCard, CallCard, DraftCard, ListCard, MoveCard, ReminderCard, ShareProposalCard } from "./cards";
 import { Composer, Shortcuts } from "./day";
 import { Ico } from "./icons";
@@ -31,6 +32,19 @@ function Earlier({ task }: { task: Task }) {
   );
 }
 
+/** Chats are kept as long as the account exists; each line can be deleted on its own (GDPR, decision 2026-11-11). */
+function DeleteLine({ id }: { id: string }) {
+  const t = useT("privat");
+  const { run, busy, mode } = usePrivat();
+  if (id.startsWith("pending") || mode === "demo") return null;
+  return (
+    <button type="button" disabled={busy} onClick={() => void run((a) => a.deleteMessage(id))} aria-label={t("chat.deleteMessage")} title={t("chat.deleteMessage")}
+      className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-muted hover:text-ink hover:bg-panel shrink-0" data-testid="delete-message">
+      <Ico name="trash" size={14} />
+    </button>
+  );
+}
+
 function Message({ m, latestCard, open, prevUser }: { m: ChatMessage; latestCard: boolean; open: boolean; prevUser: string | null }) {
   const t = useT("privat");
   const { task, pick, openTask, tasks, busy } = usePrivat();
@@ -40,7 +54,8 @@ function Message({ m, latestCard, open, prevUser }: { m: ChatMessage; latestCard
     return (
       <div className="self-end max-w-[86%] flex flex-col items-end gap-1">
         {about && <span className="text-[12px] font-semibold text-muted [overflow-wrap:anywhere]">{t("chat.aboutTask", { title: about.title })}</span>}
-        <div className="bg-ink text-paper rounded-[16px_16px_4px_16px] px-3.5 py-2.5 text-[16px] leading-[1.4] [overflow-wrap:anywhere]">{m.text}</div>
+        <div className="flex items-center gap-1"><DeleteLine id={m.id} />
+          <div className="bg-ink text-paper rounded-[16px_16px_4px_16px] px-3.5 py-2.5 text-[16px] leading-[1.4] [overflow-wrap:anywhere]">{m.text}</div></div>
       </div>
     );
   }
@@ -52,6 +67,18 @@ function Message({ m, latestCard, open, prevUser }: { m: ChatMessage; latestCard
     if (m.kind === "share_proposal") return <ShareProposalCard task={tk} text={m.text} groupId={m.options?.[0]?.id} />;
     return <TaskCardFor task={tk} />;
   }
+  // A booking on a website stopped by the API (F-PDEC-02): no plan → «Kræver en plan» → Konto, like «Ring for mig»;
+  // the month's fair-use cap → the friendly text in the user's language. Markers, never answers (no pick).
+  const notice = m.kind === "text" ? (m.options ?? []).find((o) => o.id === NOTICE.needsPlan || o.id === NOTICE.limit) : undefined;
+  if (notice?.id === NOTICE.needsPlan) {
+    return (
+      <div className="self-start max-w-[90%] flex flex-col gap-2" data-testid="browser-needs-plan">
+        <div className={BOT.replace("max-w-[90%] ", "")}>{t("browser.needsPlanText")}</div>
+        <Link href="/privat/konto" className={`self-start inline-flex items-center justify-center rounded-xl font-semibold ${BIG} bg-accent text-white hover:bg-accent-deep`}>{t("call.needsPlan")}</Link>
+      </div>
+    );
+  }
+  if (notice?.id === NOTICE.limit) return <div className={BOT} data-testid="browser-limit">{t("browser.limit")}</div>;
   switch (m.kind) {
     case "move": return <MoveCard task={tk} before={m.before ?? ""} after={m.after ?? ""} />;
     case "addon": return <AddonCard addonKey={m.addon_key ?? ""} retryText={prevUser} />;
@@ -117,7 +144,7 @@ function Message({ m, latestCard, open, prevUser }: { m: ChatMessage; latestCard
       );
     }
     default:
-      return m.text ? <div className={BOT}>{m.text}</div> : null;
+      return m.text ? <div className="self-start max-w-[90%] flex items-center gap-1"><div className={BOT.replace("max-w-[90%] ", "")}>{m.text}</div><DeleteLine id={m.id} /></div> : null;
   }
 }
 

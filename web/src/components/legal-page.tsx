@@ -66,10 +66,12 @@ export async function LegalPage({ label, title, intro, updated, sections, audien
       <header className="bg-paper border-b-2 border-ink">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 min-h-16 flex items-center justify-between gap-4">
           <Link href={privat ? "/privat" : "/"} className="flex items-center gap-2.5"><LogoMark size={32} /><span className="font-display font-extrabold text-[20px] tracking-[-0.3px] text-ink">{privat ? "Dialogbot Privat" : "Dialogbot"}</span></Link>
-          <nav className="flex items-center gap-1" aria-label={t("shell.nav")}>
-            <Link href={privat ? "/privat/vilkaar" : "/vilkaar"} className="inline-flex items-center min-h-[44px] px-3 rounded-xl text-[14px] font-semibold text-ink hover:bg-panel">{t("shell.terms")}</Link>
-            <Link href="/privatliv" className="inline-flex items-center min-h-[44px] px-3 rounded-xl text-[14px] font-semibold text-ink hover:bg-panel">{t("shell.privacy")}</Link>
-            <Link href="/kontakt" className="inline-flex items-center min-h-[44px] px-3 rounded-xl text-[14px] font-semibold text-ink hover:bg-panel">{t("shell.contact")}</Link>
+          {/* 390 px: three 44 px links next to the logo only fit with px-2; longer locales (de/fr) wrap the links instead
+              of scrolling sideways (F-VER4-02-P09). */}
+          <nav className="min-w-0 flex flex-wrap items-center justify-end gap-1" aria-label={t("shell.nav")}>
+            <Link href={privat ? "/privat/vilkaar" : "/vilkaar"} className="inline-flex items-center min-h-[44px] px-2 sm:px-3 rounded-xl text-[14px] font-semibold text-ink hover:bg-panel">{t("shell.terms")}</Link>
+            <Link href="/privatliv" className="inline-flex items-center min-h-[44px] px-2 sm:px-3 rounded-xl text-[14px] font-semibold text-ink hover:bg-panel">{t("shell.privacy")}</Link>
+            <Link href="/kontakt" className="inline-flex items-center min-h-[44px] px-2 sm:px-3 rounded-xl text-[14px] font-semibold text-ink hover:bg-panel">{t("shell.contact")}</Link>
           </nav>
         </div>
       </header>

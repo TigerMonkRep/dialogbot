@@ -152,7 +152,8 @@ def send_due(db: OrmSession, now: datetime | None = None) -> int:
         for row in rows:
             data = dict(row.data)
             reminded = dict(data.get("reminded") or {})
-            due = [(t, x) for t, x in mod.due(data, today) if t not in reminded]
+            got = mod.due_for(db, data, today) if hasattr(mod, "due_for") else mod.due(data, today)
+            due = [(t, x) for t, x in got if t not in reminded]
             if not due:
                 continue
             owner = db.scalar(select(User).join(PrivateProfile, PrivateProfile.user_id == User.id)

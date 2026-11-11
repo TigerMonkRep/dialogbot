@@ -357,7 +357,7 @@
           ]},
           {"type": "p", "text": "Der Preis steht beim Anruf, bevor du ihn freigibst. «Ruf für mich an» erfordert einen Plan; ohne Plan kann das Guthaben nicht für Anrufe genutzt werden. Ohne Plan kann das Guthaben genutzt werden, um eine zusätzliche Aufgabe für {pExtraTask} zu aktivieren."},
           {"type": "p", "text": "Das Guthaben verfällt nicht, solange das Konto besteht. Es kann nicht auf andere übertragen werden. Boni, die wir deinem Guthaben gutschreiben (z. B. der Willkommensbonus von {pWelcome} und der Empfehlungsbonus von {pReferral}), können nur in Dialogbot Privat genutzt und nicht ausgezahlt werden."},
-          {"type": "p", "parts": ["Nicht verbrauchtes Guthaben, das du selbst eingezahlt hast, erstatten wir, wenn du im Zusammenhang mit einer Kündigung oder Löschung deines Kontos darum bittest. Schreib an ", {"email": true}, ", bevor du das Konto löschst. Wir erstatten über das Zahlungsmittel, mit dem du bezahlt hast, spätestens 14 Tage nach deiner Anfrage."]}
+          {"type": "p", "text": "Nicht genutztes Guthaben wird bei Kündigung oder Löschung deines Kontos nicht erstattet – das gilt für Boni ebenso wie für das, was du selbst eingezahlt hast. Dein Widerrufsrecht gilt weiterhin: Innerhalb von 14 Tagen nach einer Aufladung kannst du den nicht genutzten Teil dieser Aufladung zurückbekommen (Punkt 7)."}
         ]
       },
       {

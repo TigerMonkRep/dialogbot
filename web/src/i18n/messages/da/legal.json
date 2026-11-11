@@ -357,7 +357,7 @@
           ]},
           {"type": "p", "text": "Prisen står på opkaldet, før du godkender det. «Ring for mig» kræver en plan; saldoen kan ikke bruges til opkald uden plan. Uden plan kan saldoen bruges til at aktivere en ekstra opgave for {pExtraTask}."},
           {"type": "p", "text": "Saldoen udløber ikke, så længe kontoen findes. Den kan ikke overføres til andre. Bonusser, som vi lægger på saldoen (fx velkomstbonus på {pWelcome} og henvisningsbonus på {pReferral}), kan kun bruges i Dialogbot Privat og udbetales ikke."},
-          {"type": "p", "parts": ["Ubrugt saldo, som du selv har indbetalt, refunderer vi, når du beder om det i forbindelse med opsigelse eller sletning af kontoen. Skriv til ", {"email": true}, ", før du sletter kontoen. Vi refunderer til det betalingsmiddel, du betalte med, senest 14 dage efter din anmodning."]}
+          {"type": "p", "text": "Ubrugt saldo refunderes ikke, når du opsiger eller sletter kontoen – det gælder både bonusser og det, du selv har indbetalt. Din fortrydelsesret gælder stadig: Inden for 14 dage efter en optankning kan du få den ubrugte del af den optankning tilbage (punkt 7)."}
         ]
       },
       {

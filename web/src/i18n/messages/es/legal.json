@@ -357,7 +357,7 @@
           ]},
           {"type": "p", "text": "El precio aparece en la llamada antes de que la apruebes. «Llama por mí» requiere un plan; sin plan, el saldo no puede usarse para llamadas. Sin plan, el saldo puede usarse para activar una tarea adicional por {pExtraTask}."},
           {"type": "p", "text": "El saldo no caduca mientras exista la cuenta. No puede transferirse a otras personas. Las bonificaciones que añadimos a tu saldo (por ejemplo, la bonificación de bienvenida de {pWelcome} y la de recomendación de {pReferral}) solo pueden usarse en Dialogbot Privat y no se pagan en efectivo."},
-          {"type": "p", "parts": ["El saldo no utilizado que hayas ingresado tú mismo te lo reembolsamos si lo pides al cancelar o eliminar tu cuenta. Escribe a ", {"email": true}, " antes de eliminar la cuenta. Te reembolsamos en el medio de pago que usaste, como máximo 14 días después de tu solicitud."]}
+          {"type": "p", "text": "El saldo no utilizado no se reembolsa cuando cancelas o eliminas tu cuenta; esto se aplica tanto a las bonificaciones como a lo que hayas ingresado tú. Tu derecho de desistimiento se mantiene: en los 14 días siguientes a una recarga puedes recuperar la parte no utilizada de esa recarga (punto 7)."}
         ]
       },
       {

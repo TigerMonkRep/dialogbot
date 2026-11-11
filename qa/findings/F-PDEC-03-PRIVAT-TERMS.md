@@ -54,11 +54,20 @@ Erhvervs tilmelding); kun salgstilbud har `terms_version`.
   `i18n:check` grønne. ruff: kun 4 eksisterende fejl i tests/qa/test_qa_pd_billing.py (uændret).
 - Commit: 7fb3b80
 
+## Beslutninger (Fürster 2026-11-11, via qa-lead)
+- **Pkt. 1 – saldo:** Ubrugt Opkaldssaldo refunderes **ikke** ved opsigelse eller sletning – hverken bonusser eller
+  egne indbetalinger. Den lovpligtige fortrydelsesret bevares: inden for 14 dage efter en optankning kan den ubrugte
+  del af den optankning refunderes (punkt 7). Saldoen udløber ikke, så længe kontoen findes. Rettet i
+  `privatTerms.sections[7].body[5]` (8. Opkaldssaldo) på alle 8 sprog (sætningen om at skrive til info@ før sletning
+  er fjernet); `tests/test_prices.py` låser det (fejler på teksten før, består efter).
+- **Pkt. 5 – ODR:** Henvisningen til Forbrugerklagenævnet og Forbrugereuropa i stedet for ODR er **godkendt**.
+- **Pkt. 6, 8, 10/11 – 18 år, dansk ret med forbrugerens hjemlandsbeskyttelse, 30 dages varsel:** **godkendt**.
+- Commit: «fix(privat-terms): F-PDEC-03 ubrugt saldo refunderes ikke …» (fix-engineer #12, oven på merge 823f5e2).
+- Stadig åbent: jurist-gennemlæsning (UDKAST-noten ovenfor gælder fortsat); punkterne nedenfor uden beslutning.
+
 ## Valg truffet af fix-engineer – Fürster/jurist skal bekræfte
-1. **«beslutning – bekræft»: Ubrugt saldo refunderes ved opsigelse/sletning efter anmodning** (standardvalget fra
-   qa-lead). Præciseret: kun det, kunden selv har indbetalt; bonusser (velkomst, henvisning) udbetales ikke; kunden
-   skal skrive til info@ **før** kontoen slettes (sletning fjerner saldohistorikken). Refusion til samme betalingsmiddel
-   inden 14 dage. Der findes ingen kode til det – det er en manuel proces i dag.
+1. ~~Ubrugt saldo refunderes ved opsigelse/sletning efter anmodning~~ – **afgjort 2026-11-11: refunderes ikke**
+   (se Beslutninger). Kun fortrydelsesretten (14 dage efter en optankning, den ubrugte del) giver refusion.
 2. **Fortrydelsesret, plan uden prøveperiode** (kortet har haft prøveperiode før): fuld refusion ved fortrydelse inden
    14 dage – vi trækker IKKE forholdsmæssigt for brugte dage (loven tillader det kun, hvis kunden udtrykkeligt har bedt
    om levering i fortrydelsesperioden, hvilket Checkout ikke indhenter). Følger «uden at det koster noget».
@@ -67,16 +76,15 @@ Erhvervs tilmelding); kun salgstilbud har `terms_version`.
    (prøveperioden kan slutte få timer før), refunderes alt.
 5. **EU's ODR-platform er IKKE nævnt.** EU-forordningen om ODR blev ophævet, og platformen lukkede 20. juli 2025, så et
    link dertil ville være dødt. I stedet: Forbrugerklagenævnet (Nævnenes Hus, Toldboden 2, 8800 Viborg, via forbrug.dk)
-   og Forbrugereuropa for forbrugere i andre EU-lande. **needs-decision:** vil Fürster alligevel have ODR nævnt, eller
-   bekræfter juristen erstatningen?
-6. **Alder:** man skal være 18 år for at købe en plan eller fylde saldoen op (gratis konto/husstandsmedlem uden krav).
+   og Forbrugereuropa for forbrugere i andre EU-lande. **Godkendt af Fürster 2026-11-11.**
+6. **Alder:** man skal være 18 år for at købe en plan eller fylde saldoen op (gratis konto/husstandsmedlem uden krav). **Godkendt 2026-11-11.**
 7. **Sprog:** den danske version gælder ved uoverensstemmelse.
 8. **Lovvalg/værneting:** dansk ret, men forbrugeren beholder sit hjemlands ufravigelige beskyttelse og kan bruge de
-   domstole, loven giver ret til (ingen fast værneting som Erhvervs «Retten i Aarhus»).
+   domstole, loven giver ret til (ingen fast værneting som Erhvervs «Retten i Aarhus»). **Godkendt 2026-11-11.**
 9. **Ansvar:** ingen beløbsgrænse (Erhvervs «3 måneders betaling» er ikke overført); kun undtagelser for tredjeparter
    (virksomheden der ringes til, teleselskaber/cloud) og force majeure, «intet begrænser dine rettigheder som forbruger».
-10. **Vores opsigelse:** 30 dages varsel med forholdsmæssig refusion af forudbetalt periode; grov misbrug → uden varsel.
-11. **Ændringer:** 30 dages varsel på e-mail og i appen; også prisændringer; kunden kan opsige før ikrafttræden.
+10. **Vores opsigelse:** 30 dages varsel med forholdsmæssig refusion af forudbetalt periode; grov misbrug → uden varsel. **30 dages varsel godkendt 2026-11-11.**
+11. **Ændringer:** 30 dages varsel på e-mail og i appen; også prisændringer; kunden kan opsige før ikrafttræden. **Godkendt 2026-11-11.**
 12. **Mislykket betaling:** «lykkes den ikke, efter at Stripe har prøvet igen, ophører planen» (matcher
     past_due → canceled i koden).
 13. **Ubrugte planopkald overføres ikke** til næste måned (kalendermåned); ubesvarede/fejlede tæller ikke.

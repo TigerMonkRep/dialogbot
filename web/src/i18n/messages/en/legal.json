@@ -357,7 +357,7 @@
           ]},
           {"type": "p", "text": "The price is shown on the call before you approve it. «Call for me» requires a plan; the balance cannot be used for calls without a plan. Without a plan, the balance can be used to activate an extra task for {pExtraTask}."},
           {"type": "p", "text": "The balance does not expire as long as the account exists. It cannot be transferred to others. Bonuses we add to your balance (such as the welcome bonus of {pWelcome} and the referral bonus of {pReferral}) can only be used in Dialogbot Privat and are not paid out."},
-          {"type": "p", "parts": ["Unused balance that you paid in yourself is refunded when you ask for it in connection with cancelling or deleting your account. Write to ", {"email": true}, " before you delete the account. We refund to the payment method you used, no later than 14 days after your request."]}
+          {"type": "p", "text": "Unused balance is not refunded when you cancel or delete your account – this applies both to bonuses and to what you paid in yourself. Your right of withdrawal still applies: within 14 days of a top-up you can get back the unused part of that top-up (section 7)."}
         ]
       },
       {

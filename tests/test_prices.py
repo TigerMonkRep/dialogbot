@@ -258,11 +258,15 @@ def test_the_privat_terms_exist_in_every_language_with_every_price_from_prices_j
         assert re.search(rf"\b{market.TERMS_VERSION}\b", terms["updated"]) and "2026" in terms["updated"], loc
         assert [len(s["body"]) for s in terms["sections"]] == [len(s["body"]) for s in da["sections"]], loc
         assert "/privatliv" in text and "forbrug.dk" in text and "Forbrugerklagenævnet" in text, loc
+        refund = terms["sections"][7]["body"][5]  # 8. Opkaldssaldo: no refund on cancel/delete, no «write to us first»
+        assert refund["type"] == "p" and "parts" not in refund and "14" in refund["text"], loc
     assert "Version 1 · gældende fra 11. november 2026." == da["updated"]
     da_text = json.dumps(da, ensure_ascii=False)
     for promise in ("14 dages fortrydelsesret", "én prøveperiode pr. konto og pr. betalingskort",
                     "udløber ikke, så længe kontoen findes", "slettes efter 90 dage", "gælder i 7 dage",
-                    "tilbagekalder vi adgangen hos Google", "«Annonce»", "30 dages varsel", "fair use"):
+                    "tilbagekalder vi adgangen hos Google", "«Annonce»", "30 dages varsel", "fair use",
+                    # Fürster 2026-11-11: no refund of unused balance on cancel/delete – only the 14-day withdrawal
+                    "ubrugt saldo refunderes ikke", "den ubrugte del af den optankning"):
         assert promise.lower() in da_text.lower(), promise
     # the page, and every Privat place that leads to a Checkout, links the Privat terms – never the business terms
     page = (ROOT / "web/src/app/privat/vilkaar/page.tsx").read_text(encoding="utf-8")

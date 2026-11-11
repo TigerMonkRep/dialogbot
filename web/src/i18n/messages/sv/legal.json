@@ -357,7 +357,7 @@
           ]},
           {"type": "p", "text": "Priset står på samtalet innan du godkänner det. «Ring för mig» kräver en plan; saldot kan inte användas till samtal utan plan. Utan plan kan saldot användas för att aktivera en extra uppgift för {pExtraTask}."},
           {"type": "p", "text": "Saldot förfaller inte så länge kontot finns. Det kan inte överföras till andra. Bonusar som vi lägger på saldot (till exempel välkomstbonusen på {pWelcome} och värvningsbonusen på {pReferral}) kan bara användas i Dialogbot Privat och betalas inte ut."},
-          {"type": "p", "parts": ["Oanvänt saldo som du själv har betalat in återbetalar vi när du ber om det i samband med uppsägning eller radering av kontot. Skriv till ", {"email": true}, " innan du raderar kontot. Vi återbetalar till det betalningsmedel du betalade med, senast 14 dagar efter din begäran."]}
+          {"type": "p", "text": "Outnyttjat saldo återbetalas inte när du säger upp eller raderar kontot – det gäller både bonusar och det du själv har betalat in. Din ångerrätt gäller fortfarande: Inom 14 dagar efter en påfyllning kan du få tillbaka den outnyttjade delen av den påfyllningen (punkt 7)."}
         ]
       },
       {

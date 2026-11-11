@@ -357,7 +357,7 @@
           ]},
           {"type": "p", "text": "Il prezzo è indicato sulla chiamata prima che tu la approvi. «Chiama per me» richiede un piano; senza piano il saldo non può essere usato per le chiamate. Senza piano il saldo può essere usato per attivare un compito extra a {pExtraTask}."},
           {"type": "p", "text": "Il saldo non scade finché l'account esiste. Non può essere trasferito ad altri. I bonus che aggiungiamo al saldo (ad esempio il bonus di benvenuto di {pWelcome} e il bonus presentazione di {pReferral}) possono essere usati solo in Dialogbot Privat e non vengono pagati."},
-          {"type": "p", "parts": ["Il saldo non utilizzato che hai versato tu stesso ti viene rimborsato se lo chiedi in occasione della disdetta o dell'eliminazione dell'account. Scrivi a ", {"email": true}, " prima di eliminare l'account. Rimborsiamo sul mezzo di pagamento che hai usato, entro 14 giorni dalla tua richiesta."]}
+          {"type": "p", "text": "Il saldo non utilizzato non viene rimborsato quando disdici o elimini il tuo account: vale sia per i bonus sia per ciò che hai versato tu. Il tuo diritto di recesso resta valido: entro 14 giorni da una ricarica puoi riavere la parte non utilizzata di quella ricarica (punto 7)."}
         ]
       },
       {

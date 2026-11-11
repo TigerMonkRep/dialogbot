@@ -612,7 +612,7 @@
           ]},
           {"type": "p", "text": "Le prix figure sur l'appel avant que vous l'approuviez. « Appelle pour moi » nécessite une formule ; sans formule, le solde ne peut pas servir à des appels. Sans formule, le solde peut servir à activer une tâche supplémentaire pour {pExtraTask}."},
           {"type": "p", "text": "Le solde n'expire pas tant que le compte existe. Il ne peut pas être transféré à d'autres personnes. Les bonus que nous ajoutons à votre solde (par exemple le bonus de bienvenue de {pWelcome} et le bonus de parrainage de {pReferral}) ne peuvent être utilisés que dans Dialogbot Privat et ne sont pas versés."},
-          {"type": "p", "parts": ["Le solde non utilisé que vous avez vous-même versé vous est remboursé si vous le demandez lors de la résiliation ou de la suppression de votre compte. Écrivez à ", {"email": true}, " avant de supprimer le compte. Nous remboursons sur le moyen de paiement que vous avez utilisé, au plus tard 14 jours après votre demande."]}
+          {"type": "p", "text": "Le solde non utilisé n'est pas remboursé lorsque vous résiliez ou supprimez votre compte – cela vaut pour les bonus comme pour ce que vous avez versé vous-même. Votre droit de rétractation s'applique toujours : dans les 14 jours suivant une recharge, vous pouvez récupérer la partie non utilisée de cette recharge (point 7)."}
         ]
       },
       {

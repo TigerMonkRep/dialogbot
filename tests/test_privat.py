@@ -476,3 +476,31 @@ def test_provider_crash_never_leaves_the_call_dialling(api, pv, db, monkeypatch)
     assert t["status"] == "awaiting_user" and t["call"]["status"] == "failed", t
     assert pv.me(tok)["reserved"] == 0
     assert api.post(tok, f"/privat/calls/{tid}/retry").status_code == 200
+
+
+def test_privat_call_gives_its_names_to_the_transcriber(db, monkeypatch):
+    """F-PX-03: Privat calls have no business workspace; the names this call will hear (the user's, the business's)
+    must still reach the recogniser – they were dropped when ws is None."""
+    from app.modules.telephony import vapi
+
+    monkeypatch.setattr(get_settings(), "vapi_transcriber_json", None, raising=False)
+    t = vapi.transcriber_for(db, None, extra=["Cykelmageren", "Bjørk", "Æblegård"])
+    assert t["provider"] == "deepgram" and t["keyterm"][:3] == ["Cykelmageren", "Bjørk", "Æblegård"], t
+    assert "keyterm" not in vapi.transcriber_for(db, None)  # nothing to add: unchanged
+
+
+def test_default_may_ask_reads_right_whatever_the_purpose(api, pv, db):
+    """F-PX-07: «Om de kan aflever cyklen …» – the default may_ask now carries the purpose after «hjælpe med:», and the
+    window is not repeated when the purpose already says it. F-PX-02: an app's own «må ikke» is ADDED to the general one."""
+    from app.models import User
+    from app.modules.privat import calls, deps
+
+    tok = pv.account("mette@testmail.dk")
+    principal = type("P", (), {"user": db.get(User, pv.uid(tok))})()
+    ctx = deps._ctx(db, principal, deps.find_profile(db, pv.uid(tok)))
+    t = calls.propose(db, ctx, business_name="Cykelmageren", phone="+4586123456", address="", price_text=None,
+                      purpose="Aflever cyklen torsdag efter kl. 15", window="torsdag efter kl. 15",
+                      may_not="Sige noget om helbred")
+    c = db.query(PrivateCall).filter_by(task_id=t.id).one()
+    assert c.may_ask == "Om de kan hjælpe med: aflever cyklen torsdag efter kl. 15, og hvad det koster"
+    assert c.may_not == f"{calls.DEFAULT_MAY_NOT}. Sige noget om helbred"

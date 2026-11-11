@@ -1,6 +1,7 @@
 {
   "framework": "nextjs",
   "regions": ["fra1"],
+  "ignoreCommand": "[ \"$VERCEL_GIT_COMMIT_REF\" != \"main\" ]",
   "headers": [
     { "source": "/app/(.*)", "headers": [{ "key": "Cache-Control", "value": "no-store, private" }] },
     { "source": "/onboarding/(.*)", "headers": [{ "key": "Cache-Control", "value": "no-store, private" }] },

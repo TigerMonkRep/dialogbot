@@ -889,8 +889,12 @@ def out(db: OrmSession, ws_id: uuid.UUID, a: Addon, ent: dict | None = None) -> 
     row = db.get(PrivateAddonEnabled, (ws_id, a.key))
     on = row is not None and a.live_status != "coming_soon"
     st = app_status.state(db, ws_id, a.key)
-    return {"needs": p(list(a.needs)), "summary_line": app_status.summary_line(db, ws_id, a.key) if on else None,
-            "setup": {"done": min(st.setup_done if st else 0, len(a.steps)), "total": len(a.steps)},
+    line = app_status.summary_line(db, ws_id, a.key) if on else None
+    # the app already holds data (Sofie's birthday, a packing list …): its first step – telling Peter – is done,
+    # whether or not «Trinnet er klaret» was tapped (F-UX-04)
+    done = max(st.setup_done if st else 0, 1 if line and a.steps else 0)
+    return {"needs": p(list(a.needs)), "summary_line": line,
+            "setup": {"done": min(done, len(a.steps)), "total": len(a.steps)},
             "disabled_at": st.disabled_at.isoformat() if st and st.disabled_at and not on else None,
             "notify_requested": bool(st and st.notify_requested_at), "data_deletable": app_status.deletable(a.key),
             "key": a.key, "name": a.name, "tagline": p(a.tagline), "description": p(a.description), "icon": a.icon,

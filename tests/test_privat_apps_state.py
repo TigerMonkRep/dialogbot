@@ -130,3 +130,14 @@ def test_plan_app_stops_when_the_plan_lapses_and_comes_back_with_its_data(api, p
     assert "kaeledyr" in addons.enabled_keys(db, ws)
     over = api.get(tok, "/privat/apps/kaeledyr/overview").json()
     assert any("Misser" in i["text"] for i in over["items"])
+
+
+def test_first_setup_step_counts_as_done_when_the_app_has_data(api, pv):
+    """F-UX-04: Fødselsdage with Sofie saved stood on «Trin 1 af 3» – an app with data has its first step done."""
+    tok = pv.account("ux04@testmail.dk")
+    assert api.post(tok, "/privat/addons/foedselsdage/enable").status_code == 200
+    card = next(a for a in api.get(tok, "/privat/addons").json() if a["key"] == "foedselsdage")
+    assert card["setup"]["done"] == 0
+    assert api.post(tok, "/privat/birthdays", {"name": "Sofie", "date": "2019-12-03"}).status_code in (200, 201)
+    card = next(a for a in api.get(tok, "/privat/addons").json() if a["key"] == "foedselsdage")
+    assert card["summary_line"] and card["setup"]["done"] >= 1

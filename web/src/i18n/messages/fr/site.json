@@ -37,7 +37,9 @@
       },
       "lead": "Un réceptionniste IA qui parle la langue de vos clients, répond 24 h/24, prend les rendez-vous dans votre agenda et vous envoie un message après chaque appel. Vous gardez votre numéro. {pMonthly}/mois HT.",
       "cta": "Essayez-le – il vous appelle",
-      "note": "2 minutes, sans inscription. Posez-lui vos questions comme le ferait un client."
+      "note": "2 minutes, sans inscription. Posez-lui vos questions comme le ferait un client.",
+      "signupCta": "Inscrivez-vous et commencez",
+      "signupNote": "Ouvert 24 h/24 : inscrivez-vous et choisissez votre abonnement vous-même. Aucun appel préalable n'est nécessaire."
     },
     "how": {
       "eyebrow": "Comment ça marche",
@@ -114,7 +116,8 @@
           "Téléphone, réservation et chat web – tout inclus",
           "{pIncluded} minutes par mois – appels entrants et sortants",
           "Sans engagement – résiliable chaque mois"
-        ]
+        ],
+        "signupCta": "Inscrivez-vous et choisissez l'abonnement"
       },
       "campaign": {
         "name": "Appels sortants de campagne",
@@ -169,7 +172,13 @@
         "text": "Le guide de configuration vous montre étape par étape ce dont vous avez besoin et ce qui se passe – sans technique, sans code.",
         "cta": "Ouvrir le guide de configuration"
       },
-      "specialists": "Vous préférez qu’on s’en charge ? Nos spécialistes le configurent pour {pSetup}. HT, sur mesure pour vos outils."
+      "specialists": "Vous préférez qu’on s’en charge ? Nos spécialistes le configurent pour {pSetup}. HT, sur mesure pour vos outils.",
+      "signup": {
+        "badge": "24 h/24 · sans appel",
+        "title": "Inscrivez-vous vous-même",
+        "text": "Créez un compte, choisissez votre abonnement et configurez Dialogbot à votre rythme, même ce soir et le week-end. Nous n'appelons que si vous le demandez.",
+        "cta": "Inscrivez-vous"
+      }
     },
     "ld": {
       "appDescription": "Dialogbot est un réceptionniste IA qui gère le téléphone et le chat de votre entreprise 24 h/24, dans la langue de vos clients – il répond à partir de vos propres connaissances, prend des rendez-vous et centralise les demandes. Nous vous accompagnons tout au long de la configuration.",
@@ -426,7 +435,6 @@
         "unavailable": "Pas pour le moment"
       },
       "blockerInactive": "L’appel test sera bientôt activé – d’ici là, nous vous appelons manuellement pendant les heures d’ouverture. Appelez-nous au {phone} ({hours}) ou envoyez votre numéro à {email}, et nous vous rappellerons.",
-      "blockerClosed": "Je n’appelle qu’entre {from} et {to} en semaine. Revenez à ce moment-là – ou envoyez votre numéro à {email}, et nous vous rappellerons pendant les heures d’ouverture.",
       "blockerOwnNumber": " Vous pouvez aussi appeler vous-même mon numéro de démonstration {number}.",
       "chipCall": "Oui, appelez-moi",
       "chipWhat": "Que savez-vous faire ?",
@@ -479,7 +487,15 @@
         "Décrochez – posez vos questions comme un client",
         "Ça vous plaît ? Alors créons le vrai"
       ],
-      "sideNote": "Le même chat vous accompagne ensuite : quand vous dites oui, il vous guide dans la configuration, connecte votre agenda et teste tout avec vous."
+      "sideNote": "Le même chat vous accompagne ensuite : quand vous dites oui, il vous guide dans la configuration, connecte votre agenda et teste tout avec vous.",
+      "signupCta": "Inscrivez-vous",
+      "signupLine": "Prêt à commencer ? Inscrivez-vous vous-même : c'est ouvert 24 h/24.",
+      "closedAskCompany": "Je n'appelle pas pour le moment : j'appellerai {when} à partir de {time}. Inutile d'attendre : vous pouvez vous inscrire tout de suite. Si vous voulez quand même l'appel, indiquez le nom de votre entreprise.",
+      "scheduled": "Merci. J'appellerai le {number} {when} à partir de {time} et je me présenterai comme réceptionniste de {company}. Inutile de m'attendre : vous pouvez vous inscrire tout de suite ici.",
+      "phoneScheduledTitle": "Peter appelle {when} à partir de {time}",
+      "phoneScheduledText": "Vous pouvez vous inscrire et commencer dès maintenant : l'appel aura lieu quand même.",
+      "whenToday": "aujourd'hui",
+      "whenTomorrow": "demain"
     }
   },
   "preview": {
@@ -799,8 +815,11 @@
         "notLoggedIn": "Connectez-vous pour voir comment s'est passé l'appel.",
         "login": "Se connecter",
         "statusAria": "État de l'appel",
-        "noCallTitle": "Elle n'appelle pas pour le moment"
-      }
+        "noCallTitle": "Elle n'appelle pas pour le moment",
+        "scheduledTitle": "Elle appelle {when} à partir de {time}",
+        "scheduledText": "En dehors des heures d'appel, nous mettons l'appel en file d'attente. Inutile d'attendre : adoptez-la dès maintenant."
+      },
+      "signupDirect": "Passez le quiz : inscrivez-vous directement"
     }
   }
 }

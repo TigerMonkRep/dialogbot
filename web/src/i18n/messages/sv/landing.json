@@ -45,6 +45,8 @@
     "ctaTitle": "Hör Dialogbot svara i telefon – på din egen telefon",
     "ctaText": "Berätta för chatten vad ditt företag heter och vad ni gör, så ringer assistenten upp dig och visar hur den skulle svara i telefon åt er.",
     "callMe": "Ring upp mig nu",
+    "signupCta": "Skapa konto – kom igång nu",
+    "ctaSignupText": "Du kan också skapa konto direkt – dygnet runt, utan att vänta på ett samtal.",
     "orWrite": "Eller skriv till ",
     "priceLine": ". {pMonthly}/mån. · exkl. moms. Ingen bindningstid."
   },

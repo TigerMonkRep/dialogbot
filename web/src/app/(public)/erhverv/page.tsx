@@ -16,6 +16,7 @@ import { getLocale, getRaw, getT } from "@/i18n/server";
 import { HTML_LANG, type Locale } from "@/i18n/config";
 import type { T } from "@/i18n/translate";
 import { market, schemaPrice } from "@/lib/markets";
+import { SIGNUP_ERHVERV } from "@/lib/contact";
 
 /** The Erhverv landing (/erhverv – the entry page at "/" sends business visitors here): one story, read top to
  *  bottom. What Dialogbot is (one sentence + the 70-second video), how it works (3 steps), what it does (4 tiles),
@@ -118,12 +119,13 @@ export default async function Home() {
             <h1 className="m-0 font-display font-extrabold text-[clamp(38px,5vw,64px)] leading-[1.02] tracking-[-1.6px]">{t("home.hero.title.before")}<Mark kind="marker">{t("home.hero.title.mark")}</Mark>{t("home.hero.title.after")}</h1>
             <p className="m-0 text-[18px] sm:text-[19px] leading-[1.55] text-ink-soft max-w-[540px]">{t("home.hero.lead")}</p>
             <div className="flex flex-wrap gap-3">
-              <Link href="/proev" className={btnPrimary}>{t("home.hero.cta")}<ArrowIcon size={18} /></Link>
+              <Link href={SIGNUP_ERHVERV} className={btnPrimary} data-signup-cta>{t("home.hero.signupCta")}<ArrowIcon size={18} /></Link>
+              <Link href="/proev" className={btnOutline}>{t("home.hero.cta")}</Link>
               <Link href="/start" className={btnOutline} data-funnel-entry>{t("funnel.entry")}</Link>
               <div className="hidden sm:block"><ExplainerVideo variant="button" /></div>
               <ShortArrow className="hidden lg:inline-flex ml-auto mr-2 self-center" />
             </div>
-            <p className="m-0 text-sm text-muted">{t("home.hero.note")}</p>
+            <p className="m-0 text-sm text-muted">{t("home.hero.signupNote")}</p>
           </div>
           <div className="flex-[1_1_420px] min-w-0 max-w-[640px]"><ExplainerVideo variant="poster" /></div>
         </div>
@@ -188,7 +190,10 @@ export default async function Home() {
             <span className={eyebrow}>{t("home.demo.eyebrow")}</span>
             <h2 className={h2}>{t("home.demo.title")}</h2>
             <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">{t("home.demo.lead")}</p>
-            <Link href="/proev" className={`${btnPrimary} self-start min-h-14 px-6`}><PlayIcon size={20} />{t("home.demo.cta")}</Link>
+            <div className="flex flex-wrap gap-3">
+              <Link href={SIGNUP_ERHVERV} className={`${btnPrimary} min-h-14 px-6`}>{t("home.hero.signupCta")}<ArrowIcon size={20} /></Link>
+              <Link href="/proev" className={`${btnOutline} min-h-14 px-6`}><PlayIcon size={20} />{t("home.demo.cta")}</Link>
+            </div>
           </div>
           <div className="flex-[1_1_380px] min-w-0 flex flex-col gap-3 p-5 sm:p-6 rounded-[20px] bg-white border-2 border-ink">
             <div className="flex items-center justify-between gap-3 text-[13px] font-semibold text-muted tracking-[1px] uppercase"><span>{t("demoCall.label")}</span><span>0:48</span></div>
@@ -222,7 +227,8 @@ export default async function Home() {
               <span className="text-[15px] text-ink-soft">{t("home.price.subscription.text")}</span>
               <Points items={raw<string[]>("site.home.price.subscription.points")} />
               <span className="text-[15px] text-ink-soft">{t("home.price.subscription.compare")}</span>
-              <Link href="/proev" className={`${btnPrimary} mt-auto`}>{t("home.price.subscription.cta")}<ArrowIcon size={18} /></Link>
+              <Link href={SIGNUP_ERHVERV} className={`${btnPrimary} mt-auto`}>{t("home.price.subscription.signupCta")}<ArrowIcon size={18} /></Link>
+              <Link href="/proev" className="self-start text-[15px] font-semibold text-ink underline underline-offset-4 inline-flex items-center min-h-11">{t("home.price.subscription.cta")}</Link>
             </article>
             <PriceAddon k="campaign" price={t("prices.perCall")} icon={<SendIcon size={22} />} href="/kontakt" points={raw<string[]>("site.home.price.campaign.points")} t={t} />
             <PriceAddon k="setup" price={t("prices.setup")} icon={<CalendarIcon size={22} />} href="/kontakt" points={raw<string[]>("site.home.price.setup.points")} t={t} />
@@ -238,7 +244,8 @@ export default async function Home() {
               <span className="text-[16px] text-white/80">{t("home.price.bottom.text")}</span>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 shrink-0">
-              <Link href="/proev" className={btnPrimary}><PhoneIcon size={18} />{t("home.price.bottom.primary")}</Link>
+              <Link href={SIGNUP_ERHVERV} className={btnPrimary}>{t("home.hero.signupCta")}<ArrowIcon size={18} /></Link>
+              <Link href="/proev" className="inline-flex items-center justify-center gap-2.5 min-h-[52px] px-[22px] rounded-[14px] border-2 border-white text-white no-underline font-semibold text-[17px] hover:bg-white/10"><PhoneIcon size={18} />{t("home.price.bottom.primary")}</Link>
               <Link href="/byggevejledning" className="inline-flex items-center justify-center gap-2.5 min-h-[52px] px-[22px] rounded-[14px] bg-white text-ink no-underline font-semibold text-[17px] hover:bg-panel">{t("home.price.bottom.secondary")}<ArrowIcon size={18} /></Link>
             </div>
           </div>
@@ -254,11 +261,17 @@ export default async function Home() {
             <h2 className={h2}>{t("home.start.title.before")}<Mark kind="underline">{t("home.start.title.mark")}</Mark>{t("home.start.title.after")}</h2>
           </div>
           <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))]">
-            <Link href="/proev" className="group flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink shadow-block text-ink no-underline">
+            <Link href={SIGNUP_ERHVERV} className="group flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink shadow-block text-ink no-underline">
+              <span className="inline-flex self-start items-center gap-2 px-3 py-1.5 rounded-full bg-highlight text-[13px] font-semibold tracking-[1px] uppercase">{t("home.start.signup.badge")}</span>
+              <span className="font-display font-extrabold text-[28px] leading-[1.05] tracking-[-0.5px]">{t("home.start.signup.title")}</span>
+              <span className="text-[16px] leading-[1.5] text-ink-soft">{t("home.start.signup.text")}</span>
+              <span className={`${btnPrimary} mt-auto group-hover:bg-accent-deep`}>{t("home.start.signup.cta")}<ArrowIcon size={18} /></span>
+            </Link>
+            <Link href="/proev" className="group flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink text-ink no-underline">
               <span className="inline-flex self-start items-center gap-2 px-3 py-1.5 rounded-full bg-highlight text-[13px] font-semibold tracking-[1px] uppercase">{t("home.start.try.badge")}</span>
               <span className="font-display font-extrabold text-[28px] leading-[1.05] tracking-[-0.5px]">{t("home.start.try.title")}</span>
               <span className="text-[16px] leading-[1.5] text-ink-soft">{t("home.start.try.text")}</span>
-              <span className={`${btnPrimary} mt-auto group-hover:bg-accent-deep`}>{t("home.start.try.cta")}<ArrowIcon size={18} /></span>
+              <span className={`${btnOutline} mt-auto`}>{t("home.start.try.cta")}<ArrowIcon size={18} /></span>
             </Link>
             <Link href="/byggevejledning" className="group flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink text-ink no-underline">
               <span className="inline-flex self-start items-center gap-2 px-3 py-1.5 rounded-full bg-panel border-[1.5px] border-ink text-[13px] font-semibold tracking-[1px] uppercase">{t("home.start.build.badge")}</span>

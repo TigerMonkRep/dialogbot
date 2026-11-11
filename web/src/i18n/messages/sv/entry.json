@@ -13,7 +13,8 @@
     "login": "Logga in",
     "try": "Prova den",
     "menu": "Meny",
-    "close": "Stäng menyn"
+    "close": "Stäng menyn",
+    "signup": "Skapa konto"
   },
   "hero": {
     "step": "Hör den först",
@@ -26,7 +27,8 @@
     "cta": "Prova den – den ringer dig",
     "watch": "Se hur",
     "note": "2 minuter. Ingen registrering, inget kort.",
-    "listen": "Så låter den"
+    "listen": "Så låter den",
+    "signupCta": "Registrera ditt företag"
   },
   "phone": {
     "alt": "Exempel på ett samtal som Dialogbot tar för en snickare: kunden ringer, Dialogbot svarar, hittar en tid tisdag kl. 9 och bokar den.",

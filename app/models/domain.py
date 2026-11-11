@@ -1058,8 +1058,10 @@ class DemoCall(Base):
     __tablename__ = "demo_calls"
     __table_args__ = (
         CheckConstraint("source in ('web','seller')", name="ck_demo_calls_source"),
-        CheckConstraint("status in ('calling','done','no_answer','failed','skipped')", name="ck_demo_calls_status"),
+        CheckConstraint("status in ('scheduled','calling','done','no_answer','failed','skipped')",
+                        name="ck_demo_calls_status"),
         Index("ix_demo_calls_phone_created", "phone", "created_at"),
+        Index("ix_demo_calls_scheduled", "scheduled_for", postgresql_where=text("status = 'scheduled'")),
     )
 
     id: Mapped[uuid.UUID] = uuid_pk()
@@ -1075,6 +1077,8 @@ class DemoCall(Base):
     seller_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     note: Mapped[str] = mapped_column(String(500), nullable=False, default="")
     status: Mapped[str] = mapped_column(String(16), nullable=False, default="calling")
+    # `scheduled`: asked for outside the calling hours; the worker rings at this time (the next opening)
+    scheduled_for: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     provider_call_id: Mapped[str | None] = mapped_column(String(100), index=True)
     outcome: Mapped[str | None] = mapped_column(String(24))  # interested | callback | not_interested | opt_out
     summary: Mapped[str] = mapped_column(Text, nullable=False, default="")

@@ -2,21 +2,25 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "@/i18n/link";
 import { InstallStep } from "@/components/install-step";
-import { useRaw, useT } from "@/i18n/client";
+import { useLocale, useRaw, useT } from "@/i18n/client";
 import { api, type ApiError } from "@/lib/client";
-import { EMAIL, PHONE_DISPLAY, PHONE_TEL } from "@/lib/contact";
+import { EMAIL, PHONE_DISPLAY, PHONE_TEL, SIGNUP_ERHVERV } from "@/lib/contact";
+import { nextOpenLabel } from "@/lib/next-open";
 import { ArrowIcon, CloseIcon, PhoneIcon } from "@/components/site-icons";
 
 /** The "Prøv den" conversation (Proev.dc.html): start → firma → branche (→ andet) → tlf → calling → done.
  *  The call is REAL: POST /demo-call (app/modules/sales) rings the number with our sales assistant. It needs the
- *  visitor's consent (markedsføringsloven § 10), only works inside the calling hours and only while demo calls are
- *  switched on, so the chat reads GET /demo-call first and says honestly when it cannot ring – it never pretends. */
+ *  visitor's consent (markedsføringsloven § 10) and only works while demo calls are switched on, so the chat reads
+ *  GET /demo-call first and says honestly when it cannot ring – it never pretends. Outside the calling hours nothing
+ *  stops: the backend queues the call for the next opening (the consent text it returns says so), the chat says when
+ *  Peter rings, and «Opret dig» (self-service sign-up, open day and night) is always one click away (S0). */
 type Info = {
-  available: boolean; demo_number: string | null; open_now: boolean; hours: { from: string; to: string };
+  available: boolean; demo_number: string | null; open_now: boolean; next_open?: string | null; hours: { from: string; to: string };
   consent_text: string; consent_version: string; industries: { key: string; label: string }[];
 };
 type Step = "start" | "firma" | "branche" | "andet" | "tlf" | "calling" | "done" | "unavailable";
-type Msg = { from: "bot" | "user"; text: string };
+/** `signup`: the message carries an «Opret dig» button to the self-service sign-up. */
+type Msg = { from: "bot" | "user"; text: string; signup?: boolean };
 
 /** The chips: the backend's industry keys (app/modules/sales/script.py); null = "Noget andet", which asks for the
  *  visitor's own words. Labels: site.json → proev.chat.branches.<key> ("other" for null). Step labels:
@@ -39,6 +43,7 @@ const avatar = "flex-none w-[30px] h-[30px] rounded-full bg-accent inline-flex i
 export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; onClose?: () => void } = {}) {
   const t = useT("site");
   const raw = useRaw();
+  const locale = useLocale();
   const c = (key: string, vars?: Record<string, string | number>) => t(`proev.chat.${key}`, vars);
   const GREETING = c("greeting");
   const hours = c("hours");
@@ -53,6 +58,7 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
   const [consent, setConsent] = useState(false);
   const [consentError, setConsentError] = useState(false);
   const [pending, setPending] = useState(false);
+  const [scheduledFor, setScheduledFor] = useState<string | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const timers = useRef<number[]>([]);
@@ -68,20 +74,18 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
   const push = useCallback((m: Msg) => setHistory((h) => h.concat(m)), []);
   const later = useCallback((fn: () => void, ms: number) => { timers.current.push(window.setTimeout(fn, ms)); }, []);
   /** The bot "types" for 700 ms, then answers and moves to the next step. */
-  const botSays = useCallback((text: string, next?: Step, ms = 700) => {
+  const botSays = useCallback((text: string, next?: Step, ms = 700, signup = false) => {
     setTyping(true);
-    later(() => { setTyping(false); push({ from: "bot", text }); if (next) setStep(next); }, ms);
+    later(() => { setTyping(false); push({ from: "bot", text, signup }); if (next) setStep(next); }, ms);
   }, [later, push]);
+  const when = (iso: string) => nextOpenLabel(iso, locale, { today: c("whenToday"), tomorrow: c("whenTomorrow") });
 
-  /** Why we cannot ring right now – or null when we can. Honest copy; never claims a call was placed. */
+  /** Why we cannot ring at all – or null when we can (now, or queued for the next opening). Honest copy; never claims
+   *  a call was placed. The calling hours are not a reason: outside them the call is queued. */
   const blocker = (): string | null => {
     if (info === null) return null; // still loading: ask on, check again before dialling
     if (info === "error" || !info.available) {
       return c("blockerInactive", { phone: PHONE_DISPLAY, hours, email: EMAIL });
-    }
-    if (!info.open_now) {
-      const own = info.demo_number ? c("blockerOwnNumber", { number: pretty(info.demo_number) }) : "";
-      return `${c("blockerClosed", { from: info.hours.from, to: info.hours.to, email: EMAIL })}${own}`;
     }
     return null;
   };
@@ -90,10 +94,15 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
     { label: c("chipCall"), act: () => {
       push({ from: "user", text: c("chipCall") });
       const why = blocker();
-      if (why) botSays(why, "unavailable"); else botSays(c("askCompany"), "firma");
+      if (why) botSays(why, "unavailable", 700, true);
+      else if (info && info !== "error" && !info.open_now && info.next_open) {
+        const own = info.demo_number ? c("blockerOwnNumber", { number: pretty(info.demo_number) }) : "";
+        botSays(`${c("closedAskCompany", when(info.next_open))}${own}`, "firma", 700, true);
+      }
+      else botSays(c("askCompany"), "firma");
     } },
     { label: c("chipWhat"), act: () => { push({ from: "user", text: c("chipWhat") }); botSays(c("answerWhat"), "start"); } },
-    { label: c("chipPrice"), act: () => { push({ from: "user", text: c("chipPrice") }); botSays(c("answerPrice"), "start"); } },
+    { label: c("chipPrice"), act: () => { push({ from: "user", text: c("chipPrice") }); botSays(c("answerPrice"), "start", 700, true); } },
   ];
   const chooseBranch = (label: string, key: string | null) => () => {
     push({ from: "user", text: label });
@@ -106,6 +115,7 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
     timers.current.forEach(clearTimeout); timers.current = [];
     setStep("start"); setHistory([{ from: "bot", text: GREETING }]); setTyping(false); setDraft(""); setFirma("");
     setIndustry({ key: null, other: "" }); setTlf(""); setConsent(false); setConsentError(false); setPending(false);
+    setScheduledFor(null);
   };
 
   /** Anything that is not one of the scripted steps goes to Peter himself: POST /demo-call/chat answers from the
@@ -115,12 +125,12 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
     const messages = history.concat({ from: "user", text: v }).slice(-16)
       .map((m) => ({ role: m.from === "bot" ? "assistant" : "user", content: m.text.slice(0, 600) }));
     try {
-      const r = await api<{ reply: string }>("/demo-call/chat", { method: "POST", body: JSON.stringify({ messages, website: "" }) });
-      setTyping(false); push({ from: "bot", text: r.reply });
+      const r = await api<{ reply: string; signup_url?: string | null }>("/demo-call/chat", { method: "POST", body: JSON.stringify({ messages, website: "" }) });
+      setTyping(false); push({ from: "bot", text: r.reply, signup: !!r.signup_url });
     } catch (err) {
       setTyping(false);
       const a = err as ApiError;
-      push({ from: "bot", text: a?.code === "demo_unavailable"
+      push({ from: "bot", signup: true, text: a?.code === "demo_unavailable"
         ? c("chatNotReady", { phone: PHONE_DISPLAY, hours, email: EMAIL })
         : c("chatFailed", { phone: PHONE_DISPLAY }) });
     } finally { setPending(false); }
@@ -154,18 +164,31 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
     if (why || info === null || info === "error") { botSays(why ?? c("serviceDown"), "unavailable"); return; }
     setPending(true); setTyping(true);
     try {
-      await api("/demo-call", { method: "POST", body: JSON.stringify({
+      const r = await api<{ status: string; scheduled_for?: string }>("/demo-call", { method: "POST", body: JSON.stringify({
         phone: v, company: firma, consent: true, consent_version: info.consent_version, website: "",
         industry: industry.key ?? "andet", industry_other: industry.key ? null : industry.other || null }) });
       setTyping(false);
+      if (r?.status === "scheduled" && r.scheduled_for) {
+        // Outside the calling hours: queued for the next opening. Never a dead end – sign up now.
+        setScheduledFor(r.scheduled_for);
+        push({ from: "bot", text: c("scheduled", { number: v, company: firma, ...when(r.scheduled_for) }), signup: true });
+        setStep("done");
+        return;
+      }
       push({ from: "bot", text: c("callingNow", { number: v, company: firma }) });
       setStep("calling");
-      later(() => botSays(c("callSent", { phone: PHONE_DISPLAY }), "done"), CALL_WINDOW_MS);
+      later(() => botSays(c("callSent", { phone: PHONE_DISPLAY }), "done", 700, true), CALL_WINDOW_MS);
     } catch (err) {
       setTyping(false);
       const a = err as ApiError;
       const msg = a?.message || c("callFailed");
-      if (a?.code === "demo_unavailable") botSays(msg, "unavailable");
+      if (a?.code === "demo_unavailable") botSays(msg, "unavailable", 700, true);
+      else if (a?.code === "demo_consent_later") {
+        // The page was opened before closing: fetch the consent for a later call and ask again.
+        api<Info>("/demo-call").then((i) => setInfo({ ...i, industries: i.industries ?? [] })).catch(() => setInfo("error"));
+        setConsent(false);
+        botSays(msg, "tlf", 700, true);
+      }
       else botSays(c("callRetry", { message: msg, phone: PHONE_DISPLAY }), "tlf");
     } finally { setPending(false); }
   };
@@ -181,6 +204,7 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
     : c("consentFallback");
 
   const phone = calling ? null
+    : done && scheduledFor ? [c("phoneScheduledTitle", when(scheduledFor)), c("phoneScheduledText")]
     : done ? [c("phoneDoneTitle"), c("phoneDoneText")]
     : step === "unavailable" ? [c("phoneUnavailableTitle"), c("phoneUnavailableText", { hours, phone: PHONE_DISPLAY, email: EMAIL })]
     : [c("phoneIdleTitle"), c("phoneIdleText")];
@@ -210,7 +234,12 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
             return (
               <div key={i} className={`flex gap-2.5 items-end ${bot ? "" : "justify-end"}`}>
                 {bot && <span className={avatar}>D</span>}
-                <p className={`m-0 px-4 py-3 text-[15px] leading-normal max-w-[420px] whitespace-pre-line border-2 border-ink ${bot ? "rounded-[16px_16px_16px_4px] bg-white text-ink" : "rounded-[16px_16px_4px_16px] bg-ink text-white"}`}>{m.text}</p>
+                <div className={`flex flex-col gap-2 min-w-0 ${bot ? "items-start" : "items-end"}`}>
+                  <p className={`m-0 px-4 py-3 text-[15px] leading-normal max-w-[420px] whitespace-pre-line border-2 border-ink ${bot ? "rounded-[16px_16px_16px_4px] bg-white text-ink" : "rounded-[16px_16px_4px_16px] bg-ink text-white"}`}>{m.text}</p>
+                  {bot && m.signup && (
+                    <Link href={SIGNUP_ERHVERV} data-signup-link className="inline-flex items-center gap-2 min-h-11 px-4 rounded-xl bg-accent hover:bg-accent-deep text-white no-underline font-semibold text-[15px]">{c("signupCta")}<ArrowIcon size={16} /></Link>
+                  )}
+                </div>
               </div>
             );
           })}
@@ -227,7 +256,10 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
 
         <div className="flex flex-col gap-3 px-4 pt-4 pb-5 sm:px-5 border-t-2 border-ink bg-panel">
           {step === "start" && !typing && (
-            <div className="flex flex-wrap gap-2">{startChips.map((q) => <button key={q.label} type="button" onClick={q.act} className={chip}>{q.label}</button>)}</div>
+            <div className="flex flex-wrap gap-2">
+              {startChips.map((q) => <button key={q.label} type="button" onClick={q.act} className={chip}>{q.label}</button>)}
+              <Link href={SIGNUP_ERHVERV} className={`${chip} inline-flex items-center no-underline !bg-accent !border-accent !text-white`}>{c("signupCta")}</Link>
+            </div>
           )}
           {(step === "done" || step === "unavailable" || step === "calling") && !typing && null}
           {step === "branche" && !typing && (
@@ -235,6 +267,7 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
           )}
           {step === "unavailable" && !typing && (
             <div className="flex flex-wrap gap-2">
+              <Link href={SIGNUP_ERHVERV} className={`${chip} inline-flex items-center no-underline !bg-accent !border-accent !text-white`}>{c("signupCta")}</Link>
               <a href={PHONE_TEL} className={`${chip} inline-flex items-center gap-2 no-underline`}><PhoneIcon size={16} />{c("callUs")}</a>
               <a href={`mailto:${EMAIL}?subject=${encodeURIComponent(c("mailSubject"))}`} className={`${chip} inline-flex items-center no-underline`}>{c("mailUs")}</a>
               <Link href="/byggevejledning" className={`${chip} inline-flex items-center no-underline`}>{c("seeGuide")}</Link>
@@ -273,6 +306,7 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
             </div>
           )}
           {calling && <p className="m-0 text-sm font-semibold">{c("pickUp")}</p>}
+          <Link href={SIGNUP_ERHVERV} className="self-start text-[14px] font-semibold text-ink underline underline-offset-4 inline-flex items-center min-h-11" data-signup-line>{c("signupLine")}</Link>
           <span className="text-xs text-muted">{c("privacy")}</span>
         </div>
       </section>

@@ -37,7 +37,9 @@
       },
       "lead": "Un recepcionista con IA que habla el idioma de sus clientes, responde las 24 horas, reserva citas en su calendario y le avisa de cada llamada. Conserva su número. {pMonthly}/mes, IVA no incluido.",
       "cta": "Pruébelo: le llamará",
-      "note": "2 minutos, sin registro. Pregúntele lo que le preguntaría un cliente."
+      "note": "2 minutos, sin registro. Pregúntele lo que le preguntaría un cliente.",
+      "signupCta": "Regístrate y empieza ya",
+      "signupNote": "Abierto las 24 horas: regístrate y elige tu plan tú mismo. No hace falta que te llamemos antes."
     },
     "how": {
       "eyebrow": "Cómo funciona",
@@ -114,7 +116,8 @@
           "Teléfono, reservas y chat web – todo incluido",
           "{pIncluded} minutos al mes – llamadas entrantes y salientes",
           "Sin permanencia – cancela mes a mes"
-        ]
+        ],
+        "signupCta": "Regístrate y elige el plan"
       },
       "campaign": {
         "name": "Llamadas salientes de campaña",
@@ -169,7 +172,13 @@
         "text": "La guía de construcción le muestra paso a paso qué necesita y qué ocurre: sin tecnicismos, sin código.",
         "cta": "Abrir la guía de construcción"
       },
-      "specialists": "¿Prefiere que se lo hagamos? Nuestros especialistas lo configuran por {pSetup}, IVA no incluido, a medida de sus sistemas."
+      "specialists": "¿Prefiere que se lo hagamos? Nuestros especialistas lo configuran por {pSetup}, IVA no incluido, a medida de sus sistemas.",
+      "signup": {
+        "badge": "24/7 · sin llamada",
+        "title": "Regístrate tú mismo",
+        "text": "Crea una cuenta, elige tu plan y configura Dialogbot a tu ritmo, también esta noche y el fin de semana. Solo te llamamos si nos lo pides.",
+        "cta": "Regístrate"
+      }
     },
     "ld": {
       "appDescription": "Dialogbot es un recepcionista con IA que atiende el teléfono y el chat de su empresa las 24 horas, en el idioma de sus clientes: responde con su propia información, reserva citas y reúne todas las consultas. Le guiamos durante toda la configuración.",
@@ -426,7 +435,6 @@
         "unavailable": "Ahora no disponible"
       },
       "blockerInactive": "La llamada de prueba se activará pronto; hasta entonces le llamamos manualmente en horario de oficina. Llámenos al {phone} ({hours}) o escriba su número a {email} y le llamaremos.",
-      "blockerClosed": "Solo hago llamadas entre las {from} y las {to} en días laborables. Vuelva entonces, o escriba su número a {email} y le llamaremos en horario de oficina.",
       "blockerOwnNumber": " También puede llamar usted a mi número de demostración {number}.",
       "chipCall": "Sí, llámame",
       "chipWhat": "¿Qué sabes hacer?",
@@ -479,7 +487,15 @@
         "Conteste el teléfono y pregunte como un cliente",
         "¿Le gusta? Entonces construimos el de verdad"
       ],
-      "sideNote": "El mismo chat le acompaña después: cuando diga que sí, le guía por la configuración, conecta su calendario y lo prueba todo con usted."
+      "sideNote": "El mismo chat le acompaña después: cuando diga que sí, le guía por la configuración, conecta su calendario y lo prueba todo con usted.",
+      "signupCta": "Regístrate",
+      "signupLine": "¿Listo para empezar? Regístrate tú mismo: está abierto las 24 horas.",
+      "closedAskCompany": "Ahora mismo no llamo: llamaré {when} a partir de las {time}. No tienes que esperar: puedes registrarte ya. Si aun así quieres la llamada, dime cómo se llama tu empresa.",
+      "scheduled": "Gracias. Llamaré al {number} {when} a partir de las {time} y me presentaré como recepcionista de {company}. No tienes que esperarme: puedes registrarte ya aquí.",
+      "phoneScheduledTitle": "Peter llama {when} a partir de las {time}",
+      "phoneScheduledText": "Puedes registrarte y empezar ya: la llamada llegará igualmente.",
+      "whenToday": "hoy",
+      "whenTomorrow": "mañana"
     }
   },
   "preview": {
@@ -799,8 +815,11 @@
         "notLoggedIn": "Inicia sesión para ver cómo fue la llamada.",
         "login": "Iniciar sesión",
         "statusAria": "Estado de la llamada",
-        "noCallTitle": "Ahora mismo no va a llamar"
-      }
+        "noCallTitle": "Ahora mismo no va a llamar",
+        "scheduledTitle": "Te llamará {when} a partir de las {time}",
+        "scheduledText": "Fuera del horario de llamadas ponemos la llamada en cola. No tienes que esperar: hazla tuya ya."
+      },
+      "signupDirect": "Sáltate el cuestionario: regístrate directamente"
     }
   }
 }

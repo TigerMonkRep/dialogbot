@@ -37,7 +37,9 @@
       },
       "lead": "Un receptionist AI che parla la lingua dei vostri clienti, risponde 24 ore su 24, prenota appuntamenti nel vostro calendario e vi invia un messaggio per ogni chiamata. Mantenete il vostro numero. {pMonthly}/mese IVA esclusa.",
       "cta": "Lo provi: la richiama lui",
-      "note": "2 minuti, nessuna registrazione. Gli faccia le domande che farebbe un cliente."
+      "note": "2 minuti, nessuna registrazione. Gli faccia le domande che farebbe un cliente.",
+      "signupCta": "Registrati e inizia ora",
+      "signupNote": "Aperto 24 ore su 24: registrati e scegli tu l'abbonamento. Non serve essere richiamati prima."
     },
     "how": {
       "eyebrow": "Come funziona",
@@ -114,7 +116,8 @@
           "Telefono, prenotazioni e chat web – tutto incluso",
           "{pIncluded} minuti al mese – chiamate in entrata e in uscita",
           "Nessun vincolo – disdici mese per mese"
-        ]
+        ],
+        "signupCta": "Registrati e scegli l'abbonamento"
       },
       "campaign": {
         "name": "Chiamate in uscita delle campagne",
@@ -169,7 +172,13 @@
         "text": "La guida alla configurazione mostra passo dopo passo cosa le serve e cosa succede: niente tecnicismi, nessun codice.",
         "cta": "Apri la guida alla configurazione"
       },
-      "specialists": "Preferite che ci pensi qualcun altro? I nostri specialisti lo configurano per {pSetup}. IVA esclusa, su misura per i vostri sistemi."
+      "specialists": "Preferite che ci pensi qualcun altro? I nostri specialisti lo configurano per {pSetup}. IVA esclusa, su misura per i vostri sistemi.",
+      "signup": {
+        "badge": "24 ore su 24 · nessuna chiamata",
+        "title": "Registrati da solo",
+        "text": "Crea un account, scegli l'abbonamento e configura Dialogbot con i tuoi tempi, anche stasera e nel fine settimana. Ti chiamiamo solo se ce lo chiedi.",
+        "cta": "Registrati"
+      }
     },
     "ld": {
       "appDescription": "Dialogbot è un receptionist AI che gestisce telefono e chat per la sua azienda 24 ore su 24, nella lingua dei suoi clienti: risponde in base alle vostre conoscenze, prenota appuntamenti e raccoglie le richieste. Vi accompagniamo in tutta la configurazione.",
@@ -426,7 +435,6 @@
         "unavailable": "Non al momento"
       },
       "blockerInactive": "La chiamata di prova sarà attivata a breve: fino ad allora la richiamiamo noi manualmente in orario di apertura. Ci chiami al {phone} ({hours}) oppure scriva il suo numero a {email} e la richiameremo.",
-      "blockerClosed": "Effettuo chiamate solo tra le {from} e le {to} nei giorni feriali. Torni in quell'orario, oppure scriva il suo numero a {email} e la richiameremo in orario di apertura.",
       "blockerOwnNumber": " Può anche chiamare lei il mio numero demo {number}.",
       "chipCall": "Sì, chiamami",
       "chipWhat": "Cosa sai fare?",
@@ -479,7 +487,15 @@
         "Risponda al telefono e faccia domande come un cliente",
         "Le piace? Allora configuriamo quello vero"
       ],
-      "sideNote": "La stessa chat la accompagna anche dopo: quando dice sì, la guida nella configurazione, collega il suo calendario e testa tutto insieme a lei."
+      "sideNote": "La stessa chat la accompagna anche dopo: quando dice sì, la guida nella configurazione, collega il suo calendario e testa tutto insieme a lei.",
+      "signupCta": "Registrati",
+      "signupLine": "Pronto a iniziare? Registrati da solo: è aperto 24 ore su 24.",
+      "closedAskCompany": "In questo momento non chiamo: chiamerò {when} dalle {time}. Non devi aspettare: puoi registrarti subito. Se vuoi comunque la chiamata, scrivimi il nome della tua azienda.",
+      "scheduled": "Grazie. Chiamerò il {number} {when} dalle {time} e mi presenterò come receptionist di {company}. Non devi aspettarmi: puoi registrarti subito qui.",
+      "phoneScheduledTitle": "Peter chiama {when} dalle {time}",
+      "phoneScheduledText": "Puoi registrarti e iniziare già ora: la chiamata arriverà comunque.",
+      "whenToday": "oggi",
+      "whenTomorrow": "domani"
     }
   },
   "preview": {
@@ -799,8 +815,11 @@
         "notLoggedIn": "Accedi per vedere com'è andata la chiamata.",
         "login": "Accedi",
         "statusAria": "Stato della chiamata",
-        "noCallTitle": "Al momento non chiama"
-      }
+        "noCallTitle": "Al momento non chiama",
+        "scheduledTitle": "Ti chiamerà {when} dalle {time}",
+        "scheduledText": "Fuori dall'orario di chiamata mettiamo la chiamata in coda. Non devi aspettare: rendila vostra subito."
+      },
+      "signupDirect": "Salta il quiz: registrati direttamente"
     }
   }
 }

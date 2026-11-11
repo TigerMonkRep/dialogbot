@@ -45,6 +45,8 @@
     "ctaTitle": "Hear Dialogbot answer the phone – on your own phone",
     "ctaText": "Tell the chat your business name and what you do, and the assistant will call you and show you how it would answer the phone for you.",
     "callMe": "Call me now",
+    "signupCta": "Sign up – get started now",
+    "ctaSignupText": "You can also sign up straight away – around the clock, without waiting for a call.",
     "orWrite": "Or email ",
     "priceLine": ". {pMonthly}/month · excl. VAT. No lock-in."
   },

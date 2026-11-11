@@ -12,6 +12,7 @@
     "pricing": "Priser",
     "login": "Log ind",
     "try": "Prøv den",
+    "signup": "Opret dig",
     "menu": "Menu",
     "close": "Luk menuen"
   },
@@ -20,6 +21,7 @@
     "title": { "before": "Én assistent, der ", "mark": "tager telefonen", "after": " – for din virksomhed og for dig." },
     "lead": "Dialogbot svarer på dansk, døgnet rundt, booker tider i din kalender og ringer for dig, når du beder om det. Du godkender alt, før det gælder.",
     "cta": "Prøv den – den ringer til dig",
+    "signupCta": "Opret din virksomhed",
     "watch": "Se hvordan",
     "note": "2 minutter. Ingen tilmelding, intet kort.",
     "listen": "Sådan lyder den"

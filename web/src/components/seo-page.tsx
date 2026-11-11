@@ -4,6 +4,7 @@ import { getLocale, getT } from "@/i18n/server";
 import { SiteChrome, EMAIL, PHONE_DISPLAY, PHONE_TEL } from "./site-chrome";
 import { ArrowIcon, CheckIcon, ChevronIcon, PhoneIcon, PlayIcon } from "./site-icons";
 import { SITE_URL, localeUrl } from "@/lib/site";
+import { SIGNUP_ERHVERV } from "@/lib/contact";
 
 export type SeoSection = { title: string; body: React.ReactNode };
 export type SeoFaq = [string, string];
@@ -55,7 +56,8 @@ export async function SeoPage({ path, kicker, title, lead, points, sections, faq
             <h1 className="m-0 font-display font-extrabold text-[clamp(34px,4.6vw,60px)] leading-[1.03] tracking-[-1.4px] text-balance">{title}</h1>
             <p className="m-0 text-lg leading-[1.55] text-ink-soft max-w-[620px]">{lead}</p>
             <div className="flex flex-wrap gap-3 pt-1">
-              <Link href="/proev" className="inline-flex items-center gap-2.5 min-h-[52px] px-[22px] rounded-[14px] bg-accent hover:bg-accent-deep text-white no-underline font-semibold text-[17px]"><PlayIcon size={18} />{t("tryIt")}</Link>
+              <Link href={SIGNUP_ERHVERV} className="inline-flex items-center gap-2.5 min-h-[52px] px-[22px] rounded-[14px] bg-accent hover:bg-accent-deep text-white no-underline font-semibold text-[17px]">{t("signupCta")}<ArrowIcon size={18} /></Link>
+              <Link href="/proev" className="inline-flex items-center gap-2.5 min-h-[52px] px-[22px] rounded-[14px] bg-white border-2 border-ink text-ink no-underline font-semibold text-[17px] hover:bg-panel"><PlayIcon size={18} />{t("tryIt")}</Link>
               <Link href="/byggevejledning" className="inline-flex items-center gap-2.5 min-h-[52px] px-[22px] rounded-[14px] bg-white border-2 border-ink text-ink no-underline font-semibold text-[17px] hover:bg-panel">{t("seeGuide")}<ArrowIcon size={18} /></Link>
             </div>
           </div>
@@ -100,9 +102,11 @@ export async function SeoPage({ path, kicker, title, lead, points, sections, faq
           <div className="flex-[1_1_420px] flex flex-col gap-3">
             <h2 className="m-0 font-display font-extrabold text-[clamp(30px,3.6vw,46px)] leading-[1.05] tracking-[-1px] text-balance">{t("ctaTitle")}</h2>
             <p className="m-0 text-lg leading-[1.55] text-line max-w-[520px]">{t("ctaText")}</p>
+            <p className="m-0 text-lg leading-[1.55] text-line max-w-[520px]">{t("ctaSignupText")}</p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Link href="/proev" className="inline-flex items-center gap-2.5 min-h-14 px-6 rounded-[14px] bg-highlight hover:bg-highlight-deep text-ink no-underline font-display font-bold text-lg"><PhoneIcon size={20} width={2.4} />{t("callMe")}</Link>
+            <Link href={SIGNUP_ERHVERV} className="inline-flex items-center gap-2.5 min-h-14 px-6 rounded-[14px] bg-highlight hover:bg-highlight-deep text-ink no-underline font-display font-bold text-lg">{t("signupCta")}<ArrowIcon size={20} /></Link>
+            <Link href="/proev" className="inline-flex items-center gap-2.5 min-h-14 px-6 rounded-[14px] border-2 border-white text-white no-underline font-semibold text-[17px] hover:bg-white/10"><PhoneIcon size={20} width={2.4} />{t("callMe")}</Link>
             <a href={PHONE_TEL} className="inline-flex items-center gap-2.5 min-h-14 px-6 rounded-[14px] border-2 border-white text-white no-underline font-semibold text-[17px] hover:bg-white/10">{PHONE_DISPLAY}</a>
           </div>
           <p className="basis-full m-0 text-sm text-line">{t("orWrite")}<a href={`mailto:${EMAIL}`} className="text-white underline underline-offset-4">{EMAIL}</a>{t("priceLine")}</p>

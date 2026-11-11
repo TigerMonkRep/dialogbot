@@ -13,7 +13,8 @@
     "login": "Logg inn",
     "try": "Prøv den",
     "menu": "Meny",
-    "close": "Lukk menyen"
+    "close": "Lukk menyen",
+    "signup": "Opprett konto"
   },
   "hero": {
     "step": "Hør den først",
@@ -26,7 +27,8 @@
     "cta": "Prøv den – den ringer til deg",
     "watch": "Se hvordan",
     "note": "2 minutter. Ingen registrering, ingen kort.",
-    "listen": "Slik høres den ut"
+    "listen": "Slik høres den ut",
+    "signupCta": "Registrer bedriften din"
   },
   "phone": {
     "alt": "Eksempel på en samtale Dialogbot tar for en snekker: kunden ringer, Dialogbot svarer, finner en tid tirsdag kl. 9 og booker den.",

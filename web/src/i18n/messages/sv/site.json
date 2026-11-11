@@ -37,7 +37,9 @@
       },
       "lead": "En AI-receptionist som svarar på svenska – och på era kunders språk – dygnet runt, bokar tider i er kalender och skickar ett meddelande om varje samtal. Ni behåller ert nummer. {pMonthly}/mån. exkl. moms.",
       "cta": "Testa den – den ringer upp dig",
-      "note": "2 minuter, ingen registrering. Fråga den som en kund skulle göra."
+      "note": "2 minuter, ingen registrering. Fråga den som en kund skulle göra.",
+      "signupCta": "Skapa konto – kom igång nu",
+      "signupNote": "Öppet dygnet runt – skapa konto och välj abonnemang själv. Du behöver inte bli uppringd först."
     },
     "how": {
       "eyebrow": "Så fungerar det",
@@ -114,7 +116,8 @@
           "Telefon, bokning och webbchatt – allt ingår",
           "{pIncluded} minuter per månad – in- och utgående samtal",
           "Ingen bindning – uppsägning månad till månad"
-        ]
+        ],
+        "signupCta": "Skapa konto och välj abonnemang"
       },
       "campaign": {
         "name": "Utgående kampanjsamtal",
@@ -169,7 +172,13 @@
         "text": "Bygganvisningen visar steg för steg vad du behöver och vad som händer – ingen teknik, ingen kod.",
         "cta": "Öppna bygganvisningen"
       },
-      "specialists": "Vill ni hellre att någon gör det åt er? Våra specialister konfigurerar den för {pSetup} exkl. moms, skräddarsytt för era system."
+      "specialists": "Vill ni hellre att någon gör det åt er? Våra specialister konfigurerar den för {pSetup} exkl. moms, skräddarsytt för era system.",
+      "signup": {
+        "badge": "Dygnet runt · inget samtal",
+        "title": "Skapa konto själv",
+        "text": "Skapa ett konto, välj abonnemang och sätt upp Dialogbot i er egen takt – även i kväll och på helgen. Vi ringer bara om ni själva ber om det.",
+        "cta": "Skapa konto"
+      }
     },
     "ld": {
       "appDescription": "Dialogbot är en AI-receptionist som svarar i telefon och chatt åt ditt företag dygnet runt – på svenska och på kundernas eget språk – utifrån er egen kunskap, bokar tider och samlar in ärenden. Vi guidar er genom hela konfigurationen.",
@@ -426,7 +435,6 @@
         "unavailable": "Inte just nu"
       },
       "blockerInactive": "Testsamtalet aktiveras snart – fram till dess ringer vi upp dig manuellt inom öppettiderna. Ring oss på {phone} ({hours}), eller skicka ditt nummer till {email}, så ringer vi upp dig.",
-      "blockerClosed": "Jag ringer bara upp mellan kl. {from} och {to} på vardagar. Kom tillbaka då – eller skicka ditt nummer till {email}, så ringer vi upp dig inom öppettiderna.",
       "blockerOwnNumber": " Du kan också själv ringa mitt demonummer {number}.",
       "chipCall": "Ja, ring mig",
       "chipWhat": "Vad kan du?",
@@ -479,7 +487,15 @@
         "Svara i telefon – fråga som en kund",
         "Gillar du det? Då bygger vi den riktiga"
       ],
-      "sideNote": "Samma chatt följer med dig vidare: När du säger ja guidar den dig genom konfigurationen, kopplar på din kalender och testar allt tillsammans med dig."
+      "sideNote": "Samma chatt följer med dig vidare: När du säger ja guidar den dig genom konfigurationen, kopplar på din kalender och testar allt tillsammans med dig.",
+      "signupCta": "Skapa konto",
+      "signupLine": "Redo att börja? Skapa konto själv – det är öppet dygnet runt.",
+      "closedAskCompany": "Just nu ringer jag inte ut – jag ringer {when} från kl. {time}. Du behöver inte vänta: du kan skapa konto direkt. Vill du ändå ha samtalet, skriv vad ditt företag heter.",
+      "scheduled": "Tack. Jag ringer {number} {when} från kl. {time} och presenterar mig som receptionist för {company}. Du behöver inte vänta på mig – du kan skapa konto direkt här.",
+      "phoneScheduledTitle": "Peter ringer {when} från kl. {time}",
+      "phoneScheduledText": "Du kan skapa konto och komma igång redan nu – samtalet kommer ändå.",
+      "whenToday": "i dag",
+      "whenTomorrow": "i morgon"
     }
   },
   "preview": {
@@ -799,8 +815,11 @@
         "notLoggedIn": "Logga in för att se hur samtalet gick.",
         "login": "Logga in",
         "statusAria": "Status för samtalet",
-        "noCallTitle": "Hon ringer inte just nu"
-      }
+        "noCallTitle": "Hon ringer inte just nu",
+        "scheduledTitle": "Hon ringer {when} från kl. {time}",
+        "scheduledText": "Utanför samtalstiden ställer vi samtalet i kö. Du behöver inte vänta – gör henne till er direkt."
+      },
+      "signupDirect": "Hoppa över quizet – skapa konto direkt"
     }
   }
 }

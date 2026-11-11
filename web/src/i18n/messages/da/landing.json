@@ -45,6 +45,8 @@
     "ctaTitle": "Hør Dialogbot tage telefonen – på din egen telefon",
     "ctaText": "Fortæl chatten, hvad din virksomhed hedder og hvad I laver, så ringer assistenten dig op og viser, hvordan den ville tage telefonen for jer.",
     "callMe": "Ring mig op nu",
+    "signupCta": "Opret dig – kom i gang nu",
+    "ctaSignupText": "Du kan også oprette dig med det samme – døgnet rundt, uden at vente på et opkald.",
     "orWrite": "Eller skriv til ",
     "priceLine": ". {pMonthly}/md. · ekskl. moms. Ingen binding."
   },

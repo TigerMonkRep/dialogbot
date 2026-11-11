@@ -37,7 +37,9 @@
       },
       "lead": "An AI receptionist that answers around the clock, books appointments in your calendar and sends you a message about every call. You keep your number. {pMonthly}/month excl. VAT.",
       "cta": "Try it – it calls you",
-      "note": "2 minutes, no sign-up. Ask it anything a customer would."
+      "note": "2 minutes, no sign-up. Ask it anything a customer would.",
+      "signupCta": "Sign up – get started now",
+      "signupNote": "Open around the clock – sign up and choose your plan yourself. No call needed first."
     },
     "how": {
       "eyebrow": "How it works",
@@ -114,7 +116,8 @@
           "Phone, booking and web chat – all included",
           "{pIncluded} minutes a month – incoming and outgoing calls",
           "No lock-in – cancel month to month"
-        ]
+        ],
+        "signupCta": "Sign up and choose the plan"
       },
       "campaign": {
         "name": "Outbound campaign calls",
@@ -169,7 +172,13 @@
         "text": "The build guide shows you step by step what you need and what happens – no tech, no code.",
         "cta": "Open the build guide"
       },
-      "specialists": "Would you rather have it done for you? Our specialists set it up for {pSetup} excl. VAT, tailored to your systems."
+      "specialists": "Would you rather have it done for you? Our specialists set it up for {pSetup} excl. VAT, tailored to your systems.",
+      "signup": {
+        "badge": "24/7 · no call needed",
+        "title": "Sign up yourself",
+        "text": "Create an account, choose your plan and set Dialogbot up at your own pace – tonight and at weekends too. We only call if you ask us to.",
+        "cta": "Sign up"
+      }
     },
     "ld": {
       "appDescription": "Dialogbot is an AI receptionist from Denmark that answers the phone and the chat for your business around the clock – replying from your own knowledge, booking appointments and collecting enquiries. We guide you through the whole setup.",
@@ -426,7 +435,6 @@
         "unavailable": "Not right now"
       },
       "blockerInactive": "The test call will be switched on soon – until then we'll call you ourselves within opening hours. Call us on {phone} ({hours}), or email your number to {email} and we'll call you.",
-      "blockerClosed": "I only make calls between {from} and {to} on weekdays. Come back then – or email your number to {email} and we'll call you within opening hours.",
       "blockerOwnNumber": " You can also call my demo number yourself: {number}.",
       "chipCall": "Yes, call me",
       "chipWhat": "What can you do?",
@@ -479,7 +487,15 @@
         "Pick up – ask like a customer would",
         "Like it? Then we'll build the real one"
       ],
-      "sideNote": "The same chat stays with you: once you say yes, it guides you through the setup, connects your calendar and tests everything together with you."
+      "sideNote": "The same chat stays with you: once you say yes, it guides you through the setup, connects your calendar and tests everything together with you.",
+      "signupCta": "Sign up",
+      "signupLine": "Ready to start? Sign up yourself – it's open around the clock.",
+      "closedAskCompany": "I'm not calling out right now – I'll call {when} from {time}. You don't have to wait: you can sign up straight away. If you'd still like the call, tell me your company's name.",
+      "scheduled": "Thanks. I'll call {number} {when} from {time} and introduce myself as {company}'s receptionist. You don't have to wait for me – you can sign up straight away here.",
+      "phoneScheduledTitle": "Peter calls {when} from {time}",
+      "phoneScheduledText": "You can sign up and get started right now – the call still comes.",
+      "whenToday": "today",
+      "whenTomorrow": "tomorrow"
     }
   },
   "preview": {
@@ -799,8 +815,11 @@
         "notLoggedIn": "Log in to see how the call went.",
         "login": "Log in",
         "statusAria": "Call status",
-        "noCallTitle": "She isn't calling right now"
-      }
+        "noCallTitle": "She isn't calling right now",
+        "scheduledTitle": "She calls {when} from {time}",
+        "scheduledText": "Outside calling hours we queue the call. You don't have to wait – make her yours right away."
+      },
+      "signupDirect": "Skip the quiz – sign up directly"
     }
   }
 }

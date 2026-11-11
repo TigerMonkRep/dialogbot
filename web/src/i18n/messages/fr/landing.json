@@ -58,7 +58,9 @@
     "ctaText": "Dites au chat le nom de votre entreprise et votre activité : l’assistant vous appelle et vous montre comment il répondrait au téléphone pour vous.",
     "callMe": "Appelez-moi maintenant",
     "orWrite": "Ou écrivez à ",
-    "priceLine": ". {pMonthly}/mois · HT. Sans engagement."
+    "priceLine": ". {pMonthly}/mois · HT. Sans engagement.",
+    "signupCta": "Inscrivez-vous et commencez",
+    "ctaSignupText": "Vous pouvez aussi vous inscrire tout de suite, 24 h/24, sans attendre d'appel."
   },
   "compareTable": {
     "difference": "Différence"

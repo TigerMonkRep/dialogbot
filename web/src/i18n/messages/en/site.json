@@ -2,7 +2,7 @@
   "prices": {
     "monthly": "{pMonthly}",
     "setup": "{pSetup}",
-    "perCall": "{pCallAnsweredNum}"
+    "perCall": "{pCallAnswered}"
   },
   "demoCall": {
     "label": "Call · Carpentry firm (example)",

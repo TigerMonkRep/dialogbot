@@ -157,3 +157,26 @@ def test_eur_languages_state_no_amount_in_kroner():
                 if kroner.search(line):
                     hits.append(f"{loc}/{f.name}:{n}: {line.strip()[:110]}")
     assert not hits, "amount in kroner in a EUR text:\n" + "\n".join(hits)
+
+
+LOCALES = ("da", "en", "de", "es", "fr", "it", "no", "sv")
+
+
+def _msg(loc: str, file: str, key: str) -> str:
+    v = json.loads((ROOT / f"web/src/i18n/messages/{loc}/{file}").read_text(encoding="utf-8"))
+    for k in key.split("."):
+        v = v[k]
+    return v
+
+
+def test_a_big_price_figure_carries_its_currency_once():
+    """F-VR-05: a big price figure is an amount plus a unit beside it. Either the amount has the currency ({pX}) and the
+    unit has none, or the amount is bare ({pXNum}) and the unit carries {pCur} – en showed a bare "0.55"."""
+    pairs = [("prices.monthly", "home.price.subscription.unit"), ("prices.perCall", "home.price.campaign.unit"),
+             ("prices.perCall", "guide.pricing.campaign.unit")]
+    for loc in LOCALES:
+        for amount_key, unit_key in pairs:
+            amount, unit = _msg(loc, "site.json", amount_key), _msg(loc, "site.json", unit_key)
+            assert re.fullmatch(r"\{p\w+\}", amount), (loc, amount_key, amount)
+            bare = amount.endswith("Num}")
+            assert bare == ("{pCur}" in unit), (loc, amount_key, amount, unit_key, unit)

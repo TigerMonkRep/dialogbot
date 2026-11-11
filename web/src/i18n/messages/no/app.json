@@ -572,7 +572,7 @@
       "before": "Før den starter",
       "resumeTitle": "Gjenoppta kampanjen",
       "heading": "{n} kontakter · høyst {max} eks. mva.",
-      "body": "{n} kontakter venter: høyst {attempts} forsøk og {minutes} samtaleminutter per kontakt, totalt høyst {maxMinutes} minutter. Det er {remaining} av {included} minutter igjen i pakken denne måneden – med dem koster kampanjen høyst {withPackage} + mva. I verste fall (andre samtaler bruker pakken først, og hvert forsøk besvares: {answered} per anrop + {minute} per minutt, høyst {contactMax} per kontakt) er prisen høyst {max} + mva. ({gross} inkl. mva.). Betaling starter aldri samtaler.",
+      "body": "{n} kontakter venter: høyst {attempts} forsøk og {minutes} samtaleminutter per kontakt, totalt høyst {maxMinutes} minutter. Det er {remaining} av {included} minutter igjen i pakken denne måneden – med dem koster kampanjen høyst {withPackage} + mva. I verste fall (andre samtaler bruker pakken først, og hvert forsøk besvares – høyst {contactMax} per kontakt) er prisen høyst {max} + mva. ({gross} inkl. mva.). Etter pakken koster et anrop {answered} (besvart), {voicemail} (telefonsvarer) eller {noAnswer} (ubesvart) pluss {minute} per påbegynt samtaleminutt. Betaling starter aldri samtaler.",
       "confirm": "Bekreft reglene for anrop",
       "starting": "Starter …",
       "resume": "Gjenoppta",

@@ -572,7 +572,7 @@
       "before": "Før den starter",
       "resumeTitle": "Genoptag kampagnen",
       "heading": "{n} kontakter · højst {max} ekskl. moms",
-      "body": "{n} kontakter venter: højst {attempts} forsøg og {minutes} samtaleminutter pr. kontakt, i alt højst {maxMinutes} minutter. Der er {remaining} af {included} minutter tilbage i pakken denne måned – med dem koster kampagnen højst {withPackage} + moms. I værste fald (andre opkald bruger pakken først, og hvert forsøg besvares: {answered} pr. opkald + {minute} pr. minut, højst {contactMax} pr. kontakt) er prisen højst {max} + moms ({gross} inkl. moms). Betaling starter aldrig opkald.",
+      "body": "{n} kontakter venter: højst {attempts} forsøg og {minutes} samtaleminutter pr. kontakt, i alt højst {maxMinutes} minutter. Der er {remaining} af {included} minutter tilbage i pakken denne måned – med dem koster kampagnen højst {withPackage} + moms. I værste fald (andre opkald bruger pakken først, og hvert forsøg besvares – højst {contactMax} pr. kontakt) er prisen højst {max} + moms ({gross} inkl. moms). Efter pakken koster et opkald {answered} (besvaret), {voicemail} (telefonsvarer) eller {noAnswer} (ubesvaret) plus {minute} pr. påbegyndt samtaleminut. Betaling starter aldrig opkald.",
       "confirm": "Bekræft reglerne for opkald",
       "starting": "Starter…",
       "resume": "Genoptag",

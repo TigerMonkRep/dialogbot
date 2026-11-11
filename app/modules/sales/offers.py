@@ -94,9 +94,15 @@ def _vat(net: int, bp: int) -> int:
 
 
 def amounts(o: SalesOffer) -> dict:
+    from app.modules.billing.agreements import offer_call_prices
+
+    calls = offer_call_prices(o)
     return {"monthly_net_minor": o.monthly_net_minor, "monthly_vat_minor": _vat(o.monthly_net_minor, o.tax_basis_points),
             "setup_net_minor": o.setup_net_minor, "setup_vat_minor": _vat(o.setup_net_minor, o.tax_basis_points),
             "campaign_call_net_minor": o.campaign_call_net_minor,
+            # voicemail / no answer: the values accepting snapshots into the agreement (agreements.offer_call_prices)
+            "campaign_call_voicemail_net_minor": calls["voicemail"],
+            "campaign_call_no_answer_net_minor": calls["no_answer"],
             "campaign_minute_net_minor": o.campaign_minute_net_minor,
             "inbound_included_minutes": o.inbound_included_minutes,
             "inbound_extra_minute_net_minor": o.inbound_extra_minute_net_minor,

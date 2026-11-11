@@ -572,7 +572,7 @@
       "before": "Prima dell'avvio",
       "resumeTitle": "Riprendi la campagna",
       "heading": "{n} contatti · al massimo {max} IVA esclusa",
-      "body": "{n} contatti in attesa: al massimo {attempts} tentativi e {minutes} minuti di conversazione per contatto, {maxMinutes} minuti in totale al massimo. Nel pacchetto restano {remaining} di {included} minuti questo mese: con questi la campagna costa al massimo {withPackage} + IVA. Nel caso peggiore (altre chiamate esauriscono prima il pacchetto e ogni tentativo riceve risposta: {answered} a chiamata + {minute} al minuto, al massimo {contactMax} per contatto) il prezzo è al massimo {max} + IVA ({gross} IVA inclusa). Un pagamento non avvia mai chiamate.",
+      "body": "{n} contatti in attesa: al massimo {attempts} tentativi e {minutes} minuti di conversazione per contatto, {maxMinutes} minuti in totale al massimo. Nel pacchetto restano {remaining} di {included} minuti questo mese: con questi la campagna costa al massimo {withPackage} + IVA. Nel caso peggiore (altre chiamate esauriscono prima il pacchetto e ogni tentativo riceve risposta – al massimo {contactMax} per contatto) il prezzo è al massimo {max} + IVA ({gross} IVA inclusa). Dopo il pacchetto una chiamata costa {answered} (risposta), {voicemail} (segreteria) o {noAnswer} (senza risposta) più {minute} per minuto di conversazione iniziato. Un pagamento non avvia mai chiamate.",
       "confirm": "Conferma le regole per le chiamate",
       "starting": "Avvio…",
       "resume": "Riprendi",

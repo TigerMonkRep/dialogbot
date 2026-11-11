@@ -11,7 +11,9 @@ import { currencyOr, formatPrice } from "@/lib/markets";
 type Offer = {
   company: string; package: string; setup_kind: string; setup_text: string; status: string; valid_until: string; terms_version: string; notice: string;
   monthly_net_minor: number; monthly_vat_minor: number; setup_net_minor: number; setup_vat_minor: number;
-  campaign_call_net_minor: number; campaign_minute_net_minor: number; inbound_included_minutes: number; inbound_extra_minute_net_minor: number;
+  campaign_call_net_minor: number; campaign_minute_net_minor: number;
+  /** The voicemail and unanswered call prices after the package (the agreement snapshots the same values on accept). */
+  campaign_call_voicemail_net_minor: number; campaign_call_no_answer_net_minor: number; inbound_included_minutes: number; inbound_extra_minute_net_minor: number;
   /** The offer's currency (DKK when the backend does not say). */
   currency?: string;
 };
@@ -37,7 +39,7 @@ export default async function OfferPage({ params }: { params: Promise<{ token: s
             <dt className="text-ink-soft">{t("offer.totalMonthly")}</dt><dd className="font-semibold tabular-nums text-right">{t("offer.inclVat", { amount: kr(o.monthly_net_minor + o.monthly_vat_minor) })}</dd>
             <dt className="text-ink-soft">{t("offer.setup")}</dt><dd className="text-right">{o.setup_net_minor ? t("offer.setupPaid", { amount: kr(o.setup_net_minor), total: kr(o.setup_net_minor + o.setup_vat_minor) }) : t("offer.setupDiy")}</dd>
             <dt className="text-ink-soft">{t("offer.inbound")}</dt><dd className="text-right">{t("offer.inboundValue", { minutes: o.inbound_included_minutes, price: kr(o.inbound_extra_minute_net_minor) })}</dd>
-            <dt className="text-ink-soft">{t("offer.outbound")}</dt><dd className="text-right">{t("offer.outboundValue", { call: kr(o.campaign_call_net_minor), minute: kr(o.campaign_minute_net_minor) })}</dd>
+            <dt className="text-ink-soft">{t("offer.outbound")}</dt><dd className="text-right">{t("offer.outboundValue", { call: kr(o.campaign_call_net_minor), voicemail: kr(o.campaign_call_voicemail_net_minor), noAnswer: kr(o.campaign_call_no_answer_net_minor), minute: kr(o.campaign_minute_net_minor) })}</dd>
             <dt className="text-ink-soft">{t("offer.binding")}</dt><dd className="text-right">{o.notice}</dd>
             <dt className="text-ink-soft">{t("offer.validUntil")}</dt><dd className="text-right">{new Date(o.valid_until).toLocaleDateString(lang, { timeZone: "Europe/Copenhagen" })}</dd>
           </dl>

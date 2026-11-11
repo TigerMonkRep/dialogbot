@@ -572,7 +572,7 @@
       "before": "Avant le lancement",
       "resumeTitle": "Reprendre la campagne",
       "heading": "{n} contacts · {max} HT maximum",
-      "body": "{n} contacts en attente : au maximum {attempts} tentatives et {minutes} minutes de conversation par contact, {maxMinutes} minutes au total au maximum. Il reste {remaining} des {included} minutes du forfait ce mois-ci – avec elles, la campagne coûte au maximum {withPackage} HT. Dans le pire des cas (d’autres appels épuisent d’abord le forfait et chaque tentative est décrochée : {answered} par appel + {minute} par minute, au maximum {contactMax} par contact), le prix est au maximum {max} HT ({gross} TTC). Un paiement ne lance jamais d’appels.",
+      "body": "{n} contacts en attente : au maximum {attempts} tentatives et {minutes} minutes de conversation par contact, {maxMinutes} minutes au total au maximum. Il reste {remaining} des {included} minutes du forfait ce mois-ci – avec elles, la campagne coûte au maximum {withPackage} HT. Dans le pire des cas (d’autres appels épuisent d’abord le forfait et chaque tentative est décrochée – au maximum {contactMax} par contact), le prix est au maximum {max} HT ({gross} TTC). Après le forfait, un appel coûte {answered} (décroché), {voicemail} (messagerie) ou {noAnswer} (sans réponse), plus {minute} par minute de conversation entamée. Un paiement ne lance jamais d’appels.",
       "confirm": "Confirmer les règles d’appel",
       "starting": "Lancement…",
       "resume": "Reprendre",

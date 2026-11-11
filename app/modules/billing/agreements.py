@@ -24,6 +24,16 @@ from app.modules.billing import markets, prices
 from app.modules.billing.money import Money
 
 TAX_BASIS_POINTS = prices.TAX_BASIS_POINTS
+OFFER_CURRENCY = "DKK"  # Dialogbot's own sales are Danish and priced in DKK
+
+
+def offer_call_prices(offer) -> dict[str, int]:
+    """The outbound call prices after the package that accepting `offer` snapshots, by outcome. The offer page shows
+    these same values, so what the customer accepts is what is billed: the offer's answered price, and the list price
+    for voicemail and no answer (the offer row has no columns for those)."""
+    return {"answered": offer.campaign_call_net_minor or markets.erhverv_price(OFFER_CURRENCY, "call_answered"),
+            "voicemail": markets.erhverv_price(OFFER_CURRENCY, "call_voicemail"),
+            "no_answer": markets.erhverv_price(OFFER_CURRENCY, "call_no_answer")}
 
 
 def current(db: OrmSession, workspace_id: uuid.UUID) -> ReceptionAgreement | None:
@@ -42,13 +52,15 @@ def create(db: OrmSession, workspace_id: uuid.UUID, model: str, created_by: uuid
     last = db.scalar(select(func.max(ReceptionAgreement.version)).where(ReceptionAgreement.workspace_id == workspace_id))
     previous = current(db, workspace_id)
     if offer is not None:
-        currency = "DKK"  # Dialogbot's own sales are Danish and priced in DKK
+        currency = OFFER_CURRENCY
     elif previous is not None:
         currency = previous.currency  # locked: a later country change does not move the currency
     else:
         p = db.get(BusinessProfile, workspace_id)
         currency = markets.currency_for_country(p.country if p else None)
     tax_bp = offer.tax_basis_points if offer is not None else _vat_bp_now(db, workspace_id)
+    calls = offer_call_prices(offer) if offer is not None else {
+        k: markets.erhverv_price(currency, f"call_{k}") for k in ("answered", "voicemail", "no_answer")}
     a = ReceptionAgreement(workspace_id=workspace_id, version=(last or 0) + 1, model="A", currency=currency,
                            monthly_net_minor=offer.monthly_net_minor if offer else markets.erhverv_price(currency, "monthly"),
                            lead_fee_net_minor=0, tax_basis_points=tax_bp,
@@ -61,10 +73,9 @@ def create(db: OrmSession, workspace_id: uuid.UUID, model: str, created_by: uuid
                            outbound_extra_minute_net_minor=(offer.campaign_minute_net_minor if offer
                                                             else markets.erhverv_price(currency, "outbound_extra_minute")),
                            # an offer's campaign call price is the answered call after the package
-                           outbound_call_answered_net_minor=(offer.campaign_call_net_minor if offer and offer.campaign_call_net_minor
-                                                             else markets.erhverv_price(currency, "call_answered")),
-                           outbound_call_voicemail_net_minor=markets.erhverv_price(currency, "call_voicemail"),
-                           outbound_call_no_answer_net_minor=markets.erhverv_price(currency, "call_no_answer"),
+                           outbound_call_answered_net_minor=calls["answered"],
+                           outbound_call_voicemail_net_minor=calls["voicemail"],
+                           outbound_call_no_answer_net_minor=calls["no_answer"],
                            sales_offer_id=offer.id if offer else None, created_by=created_by)
     db.add(a)
     db.flush()

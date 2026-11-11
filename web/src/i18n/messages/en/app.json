@@ -572,7 +572,7 @@
       "before": "Before it starts",
       "resumeTitle": "Resume the campaign",
       "heading": "{n} contacts · at most {max} excl. VAT",
-      "body": "{n} contacts waiting: at most {attempts} attempts and {minutes} minutes of conversation per contact, {maxMinutes} minutes in total at most. {remaining} of {included} minutes are left in the package this month – with them the campaign costs at most {withPackage} + VAT. In the worst case (other calls use the package first and every attempt is answered: {answered} per call + {minute} per minute, at most {contactMax} per contact) the price is at most {max} + VAT ({gross} incl. VAT). Payment never starts calls.",
+      "body": "{n} contacts waiting: at most {attempts} attempts and {minutes} minutes of conversation per contact, {maxMinutes} minutes in total at most. {remaining} of {included} minutes are left in the package this month – with them the campaign costs at most {withPackage} + VAT. In the worst case (other calls use the package first and every attempt is answered – at most {contactMax} per contact) the price is at most {max} + VAT ({gross} incl. VAT). After the package a call costs {answered} (answered), {voicemail} (voicemail) or {noAnswer} (unanswered) plus {minute} per started minute of conversation. Payment never starts calls.",
       "confirm": "Confirm the rules for calls",
       "starting": "Starting…",
       "resume": "Resume",

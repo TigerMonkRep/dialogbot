@@ -572,7 +572,7 @@
       "before": "Bevor sie startet",
       "resumeTitle": "Kampagne fortsetzen",
       "heading": "{n} Kontakte · höchstens {max} zzgl. MwSt.",
-      "body": "{n} Kontakte warten: höchstens {attempts} Versuche und {minutes} Gesprächsminuten pro Kontakt, insgesamt höchstens {maxMinutes} Minuten. Im Paket sind diesen Monat noch {remaining} von {included} Minuten übrig – damit kostet die Kampagne höchstens {withPackage} + MwSt. Im schlimmsten Fall (andere Anrufe verbrauchen das Paket zuerst und jeder Versuch wird angenommen: {answered} pro Anruf + {minute} pro Minute, höchstens {contactMax} pro Kontakt) kostet sie höchstens {max} + MwSt. ({gross} inkl. MwSt.). Eine Zahlung startet nie Anrufe.",
+      "body": "{n} Kontakte warten: höchstens {attempts} Versuche und {minutes} Gesprächsminuten pro Kontakt, insgesamt höchstens {maxMinutes} Minuten. Im Paket sind diesen Monat noch {remaining} von {included} Minuten übrig – damit kostet die Kampagne höchstens {withPackage} + MwSt. Im schlimmsten Fall (andere Anrufe verbrauchen das Paket zuerst und jeder Versuch wird angenommen – höchstens {contactMax} pro Kontakt) kostet sie höchstens {max} + MwSt. ({gross} inkl. MwSt.). Nach dem Paket kostet ein Anruf {answered} (angenommen), {voicemail} (Mailbox) oder {noAnswer} (nicht angenommen) plus {minute} pro angefangene Gesprächsminute. Eine Zahlung startet nie Anrufe.",
       "confirm": "Regeln für Anrufe bestätigen",
       "starting": "Wird gestartet …",
       "resume": "Fortsetzen",

@@ -160,6 +160,9 @@ def test_eur_languages_state_no_amount_in_kroner():
 
 
 LOCALES = ("da", "en", "de", "es", "fr", "it", "no", "sv")
+# "per started minute" in each language: the amounts are billed per started minute (statement rounds each call up)
+STARTED = {"da": "påbegyndt", "en": "started", "de": "angefangene", "es": "iniciado", "fr": "entamée", "it": "iniziato",
+           "no": "påbegynt", "sv": "påbörjad"}
 
 
 def _msg(loc: str, file: str, key: str) -> str:
@@ -167,6 +170,32 @@ def _msg(loc: str, file: str, key: str) -> str:
     for k in key.split("."):
         v = v[k]
     return v
+
+
+def _passed_vars(tsx: str, key: str) -> set[str]:
+    """The variable names a page passes to t("<key>", { … }) (one call, on one line)."""
+    src = (ROOT / tsx).read_text(encoding="utf-8")
+    m = re.search(r't\("' + re.escape(key) + r'", \{(.*?)\}\)\}', src, re.S)
+    assert m, f"{tsx}: t({key!r}, …) not found"
+    return set(re.findall(r"(\w+):", m.group(1)))
+
+
+def test_the_texts_a_customer_accepts_state_every_call_price_and_the_started_minute():
+    """F-VR-06: the offer (/tilbud) and the campaign start dialog are what a customer accepts. Both state all three call
+    prices after the package (answered / voicemail / no answer) and that a minute is billed per started minute, in every
+    language – with the amounts passed in from the API (agreements.offer_call_prices / the campaign's call_prices)."""
+    texts = {("auth.json", "offer.outboundValue"): ({"call", "voicemail", "noAnswer", "minute"}, "web/src/app/tilbud/[token]/page.tsx"),
+             ("app.json", "campaigns.start.body"): ({"answered", "voicemail", "noAnswer", "minute"},
+                                                    "web/src/app/app/(admin)/kampagner/client.tsx")}
+    for (file, key), (needed, tsx) in texts.items():
+        passed = _passed_vars(tsx, key)
+        for loc in LOCALES:
+            s = _msg(loc, file, key)
+            used = set(re.findall(r"\{(\w+)\}", s))
+            assert needed <= used, (loc, key, needed - used)
+            assert used <= passed, (loc, key, "not passed by the page", used - passed)
+            assert STARTED[loc] in s, (loc, key, "per started minute")
+            assert not re.search(r"\d", s), (loc, key, "a hard-coded amount")
 
 
 def test_a_big_price_figure_carries_its_currency_once():

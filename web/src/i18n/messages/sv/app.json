@@ -572,7 +572,7 @@
       "before": "Innan den startar",
       "resumeTitle": "Återuppta kampanjen",
       "heading": "{n} kontakter · högst {max} exkl. moms",
-      "body": "{n} kontakter väntar: högst {attempts} försök och {minutes} samtalsminuter per kontakt, totalt högst {maxMinutes} minuter. Det finns {remaining} av {included} minuter kvar i paketet denna månad – med dem kostar kampanjen högst {withPackage} + moms. I värsta fall (andra samtal använder paketet först och varje försök besvaras: {answered} per samtal + {minute} per minut, högst {contactMax} per kontakt) är priset högst {max} + moms ({gross} inkl. moms). Betalning startar aldrig samtal.",
+      "body": "{n} kontakter väntar: högst {attempts} försök och {minutes} samtalsminuter per kontakt, totalt högst {maxMinutes} minuter. Det finns {remaining} av {included} minuter kvar i paketet denna månad – med dem kostar kampanjen högst {withPackage} + moms. I värsta fall (andra samtal använder paketet först och varje försök besvaras – högst {contactMax} per kontakt) är priset högst {max} + moms ({gross} inkl. moms). Efter paketet kostar ett samtal {answered} (besvarat), {voicemail} (röstbrevlåda) eller {noAnswer} (obesvarat) plus {minute} per påbörjad samtalsminut. Betalning startar aldrig samtal.",
       "confirm": "Bekräfta reglerna för samtal",
       "starting": "Startar…",
       "resume": "Återuppta",

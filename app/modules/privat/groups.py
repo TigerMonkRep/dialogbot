@@ -424,6 +424,7 @@ def _danish_mobile(raw: str | None) -> str:
 
 def _send_code(db: OrmSession, g: PrivateGroup, e164: str, code: str) -> None:
     from app.core.errors import ApiError
+    from app.modules.integrations import privat_mails
     from app.modules.integrations.connectors import sms
     from app.modules.privat import phone
 
@@ -432,6 +433,6 @@ def _send_code(db: OrmSession, g: PrivateGroup, e164: str, code: str) -> None:
 
     try:
         sms.send(db, db.get(Workspace, owner_ws), sender=phone.SENDER, to=e164,
-                 body=f"Din kode til Dialogbot er {code}. Den gælder i 10 minutter.", simulated=phone._simulated())
+                 body=privat_mails.sms_code(code), simulated=phone._simulated())
     except Exception as e:  # noqa: BLE001
         raise ApiError("SMS kunne ikke sendes lige nu. Prøv igen om lidt.", code="sms_failed", status_code=502) from e

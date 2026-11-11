@@ -38,7 +38,7 @@ TEXTS: dict[str, dict[str, str]] = {
         "verify_button": "Bekræft min e-mail",
         "verify_heading_privat": "Velkommen til Dialogbot Privat",
         "verify_body_privat": "Tak, fordi du har oprettet en konto. Bekræft din e-mailadresse, så kan du starte din prøveperiode på Dialogbot Privat.",
-        # billing mails (F-PBQ-08) – Privat and Erhverv
+        # billing mails (F-PBQ-08) – Privat and Erhverv; de/es/fr/it formal like every mail (F-JP-15)
         "billing_footer": "Du får denne e-mail, fordi du har et abonnement hos Dialogbot.",
         "manage_button": "Se dit abonnement",
         "what_privat": "Dialogbot Privat",
@@ -172,7 +172,7 @@ TEXTS: dict[str, dict[str, str]] = {
         "verify_button": "Confirm my e-mail",
         "verify_heading_privat": "Welcome to Dialogbot Privat",
         "verify_body_privat": "Thank you for creating an account. Confirm your e-mail address, and you can start your Dialogbot Privat trial.",
-        # billing mails (F-PBQ-08) – Privat and Erhverv
+        # billing mails (F-PBQ-08) – Privat and Erhverv; de/es/fr/it formal like every mail (F-JP-15)
         "billing_footer": "You receive this e-mail because you have a subscription with Dialogbot.",
         "manage_button": "See your subscription",
         "what_privat": "Dialogbot Privat",
@@ -303,24 +303,25 @@ TEXTS: dict[str, dict[str, str]] = {
                        "Sie mit der Einrichtung Ihrer KI-Rezeption beginnen.",
         "verify_button": "E-Mail-Adresse bestätigen",
         "verify_heading_privat": "Willkommen bei Dialogbot Privat",
-        "verify_body_privat": "Danke, dass du ein Konto erstellt hast. Bestätige deine E-Mail-Adresse, dann kannst du deine Testphase von Dialogbot Privat starten.",
-        # billing mails (F-PBQ-08) – Privat and Erhverv
-        "billing_footer": "Du erhältst diese E-Mail, weil du ein Abonnement bei Dialogbot hast.",
+        "verify_body_privat": "Vielen Dank, dass Sie ein Konto erstellt haben. Bestätigen Sie Ihre E-Mail-Adresse, dann können "
+                              "Sie Ihre Testphase von Dialogbot Privat starten.",
+        # billing mails (F-PBQ-08) – Privat and Erhverv; de/es/fr/it formal like every mail (F-JP-15)
+        "billing_footer": "Sie erhalten diese E-Mail, weil Sie ein Abonnement bei Dialogbot haben.",
         "manage_button": "Abonnement ansehen",
         "what_privat": "Dialogbot Privat",
         "what_erhverv": "Dialogbot",
         "receipt_subject": "Beleg: {amount} bezahlt",
         "receipt_heading": "Danke – die Zahlung ist eingegangen",
-        "receipt_body": "Wir haben {amount} für {what} erhalten. Beleg und Rechnung findest du unter «Abonnement verwalten».",
+        "receipt_body": "Wir haben {amount} für {what} erhalten. Beleg und Rechnung finden Sie unter «Abonnement verwalten».",
         "failed_subject": "Die Zahlung von {amount} ist fehlgeschlagen",
         "failed_heading": "Die Zahlung ist fehlgeschlagen",
-        "failed_body": "Wir konnten {amount} für {what} nicht abbuchen. Aktualisiere deine Zahlungskarte, dann läuft alles weiter wie bisher. Wir versuchen es in den nächsten Tagen erneut.",
+        "failed_body": "Wir konnten {amount} für {what} nicht abbuchen. Aktualisieren Sie Ihre Zahlungskarte, dann läuft alles weiter wie bisher. Wir versuchen es in den nächsten Tagen erneut.",
         "refund_subject": "Erstattung: {amount} zurückgezahlt",
         "refund_heading": "Das Geld ist auf dem Weg zurück",
-        "refund_body": "Wir haben {amount} für {what} erstattet. Es dauert normalerweise 5–10 Bankarbeitstage, bis der Betrag auf deinem Konto ist.",
-        "trial_subject": "Deine Testphase endet in 3 Tagen",
+        "refund_body": "Wir haben {amount} für {what} erstattet. Es dauert normalerweise 5–10 Bankarbeitstage, bis der Betrag auf Ihrem Konto ist.",
+        "trial_subject": "Ihre Testphase endet in 3 Tagen",
         "trial_heading": "Die Testphase endet am {date}",
-        "trial_body": "Am {date} wird deine Testphase von {plan} zu einem bezahlten Abonnement für {amount}. Wenn du nicht weitermachen willst, kündige vorher – dann wird nichts abgebucht.",
+        "trial_body": "Am {date} wird Ihre Testphase von {plan} zu einem bezahlten Abonnement für {amount}. Wenn Sie nicht weitermachen möchten, kündigen Sie vorher – dann wird nichts abgebucht.",
         "verify_note": "Der Link ist 48 Stunden gültig. Wenn Sie kein Konto bei Dialogbot erstellt haben, können Sie diese "
                        "E-Mail ignorieren.",
         "verify_footer": "Sie erhalten diese E-Mail, weil jemand mit Ihrer Adresse ein Konto bei Dialogbot erstellt hat.",
@@ -436,10 +437,11 @@ TEXTS: dict[str, dict[str, str]] = {
                        "configurar su recepcionista con IA.",
         "verify_button": "Confirmar mi correo",
         "verify_heading_privat": "Bienvenido a Dialogbot Privat",
-        "verify_body_privat": "Gracias por crear una cuenta. Confirma tu dirección de correo electrónico y podrás empezar tu prueba de Dialogbot Privat.",
-        # billing mails (F-PBQ-08) – Privat and Erhverv
-        "billing_footer": "Recibes este correo porque tienes una suscripción con Dialogbot.",
-        "manage_button": "Ver tu suscripción",
+        "verify_body_privat": "Gracias por crear una cuenta. Confirme su dirección de correo electrónico y podrá empezar su "
+                              "prueba de Dialogbot Privat.",
+        # billing mails (F-PBQ-08) – Privat and Erhverv; de/es/fr/it formal like every mail (F-JP-15)
+        "billing_footer": "Recibe este correo porque tiene una suscripción con Dialogbot.",
+        "manage_button": "Ver su suscripción",
         "what_privat": "Dialogbot Privat",
         "what_erhverv": "Dialogbot",
         "receipt_subject": "Recibo: {amount} pagado",
@@ -447,13 +449,13 @@ TEXTS: dict[str, dict[str, str]] = {
         "receipt_body": "Hemos recibido {amount} por {what}. El recibo y la factura están en «Gestionar suscripción».",
         "failed_subject": "El pago de {amount} no se ha realizado",
         "failed_heading": "El pago no se ha realizado",
-        "failed_body": "No pudimos cobrar {amount} por {what}. Actualiza tu tarjeta de pago y todo seguirá igual. Lo intentaremos de nuevo en los próximos días.",
+        "failed_body": "No pudimos cobrar {amount} por {what}. Actualice su tarjeta de pago y todo seguirá igual. Lo intentaremos de nuevo en los próximos días.",
         "refund_subject": "Reembolso: {amount} devuelto",
         "refund_heading": "El dinero está de vuelta en camino",
-        "refund_body": "Hemos reembolsado {amount} por {what}. Normalmente tarda entre 5 y 10 días hábiles en aparecer en tu cuenta.",
-        "trial_subject": "Tu prueba termina en 3 días",
+        "refund_body": "Hemos reembolsado {amount} por {what}. Normalmente tarda entre 5 y 10 días hábiles en aparecer en su cuenta.",
+        "trial_subject": "Su prueba termina en 3 días",
         "trial_heading": "La prueba termina el {date}",
-        "trial_body": "El {date} tu prueba de {plan} pasa a ser una suscripción de pago por {amount}. Si no quieres continuar, cancela antes y no se cobrará nada.",
+        "trial_body": "El {date} su prueba de {plan} pasa a ser una suscripción de pago por {amount}. Si no desea continuar, cancele antes y no se cobrará nada.",
         "verify_note": "El enlace es válido durante 48 horas. Si no ha creado una cuenta en Dialogbot, puede ignorar este "
                        "correo.",
         "verify_footer": "Recibe este correo electrónico porque alguien ha creado una cuenta en Dialogbot con su dirección.",
@@ -570,10 +572,11 @@ TEXTS: dict[str, dict[str, str]] = {
                        "réceptionniste IA.",
         "verify_button": "Confirmer mon adresse e-mail",
         "verify_heading_privat": "Bienvenue sur Dialogbot Privat",
-        "verify_body_privat": "Merci d'avoir créé un compte. Confirme ton adresse e-mail pour commencer ton essai de Dialogbot Privat.",
-        # billing mails (F-PBQ-08) – Privat and Erhverv
-        "billing_footer": "Tu reçois cet e-mail parce que tu as un abonnement chez Dialogbot.",
-        "manage_button": "Voir ton abonnement",
+        "verify_body_privat": "Merci d'avoir créé un compte. Confirmez votre adresse e-mail pour commencer votre essai de "
+                              "Dialogbot Privat.",
+        # billing mails (F-PBQ-08) – Privat and Erhverv; de/es/fr/it formal like every mail (F-JP-15)
+        "billing_footer": "Vous recevez cet e-mail parce que vous avez un abonnement chez Dialogbot.",
+        "manage_button": "Voir votre abonnement",
         "what_privat": "Dialogbot Privat",
         "what_erhverv": "Dialogbot",
         "receipt_subject": "Reçu : {amount} payé",
@@ -581,13 +584,13 @@ TEXTS: dict[str, dict[str, str]] = {
         "receipt_body": "Nous avons reçu {amount} pour {what}. Le reçu et la facture se trouvent sous « Gérer l'abonnement ».",
         "failed_subject": "Le paiement de {amount} n'est pas passé",
         "failed_heading": "Le paiement n'est pas passé",
-        "failed_body": "Nous n'avons pas pu prélever {amount} pour {what}. Mets à jour ta carte de paiement et tout continue comme avant. Nous réessaierons dans les prochains jours.",
+        "failed_body": "Nous n'avons pas pu prélever {amount} pour {what}. Mettez à jour votre carte de paiement et tout continue comme avant. Nous réessaierons dans les prochains jours.",
         "refund_subject": "Remboursement : {amount} renvoyé",
         "refund_heading": "L'argent est en route",
-        "refund_body": "Nous avons remboursé {amount} pour {what}. Il faut généralement 5 à 10 jours ouvrables avant que le montant apparaisse sur ton compte.",
-        "trial_subject": "Ton essai se termine dans 3 jours",
+        "refund_body": "Nous avons remboursé {amount} pour {what}. Il faut généralement 5 à 10 jours ouvrables avant que le montant apparaisse sur votre compte.",
+        "trial_subject": "Votre essai se termine dans 3 jours",
         "trial_heading": "L'essai se termine le {date}",
-        "trial_body": "Le {date}, ton essai de {plan} devient un abonnement payant à {amount}. Si tu ne veux pas continuer, résilie avant – et rien ne sera prélevé.",
+        "trial_body": "Le {date}, votre essai de {plan} devient un abonnement payant à {amount}. Si vous ne souhaitez pas continuer, résiliez avant – et rien ne sera prélevé.",
         "verify_note": "Le lien est valable 48 heures. Si vous n'avez pas créé de compte chez Dialogbot, vous pouvez "
                        "ignorer cet e-mail.",
         "verify_footer": "Vous recevez cet e-mail parce que quelqu'un a créé un compte Dialogbot avec votre adresse.",
@@ -705,10 +708,11 @@ TEXTS: dict[str, dict[str, str]] = {
                        "Suo receptionist IA.",
         "verify_button": "Conferma il mio indirizzo e-mail",
         "verify_heading_privat": "Benvenuto in Dialogbot Privat",
-        "verify_body_privat": "Grazie per aver creato un account. Conferma il tuo indirizzo e-mail per iniziare la prova di Dialogbot Privat.",
-        # billing mails (F-PBQ-08) – Privat and Erhverv
-        "billing_footer": "Ricevi questa e-mail perché hai un abbonamento con Dialogbot.",
-        "manage_button": "Vedi il tuo abbonamento",
+        "verify_body_privat": "Grazie per aver creato un account. Confermi il Suo indirizzo e-mail per iniziare la prova di "
+                              "Dialogbot Privat.",
+        # billing mails (F-PBQ-08) – Privat and Erhverv; de/es/fr/it formal like every mail (F-JP-15)
+        "billing_footer": "Riceve questa e-mail perché ha un abbonamento con Dialogbot.",
+        "manage_button": "Veda il Suo abbonamento",
         "what_privat": "Dialogbot Privat",
         "what_erhverv": "Dialogbot",
         "receipt_subject": "Ricevuta: {amount} pagato",
@@ -716,13 +720,13 @@ TEXTS: dict[str, dict[str, str]] = {
         "receipt_body": "Abbiamo ricevuto {amount} per {what}. Ricevuta e fattura sono in «Gestisci abbonamento».",
         "failed_subject": "Il pagamento di {amount} non è andato a buon fine",
         "failed_heading": "Il pagamento non è andato a buon fine",
-        "failed_body": "Non siamo riusciti ad addebitare {amount} per {what}. Aggiorna la tua carta di pagamento e tutto continua come prima. Riproveremo nei prossimi giorni.",
+        "failed_body": "Non siamo riusciti ad addebitare {amount} per {what}. Aggiorni la Sua carta di pagamento e tutto continua come prima. Riproveremo nei prossimi giorni.",
         "refund_subject": "Rimborso: {amount} restituito",
         "refund_heading": "Il denaro sta tornando indietro",
-        "refund_body": "Abbiamo rimborsato {amount} per {what}. Di solito servono 5–10 giorni lavorativi prima che l'importo sia sul tuo conto.",
-        "trial_subject": "La tua prova termina tra 3 giorni",
+        "refund_body": "Abbiamo rimborsato {amount} per {what}. Di solito servono 5–10 giorni lavorativi prima che l'importo sia sul Suo conto.",
+        "trial_subject": "La Sua prova termina tra 3 giorni",
         "trial_heading": "La prova termina il {date}",
-        "trial_body": "Il {date} la tua prova di {plan} diventa un abbonamento a pagamento di {amount}. Se non vuoi continuare, disdici prima – e non verrà addebitato nulla.",
+        "trial_body": "Il {date} la Sua prova di {plan} diventa un abbonamento a pagamento di {amount}. Se non desidera continuare, disdica prima – e non verrà addebitato nulla.",
         "verify_note": "Il link è valido per 48 ore. Se non ha creato un account su Dialogbot, può ignorare questa e-mail.",
         "verify_footer": "Riceve questa e-mail perché qualcuno ha creato un account su Dialogbot con il Suo indirizzo.",
         "reset_subject": "Reimposti la Sua password di Dialogbot",
@@ -836,7 +840,7 @@ TEXTS: dict[str, dict[str, str]] = {
         "verify_button": "Bekreft e-postadressen min",
         "verify_heading_privat": "Velkommen til Dialogbot Privat",
         "verify_body_privat": "Takk for at du har opprettet en konto. Bekreft e-postadressen din, så kan du starte prøveperioden på Dialogbot Privat.",
-        # billing mails (F-PBQ-08) – Privat and Erhverv
+        # billing mails (F-PBQ-08) – Privat and Erhverv; de/es/fr/it formal like every mail (F-JP-15)
         "billing_footer": "Du får denne e-posten fordi du har et abonnement hos Dialogbot.",
         "manage_button": "Se abonnementet ditt",
         "what_privat": "Dialogbot Privat",
@@ -965,7 +969,7 @@ TEXTS: dict[str, dict[str, str]] = {
         "verify_button": "Bekräfta min e-postadress",
         "verify_heading_privat": "Välkommen till Dialogbot Privat",
         "verify_body_privat": "Tack för att du har skapat ett konto. Bekräfta din e-postadress, så kan du starta din provperiod på Dialogbot Privat.",
-        # billing mails (F-PBQ-08) – Privat and Erhverv
+        # billing mails (F-PBQ-08) – Privat and Erhverv; de/es/fr/it formal like every mail (F-JP-15)
         "billing_footer": "Du får detta e-postmeddelande eftersom du har ett abonnemang hos Dialogbot.",
         "manage_button": "Se ditt abonnemang",
         "what_privat": "Dialogbot Privat",
@@ -1090,6 +1094,12 @@ GREETING_WORDS: dict[str, tuple[str, ...]] = {
     "es": ("Hola", "Estimado", "Estimada"), "fr": ("Bonjour", "Cher", "Chère", "Madame", "Monsieur"),
     "it": ("Buongiorno", "Ciao", "Gentile", "Caro", "Cara"), "no": ("Hei", "Kjære"), "sv": ("Hej", "Kära"),
 }
+
+# Dialogbot Privat's texts (service mails, the funnel welcome, the SMS code) live in their own file, same mechanism.
+from app.modules.integrations.email_texts_privat import PRIVAT_TEXTS  # noqa: E402
+
+for _lang, _table in PRIVAT_TEXTS.items():
+    TEXTS[_lang].update(_table)
 
 
 def t(lang: str | None, key: str, **values) -> str:

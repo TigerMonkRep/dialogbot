@@ -326,6 +326,7 @@ def _tell(db: OrmSession, item: PrivateTaskItem, user_ids, text: str, *, dedupe:
     """A service message to givers only (push, else e-mail). Never to the wishlist's owner."""
     from app.config import get_settings
     from app.modules.integrations import email_templates as tpl
+    from app.modules.integrations import privat_mails
     from app.modules.privat import push
 
     owner_id = db.scalar(select(PrivateTaskMember.user_id).where(PrivateTaskMember.task_id == item.task_id,
@@ -337,7 +338,6 @@ def _tell(db: OrmSession, item: PrivateTaskItem, user_ids, text: str, *, dedupe:
         u = db.get(User, uid)
         if u is None:
             continue
-        mail = tpl.Email(subject="Fællesgave", heading="Fællesgave", paragraphs=[text], button_label="Se ønskesedlen",
-                         button_url=url, footer_reason="Du får denne e-mail, fordi du er med i en fællesgave i Dialogbot.")
+        mail = privat_mails.group_gift(text, url, u.interface_language)
         push.notify(db, uid, title="Fællesgave", body=text, url=url, dedupe=f"{dedupe}:{uid}",
                     email={"to_email": u.email, "email": tpl.to_payload(mail)})

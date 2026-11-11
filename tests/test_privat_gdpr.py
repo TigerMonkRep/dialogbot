@@ -218,3 +218,24 @@ def test_login_used_outside_privat_is_kept(api, pv, db, monkeypatch):
     assert api.get(tok, f"/workspaces/{biz}").status_code == 200
     db.expire_all()
     assert db.get(Workspace, ws) is None and db.get(PrivateTask, tid) is None
+
+
+def test_export_mail_is_a_privat_mail_in_the_users_language(api, pv, db):
+    """The «Dine data er klar» mail is built by privat_mails.data_export (the one Privat mail mechanism): Privat orange,
+    the recipient's language (here German, formal), the button to Konto with the export token."""
+    from app.models import OutboxEvent, User
+    from app.modules.integrations import email_templates as tpl
+
+    mette = pv.account("mette@testmail.dk", "Mette Hansen")
+    user = db.query(User).filter_by(email="mette@testmail.dk").one()
+    user.interface_language = "de"
+    db.commit()
+    assert api.post(mette, "/privat/data-export").status_code == 202
+    runner.drain()
+    db.expire_all()
+    ev = next(e for e in db.query(OutboxEvent).filter_by(event_type="email.branded")
+              if e.dedupe_key.startswith("privat-export-mail:"))
+    mail = tpl.from_payload(ev.payload)
+    assert mail.audience == "privat" and mail.lang == "de", (mail.audience, mail.lang)
+    assert mail.subject == "Ihre Daten aus Dialogbot Privat sind bereit"
+    assert "/privat/konto?eksport=" in mail.button_url and tpl.PRIVAT_ACCENT in mail.html()

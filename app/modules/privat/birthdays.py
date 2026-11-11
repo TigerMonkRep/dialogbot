@@ -210,6 +210,7 @@ def due(db: OrmSession, now: datetime | None = None) -> list[PrivateBirthday]:
 def send_due(db: OrmSession, now: datetime | None = None) -> int:
     """Worker schedule: one reminder per birthday per year (push, or e-mail without a push subscription)."""
     from app.modules.integrations import email_templates as tpl
+    from app.modules.integrations import privat_mails
     from app.modules.privat import push
 
     if addons.CATALOG.get(ADDON) is None or addons.CATALOG[ADDON].live_status == "coming_soon":
@@ -225,10 +226,7 @@ def send_due(db: OrmSession, now: datetime | None = None) -> int:
         if owner is None:
             continue
         text = summary(b, today) + "."
-        mail = tpl.Email(subject=f"Fødselsdag: {b.name}", heading=text,
-                         paragraphs=["Skriv til din assistent i Dialogbot, hvis du vil have idéer til en gave eller en påmindelse om at ringe."],
-                         button_label="Se fødselsdage", button_url=url,
-                         footer_reason="Du får denne e-mail, fordi du har slået Fødselsdage til i Dialogbot.")
+        mail = privat_mails.birthday(b.name, text, url, owner.interface_language)
         push.notify(db, owner.id, title="Fødselsdag", body=text, url=url, dedupe=f"birthday:{b.id}:{nxt.isoformat()}",
                     email={"to_email": owner.email, "email": tpl.to_payload(mail)}, workspace_id=b.workspace_id)
         n += 1

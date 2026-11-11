@@ -258,6 +258,7 @@ def due(db: OrmSession, now: datetime | None = None) -> list[PrivateBill]:
 def send_due(db: OrmSession, now: datetime | None = None) -> int:
     """Worker schedule: one reminder per due date (push, or e-mail without a push subscription)."""
     from app.modules.integrations import email_templates as tpl
+    from app.modules.integrations import privat_mails
     from app.modules.privat import push
 
     if addons.CATALOG.get(ADDON) is None or addons.CATALOG[ADDON].live_status == "coming_soon":
@@ -275,10 +276,7 @@ def send_due(db: OrmSession, now: datetime | None = None) -> int:
         when = "i dag" if days == 0 else "i morgen" if days == 1 else f"om {days} dage"
         text = (f"{b.name} skal betales {when} ({date_text(b.next_due)})"
                 + (f": {money(b.amount_minor)}" if b.amount_minor else "")).rstrip(".") + "."
-        mail = tpl.Email(subject=f"Regning: {b.name}", heading=text,
-                         paragraphs=["Dialogbot betaler aldrig selv og har ikke adgang til din bank."],
-                         button_label="Se regninger", button_url=url,
-                         footer_reason="Du får denne e-mail, fordi du har slået Regninger til i Dialogbot.")
+        mail = privat_mails.bill(b.name, text, url, owner.interface_language)
         push.notify(db, owner.id, title="Regning", body=text, url=url, dedupe=f"bill:{b.id}:{b.next_due.isoformat()}",
                     email={"to_email": owner.email, "email": tpl.to_payload(mail)}, workspace_id=b.workspace_id)
         n += 1

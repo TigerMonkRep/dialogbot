@@ -60,6 +60,7 @@ export function InvitationPage({ token, loggedIn }: { token: string; loggedIn: b
   const [state, setState] = useState<"loading" | "ok" | "gone">("loading");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [unverified, setUnverified] = useState(false);
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -83,7 +84,12 @@ export function InvitationPage({ token, loggedIn }: { token: string; loggedIn: b
       const task = await (isShortCode(token) ? api.acceptInviteByCode(token) : api.acceptInvite(token));
       // Familie (resource_type household): the plan comes along, no task to open – land on Konto → Husstand.
       router.push(p?.resource_type === "household" ? "/privat/konto" : `/privat/opgaver/${encodeURIComponent(task.id)}?velkommen=1`);
-    } catch (e) { setErr((e as ApiError).message); setBusy(false); }
+    } catch (e) {
+      // Not verified yet (e.g. logged in on another device): one way on – confirm the e-mail; the link returns here and
+      // opens the list (F-JP-05). Never a bare 403 text.
+      if ((e as ApiError).code === "email_not_verified") setUnverified(true); else setErr((e as ApiError).message);
+      setBusy(false);
+    }
   };
   useEffect(() => { if (state === "ok" && params.get("accept") === "1" && canAccept) void accept(); /* after login */ // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
@@ -127,10 +133,15 @@ export function InvitationPage({ token, loggedIn }: { token: string; loggedIn: b
           <Button className={BIG} onClick={accept} disabled={busy}>{busy ? t("invitation.opening") : t("invitation.open")}</Button>
         ) : (
           <>
+            {/* A free account – no trial, no plan, no card (Fürster's decision for invitees, F-JP-05). */}
             <p className="m-0 text-[14px] text-ink-soft">{t("invitation.loginFirst")}</p>
-            <Link href={`/signup?next=${next}`} className={`inline-flex items-center justify-center rounded-xl ${BIG} bg-accent text-white font-semibold hover:bg-accent-deep`}>{t("invitation.open")}</Link>
+            <Link href={`/signup?next=${next}`} className={`inline-flex items-center justify-center rounded-xl ${BIG} bg-accent text-white font-semibold hover:bg-accent-deep`}>{t("invitation.signupFree")}</Link>
             <Link href={`/login?next=${next}`} className="inline-flex items-center justify-center min-h-[44px] rounded-xl border-2 border-ink font-semibold text-[15px] hover:bg-panel">{t("invitation.login")}</Link>
           </>
+        )}
+        {unverified && (
+          <p role="alert" className="m-0 text-[14px] font-semibold">{t("invitation.verifyFirst")}{" "}
+            <Link href={`/verify-email?for=privat&next=${next}`} className="underline">{t("errors.verifyLink")}</Link></p>
         )}
         {err && <p role="alert" className="m-0 text-[14px] text-danger font-semibold">{err}</p>}
       </section>

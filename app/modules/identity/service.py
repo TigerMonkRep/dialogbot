@@ -13,9 +13,10 @@ from app.core.languages import normalize as normalize_language
 from app.core.outbox import enqueue
 from app.core.security import hash_password, new_token, normalize_email, token_digest, verify_password
 from app.models import AuthToken, Session, User
+from app.modules.identity import privat_context as pctx
+from app.modules.identity.privat_context import PRIVAT_INTENT
 
 INTENTS = ("reception", "campaigns", "both")
-PRIVAT_INTENT = "privat"  # a Dialogbot Privat sign-up: Privat verify mail and link (F-PK-04); never a product intent
 
 
 def _now() -> datetime:
@@ -23,7 +24,9 @@ def _now() -> datetime:
 
 
 def register(db: OrmSession, *, email: str, password: str, display_name: str, signup_intent: str | None,
-             interface_language: str = "da", request_id: str | None = None) -> User:
+             interface_language: str = "da", request_id: str | None = None, next_: str | None = None) -> User:
+    """`next_`: where a Privat sign-up returns after the verify link (privat_context.safe_next; anything else is
+    dropped)."""
     if len(password) < 10:
         raise ValidationFailed("Adgangskoden skal være mindst 10 tegn", field_errors=[{"field": "password"}])
     if signup_intent is not None and signup_intent not in (*INTENTS, PRIVAT_INTENT):
@@ -37,22 +40,38 @@ def register(db: OrmSession, *, email: str, password: str, display_name: str, si
     )
     db.add(user)
     db.flush()
-    issue_verification(db, user)
+    issue_verification(db, user, next_=next_)
     record_audit(db, workspace_id=None, actor_user_id=user.id, action="user.registered", object_type="user",
                  object_id=user.id, after={"email": norm, "signup_intent": signup_intent}, request_id=request_id)
     return user
 
 
-def issue_verification(db: OrmSession, user: User) -> None:
+def issue_verification(db: OrmSession, user: User, *, next_: str | None = None) -> None:
+    """The verify mail. A Privat account (or a `next_` back into Privat) gets the Privat mail, and the link carries
+    `for=privat` and `next`, so the person returns to the plan, list or group they came from – also in another
+    browser (F-JP-01, F-JP-05). A Privat-only account (e.g. from the quiz-funnel) is Privat too (F-JP-03)."""
     s = get_settings()
     raw = new_token()
     db.add(AuthToken(user_id=user.id, purpose="verify_email", token_hash=token_digest(raw),
                      expires_at=_now() + timedelta(hours=s.verification_ttl_hours)))
-    privat = user.signup_intent == PRIVAT_INTENT
-    link = f"{s.frontend_base_url}/verify-email?token={raw}" + ("&for=privat" if privat else "")
+    next_ = pctx.safe_next(next_)
+    privat = user.signup_intent == PRIVAT_INTENT or next_ is not None or pctx.is_privat_user(db, user)
+    link = f"{s.frontend_base_url}/verify-email?token={raw}" + pctx.link_suffix(privat=privat, next_=next_)
+    extra = {"audience": "privat", "variant": pctx.next_kind(next_)} if privat else {}
+    if not privat and _invited(db, user):  # a colleague joining a company: no «set up your AI receptionist» (F-JE-10)
+        extra = {"variant": "invited"}
     enqueue(db, event_type="email.verify_address", dedupe_key=f"verify:{user.id}:{token_digest(raw)[:16]}",
             payload={"user_id": str(user.id), "to_email": user.email, "link": link,
-                     "lang": normalize_language(user.interface_language), **({"audience": "privat"} if privat else {})})
+                     "lang": normalize_language(user.interface_language), **extra})
+
+
+def _invited(db: OrmSession, user: User) -> bool:
+    """A pending, unexpired invitation to a company for this address."""
+    from app.models import Invitation
+
+    return db.scalar(select(Invitation.id).where(Invitation.email_normalized == user.email_normalized,
+                                                 Invitation.status == "pending", Invitation.expires_at > _now())
+                     .limit(1)) is not None
 
 
 def verify_email(db: OrmSession, raw_token: str) -> User:
@@ -97,8 +116,9 @@ def logout(db: OrmSession, session: Session) -> None:
     session.revoked_at = _now()
 
 
-def request_password_reset(db: OrmSession, email: str) -> None:
-    """Always succeeds from the caller's perspective (no account enumeration)."""
+def request_password_reset(db: OrmSession, email: str, *, next_: str | None = None) -> None:
+    """Always succeeds from the caller's perspective (no account enumeration). A Privat-only account, or a request
+    from a Privat page (`next_`), gets the Privat mail and a link that keeps `for=privat` and `next` (F-JP-02)."""
     s = get_settings()
     user = db.scalar(select(User).where(User.email_normalized == normalize_email(email)))
     if user is None:
@@ -106,10 +126,12 @@ def request_password_reset(db: OrmSession, email: str) -> None:
     raw = new_token()
     db.add(AuthToken(user_id=user.id, purpose="password_reset", token_hash=token_digest(raw),
                      expires_at=_now() + timedelta(minutes=s.reset_ttl_minutes)))
-    link = f"{s.frontend_base_url}/password/reset?token={raw}"
+    next_ = pctx.safe_next(next_)
+    privat = next_ is not None or pctx.is_privat_user(db, user)
+    link = f"{s.frontend_base_url}/password/reset?token={raw}" + pctx.link_suffix(privat=privat, next_=next_)
     enqueue(db, event_type="email.password_reset", dedupe_key=f"reset:{user.id}:{token_digest(raw)[:16]}",
             payload={"user_id": str(user.id), "to_email": user.email, "link": link,
-                     "lang": normalize_language(user.interface_language)})
+                     "lang": normalize_language(user.interface_language), **({"audience": "privat"} if privat else {})})
 
 
 def reset_password(db: OrmSession, *, raw_token: str, new_password: str) -> User:
@@ -119,6 +141,10 @@ def reset_password(db: OrmSession, *, raw_token: str, new_password: str) -> User
     user = db.get(User, tok.user_id)
     assert user is not None
     user.password_hash = hash_password(new_password)
+    # The token was mailed to this address, so using it proves the e-mail: a funnel account (welcome mail «Vælg
+    # adgangskode») or anyone resetting before verifying is verified here – no lasting «Bekræft din e-mail» (F-JE-09).
+    if user.email_verified_at is None:
+        user.email_verified_at = _now()
     # Revoke all sessions after a reset.
     for sess in db.scalars(select(Session).where(Session.user_id == user.id, Session.revoked_at.is_(None))):
         sess.revoked_at = _now()

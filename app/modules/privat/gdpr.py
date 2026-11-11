@@ -326,6 +326,7 @@ def handle_export(db: OrmSession, ev) -> None:
     """Worker: build the export, keep it with a hashed token, and e-mail the link. Idempotent (a done row is skipped)."""
     from app.core.outbox import enqueue
     from app.modules.integrations import email_templates as tpl
+    from app.modules.integrations import privat_mails
 
     row = db.get(PrivateDataExport, uuid.UUID(str(ev.payload.get("export_id"))))
     if row is None or row.status != "queued":
@@ -341,18 +342,7 @@ def handle_export(db: OrmSession, ev) -> None:
     now = rules.now()
     row.status, row.data, row.token_hash = "ready", data, token_digest(raw)
     row.ready_at, row.expires_at = now, now + timedelta(days=EXPORT_DAYS)
-    da = (user.interface_language or "da").startswith("da")
-    mail = tpl.Email(
-        subject="Dine data fra Dialogbot Privat er klar" if da else "Your Dialogbot Privat data is ready",
-        heading="Dine data er klar" if da else "Your data is ready",
-        paragraphs=["Her er alt, Dialogbot Privat har gemt om dig: som data (JSON) og som en læsbar oversigt." if da
-                    else "Here is everything Dialogbot Privat keeps about you: as data (JSON) and as a readable overview."],
-        button_label="Hent dine data" if da else "Download your data", button_url=_link(raw),
-        note=(f"Linket virker i {EXPORT_DAYS} dage, og kun når du er logget ind." if da
-              else f"The link works for {EXPORT_DAYS} days, and only when you are logged in."),
-        footer_reason=("Du får denne e-mail, fordi du bad om dine data i Dialogbot Privat." if da
-                       else "You get this e-mail because you asked for your data in Dialogbot Privat."),
-        lang="da" if da else "en")
+    mail = privat_mails.data_export(_link(raw), EXPORT_DAYS, user.interface_language or "da")
     prof = db.scalar(select(PrivateProfile).where(PrivateProfile.user_id == user.id))
     enqueue(db, event_type="email.branded", dedupe_key=f"privat-export-mail:{row.id}",
             workspace_id=prof.workspace_id if prof else None,

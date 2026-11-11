@@ -878,7 +878,9 @@ WEB = __import__("pathlib").Path(__file__).resolve().parents[2] / "web" / "src"
 
 def test_ps_inv_11_next_redirect_is_relative_only():
     src = (WEB / "lib" / "safe-next.ts").read_text()
-    assert 'startsWith("//")' in src and 'startsWith("/\\\\")' in src
+    # #186/#187: protocol-relative refused, every control char/whitespace/backslash (also %-encoded) refused, and the
+    # path must resolve to our own origin
+    assert 'startsWith("//")' in src and "\\\\" in src and "%5c" in src and "u.origin !== BASE" in src
 
 
 def test_ps_inv_12_og_image_shows_no_items():

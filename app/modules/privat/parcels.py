@@ -164,6 +164,7 @@ def poll(db: OrmSession, now: datetime | None = None) -> int:
     """Worker schedule: refresh parcels not delivered, at most every POLL_MINUTES; tell the user when the status
     changes to one worth knowing. Returns the number of notifications."""
     from app.modules.integrations import email_templates as tpl
+    from app.modules.integrations import privat_mails
     from app.modules.privat import push
 
     if addons.CATALOG.get(ADDON) is None or addons.CATALOG[ADDON].live_status == "coming_soon":
@@ -193,9 +194,7 @@ def poll(db: OrmSession, now: datetime | None = None) -> int:
                                            .where(PrivateProfile.workspace_id == row.workspace_id))
                 if owner is not None:
                     text = text_of(new) + "."
-                    mail = tpl.Email(subject="Din pakke", heading=text, paragraphs=[info.get("event") or ""],
-                                     button_label="Se pakker", button_url=url,
-                                     footer_reason="Du får denne e-mail, fordi du følger en pakke i Dialogbot.")
+                    mail = privat_mails.parcel(text, info.get("event") or "", url, owner.interface_language)
                     push.notify(db, owner.id, title="Din pakke", body=text, url=url,
                                 dedupe=f"parcel:{row.workspace_id}:{p['number']}:{info['status']}",
                                 email={"to_email": owner.email, "email": tpl.to_payload(mail)}, workspace_id=row.workspace_id)

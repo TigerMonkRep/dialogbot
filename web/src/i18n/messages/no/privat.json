@@ -562,7 +562,9 @@
     "brandTitle": "{name} bruker Dialogbot",
     "brandText": "– en personlig assistent som lager lister, minner deg på ting og ringer for deg.",
     "brandOffer": "Få din egen: prøv Dialogbot Privat gratis i 14 dager",
-    "brandCta": "Les om Dialogbot Privat"
+    "brandCta": "Les om Dialogbot Privat",
+    "signupFree": "Opprett gratis konto",
+    "verifyFirst": "Bekreft e-posten din, så kan du åpne listen."
   },
   "paywall": {
     "titleDigital": "Det krever en plan",
@@ -1669,5 +1671,14 @@
     "wishlist": "{name} har delt ønskelisten sin med deg",
     "list": "{name} har delt en liste med deg",
     "generic": "Du er invitert til en liste"
+  },
+  "problem": {
+    "notFoundTitle": "Siden finnes ikke",
+    "notFoundText": "Lenken er kanskje gammel eller skrevet feil.",
+    "errorTitle": "Noe gikk galt",
+    "errorText": "Siden kunne ikke vises. Prøv igjen om litt.",
+    "retry": "Prøv igjen",
+    "toDay": "Til Min dag",
+    "toHome": "Til forsiden"
   }
 }

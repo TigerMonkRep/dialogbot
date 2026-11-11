@@ -31,7 +31,7 @@ def test_subscription_and_topup_checkouts_carry_the_privat_branding(api, pv, mon
     for p, d, k in sent:
         assert p == "/checkout/sessions" and k["version"] == "2025-09-30.clover"
         b = d["branding_settings"]
-        assert b["display_name"] == "Dialogbot Privat" and b["button_color"] == "#E0521A"
+        assert b["display_name"] == "Dialogbot Privat" and b["button_color"] == "#C4461A"
         assert b["background_color"] == "#FFFBF5" and b["border_style"] == "pill"
         assert b["icon"] == {"type": "url", "url": "https://dialogbot.app/icons/privat-icon-512.png"}
     assert sent[0][1]["mode"] == "subscription" and sent[1][1]["mode"] == "payment"

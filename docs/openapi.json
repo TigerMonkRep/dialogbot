@@ -4118,6 +4118,19 @@
             "title": "Interface Language",
             "type": "string"
           },
+          "next": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Dialogbot Privat return address (a relative path under /privat, /g/ or /i/). It is carried in the mailed link (`&for=privat&next=…`); anything else is ignored.",
+            "title": "Next"
+          },
           "password": {
             "maxLength": 200,
             "minLength": 10,
@@ -4222,6 +4235,25 @@
         "title": "RequestPatch",
         "type": "object"
       },
+      "ResendIn": {
+        "properties": {
+          "next": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Dialogbot Privat return address (a relative path under /privat, /g/ or /i/). It is carried in the mailed link (`&for=privat&next=…`); anything else is ignored.",
+            "title": "Next"
+          }
+        },
+        "title": "ResendIn",
+        "type": "object"
+      },
       "ResetIn": {
         "properties": {
           "password": {
@@ -4250,6 +4282,19 @@
             "format": "email",
             "title": "Email",
             "type": "string"
+          },
+          "next": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Dialogbot Privat return address (a relative path under /privat, /g/ or /i/). It is carried in the mailed link (`&for=privat&next=…`); anything else is ignored.",
+            "title": "Next"
           }
         },
         "required": [
@@ -5302,6 +5347,12 @@
             "title": "Email Verified",
             "type": "boolean"
           },
+          "home": {
+            "default": "/app",
+            "description": "Where a login without ?next lands: /privat/dag for a Privat-only account (no business workspace), else /app",
+            "title": "Home",
+            "type": "string"
+          },
           "id": {
             "format": "uuid",
             "title": "Id",
@@ -5456,6 +5507,27 @@
             "minLength": 1,
             "title": "Code",
             "type": "string"
+          },
+          "interface_language": {
+            "anyOf": [
+              {
+                "enum": [
+                  "da",
+                  "en",
+                  "de",
+                  "es",
+                  "fr",
+                  "it",
+                  "no",
+                  "sv"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interface Language"
           }
         },
         "required": [
@@ -8540,6 +8612,23 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ResendIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
         "responses": {
           "202": {
             "content": {

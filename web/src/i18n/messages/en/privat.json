@@ -562,7 +562,9 @@
     "brandTitle": "{name} uses Dialogbot",
     "brandText": "– a personal assistant that makes lists, reminds you of things and calls for you.",
     "brandOffer": "Get your own: try Dialogbot Privat free for 14 days",
-    "brandCta": "Read about Dialogbot Privat"
+    "brandCta": "Read about Dialogbot Privat",
+    "signupFree": "Create a free account",
+    "verifyFirst": "Confirm your e-mail, and you can open the list."
   },
   "paywall": {
     "titleDigital": "This needs a plan",
@@ -1669,5 +1671,14 @@
     "wishlist": "{name} shared their wish list with you",
     "list": "{name} shared a list with you",
     "generic": "You are invited to a list"
+  },
+  "problem": {
+    "notFoundTitle": "This page does not exist",
+    "notFoundText": "The link may be old or mistyped.",
+    "errorTitle": "Something went wrong",
+    "errorText": "The page could not be shown. Please try again in a moment.",
+    "retry": "Try again",
+    "toDay": "To My day",
+    "toHome": "To the front page"
   }
 }

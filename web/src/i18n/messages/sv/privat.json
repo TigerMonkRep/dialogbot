@@ -562,7 +562,9 @@
     "brandTitle": "{name} använder Dialogbot",
     "brandText": "– en personlig assistent som gör listor, påminner dig om saker och ringer åt dig.",
     "brandOffer": "Skaffa din egen: prova Dialogbot Privat gratis i 14 dagar",
-    "brandCta": "Läs om Dialogbot Privat"
+    "brandCta": "Läs om Dialogbot Privat",
+    "signupFree": "Skapa ett gratiskonto",
+    "verifyFirst": "Bekräfta din e-post, så kan du öppna listan."
   },
   "paywall": {
     "titleDigital": "Det kräver en plan",
@@ -1669,5 +1671,14 @@
     "wishlist": "{name} har delat sin önskelista med dig",
     "list": "{name} har delat en lista med dig",
     "generic": "Du är inbjuden till en lista"
+  },
+  "problem": {
+    "notFoundTitle": "Sidan finns inte",
+    "notFoundText": "Länken kan vara gammal eller felskriven.",
+    "errorTitle": "Något gick fel",
+    "errorText": "Sidan kunde inte visas. Försök igen om en stund.",
+    "retry": "Försök igen",
+    "toDay": "Till Min dag",
+    "toHome": "Till startsidan"
   }
 }

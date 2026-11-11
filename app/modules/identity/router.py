@@ -15,6 +15,9 @@ from app.modules.identity import service
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
+NEXT_DOC = ("Dialogbot Privat return address (a relative path under /privat, /g/ or /i/). It is carried in the mailed "
+            "link (`&for=privat&next=…`); anything else is ignored.")
+
 
 class RegisterIn(BaseModel):
     email: EmailStr
@@ -23,6 +26,7 @@ class RegisterIn(BaseModel):
     signup_intent: str | None = Field(default=None, description="reception | campaigns | both (A01), or privat (a Dialogbot Privat sign-up: Privat verify mail)")
     # One of the 8 supported interface languages (app.core.languages.LANGUAGES); anything else is a 422, never a 500
     interface_language: Literal["da", "en", "de", "es", "fr", "it", "no", "sv"] = "da"
+    next: str | None = Field(default=None, max_length=1000, description=NEXT_DOC)
 
 
 class UserOut(BaseModel):
@@ -34,12 +38,18 @@ class UserOut(BaseModel):
     interface_language: str
     is_platform_operator: bool = False
     created_at: datetime
+    home: str = Field(default="/app", description="Where a login without ?next lands: /privat/dag for a Privat-only "
+                                                  "account (no business workspace), else /app")
 
 
-def user_out(u) -> UserOut:
+def user_out(u, db: OrmSession | None = None) -> UserOut:
+    """`db` given: `home` is computed (privat_context.home); without it /app."""
+    from app.modules.identity import privat_context
+
     return UserOut(id=u.id, email=u.email, display_name=u.display_name, email_verified=u.email_verified_at is not None,
                    signup_intent=u.signup_intent, interface_language=u.interface_language,
-                   is_platform_operator=bool(u.is_platform_operator), created_at=u.created_at)
+                   is_platform_operator=bool(u.is_platform_operator), created_at=u.created_at,
+                   home=privat_context.home(db, u) if db is not None else "/app")
 
 
 class LoginIn(BaseModel):
@@ -59,6 +69,11 @@ class TokenIn(BaseModel):
 
 class ResetRequestIn(BaseModel):
     email: EmailStr
+    next: str | None = Field(default=None, max_length=1000, description=NEXT_DOC)
+
+
+class ResendIn(BaseModel):
+    next: str | None = Field(default=None, max_length=1000, description=NEXT_DOC)
 
 
 class ResetIn(BaseModel):
@@ -79,16 +94,16 @@ class SessionOut(BaseModel):
 def register(body: RegisterIn, request: Request, db: OrmSession = Depends(get_db)):
     user = service.register(db, email=body.email, password=body.password, display_name=body.display_name,
                             signup_intent=body.signup_intent, interface_language=body.interface_language,
-                            request_id=request.state.request_id)
+                            request_id=request.state.request_id, next_=body.next)
     db.commit()
-    return user_out(user)
+    return user_out(user, db)
 
 
 @router.post("/login", response_model=LoginOut)
 def login(body: LoginIn, db: OrmSession = Depends(get_db), user_agent: str | None = Header(default=None)):
     user, raw = service.login(db, email=body.email, password=body.password, user_agent=user_agent)
     db.commit()
-    return LoginOut(access_token=raw, user=user_out(user))
+    return LoginOut(access_token=raw, user=user_out(user, db))
 
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
@@ -104,8 +119,8 @@ def logout(principal: Principal = Depends(get_current_principal), db: OrmSession
 
 
 @router.get("/me", response_model=UserOut)
-def me(principal: Principal = Depends(get_current_principal)):
-    return user_out(principal.user)
+def me(principal: Principal = Depends(get_current_principal), db: OrmSession = Depends(get_db)):
+    return user_out(principal.user, db)
 
 
 class MeIn(BaseModel):
@@ -128,27 +143,28 @@ def update_me(body: MeIn, principal: Principal = Depends(get_current_principal),
     if body.display_name is not None:
         user.display_name = body.display_name.strip()
     db.commit()
-    return user_out(user)
+    return user_out(user, db)
 
 
 @router.post("/verify-email", response_model=UserOut)
 def verify_email(body: TokenIn, db: OrmSession = Depends(get_db)):
     user = service.verify_email(db, body.token)
     db.commit()
-    return user_out(user)
+    return user_out(user, db)
 
 
 @router.post("/verify-email/resend", status_code=status.HTTP_202_ACCEPTED)
-def resend_verification(principal: Principal = Depends(get_current_principal), db: OrmSession = Depends(get_db)):
+def resend_verification(body: ResendIn | None = None, principal: Principal = Depends(get_current_principal),
+                        db: OrmSession = Depends(get_db)):
     if principal.user.email_verified_at is None:
-        service.issue_verification(db, principal.user)
+        service.issue_verification(db, principal.user, next_=body.next if body else None)
         db.commit()
     return {"status": "queued"}
 
 
 @router.post("/password/forgot", status_code=status.HTTP_202_ACCEPTED)
 def forgot_password(body: ResetRequestIn, db: OrmSession = Depends(get_db)):
-    service.request_password_reset(db, body.email)
+    service.request_password_reset(db, body.email, next_=body.next)
     db.commit()
     return {"status": "queued"}
 
@@ -157,7 +173,7 @@ def forgot_password(body: ResetRequestIn, db: OrmSession = Depends(get_db)):
 def reset_password(body: ResetIn, db: OrmSession = Depends(get_db)):
     user = service.reset_password(db, raw_token=body.token, new_password=body.password)
     db.commit()
-    return user_out(user)
+    return user_out(user, db)
 
 
 @router.get("/sessions", response_model=list[SessionOut])

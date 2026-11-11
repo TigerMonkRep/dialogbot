@@ -53,3 +53,12 @@ def test_privat_signup_can_still_create_a_business(api, db):
     assert r.json()["product_intent"] == "reception"
     r = api.post(tok, "/workspaces", {"name": "Bo 2 ApS"})
     assert r.status_code == 201 and r.json()["product_intent"] == "reception", r.text
+
+
+def test_privat_next_refuses_encoded_dot_segments_and_slashes():
+    """Open-redirect hardening (QA 11/11): /privat/%2e%2e/app normalises to /app in the browser."""
+    from app.modules.identity import privat_context as pctx
+
+    for bad in ("/privat/%2e%2e/app", "/privat/%2E%2E/app", "/g/%2f/evil", "/privat/%5cevil", "/privat/\t/x", "//evil"):
+        assert pctx.safe_next(bad) is None, bad
+    assert pctx.safe_next("/privat/konto?plan=plus") == "/privat/konto?plan=plus"

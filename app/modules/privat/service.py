@@ -380,21 +380,21 @@ def move_reminder(db: OrmSession, task: PrivateTask, when: datetime) -> tuple[st
 
 
 def handle_reminder(db: OrmSession, ev: OutboxEvent) -> None:
-    """Worker handler (privat.reminder): push when the owner has a subscription, else e-mail."""
+    """Worker handler (privat.reminder): push when the owner has a subscription, else e-mail (Privat layout, the
+    owner's language, «Åbn opgaven» – F-JP-06/07/08)."""
     from app.modules.integrations import email_templates as tpl
+    from app.modules.integrations import privat_mails
+    from app.modules.integrations.email_texts import user_language
     from app.worker.runner import _send_mail
 
     task = db.get(PrivateTask, uuid.UUID(ev.payload["task_id"]))
     if task is None or task.kind != "reminder" or task.status != "planned" \
             or task.reminder_version != ev.payload.get("version"):
         return  # moved, cancelled or already sent: nothing to do
-    when = rules.when_text(task.remind_at) if task.remind_at else ""
-    mail = tpl.Email(subject=f"Påmindelse: {task.title}", heading=task.title,
-                     paragraphs=[f"Du bad mig minde dig om det {rules.lower_first(when)}."],
-                     footer_reason="Du får denne e-mail, fordi du bad Dialogbot om en påmindelse.")
     from app.modules.privat import push
 
     owner_id = db.scalar(select(PrivateProfile.user_id).where(PrivateProfile.workspace_id == task.workspace_id))
+    mail = privat_mails.reminder(task.title, task.remind_at, _task_url(task), user_language(db, owner_id))
     if owner_id and push.has_subscriptions(db, owner_id):  # push is primary; e-mail only without a subscription
         push.notify(db, owner_id, title="Påmindelse", body=task.title, url=_task_url(task),
                     dedupe=f"reminder:{task.id}:{task.reminder_version}",
@@ -415,6 +415,7 @@ def _task_url(task: PrivateTask) -> str:
 def notify_owner(db: OrmSession, task: PrivateTask, *, subject: str, text: str, dedupe: str) -> None:
     """Tell the task's owner: push, or e-mail without a working subscription. A service message, never marketing."""
     from app.modules.integrations import email_templates as tpl
+    from app.modules.integrations import privat_mails
 
     owner_id = db.scalar(select(PrivateProfile.user_id).where(PrivateProfile.workspace_id == task.workspace_id))
     owner = db.get(User, owner_id)
@@ -422,9 +423,7 @@ def notify_owner(db: OrmSession, task: PrivateTask, *, subject: str, text: str, 
         return
     from app.modules.privat import push
 
-    mail = tpl.Email(subject=subject, heading=task.title, paragraphs=[text], button_label="Åbn opgaven",
-                     button_url=_task_url(task),
-                     footer_reason="Du får denne e-mail, fordi Dialogbot arbejder på en opgave for dig.")
+    mail = privat_mails.task_notice(subject, task.title, text, _task_url(task), owner.interface_language)
     push.notify(db, owner.id, title=subject, body=text, url=_task_url(task), dedupe=dedupe,
                 email={"to_email": owner.email, "email": tpl.to_payload(mail)}, workspace_id=task.workspace_id)
 

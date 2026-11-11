@@ -20,7 +20,7 @@ class RegisterIn(BaseModel):
     email: EmailStr
     password: str = Field(min_length=10, max_length=200)
     display_name: str = Field(min_length=1, max_length=200)
-    signup_intent: str | None = Field(default=None, description="reception | campaigns | both (A01)")
+    signup_intent: str | None = Field(default=None, description="reception | campaigns | both (A01), or privat (a Dialogbot Privat sign-up: Privat verify mail)")
     # One of the 8 supported interface languages (app.core.languages.LANGUAGES); anything else is a 422, never a 500
     interface_language: Literal["da", "en", "de", "es", "fr", "it", "no", "sv"] = "da"
 

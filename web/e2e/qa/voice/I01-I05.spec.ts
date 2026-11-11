@@ -17,7 +17,7 @@ async function seedChatLead(page: Page, wsId: string, who: string) {
   const wc = await (await page.request.get(`/api/backend/workspaces/${wsId}/webchat`)).json();
   const w = await (await page.request.put(`/api/backend/workspaces/${wsId}/webchat`, { headers: CSRF, data: { expected_version: wc.version, enabled: true, allowed_origins: ["http://localhost:4199"], greeting: "" } })).json();
   const apiOrigin = new URL(w.embed_code.match(/src="([^"]+)"/)![1]).origin;
-  // the stack serves the API on API_BASE_URL (:8200) while PUBLIC_BASE_URL (the frame origin the API expects) may differ
+  // the stack serves the API on API_BASE_URL (CI :8000, local QA stack :8200) while PUBLIC_BASE_URL (the frame origin the API expects) may differ
   const pub = `${process.env.API_BASE_URL ?? apiOrigin}/api/v1/public/webchat/${w.widget_key}`;
   const h = { origin: apiOrigin, "content-type": "application/json" };
   const conv = await (await page.request.post(`${pub}/conversations`, { headers: h, data: { host_origin: "http://localhost:4199" } })).json();

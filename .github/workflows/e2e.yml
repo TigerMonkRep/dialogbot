@@ -168,6 +168,11 @@ jobs:
           for i in $(seq 1 30); do curl -sf -o /dev/null localhost:3000/login && break; sleep 1; done
       - name: Playwright QA catalogue (shard ${{ matrix.shard }}/4)
         working-directory: web
+        env:
+          # erhverv-p1a reads the fake SMS codes from the API log ("Start API and worker" writes api.log in the repo root).
+          P1_API_LOG: ${{ github.workspace }}/api.log
+          # X23 offline page: lets Playwright route/observe requests made by the service worker (context.setOffline).
+          PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS: "1"
         run: npx playwright test e2e/qa --shard=${{ matrix.shard }}/4
       - name: Upload screenshots and report
         if: always()

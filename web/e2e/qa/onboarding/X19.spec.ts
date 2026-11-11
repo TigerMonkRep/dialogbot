@@ -88,7 +88,7 @@ test("X19 · kundeønske: sendes til admin, gentagelse tælles, operatør ser de
   await expect.poll(async () => { try { return await latestMailLink(op.page.request, new RegExp(`Nyt ønske[^\\n]*|${tag}`)); } catch { return ""; } }, { timeout: 40_000 }).toBeTruthy();
   const ows = (await api(op.page).send("POST", "/workspaces", { name: `QA Operatør ${Date.now()}`, product_intent: "reception" })).body;
   await op.page.request.post("/api/auth/workspace", { headers: { "x-requested-with": "dialogbot" }, data: { workspace_id: ows.id } });
-  await op.ctx.addCookies([{ name: "db_setup_later", value: "1", url: process.env.BASE_URL ?? "http://localhost:3200" }]);
+  await op.ctx.addCookies([{ name: "db_setup_later", value: "1", url: process.env.BASE_URL ?? "http://localhost:3000" }]);
   await op.page.goto("/app/operator/oensker");
   await expect(op.page.getByText(tag).first()).toBeVisible();
   await snap(op.page, ID, info, "oenske-operator");

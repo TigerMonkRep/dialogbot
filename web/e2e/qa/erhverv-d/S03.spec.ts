@@ -1,13 +1,11 @@
 import { expect, test } from "@playwright/test";
 import { freshOwner, login, SEEDED } from "../../helpers";
-import { approve, ALL_WEEK, CSRF, EVID } from "./d-helpers";
+import { approve, ALL_WEEK, CSRF, EVID, forwardPublicApi } from "./d-helpers";
 
 /* S03 – /app/settings/integrations: «Connection directory with available, connected, limited, stale, disconnected and
  * reconnect states; booking links use BK05/BK07.» Built as the sheet /app/indstillinger?ark=integrationer. */
 async function forward8000(page: import("@playwright/test").Page) {
-  await page.context().route("http://localhost:8000/**", async (route) => {
-    try { await route.fulfill({ response: await route.fetch({ url: route.request().url().replace("localhost:8000", "localhost:8200"), maxRedirects: 0 }) }); } catch { /* closed */ }
-  });
+  await forwardPublicApi(page.context(), { maxRedirects: 0 });
 }
 const card = (page: import("@playwright/test").Page, key: string) => page.locator(`li[data-connector="${key}"]`);
 

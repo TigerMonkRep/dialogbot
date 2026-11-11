@@ -37,7 +37,7 @@ async function phoneReady(page: Page, wsId: string, info: import("@playwright/te
   const dest = (await (await page.request.get(`/api/backend/workspaces/${wsId}/telephony`)).json()).destination.e164 as string;
   await page.getByRole("button", { name: "Start prøveopkald" }).click();
   await expect(page.getByText(/ring nu fra en anden telefon/)).toBeVisible();
-  const apiBase = process.env.API_BASE_URL ?? "http://localhost:8200";
+  const apiBase = process.env.API_BASE_URL ?? "http://localhost:8000";
   const auth = { authorization: `Bearer ${process.env.VAPI_SERVER_SECRET ?? "e2e-only-vapi-secret-0123456789"}` };
   const callId = `call_e2b_${info.project.name}_${Date.now()}`;
   await page.request.post(`${apiBase}/api/v1/webhooks/vapi`, { headers: auth, data: { message: { type: "assistant-request", call: { id: callId, customer: { number: "+4540404040" } }, phoneNumber: { number: dest } } } });

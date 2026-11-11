@@ -5,7 +5,7 @@ import { DEMO_PASSWORD, latestMailLink, uniqueEmail } from "../../helpers";
 /* Shared helpers for QA wave 2 (P1), instance E2B: onboarding (O01–O07), setup guide (G01–G08) and the in-app assistant (X19).
  * Only fake adapters; every e-mail/name is unique per run. */
 export const CSRF = { "x-requested-with": "dialogbot" };
-export const BASE = process.env.BASE_URL ?? "http://localhost:3200";
+export const BASE = process.env.BASE_URL ?? "http://localhost:3000";
 
 export function evid(id: string, info: TestInfo, name: string) {
   const dir = `${__dirname}/../../../../qa/evidence/${id}`;
@@ -84,7 +84,7 @@ export async function noStaging(page: Page) {
 
 /** The stack's PUBLIC_BASE_URL points at the default API port; send the simulated OAuth callback to the running API instead. */
 export async function routeOAuthToApi(page: Page) {
-  const apiBase = process.env.API_BASE_URL ?? "http://localhost:8200";
+  const apiBase = process.env.API_BASE_URL ?? "http://localhost:8000";
   await page.route(/\/api\/v1\/integrations\/oauth\/.*\/callback/, async (route) => {
     const u = new URL(route.request().url());
     if (u.origin === apiBase) return route.continue();

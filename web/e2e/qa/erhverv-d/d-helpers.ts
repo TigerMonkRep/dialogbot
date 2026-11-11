@@ -1,4 +1,4 @@
-import { expect, type APIRequestContext, type Browser, type FrameLocator, type Page, type TestInfo } from "@playwright/test";
+import { expect, type APIRequestContext, type Browser, type BrowserContext, type FrameLocator, type Page, type TestInfo } from "@playwright/test";
 import { freshOwner, serve } from "../../helpers";
 
 /* Shared setup for QA wave 2 instance D (E2D). The customer's website is a fake site on its own port (4318), so it
@@ -9,6 +9,11 @@ export const CSRF = { "x-requested-with": "dialogbot" };
 export const SITE_PORT = 4318 + 100 * Number(process.env.TEST_PARALLEL_INDEX ?? 0);
 export const SITE = `http://localhost:${SITE_PORT}`;
 export const EVID = (id: string) => `../qa/evidence/${id}`;
+/** The API the stack serves: API_BASE_URL (CI and the journeys stack: :8000; the local QA stack sets :8200). */
+export const API = (process.env.API_BASE_URL ?? "http://localhost:8000").replace(/\/$/, "");
+/** Without PUBLIC_BASE_URL the API's config default (:8000) is what the embed code, the chat frame and OAuth callbacks
+ *  point at. */
+const PUBLIC_DEFAULT = "http://localhost:8000";
 
 export async function approve(req: APIRequestContext, wsId: string, kind: string, title: string, content: Record<string, unknown>) {
   const item = await (await req.post(`/api/backend/workspaces/${wsId}/knowledge/items`, { headers: CSRF, data: { kind, title, content } })).json();
@@ -45,17 +50,23 @@ export async function closeAll(servers: import("node:http").Server[]) {
   while (servers.length) await new Promise((r) => servers.pop()!.close(r));
 }
 
-/** The p1 stack's API runs on :8200 without PUBLIC_BASE_URL, so the embed code and the frame's own origin say
- *  :8000 (config default). A visitor context forwards :8000 → :8200 unchanged (Origin header kept), which keeps the
- *  frame-origin checks real. Environment workaround only – not a product finding. */
-export async function newVisitorContext(browser: Browser, page: Page) {
-  const ctx = await browser.newContext({ viewport: page.viewportSize() ?? undefined, locale: "da-DK", timezoneId: "Europe/Copenhagen" });
-  await ctx.route("http://localhost:8000/**", async (route) => {
+/** Environment workaround, not a product finding: when the API does not run on :8000 (the local QA stack: :8200 without
+ *  PUBLIC_BASE_URL), requests to the :8000 default are forwarded unchanged (Origin header kept) to API_BASE_URL, which
+ *  keeps the frame-origin checks real. On CI the API is on :8000 and nothing is rewritten.
+ *  `maxRedirects: 0` for OAuth callbacks, whose redirect the browser must follow itself. */
+export async function forwardPublicApi(ctx: BrowserContext, opts: { maxRedirects?: number } = {}) {
+  if (new URL(API).port === "8000") return;
+  await ctx.route(`${PUBLIC_DEFAULT}/**`, async (route) => {
     try {
-      const res = await route.fetch({ url: route.request().url().replace("localhost:8000", "localhost:8200") });
+      const res = await route.fetch({ url: route.request().url().replace(PUBLIC_DEFAULT, API), ...opts });
       await route.fulfill({ response: res });
     } catch { /* context closed while a poll was in flight */ }
   });
+}
+
+export async function newVisitorContext(browser: Browser, page: Page) {
+  const ctx = await browser.newContext({ viewport: page.viewportSize() ?? undefined, locale: "da-DK", timezoneId: "Europe/Copenhagen" });
+  await forwardPublicApi(ctx);
   return ctx;
 }
 

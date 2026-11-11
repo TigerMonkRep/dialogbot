@@ -101,5 +101,12 @@
     "pushOff": "Notifications are off on this device.",
     "pushDisable": "Turn off notifications",
     "pushIosHome": "On iPhone, notifications only work from the home-screen app – put it there first (Download app above)."
+  },
+  "pageError": {
+    "title": "This page couldn't be shown",
+    "text": "Something went wrong on our side. Try again – if that doesn't help, log in again.",
+    "retry": "Try again",
+    "login": "Log in again",
+    "reference": "Error code"
   }
 }

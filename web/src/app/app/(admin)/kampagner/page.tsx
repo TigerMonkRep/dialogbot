@@ -9,7 +9,7 @@ import { HTML_LANG } from "@/i18n/config";
 import { INCLUDED_MINUTES } from "@/lib/markets";
 
 type List = { items: Campaign[]; pricing: CampaignPricing };
-type Goals = Record<string, unknown> & { version: number; callback: boolean };
+type Goals = Record<string, unknown> & { version: number; product_intent: string };
 
 /** «Kampagner»: ring to your own customers, one campaign at a time. Shown when «ringe kunder op» is chosen in trin 1. */
 export default async function KampagnerPage() {
@@ -28,7 +28,9 @@ export default async function KampagnerPage() {
   // the call prices after the package (by outcome) and the most one contact can cost
   const callVars = { answered: kr(p.call_prices.answered, lang, p.currency), voicemail: kr(p.call_prices.voicemail, lang, p.currency),
     noAnswer: kr(p.call_prices.no_answer, lang, p.currency), contactMax: kr(p.per_contact_max_net_minor, lang, p.currency) };
-  if (!goals.callback && list.items.length === 0) {
+  // «Ringe kunder op» (trin 1) = product_intent campaigns/both. Not the reception's callback flag, which the API refuses
+  // for a campaigns-only workspace (F-E2C-01-C02).
+  if (goals.product_intent === "reception" && list.items.length === 0) {
     return (
       <div className="flex flex-col gap-4 max-w-[640px] rounded-2xl border-2 border-ink bg-paper px-6 py-6 shadow-block">
         <span className="eyebrow">{t("campaigns.eyebrow")}</span>

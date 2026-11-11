@@ -101,5 +101,12 @@
     "pushOff": "Notifikationer er slået fra på denne enhed.",
     "pushDisable": "Slå notifikationer fra",
     "pushIosHome": "På iPhone virker notifikationer kun fra appen på hjemmeskærmen – læg den dér først (Download app ovenfor)."
+  },
+  "pageError": {
+    "title": "Siden kunne ikke vises",
+    "text": "Der skete en fejl hos os. Prøv igen – hjælper det ikke, så log ind igen.",
+    "retry": "Prøv igen",
+    "login": "Log ind igen",
+    "reference": "Fejlkode"
   }
 }

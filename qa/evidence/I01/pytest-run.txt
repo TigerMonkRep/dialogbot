@@ -1,0 +1,7 @@
+E       AssertionError: outcome='to_you', tasks=['Ring tilbage til +4520304050'] – an answered question became a call-back task
+PASSED tests/qa/test_qa_voice_I01_I05.py::test_i01_phone_and_webchat_in_one_list_with_filters_search_and_tenant_isolation
+PASSED tests/qa/test_qa_voice_I01_I05.py::test_i02_detail_has_transcript_summary_lead_and_resolve_closes_the_follow_up
+PASSED tests/qa/test_qa_voice_I01_I05.py::test_i02_reader_and_other_tenant_cannot_resolve
+PASSED tests/qa/test_qa_voice_I01_I05.py::test_i03_i04_enquiry_list_filters_detail_tasks_and_optimistic_edit
+PASSED tests/qa/test_qa_voice_I01_I05.py::test_i05_tasks_due_order_assignment_completion_and_scoping
+FAILED tests/qa/test_qa_voice_I01_I05.py::test_i01_a_call_peter_fully_answered_is_not_put_on_the_to_you_list

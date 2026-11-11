@@ -618,6 +618,7 @@
         "code_expired": "El código ha caducado. Pida uno nuevo.",
         "too_many_attempts": "Demasiados intentos. Pida un código nuevo.",
         "user_inactive": "La cuenta está desactivada.",
+        "account_exists": "Ya existe una cuenta con ese correo electrónico. Inicie sesión para continuar.",
         "wrong_code": "El código no coincide.",
         "generic": "Algo ha fallado. Inténtelo de nuevo en un momento."
       }
@@ -677,7 +678,8 @@
       "resendIn": "Reenviar en {s} s",
       "wrongNumber": "¿Número incorrecto?",
       "noGate": "Aún no hemos enviado ningún código.",
-      "toGate": "Introduce tus datos"
+      "toGate": "Introduce tus datos",
+      "toLogin": "Iniciar sesión"
     },
     "erhverv": {
       "meta": {
@@ -796,7 +798,8 @@
         "startOver": "Empezar de nuevo",
         "notLoggedIn": "Inicia sesión para ver cómo fue la llamada.",
         "login": "Iniciar sesión",
-        "statusAria": "Estado de la llamada"
+        "statusAria": "Estado de la llamada",
+        "noCallTitle": "Ahora mismo no va a llamar"
       }
     }
   }

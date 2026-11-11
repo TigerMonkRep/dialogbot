@@ -3,7 +3,8 @@
  *  App shell + offline (same module as sw-app.js, kept standalone on purpose):
  *   - /_next/static/*            cache-first (hashed, immutable)
  *   - /icons/*, /fonts/*, /brand/* stale-while-revalidate
- *   - HTML navigations           network-first, 3 s timeout, then the cached copy of the page, then /privat/offline
+ *   - HTML navigations           network only (3 s timeout), then /privat/offline. Pages behind the login are NEVER
+ *                                 cached (they carry customer data; the server sends no-store) – F-M2-15-X23
  *   - /api/*                     never touched (and nothing but GET is)
  *  Update flow: a new version does NOT skipWaiting on install; it tells the open pages {type:"ready"} and waits
  *  until one of them answers {type:"skipWaiting"} (the «Ny version klar – Opdater» toast in sw-update.tsx).
@@ -79,19 +80,26 @@ function withTimeout(promise, ms) {
   });
 }
 
-/** Navigations: the network wins when it answers within 3 s; otherwise the page as last seen, otherwise the offline page. */
+/** Removes every cached page in scope except the offline page (logout, 401, and caches left by older versions that
+ *  still stored the pages as last seen). */
+async function clearPages() {
+  for (const name of await caches.keys()) {
+    if (!name.startsWith(`dialogbot-${AUDIENCE}-`)) continue;
+    const cache = await caches.open(name);
+    for (const req of await cache.keys()) { const p = new URL(req.url).pathname; if (inScope(p) && p !== OFFLINE_URL) await cache.delete(req); }
+  }
+}
+
+/** Navigations: the network wins when it answers within 3 s; otherwise the offline page. The page itself is never
+ *  stored: everything in scope sits behind the login (no-store from the server), and a cached copy would show the
+ *  previous user's data to the next person on the device. */
 async function navigate(req) {
   const cache = await caches.open(CACHE);
   try {
     const res = await withTimeout(fetch(req), NAV_TIMEOUT_MS);
-    if (cacheable(res) && /text\/html/.test(res.headers.get("content-type") || "")) {
-      cache.put(req.url, res.clone()).catch(() => {});
-      ensureOffline().catch(() => {});
-    }
+    if (cacheable(res) && /text\/html/.test(res.headers.get("content-type") || "")) ensureOffline().catch(() => {});
     return res;
   } catch {
-    const last = await cache.match(req.url, { ignoreSearch: false });
-    if (last) return last;
     const offline = await cache.match(OFFLINE_URL);
     if (offline) return offline;
     return new Response("<!doctype html><meta charset=utf-8><title>Offline</title><p>Ingen forbindelse.</p>", { status: 503, headers: { "content-type": "text/html; charset=utf-8" } });
@@ -116,6 +124,7 @@ self.addEventListener("activate", (event) => {
   event.waitUntil((async () => {
     const names = await caches.keys();
     await Promise.all(names.filter((n) => n.startsWith(`dialogbot-${AUDIENCE}-`) && n !== CACHE).map((n) => caches.delete(n)));
+    await clearPages().catch(() => {});
     await self.clients.claim();
   })());
 });
@@ -123,9 +132,7 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("message", (event) => {
   const type = event.data && event.data.type;
   if (type === "skipWaiting") self.skipWaiting();
-  if (type === "clearPages") event.waitUntil(caches.open(CACHE).then(async (cache) => {
-    for (const req of await cache.keys()) { const p = new URL(req.url).pathname; if (inScope(p) && p !== OFFLINE_URL) await cache.delete(req); }
-  }));
+  if (type === "clearPages") event.waitUntil(clearPages());
 });
 
 self.addEventListener("fetch", (event) => {

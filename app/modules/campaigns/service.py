@@ -545,11 +545,16 @@ def on_report(db: OrmSession, message: dict, *, call_id: str, conv, duration: fl
     outcome, text = classify(db, ws, transcript, summary)
     contact.outcome, contact.summary = outcome, text
     _after_attempt(c, contact, now, answered=True)
-    if outcome == "opt_out":
-        contact.status = "opted_out"
+    if outcome in ("opt_out", "not_interested"):
+        # «Nej tak» is honoured like an opt-out: the assistant promises «du bliver ikke ringet op igen» and the owner is
+        # told «Siger de nej, kommer de på spærrelisten» – so the number goes on the workspace's do-not-call list at once
+        # and is never dialled in a future campaign (decision Fürster/DF-tilbud 2026-11-10, F-E2C-02-C14).
+        if outcome == "opt_out":
+            contact.status = "opted_out"
+        why = "Frabad sig opkald" if outcome == "opt_out" else "Sagde nej tak"
         if not db.scalar(select(DoNotCall.id).where(DoNotCall.workspace_id == ws.id, DoNotCall.phone == contact.phone)):
             db.add(DoNotCall(workspace_id=ws.id, phone=contact.phone, source="call",
-                             reason=f"Frabad sig opkald i kampagnen \"{c.name}\""[:300]))
+                             reason=f"{why} i kampagnen \"{c.name}\""[:300]))
     elif outcome in ("interested", "callback"):
         who = contact.name or contact.company or contact.phone
         lead = leads.create_lead(db, ws.id, source="campaign", created_by=None, conversation=conv, contact_name=contact.name,

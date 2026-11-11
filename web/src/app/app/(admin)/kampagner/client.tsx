@@ -15,13 +15,14 @@ export function Num({ n, dark = false }: { n: number; dark?: boolean }) {
   return <span className={`inline-flex w-10 h-10 shrink-0 rounded-[10px] items-center justify-center font-display font-extrabold text-[20px] ${dark ? "bg-ink text-paper" : "bg-highlight text-ink"}`} aria-hidden>{n}</span>;
 }
 
-/** The page only shows campaigns when «ringe kunder op» is chosen; this switches it on (the same setting as in trin 1). */
+/** The page only shows campaigns when «ringe kunder op» is chosen; this switches it on – the same setting as the card in
+ *  trin 1: product_intent reception → both (the reception's own choices are kept). */
 export function EnableOutbound({ wsId, goals }: { wsId: string; goals: Record<string, unknown> & { version: number } }) {
   const router = useRouter();
   const t = useT("app");
   const on = useSubmit(async () => {
     const { version, ...g } = goals;
-    await api(`/workspaces/${wsId}/goals`, { method: "PUT", body: JSON.stringify({ ...g, callback: true, expected_version: version }) });
+    await api(`/workspaces/${wsId}/goals`, { method: "PUT", body: JSON.stringify({ ...g, product_intent: "both", expected_version: version }) });
     router.refresh();
   });
   return <div className="flex flex-col gap-1"><Button type="button" onClick={() => on.run()} disabled={on.pending}>{on.pending ? t("campaigns.enable.pending") : t("campaigns.enable.button")}</Button><ErrorBox error={on.error} /></div>;

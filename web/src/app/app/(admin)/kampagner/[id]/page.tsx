@@ -42,7 +42,8 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
         <div className="flex flex-col gap-4 rounded-2xl border-2 border-ink bg-paper px-5 py-5">
           <h2 className="flex items-center gap-3 font-display font-extrabold text-[20px] text-ink"><Num n={1} />{t("campaigns.detail.who")}</h2>
           <p className="text-[14px] text-ink-soft">{t("campaigns.detail.contacts", { n: hasCount })}</p>
-          {canManage && c.status !== "completed" && <ImportContacts wsId={ws.id} id={c.id} />}
+          {canManage && c.status === "running" && <p className="text-[14px] text-ink-soft">{t("campaigns.import.pauseFirst")}</p>}
+          {canManage && c.status !== "completed" && c.status !== "running" && <ImportContacts wsId={ws.id} id={c.id} />}
           {contacts.items.length === 0 ? <p className="text-[14px] text-ink-soft">{t("campaigns.detail.noContacts")}</p> : (
             <ul className="flex flex-col">{contacts.items.map((x) => (
               <li key={x.id} className="flex flex-wrap items-center gap-2 py-2.5 border-t-[1.5px] border-line text-[14px]">

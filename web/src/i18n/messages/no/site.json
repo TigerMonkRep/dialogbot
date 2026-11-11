@@ -618,6 +618,7 @@
         "code_expired": "Koden har utløpt. Be om en ny.",
         "too_many_attempts": "For mange forsøk. Be om en ny kode.",
         "user_inactive": "Kontoen er deaktivert.",
+        "account_exists": "Det finnes allerede en konto med den e-postadressen. Logg inn for å fortsette.",
         "wrong_code": "Koden stemmer ikke.",
         "generic": "Noe gikk galt. Prøv igjen om litt."
       }
@@ -677,7 +678,8 @@
       "resendIn": "Send på nytt om {s} sek.",
       "wrongNumber": "Feil nummer?",
       "noGate": "Vi har ikke sendt en kode ennå.",
-      "toGate": "Skriv inn opplysningene dine"
+      "toGate": "Skriv inn opplysningene dine",
+      "toLogin": "Logg inn"
     },
     "erhverv": {
       "meta": {
@@ -796,7 +798,8 @@
         "startOver": "Start på nytt",
         "notLoggedIn": "Logg inn for å se hvordan anropet gikk.",
         "login": "Logg inn",
-        "statusAria": "Status for anropet"
+        "statusAria": "Status for anropet",
+        "noCallTitle": "Hun ringer ikke akkurat nå"
       }
     }
   }

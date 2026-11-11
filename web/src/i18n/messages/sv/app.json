@@ -563,7 +563,8 @@
       "consent": "Var och när har de sagt ja till att bli uppringda?",
       "consentHint": "Assistenten ringer utan en människa i luren. Enligt § 10 i den danska marknadsföringslagen (markedsføringsloven) kräver det att kontakten i förväg har bett om det – även när det är ett företag. Det räcker inte att de inte står på Robinsonlistan eller är reklamskyddade i CVR-registret.",
       "consentPlaceholder": "Anmälan på webbplatsen, mars 2026",
-      "importing": "Importerar…"
+      "importing": "Importerar…",
+      "pauseFirst": "Kampanjen pågår. Pausa den för att lägga till kontakter – när du startar igen bekräftar du det nya antalet."
     },
     "start": {
       "completed": "Kampanjen är avslutad: alla kontakter har ringts upp.",

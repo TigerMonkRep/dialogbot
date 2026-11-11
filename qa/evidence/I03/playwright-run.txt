@@ -1,0 +1,14 @@
+  ✓  1 [desktop-1440] › e2e/qa/voice/I01-I05.spec.ts:30:5 › I01–I05 · Opkald: listen, søgning, filter, detalje, henvendelse og opgave – ét forløb (18.0s)
+  ✘  2 [desktop-1440] › e2e/qa/voice/I01-I05.spec.ts:70:5 › I03 · «I dag»-flisen «Henvendelser» og ukendte id'er giver ikke en serverfejl (3.3s)
+  ✘  3 [desktop-1440] › e2e/qa/voice/I01-I05.spec.ts:82:5 › R04–R07 · gamle receptionsadresser fra kravene ender ikke på en 404 (3.8s)
+  ✓  4 [desktop-1440] › e2e/qa/voice/I01-I05.spec.ts:92:5 › X21 · salgskanalen: en kunde (ikke operatør) ser kun «kun for operatører» (10.2s)
+  ✓  5 [mobil-390] › e2e/qa/voice/I01-I05.spec.ts:30:5 › I01–I05 · Opkald: listen, søgning, filter, detalje, henvendelse og opgave – ét forløb (13.1s)
+  ✘  6 [mobil-390] › e2e/qa/voice/I01-I05.spec.ts:70:5 › I03 · «I dag»-flisen «Henvendelser» og ukendte id'er giver ikke en serverfejl (3.5s)
+  ✘  7 [mobil-390] › e2e/qa/voice/I01-I05.spec.ts:82:5 › R04–R07 · gamle receptionsadresser fra kravene ender ikke på en 404 (3.8s)
+  ✓  8 [mobil-390] › e2e/qa/voice/I01-I05.spec.ts:92:5 › X21 · salgskanalen: en kunde (ikke operatør) ser kun «kun for operatører» (3.3s)
+    ../../p1-results/V2/qa-voice-I01-I05-I03-·-«I--4f6e2-er-giver-ikke-en-serverfejl-desktop-1440/test-failed-1.png
+    ../../p1-results/V2/qa-voice-I01-I05-R04–R07-·-7e735-ravene-ender-ikke-på-en-404-desktop-1440/test-failed-1.png
+    ../../p1-results/V2/qa-voice-I01-I05-I03-·-«I--4f6e2-er-giver-ikke-en-serverfejl-mobil-390/test-failed-1.png
+    ../../p1-results/V2/qa-voice-I01-I05-R04–R07-·-7e735-ravene-ender-ikke-på-en-404-mobil-390/test-failed-1.png
+  4 failed
+  4 passed (1.3m)

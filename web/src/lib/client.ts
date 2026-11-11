@@ -11,7 +11,7 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
   if (r.status === 204) return undefined as T;
   const body = await r.json().catch(() => ({ code: "http_error", message: r.statusText }));
   if (r.status === 401 && typeof window !== "undefined" && !location.pathname.startsWith("/login")) {
-    location.href = `/login?expired=1&next=${encodeURIComponent(location.pathname)}`;
+    location.href = `/login?expired=1&next=${encodeURIComponent(location.pathname + location.search)}`;
   }
   if (!r.ok) throw { ...body, status: r.status } as ApiError;
   return body as T;

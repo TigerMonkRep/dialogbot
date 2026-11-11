@@ -101,5 +101,12 @@
     "pushOff": "Aviseringar är av på den här enheten.",
     "pushDisable": "Stäng av aviseringar",
     "pushIosHome": "På iPhone fungerar aviseringar bara från appen på hemskärmen – lägg den där först (Download app ovan)."
+  },
+  "pageError": {
+    "title": "Sidan kunde inte visas",
+    "text": "Något gick fel hos oss. Försök igen – hjälper det inte, logga in igen.",
+    "retry": "Försök igen",
+    "login": "Logga in igen",
+    "reference": "Felkod"
   }
 }

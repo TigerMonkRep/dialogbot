@@ -563,7 +563,8 @@
       "consent": "Where and when did they agree to be called?",
       "consentHint": "The assistant calls without a human on the line. Under section 10 of the Danish Marketing Practices Act, this requires the contact to have asked for it in advance – also when it's a business. It isn't enough that they're not on the Robinson list or marked as advertising-protected in the CVR register.",
       "consentPlaceholder": "Sign-up on the website, March 2026",
-      "importing": "Importing…"
+      "importing": "Importing…",
+      "pauseFirst": "The campaign is running. Pause it to add contacts – when you start again, you confirm the new number."
     },
     "start": {
       "completed": "The campaign is finished: all contacts have been called.",

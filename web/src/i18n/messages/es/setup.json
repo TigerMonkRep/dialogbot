@@ -9,21 +9,55 @@
     "skipToContent": "Saltar al contenido",
     "home": "Dialogbot – Hoy",
     "nav": "Configuración",
-    "steps": ["Empresa", "Calendario y sistemas", "Prueba y activación"],
+    "steps": [
+      "Empresa",
+      "Calendario y sistemas",
+      "Prueba y activación"
+    ],
     "stepAria": "Paso {n}: {label}",
     "skipped": " (omitido)",
     "laterNote": ": lo encontrará todo de nuevo en el icono de perfil → Todos los ajustes."
   },
   "hours": {
-    "days": ["lun", "mar", "mié", "jue", "vie", "sáb", "dom"],
-    "dayNames": ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"],
+    "days": [
+      "lun",
+      "mar",
+      "mié",
+      "jue",
+      "vie",
+      "sáb",
+      "dom"
+    ],
+    "dayNames": [
+      "lunes",
+      "martes",
+      "miércoles",
+      "jueves",
+      "viernes",
+      "sábado",
+      "domingo"
+    ],
     "and": "y"
   },
   "step1Page": {
     "eyebrow": "Construya su Dialogbot · paso 1 de 3 · unos 5 min",
     "title": "¿Quiénes son y qué debe hacer?",
     "intro": "Un solo paso. Obtenemos casi todo de su web: usted solo corrige lo que esté mal. Puede cambiarse más adelante diciéndoselo al asistente.",
-    "need": [["1×", "dirección de su web"], ["1×", "número CVR", "o solo el nombre"], ["1×", "el número al que llaman los clientes"]]
+    "need": [
+      [
+        "1×",
+        "dirección de su web"
+      ],
+      [
+        "1×",
+        "número CVR",
+        "o solo el nombre"
+      ],
+      [
+        "1×",
+        "el número al que llaman los clientes"
+      ]
+    ]
   },
   "step1": {
     "kind": {
@@ -129,7 +163,16 @@
   "step2Page": {
     "eyebrow": "Paso 2 de 3",
     "title": "¿Dónde deben registrarse las citas?",
-    "need": [["1×", "acceso a su calendario"], ["2", "minutos"]],
+    "need": [
+      [
+        "1×",
+        "acceso a su calendario"
+      ],
+      [
+        "2",
+        "minutos"
+      ]
+    ],
     "connector": {
       "google_calendar": "Google Calendar",
       "microsoft_calendar": "Calendario de Microsoft 365"
@@ -165,7 +208,20 @@
     "writeUs": "Escríbanos",
     "managersOnly": "Solo los propietarios y administradores pueden conectar sistemas.",
     "writesTitle": "Lo que Dialogbot escribe en el calendario",
-    "writes": [["1×", "cita con el nombre, el número y el motivo del cliente"], ["1×", "confirmación para usted con la hora de la cita"], ["0×", "cambios en sus citas existentes: nunca las toca"]],
+    "writes": [
+      [
+        "1×",
+        "cita con el nombre, el número y el motivo del cliente"
+      ],
+      [
+        "1×",
+        "confirmación para usted con la hora de la cita"
+      ],
+      [
+        "0×",
+        "cambios en sus citas existentes: nunca las toca"
+      ]
+    ],
     "defaultsNote": "Los horarios siguen su horario del paso 1. Para empezar: citas de 45 minutos, 15 minutos de pausa y como pronto mañana. Puede cambiarse en Citas.",
     "next": "Continuar al paso 3: prueba y activación",
     "skip": "Omitir: no uso calendario"
@@ -173,7 +229,16 @@
   "step3Page": {
     "eyebrow": "Paso 3 de 3 · último paso",
     "title": "Elija la voz, conecte el teléfono y actívelo",
-    "need": [["1×", "un teléfono desde el que llamar"], ["10", "segundos para el desvío"]]
+    "need": [
+      [
+        "1×",
+        "un teléfono desde el que llamar"
+      ],
+      [
+        "10",
+        "segundos para el desvío"
+      ]
+    ]
   },
   "step3": {
     "failed": "No ha funcionado. Inténtelo de nuevo.",
@@ -295,21 +360,45 @@
     "managersOnly": "Solo los propietarios y administradores pueden activarlo.",
     "subscriptionNote": "La suscripción es desde {pMonthly}/mes sin IVA con {pIncluded} minutos para llamadas entrantes y salientes; después {pExtraMinute} por minuto entrante y, en salientes, {pCallAnswered} por llamada atendida + {pMinute} por minuto.",
     "confirmSubscription": "Confirmar suscripción",
-    "findAgain": "Lo encontrará todo de nuevo en el icono de perfil → Todos los ajustes."
+    "findAgain": "Lo encontrará todo de nuevo en el icono de perfil → Todos los ajustes.",
+    "readerTitle": "El propietario configura Dialogbot",
+    "campaignsTitle": "Listo para vuestra primera campaña",
+    "campaignsText": "No hay nada que activar: Dialogbot solo llama cuando hayáis creado e iniciado una campaña.",
+    "campaignsCta": "Crear vuestra primera campaña",
+    "nothingTitle": "Elige qué debe hacer Dialogbot",
+    "nothingText": "No hay nada elegido en el paso 1, así que no hay nada que activar. Elige al menos una cosa."
   },
   "assistant": {
     "setupChips": {
       "1": [
-        { "label": "Horario", "fill": "Horario lun-vie 8-16" },
-        { "label": "¿Qué pasa en el paso 2?", "say": "En el paso 2 conecta su calendario para que las citas se registren allí. Es opcional: puede omitirlo." }
+        {
+          "label": "Horario",
+          "fill": "Horario lun-vie 8-16"
+        },
+        {
+          "label": "¿Qué pasa en el paso 2?",
+          "say": "En el paso 2 conecta su calendario para que las citas se registren allí. Es opcional: puede omitirlo."
+        }
       ],
       "2": [
-        { "label": "¿Qué escriben en el calendario?", "say": "Una cita con el nombre, el número y el motivo del cliente, y una confirmación para ustedes. Nunca toco sus citas existentes." },
-        { "label": "¿Qué pasa en el paso 3?", "say": "En el paso 3 elige la voz, conecta el teléfono con un desvío y activa Dialogbot." }
+        {
+          "label": "¿Qué escriben en el calendario?",
+          "say": "Una cita con el nombre, el número y el motivo del cliente, y una confirmación para ustedes. Nunca toco sus citas existentes."
+        },
+        {
+          "label": "¿Qué pasa en el paso 3?",
+          "say": "En el paso 3 elige la voz, conecta el teléfono con un desvío y activa Dialogbot."
+        }
       ],
       "3": [
-        { "label": "¿Cómo desvío las llamadas?", "say": "Marque el código del paso 3 en su teléfono y pulse llamar. Desactive el desvío de nuevo con el código que aparece debajo." },
-        { "label": "¿Puedo deshacerlo?", "say": "Sí. Puede poner Dialogbot en pausa desde Hoy y desactivar el desvío en su teléfono." }
+        {
+          "label": "¿Cómo desvío las llamadas?",
+          "say": "Marque el código del paso 3 en su teléfono y pulse llamar. Desactive el desvío de nuevo con el código que aparece debajo."
+        },
+        {
+          "label": "¿Puedo deshacerlo?",
+          "say": "Sí. Puede poner Dialogbot en pausa desde Hoy y desactivar el desvío en su teléfono."
+        }
       ]
     },
     "chips": {

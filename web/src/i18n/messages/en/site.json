@@ -618,6 +618,7 @@
         "code_expired": "The code has expired. Ask for a new one.",
         "too_many_attempts": "Too many attempts. Ask for a new code.",
         "user_inactive": "The account has been deactivated.",
+        "account_exists": "An account with that e-mail already exists. Log in to continue.",
         "wrong_code": "The code doesn't match.",
         "generic": "Something went wrong. Try again shortly."
       }
@@ -677,7 +678,8 @@
       "resendIn": "Send again in {s} s",
       "wrongNumber": "Wrong number?",
       "noGate": "We have not sent a code yet.",
-      "toGate": "Enter your details"
+      "toGate": "Enter your details",
+      "toLogin": "Log in"
     },
     "erhverv": {
       "meta": {
@@ -796,7 +798,8 @@
         "startOver": "Start over",
         "notLoggedIn": "Log in to see how the call went.",
         "login": "Log in",
-        "statusAria": "Call status"
+        "statusAria": "Call status",
+        "noCallTitle": "She isn't calling right now"
       }
     }
   }

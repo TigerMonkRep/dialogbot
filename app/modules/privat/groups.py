@@ -1,12 +1,15 @@
 """Saved groups («Mine folk»): share with many people in one tap.
 
 Data rules: a group is readable ONLY by its owner. The phone numbers in it are used for exactly two things – giving
-them back to the owner (so the owner texts from their OWN phone) and recognising people who are already on Dialogbot
-(user_id, or a verified phone). Dialogbot never contacts them and never markets to them; they are deleted with the
-group (cascade) or the account (owner_user_id cascade).
+them back to the owner (so the owner texts from their OWN phone) and nothing else. A typed number is NEVER looked up
+against Dialogbot's users (F-P2-02-X10): that would tell the owner whether – and as whom – any number is registered,
+and would put strangers on lists they never agreed to. Dialogbot never contacts them and never markets to them; they
+are deleted with the group (cascade) or the account (owner_user_id cascade).
 
-Sharing a list with a group: people already on Dialogbot are added to the list directly and get an in-app message;
-everyone else gets an SMS the owner sends from their own phone – one group SMS with one link, or a one-by-one queue
+Sharing a list with a group: only people who have themselves said yes to the owner before – a member row with a
+user_id, set when they accepted one of the owner's invitations (`suggested`, or a personal link from this group) or
+joined the group by its link – are added to the list directly and get an in-app message; everyone else (every typed
+number) gets an invitation the owner texts from their own phone, and joins only by accepting it – one group SMS with one link, or a one-by-one queue
 with a personal short link and text per person (then GET invite-status shows member / opened / invited per person).
 """
 from __future__ import annotations
@@ -28,7 +31,7 @@ from app.models import (
     PrivateTaskMember,
     User,
 )
-from app.modules.privat import addons, invites, rules, service, sharing
+from app.modules.privat import addons, invites, lookup_limits, rules, service, sharing
 
 MAX_MEMBERS = 100
 
@@ -159,12 +162,11 @@ def remove_member(db: OrmSession, g: PrivateGroup, member_id: uuid.UUID) -> None
 
 
 def _known_user(db: OrmSession, m: PrivateGroupMember) -> uuid.UUID | None:
-    """The person is already on Dialogbot Privat: a known user id, or a VERIFIED phone that matches."""
+    """The person has accepted the owner before (the member row carries their user id) and is on Dialogbot Privat.
+    Never by phone number: matching a typed number against users' verified phones leaked membership + real name and
+    enrolled strangers without consent (F-P2-02-X10)."""
     if m.user_id and db.scalar(select(PrivateProfile.workspace_id).where(PrivateProfile.user_id == m.user_id)):
         return m.user_id
-    if m.phone_e164:
-        return db.scalar(select(PrivateProfile.user_id).where(PrivateProfile.phone_e164 == m.phone_e164,
-                                                              PrivateProfile.phone_verified_at.is_not(None)))
     return None
 
 
@@ -196,8 +198,6 @@ def share(db: OrmSession, ctx, task_id: uuid.UUID, group_id: uuid.UUID, *, mode:
                             dedupe=f"shared:{task.id}:{uid}")
                 u = db.get(User, uid)  # the person's own name – never the owner's label for them
                 service.event(db, task, f"{rules.first_name(u.display_name if u else None)} er med på listen")
-            if m.user_id is None:
-                m.user_id = uid
             added.append({"name": m.name})
         elif uid is None and m.phone_e164:
             rest.append(m)
@@ -245,6 +245,7 @@ def invite_status(db: OrmSession, ctx, task: PrivateTask) -> list[dict]:
 JOINS_PER_HOUR = 50        # new members per link per hour
 CODES_PER_LINK_HOUR = 20   # SMS codes per link per hour (anti SMS-pumping)
 CODES_PER_PHONE_HOUR = 3
+CODES_PER_OWNER_HOUR = 20  # all of one owner's links together: minting more links never buys more SMS (F-PS-01)
 
 
 def _rate_limited(msg: str):
@@ -315,7 +316,7 @@ def _code_hash(link_id, phone: str, code: str) -> str:
 
 
 def join(db: OrmSession, code: str, *, principal=None, name: str | None, phone: str | None,
-         sms_code: str | None) -> dict:
+         sms_code: str | None, ip: str = "unknown") -> dict:
     """Join a group by its link. Logged in: linked to the user id. Not logged in: the name, plus a number only once
     it is verified with an SMS code (first call sends the code, second call with `code` joins). Deduped by user id or
     number (and by exact name for name-only joins)."""
@@ -363,9 +364,7 @@ def join(db: OrmSession, code: str, *, principal=None, name: str | None, phone: 
         db.add(PrivateGroupMember(group_id=g.id, name=name, joined_via_link_id=link.id, created_at=now))
         db.flush()
         return {"joined": True, "already": False}
-    e164 = normalize(phone)
-    if e164 is None:
-        raise ValidationFailed("Skriv dit mobilnummer med 8 cifre", field_errors=[{"field": "phone"}])
+    e164 = _danish_mobile(phone)
     if any(m.phone_e164 == e164 for m in existing):
         return {"joined": True, "already": True}
     q = select(PrivatePhoneCode).where(PrivatePhoneCode.purpose == "group_join", PrivatePhoneCode.ref_id == link.id,
@@ -380,6 +379,7 @@ def join(db: OrmSession, code: str, *, principal=None, name: str | None, phone: 
         if per_link >= CODES_PER_LINK_HOUR or per_phone >= CODES_PER_PHONE_HOUR:
             raise _rate_limited("Der er sendt for mange koder. Prøv igen senere.")
         rate_check()
+        lookup_limits.sms_budget(db, ip=ip, account=f"user:{g.owner_user_id}", per_account=CODES_PER_OWNER_HOUR)
         c = f"{secrets.randbelow(1_000_000):06d}"
         db.add(PrivatePhoneCode(purpose="group_join", ref_id=link.id, phone_e164=e164, code_hash=_code_hash(link.id, e164, c),
                                 expires_at=now + timedelta(minutes=10), created_at=now))
@@ -403,6 +403,18 @@ def join(db: OrmSession, code: str, *, principal=None, name: str | None, phone: 
     db.add(PrivateGroupMember(group_id=g.id, name=name, phone_e164=e164, joined_via_link_id=link.id, created_at=now))
     db.flush()
     return {"joined": True, "already": False}
+
+
+def _danish_mobile(raw: str | None) -> str:
+    """Codes go only to Danish numbers (+45, 8 digits, not premium 90xx) – what Privat's SMS path supports and what
+    the UI asks for («8 cifre»; the funnel has the same rule). Any other E.164 number would let a public link pump paid
+    SMS abroad (F-PS-01)."""
+    from app.modules.sales.service import danish_number
+
+    try:
+        return danish_number(raw or "")
+    except ValidationFailed:
+        raise ValidationFailed("Skriv dit mobilnummer med 8 cifre", field_errors=[{"field": "phone"}]) from None
 
 
 def _send_code(db: OrmSession, g: PrivateGroup, e164: str, code: str) -> None:

@@ -618,6 +618,7 @@
         "code_expired": "Koden har gått ut. Be om en ny.",
         "too_many_attempts": "För många försök. Be om en ny kod.",
         "user_inactive": "Kontot är inaktiverat.",
+        "account_exists": "Det finns redan ett konto med den e-postadressen. Logga in för att fortsätta.",
         "wrong_code": "Koden stämmer inte.",
         "generic": "Något gick fel. Försök igen om en stund."
       }
@@ -677,7 +678,8 @@
       "resendIn": "Skicka igen om {s} sek.",
       "wrongNumber": "Fel nummer?",
       "noGate": "Vi har inte skickat någon kod ännu.",
-      "toGate": "Ange dina uppgifter"
+      "toGate": "Ange dina uppgifter",
+      "toLogin": "Logga in"
     },
     "erhverv": {
       "meta": {
@@ -796,7 +798,8 @@
         "startOver": "Börja om",
         "notLoggedIn": "Logga in för att se hur samtalet gick.",
         "login": "Logga in",
-        "statusAria": "Status för samtalet"
+        "statusAria": "Status för samtalet",
+        "noCallTitle": "Hon ringer inte just nu"
       }
     }
   }

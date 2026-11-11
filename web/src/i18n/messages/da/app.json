@@ -563,7 +563,8 @@
       "consent": "Hvor og hvornår har de sagt ja til at blive ringet op?",
       "consentHint": "Assistenten ringer uden et menneske i røret. Efter markedsføringsloven § 10 kræver det, at kontakten på forhånd har bedt om det – også når det er en virksomhed. Det er ikke nok, at de ikke står på Robinsonlisten eller er reklamebeskyttet i CVR.",
       "consentPlaceholder": "Tilmelding på hjemmesiden, marts 2026",
-      "importing": "Importerer…"
+      "importing": "Importerer…",
+      "pauseFirst": "Kampagnen kører. Sæt den på pause for at tilføje kontakter – når du starter igen, bekræfter du det nye antal."
     },
     "start": {
       "completed": "Kampagnen er afsluttet: alle kontakter er ringet op.",

@@ -1,0 +1,2 @@
+{"note": "Fra web/e2e/qa/pwa/X23.spec.ts «ingen cachede logged-in sider efter log ud», mobil-390, 2026-11-10. Cache Storage læst fra /login efter POST /api/auth/logout.",
+ "left": [{"path": "/app/opkald/henvendelser/e947a033-66a9-4a0c-b082-7e3dd3293712", "containsName": true}]}

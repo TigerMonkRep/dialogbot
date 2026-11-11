@@ -242,6 +242,12 @@ def import_contacts(campaign_id: uuid.UUID, body: ImportIn, request: Request,
     c = _own(db, campaign_id, ctx.workspace.id)
     if c.status == "completed":
         raise Conflict("Kampagnen er afsluttet", code="campaign_state")
+    if c.status == "running":
+        # The admin confirmed the rules and the maximum for the contacts that were there at the start. New contacts must
+        # not go straight into the dialling queue: pause, add, and start again (start asks for the confirmation again,
+        # with the new total) – F-E2C-03-C12.
+        raise Conflict("Sæt kampagnen på pause, før du tilføjer kontakter. Når du starter igen, bekræfter du det nye antal.",
+                       code="campaign_running")
     out = service.import_contacts(db, c, body.csv, kind=body.kind, consent_source=body.consent_source)
     record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="campaigns.contacts_imported",
                  object_type="campaign", object_id=c.id, after={k: out[k] for k in ("added", "duplicates", "blocked")},

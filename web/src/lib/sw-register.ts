@@ -34,6 +34,16 @@ export function getSwRegistration(audience: SwAudience): Promise<ServiceWorkerRe
   return navigator.serviceWorker.getRegistration(SW[audience].scope).catch(() => undefined);
 }
 
+/** Logout: asks both workers to drop any page left in their caches (defence in depth – the workers no longer store
+ *  pages behind the login, F-M2-15-X23, but an older version still in charge may have). Never throws. */
+export async function clearSwPages(): Promise<void> {
+  if (!swSupported()) return;
+  const regs = await Promise.all((Object.keys(SW) as SwAudience[]).map((a) => getSwRegistration(a)));
+  for (const r of regs) {
+    try { r?.active?.postMessage({ type: "clearPages" }); } catch { /* ignore */ }
+  }
+}
+
 /** Calls `onReady(apply)` once a new worker is installed and waiting. `apply()` asks it to take over; the page reloads
  *  on `controllerchange`. Also re-checks for a new version when the app returns to the foreground. */
 export function watchSwUpdates(audience: SwAudience, onReady: (apply: () => void) => void): () => void {

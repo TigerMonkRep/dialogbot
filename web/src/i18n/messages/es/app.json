@@ -563,7 +563,8 @@
       "consent": "¿Dónde y cuándo aceptaron recibir llamadas?",
       "consentHint": "El asistente llama sin una persona al teléfono. Según el artículo 10 de la ley danesa de prácticas de mercado (markedsføringsloven), esto exige que el contacto lo haya solicitado previamente, también cuando es una empresa. No basta con que no figure en la lista Robinson ni tenga protección publicitaria en el registro CVR.",
       "consentPlaceholder": "Registro en la web, marzo de 2026",
-      "importing": "Importando…"
+      "importing": "Importando…",
+      "pauseFirst": "La campaña está en curso. Ponla en pausa para añadir contactos; al reanudarla, confirmas el nuevo número."
     },
     "start": {
       "completed": "La campaña ha finalizado: se ha llamado a todos los contactos.",

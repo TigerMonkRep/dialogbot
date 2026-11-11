@@ -1,0 +1,56 @@
+{
+ "observed": [
+  {
+   "path": "/workspaces/{workspace_id}/calls",
+   "status": 422,
+   "body": {
+    "code": "validation_failed",
+    "message": "Ugyldigt input",
+    "field_errors": [
+     {
+      "field": "limit",
+      "message": "Input should be greater than or equal to 1"
+     }
+    ],
+    "request_id": "0da795b187114ee2b44e4b28ae050195"
+   }
+  },
+  {
+   "path": "/workspaces/{workspace_id}/calls",
+   "status": 401,
+   "body": {
+    "code": "api_key_invalid",
+    "message": "Ugyldig API-nøgle",
+    "field_errors": [],
+    "request_id": "440668e1594e4bc58e9830fad7067b89"
+   }
+  },
+  {
+   "path": "/workspaces/{workspace_id}/leads",
+   "status": 403,
+   "body": {
+    "code": "insufficient_scope",
+    "message": "Nøglen mangler scopet 'leads:read'",
+    "field_errors": [],
+    "request_id": "d0a93fa92bd8434889d939c823896335",
+    "required_scope": "leads:read"
+   }
+  },
+  {
+   "path": "/workspaces/{workspace_id}/calls/{call_id}",
+   "status": 404,
+   "body": {
+    "code": "not_found",
+    "message": "Objektet findes ikke",
+    "field_errors": [],
+    "request_id": "124cb70e441f4b769ef2334274d09a95"
+   }
+  }
+ ],
+ "problems": [
+  "422 er dokumenteret som FastAPI HTTPValidationError {detail:[…]}, men svaret er {code,message,field_errors,request_id} – ingen af de faktiske felter står i skemaet",
+  "GET /workspaces/{workspace_id}/calls: status 401 er ikke dokumenteret i docs/public-openapi.json",
+  "GET /workspaces/{workspace_id}/leads: status 403 er ikke dokumenteret i docs/public-openapi.json",
+  "GET /workspaces/{workspace_id}/calls/{call_id}: status 404 er ikke dokumenteret i docs/public-openapi.json"
+ ]
+}

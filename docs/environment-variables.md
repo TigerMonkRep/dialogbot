@@ -14,6 +14,8 @@
 | `SECRET_KEY` | staging/prod | API, worker | Render `generateValue` (API) → kopiér samme værdi til worker | ≥ 32 tegn. |
 | `ENABLE_DEV_TOOLS` | nej | API | — | `true` kun i dev/test. Åbner `/api/v1/dev/*` (simuleret postkasse). |
 | `AUTH_PROVIDER` | nej | API | — | `local`. `external` er reserveret og fejler lukket. |
+| `CLIENT_IP_SECRET` | prod (anbefalet) | API **og** web (Vercel, server-only) | `python -c "import secrets; print(secrets.token_urlsafe(32))"` – samme værdi begge steder | Web-BFF'en signerer besøgendes IP (`X-Dialogbot-Client-IP` + `-Sig`). Når den er sat, tæller API'ets per-IP-grænser (Privat-opslag, Privat-SMS, funnel) den signerede IP, ellers adressen Renders kant tilføjede sidst i `X-Forwarded-For` – en forfalsket header flytter intet (F-PS-02). Uden: første `X-Forwarded-For`-værdi (gammel, forfalskbar). Sæt den på Vercel først, så på Render. |
+| `TRUSTED_PROXY_HOPS` | nej | API | — | Standard `1`: antal `X-Forwarded-For`-værdier fra højre, som betroede proxyer har tilføjet (Render: Cloudflare → load balancer tilføjer klientens adresse sidst). Bruges kun når `CLIENT_IP_SECRET` er sat og kaldet ikke er signeret. |
 | `SESSION_TTL_HOURS`, `INVITATION_TTL_HOURS`, `RESET_TTL_MINUTES`, `VERIFICATION_TTL_HOURS` | nej | API | — | Standard 336 / 72 / 60 / 48. |
 | `EMAIL_ADAPTER` | ja | API, worker | — | `simulated` (dev/test/staging) eller `resend`. |
 | `RESEND_API_KEY` | ved resend | worker (API kun hvis den sender synkront – det gør den ikke) | Resend → API Keys | Staging- og prod-nøgle adskilt. |

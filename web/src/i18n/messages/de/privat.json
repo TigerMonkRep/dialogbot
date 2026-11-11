@@ -391,7 +391,9 @@
     "useNumber": "Nummer verwenden",
     "isBusiness": "Das ist ein Unternehmen",
     "isBusinessHint": "Die Nummer sieht wie eine Handynummer aus. Ich rufe nur Unternehmen an.",
-    "demoBusiness": "Das ist ein Demo-Unternehmen, das nicht angerufen werden kann. Wähle ein echtes Unternehmen."
+    "demoBusiness": "Das ist ein Demo-Unternehmen, das nicht angerufen werden kann. Wähle ein echtes Unternehmen.",
+    "needsPlan": "Erfordert einen Plan",
+    "needsPlanText": "Anrufe sind in jedem Plan enthalten. Ohne Plan kann nicht angerufen werden – auch nicht mit Credits."
   },
   "draft": {
     "label": "Entwurf · bereit zum Speichern",

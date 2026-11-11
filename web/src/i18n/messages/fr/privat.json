@@ -391,7 +391,9 @@
     "useNumber": "Utiliser ce numéro",
     "isBusiness": "C'est une entreprise",
     "isBusinessHint": "Le numéro ressemble à un portable. Je n'appelle que des entreprises.",
-    "demoBusiness": "C'est une entreprise de démonstration qu'on ne peut pas appeler. Choisissez une vraie entreprise."
+    "demoBusiness": "C'est une entreprise de démonstration qu'on ne peut pas appeler. Choisissez une vraie entreprise.",
+    "needsPlan": "Nécessite un forfait",
+    "needsPlanText": "Les appels sont inclus dans tous les forfaits. Sans forfait, aucun appel n'est possible – pas non plus avec des crédits."
   },
   "draft": {
     "label": "Brouillon · prêt à enregistrer",

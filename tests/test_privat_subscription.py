@@ -684,3 +684,83 @@ def test_privat_sends_its_own_billing_mails(api, client, pv, db, monkeypatch):
 
     html = tpl.from_payload(mails[1]).html()
     assert "#C4461A" in html and "Dialogbot Privat" in html and "/privat/konto" in html
+
+
+# --------------------------------------------------------------------------- «Ring for mig» stops without a plan (2026-11-11)
+
+def test_ring_for_mig_stops_without_a_plan_even_with_credits(api, pv, db, monkeypatch):
+    """Decision Fürster 2026-11-11: no credits path for «Ring for mig» without a plan. Approve, retry and new proposals
+    answer 409 needs_plan with a CTA to Konto; nothing is reserved and nothing is dialled, credits or not."""
+    called = []
+    monkeypatch.setattr(campaigns, "create_call", lambda p: called.append(p) or {"id": "x"})
+    tok = pv.account("mette@testmail.dk")
+    pv.verify_phone(tok)
+    tid = _propose(pv, tok)  # proposed during the trial
+    assert pv.task(tok, tid).json()["usage_text"].startswith("Opkald 1 af")
+    pv.expire_trial(tok)
+    db.add(CreditLedger(workspace_id=pv.ws(tok), kind="purchase", amount=10, source_ref="test:buy", text="t"))
+    db.commit()
+    assert pv.me(tok)["credits"] >= 3
+    r = api.post(tok, f"/privat/calls/{tid}/approve", {"share_phone": False})
+    assert r.status_code == 409 and r.json()["code"] == "needs_plan", r.text
+    assert r.json()["cta"] == {"label": "Kræver en plan", "href": "/privat/konto"}
+    assert called == [] and pv.me(tok)["reserved"] == 0
+    c = db.query(PrivateCall).filter_by(task_id=tid).one()
+    assert c.status == "proposed" and c.paid_via is None
+    assert not db.query(CreditLedger).filter(CreditLedger.kind == "reserve").count()
+    r = api.post(tok, f"/privat/calls/{tid}/retry")
+    assert r.status_code == 409 and r.json()["code"] == "needs_plan"
+    # the app stops like every plan app (data kept) – the shop card says «Kræver plan»
+    card = next(a for a in api.get(tok, "/privat/addons").json() if a["key"] == "ring-for-mig")
+    assert card["needs_plan"] is True
+    # with a plan again it works
+    pv.set_plan(tok, "basis")
+    t = api.post(tok, f"/privat/calls/{tid}/approve", {"share_phone": False}).json()
+    assert t["status"] == "in_progress" and t["usage_text"] == "Opkald 1 af 3 i Basis" and len(called) == 1
+
+
+def test_extra_calls_with_credits_only_on_top_of_a_plan(api, pv, db, monkeypatch):
+    """The remaining credits path: a plan whose month's calls are used – an extra call reserves 3 credits."""
+    called = []
+    monkeypatch.setattr(campaigns, "create_call", lambda p: called.append(p) or {"id": "x2"})
+    tok = pv.account("mette@testmail.dk")
+    pv.verify_phone(tok)
+    pv.set_plan(tok, "basis")
+    pv.use_up_calls(tok)
+    tid = _propose(pv, tok)
+    assert pv.task(tok, tid).json()["usage_text"] == "Højst 3 credits, når du godkender"
+    t = api.post(tok, f"/privat/calls/{tid}/approve", {"share_phone": False}).json()
+    assert t["usage_text"] == "3 credits reserveret" and len(called) == 1
+    assert db.query(PrivateCall).filter_by(task_id=tid).one().paid_via == "credits"
+
+
+def test_a_planned_credits_call_is_not_made_when_the_plan_lapses(api, pv, db, monkeypatch):
+    """A call approved «ved næste åbningstid» as an extra (credits) call: the plan ends before it is due – it is not
+    dialled and the 3 credits come back (before: only plan-paid calls were stopped)."""
+    from app.modules.privat import calls
+
+    called = []
+    monkeypatch.setattr(campaigns, "create_call", lambda p: called.append(p) or {"id": "x3"})
+    tok = pv.account("mette@testmail.dk")
+    pv.verify_phone(tok)
+    pv.set_plan(tok, "basis")
+    pv.use_up_calls(tok)
+    pv.clock.at = datetime(2026, 11, 4, 17, 30, tzinfo=UTC)  # 18:30: outside calling hours
+    tid = _propose(pv, tok)
+    t = api.post(tok, f"/privat/calls/{tid}/approve", {"share_phone": False, "at_next_open": True}).json()
+    assert t["status"] == "planned" and pv.me(tok)["reserved"] == 3
+    c = db.query(PrivateCall).filter_by(task_id=tid).one()
+    sub = db.get(PrivateSubscription, pv.ws(tok))
+    sub.status = "canceled"
+    sub.current_period_end = pv.clock() - timedelta(minutes=1)
+    db.commit()
+    pv.clock.at = c.scheduled_for + timedelta(minutes=1)
+
+    class Ev:
+        payload = {"private_call_id": str(c.id), "at": c.scheduled_for.isoformat()}
+
+    calls.handle_call_due(db, Ev())
+    db.expire_all()
+    assert called == [] and db.get(PrivateCall, c.id).status == "failed"
+    assert pv.me(tok)["reserved"] == 0
+    assert "abonnement" in pv.task(tok, tid).json()["events"][-1]["text"]

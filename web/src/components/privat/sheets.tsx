@@ -119,7 +119,8 @@ function PaywallSheet({ onClose }: { onClose: () => void }) {
   const quotaUsed = call && p.entitled && p.callsQuota > 0;
   const title = trialFirst ? t("paywall.titleTrial") : call ? (quotaUsed ? t("plan.paywallCallTitlePlan") : t("paywall.titleCall")) : t("paywall.titleDigital");
   const text = trialFirst ? t("paywall.textTrial") : call
-    ? (quotaUsed ? t("plan.paywallCallTextPlan", { used: p.callsUsed, quota: p.callsQuota, plan: p.rightsName }) : `${t("plan.paywallCallTextNone")} ${t("paywall.textCall", { n: tk?.call?.max_credits ?? 3, have: credits })}`)
+    ? (quotaUsed ? t("plan.paywallCallTextPlan", { used: p.callsUsed, quota: p.callsQuota, plan: p.rightsName })
+      : p.entitled ? `${t("plan.paywallCallTextNone")} ${t("paywall.textCall", { n: tk?.call?.max_credits ?? 3, have: credits })}` : t("call.needsPlanText"))
     : `${t("paywall.textDigital")} ${t("plan.paywallDigitalPlan")}`;
   if (trialFirst) {
     return (
@@ -138,7 +139,8 @@ function PaywallSheet({ onClose }: { onClose: () => void }) {
       <p className="m-0 text-[15px] leading-normal text-ink-soft">{text}</p>
       {!p.entitled && <Button className={`${BIG} rounded-full`} onClick={choosePlan}>{t("plan.paywallChoose")}</Button>}
       {!call && <Button className={`${p.entitled ? BIG : "border-2 border-ink"} rounded-full`} variant={p.entitled ? "primary" : "outline"} disabled={credits < 1} onClick={async () => { const r = await run((a) => a.activate(tk!.id, "credit")); if (r) onClose(); }}>{t("paywall.useCredit", { n: credits })}</Button>}
-      <Button variant={quotaUsed ? "primary" : "outline"} className={`${quotaUsed ? BIG : "border-2"} rounded-full`} onClick={() => openSheet({ kind: "buy", taskId: sheet?.taskId })}>{t("plan.paywallBuy")} · {t("paywall.buy")}</Button>
+      {/* «Ring for mig» without a plan: no credits path (decision 2026-11-11) – extra calls only on top of a plan */}
+      {(!call || p.entitled) && <Button variant={quotaUsed ? "primary" : "outline"} className={`${quotaUsed ? BIG : "border-2"} rounded-full`} onClick={() => openSheet({ kind: "buy", taskId: sheet?.taskId })}>{t("plan.paywallBuy")} · {t("paywall.buy")}</Button>}
       {quotaUsed && <Button variant="outline" className="border-2 rounded-full" onClick={choosePlan}>{t("plan.change")}</Button>}
       {!call && <Button variant="outline" className="border-2 rounded-full" disabled={(balance?.sponsor_left_today ?? 0) < 1} onClick={() => openSheet({ kind: "sponsor", taskId: sheet?.taskId })}>{t("paywall.sponsor", { n: balance?.sponsor_left_today ?? 0 })}</Button>}
       <button type="button" className={`${LINK} self-center`} onClick={later}>{t("paywall.later")}</button>

@@ -260,7 +260,7 @@ def test_needs_phone_insufficient_credits_outside_hours(api, pv, db, monkeypatch
     called = []
     monkeypatch.setattr(campaigns, "create_call", lambda p: called.append(p) or {"id": "x"})
     tok = pv.account("mette@testmail.dk")
-    pv.expire_trial(tok)  # credits path (plan calls: tests/test_privat_subscription.py)
+    pv.use_up_calls(tok)  # the trial's calls are used: an extra call needs credits (plan calls: test_privat_subscription.py)
     tid = _propose(pv, tok)
     path = f"/privat/calls/{tid}/approve"
     assert api.post(tok, path, {"share_phone": False}).json()["code"] == "needs_phone"
@@ -276,15 +276,16 @@ def test_needs_phone_insufficient_credits_outside_hours(api, pv, db, monkeypatch
     db.commit()
     r = api.post(tok, path, {"share_phone": False})
     assert r.status_code == 409 and r.json()["code"] == "insufficient_credits"
-    assert r.json()["calls_left"] == 0 and r.json()["needs_plan"] is True
+    assert r.json()["calls_left"] == 0 and r.json()["needs_plan"] is False  # without a plan: needs_plan (2026-11-11)
     assert called == [] and pv.me(tok)["reserved"] == 0
 
 
 def _approve(api, pv, tok, monkeypatch, vapi_id="call_v1", name="Mette Hansen"):
-    """Approve on the credits path (trial over, no plan): 3 credits reserved."""
+    """Approve on the credits path (an extra call: the trial's calls are used): 3 credits reserved. Without a plan there
+    is no credits path any more (decision 2026-11-11, tests/test_privat_subscription.py)."""
     called = []
     monkeypatch.setattr(campaigns, "create_call", lambda p: called.append(p) or {"id": vapi_id})
-    pv.expire_trial(tok)
+    pv.use_up_calls(tok)
     pv.verify_phone(tok)
     tid = _propose(pv, tok)
     t = api.post(tok, f"/privat/calls/{tid}/approve", {"window": "torsdag efter kl. 15", "share_phone": False},
@@ -469,7 +470,7 @@ def test_provider_crash_never_leaves_the_call_dialling(api, pv, db, monkeypatch)
 
     monkeypatch.setattr(campaigns, "create_call", boom)
     tok = pv.account("mette@testmail.dk")
-    pv.expire_trial(tok)
+    pv.use_up_calls(tok)
     pv.verify_phone(tok)
     tid = _propose(pv, tok)
     t = api.post(tok, f"/privat/calls/{tid}/approve", {"share_phone": False}).json()

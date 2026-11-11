@@ -391,7 +391,9 @@
     "useNumber": "Usar número",
     "isBusiness": "Es una empresa",
     "isBusinessHint": "El número parece de móvil. Solo llamo a empresas.",
-    "demoBusiness": "Es una empresa de demostración a la que no se puede llamar. Elige una empresa real."
+    "demoBusiness": "Es una empresa de demostración a la que no se puede llamar. Elige una empresa real.",
+    "needsPlan": "Requiere un plan",
+    "needsPlanText": "Las llamadas están incluidas en todos los planes. Sin un plan no se puede llamar, tampoco con créditos."
   },
   "draft": {
     "label": "Borrador · listo para guardar",

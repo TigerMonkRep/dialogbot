@@ -28,8 +28,8 @@ class Clock:
 class Pv:
     """Thin client for /privat."""
 
-    def __init__(self, api, clock: Clock):
-        self.api, self.clock = api, clock
+    def __init__(self, api, clock: Clock, monkeypatch=None):
+        self.api, self.clock, self._mp, self._used_up = api, clock, monkeypatch, set()
 
     def user(self, email: str, name: str = "Mette Hansen") -> str:
         self.api.register(email, name=name)
@@ -96,6 +96,17 @@ class Pv:
             row.status, row.trial_ends_at = "trial", self.clock() - timedelta(days=1)
             db.commit()
 
+    def use_up_calls(self, tok: str) -> None:
+        """The plan's (or trial's) calls this month are used: an extra call reserves 3 credits – since 2026-11-11 the
+        ONLY credits path of «Ring for mig» (without a plan it stops: 409 needs_plan)."""
+        from app.modules.privat import subscriptions
+
+        if not self._used_up:
+            orig = subscriptions.calls_used
+            self._mp.setattr(subscriptions, "calls_used",
+                             lambda db, ws_id, at=None: 99 if ws_id in self._used_up else orig(db, ws_id, at))
+        self._used_up.add(self.ws(tok))
+
     def set_plan(self, tok: str, plan: str, *, status: str = "active", interval: str = "month",
                  period_days: int = 30) -> None:
         """A paid plan as the Stripe webhook would have mirrored it."""
@@ -130,7 +141,7 @@ def pv(api, monkeypatch):
     get_settings.cache_clear()
     clock = Clock(WED_10)
     monkeypatch.setattr(rules, "now", clock)
-    yield Pv(api, clock)
+    yield Pv(api, clock, monkeypatch)
     get_settings.cache_clear()
 
 

@@ -391,7 +391,9 @@
     "useNumber": "Use number",
     "isBusiness": "This is a business",
     "isBusinessHint": "The number looks like a mobile number. I only call businesses.",
-    "demoBusiness": "This is a demo business that cannot be called. Choose a real business."
+    "demoBusiness": "This is a demo business that cannot be called. Choose a real business.",
+    "needsPlan": "Requires a plan",
+    "needsPlanText": "Calls are included in every plan. Without a plan no calls can be made – not with credits either."
   },
   "draft": {
     "label": "Draft · ready to save",

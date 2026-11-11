@@ -391,7 +391,9 @@
     "useNumber": "Usa il numero",
     "isBusiness": "È un'azienda",
     "isBusinessHint": "Il numero sembra un cellulare. Chiamo solo aziende.",
-    "demoBusiness": "È un'azienda dimostrativa che non si può chiamare. Scegli un'azienda reale."
+    "demoBusiness": "È un'azienda dimostrativa che non si può chiamare. Scegli un'azienda reale.",
+    "needsPlan": "Richiede un piano",
+    "needsPlanText": "Le chiamate sono incluse in tutti i piani. Senza un piano non si può chiamare, nemmeno con i crediti."
   },
   "draft": {
     "label": "Bozza · pronta da salvare",

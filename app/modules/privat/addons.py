@@ -7,7 +7,8 @@ Adding a feature = `register(Addon(...))` here (or from the feature's own module
 list, the gating and the «Slå … til» offer in the chat all read the catalog; nothing else changes.
 
 Plans: an add-on with `included_in` (plan keys) can only be switched on with the trial or one of those plans
-(409 needs_plan, see subscriptions.py). Once on, it stays on; calls fall back to credits when the plan lapses.
+(409 needs_plan, see subscriptions.py). Once on, it stays on, but it STOPS while the plan has lapsed (data kept) – also
+«Ring for mig»: without a plan there is no credits path (decision Fürster 2026-11-11).
 """
 from __future__ import annotations
 
@@ -815,9 +816,9 @@ def enabled_keys(db: OrmSession, ws_id: uuid.UUID) -> set[str]:
 
 
 def _stops_without_plan(a: Addon) -> bool:
-    """Needs a plan to RUN. Not the free apps, and not a pay-per-use app («Ring for mig»: without a plan each call
-    reserves 3 credits – that path is the product, tests/test_privat.py credits path)."""
-    return bool(a.included_in) and a.pricing != "credits"
+    """Needs a plan to RUN: every app with `included_in`. «Ring for mig» too (decision Fürster 2026-11-11): without a
+    plan it stops – no credits path; credits only pay for EXTRA calls once a plan's monthly calls are used."""
+    return bool(a.included_in)
 
 
 def needs_plan_again(db: OrmSession, ws_id: uuid.UUID, key: str, ent: dict | None = None) -> bool:

@@ -35,9 +35,9 @@ POST /privat/tasks/{id}/activate {method:"credit"|"sponsor"} → Task   (draft �
 GET  /privat/messages?task_id=                → ChatMessage[]
 POST /privat/messages {text, about_task_id?}  (Idempotency-Key header) → {messages: ChatMessage[], balance: Balance}
 POST /privat/messages/{id}/options/{option_id} → {messages: ChatMessage[], balance: Balance}   // svar på clarify
-POST /privat/calls/{task_id}/approve {window, share_phone} (Idempotency-Key) → Task   // 409 needs_phone | insufficient_credits | outside_hours
+POST /privat/calls/{task_id}/approve {window, share_phone} (Idempotency-Key) → Task   // 409 needs_plan (uden plan/prøveperiode: ingen credits-vej; extra.cta → /privat/konto) | needs_phone | insufficient_credits (kun ekstra opkald, når planens opkald er brugt) | outside_hours
 POST /privat/calls/{task_id}/decline          → Task
-POST /privat/calls/{task_id}/retry            → Task (tilbage til awaiting_user med nyt forslag)
+POST /privat/calls/{task_id}/retry            → Task (tilbage til awaiting_user med nyt forslag)   // 409 needs_plan uden plan
 POST /privat/phone/start {phone}              → {sent: true}          // SMS-kode, 6 cifre, 10 min
 POST /privat/phone/verify {code}              → Balance
 POST /privat/credits/checkout {locale?}       → {url}                 // Stripe Checkout mode=payment, 10 credits («ekstra opkald»), 29,00 kr. inkl. moms (eller valutaens pris)

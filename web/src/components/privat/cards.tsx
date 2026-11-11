@@ -317,6 +317,7 @@ export function CallCard({ task }: { task: Task }) {
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [isBusiness, setIsBusiness] = useState(false);
+  const [planGone, setPlanGone] = useState(false);
   const [number, setNumber] = useState("");
   useEffect(() => { setWin(c.window); }, [c.window]);
   const mobile = c.is_mobile ?? isDanishMobile(c.phone_e164);
@@ -324,10 +325,13 @@ export function CallCard({ task }: { task: Task }) {
   const closed = c.open_now === false;
   const swap = (s: string) => (win && win !== c.window ? s.split(c.window).join(win) : s);
   const credits = balance?.credits ?? 0;
-  // The plan's monthly quota pays first; credits («ekstra opkald») when it is used up or there is no plan.
+  // The plan's monthly quota pays first; credits («ekstra opkald») only when a plan's quota is used up. Without a
+  // plan «Ring for mig» stops: no credits path, only «Kræver en plan» → Konto (decision 2026-11-11).
   const viaPlan = plan.entitled && plan.callsLeft > 0;
+  const needsPlan = !plan.entitled || planGone;
   const approve = async (phoneJustVerified = false) => {
     setErr(null);
+    if (needsPlan) { setPlanGone(true); return; }
     if (!addonOn(ADDON.call)) { openSheet({ kind: "addon", addonKey: ADDON.call }); return; }
     if (!phoneJustVerified && balance && !balance.phone_verified) { setNeedPhone(true); return; }
     if (!viaPlan && credits < c.max_credits) { openSheet({ kind: "paywall", taskId: task.id }); return; }
@@ -340,7 +344,7 @@ export function CallCard({ task }: { task: Task }) {
       const x = e as ClientApiError;
       if (x.code === CONFLICT.needsPhone) setNeedPhone(true);
       else if (x.code === CONFLICT.insufficientCredits) openSheet({ kind: "paywall", taskId: task.id });
-      else if (x.code === CONFLICT.needsPlan) openSheet({ kind: "needsPlan", taskId: task.id });
+      else if (x.code === CONFLICT.needsPlan) { setPlanGone(true); await refresh(); }
       else if (x.code === CONFLICT.addonDisabled) openSheet({ kind: "addon", addonKey: ADDON.call });
       else if (x.code === CONFLICT.demoBusiness) setErr(t("call.demoBusiness"));
       // The card was stale (no number yet / just closed / mobile number): refresh so it shows the right step, and say why.
@@ -450,12 +454,19 @@ export function CallCard({ task }: { task: Task }) {
         [t("call.mayAgree"), swap(c.may_agree)],
         [t("call.mayNot"), c.may_not],
       ]} />
+      {needsPlan ? (
+        <div className="rounded-xl border-2 border-ink bg-highlight p-3 flex flex-col gap-2" data-testid="call-needs-plan">
+          <p className="m-0 text-[15px]">{t("call.needsPlanText")}</p>
+          <Link href="/privat/konto" className={`inline-flex items-center justify-center rounded-xl font-semibold ${BIG} bg-accent text-white hover:bg-accent-deep`}>{t("call.needsPlan")}</Link>
+        </div>
+      ) : (
       <div className="rounded-xl border-[1.5px] border-ink bg-panel p-3 flex flex-col gap-1.5">
         {viaPlan ? <span className="text-[15px]"><b>{t("day2.callQuota", { used: plan.callsUsed + 1, quota: plan.callsQuota, plan: plan.rightsName })}</b></span>
           : <span className="text-[15px]"><b>{t("call.cost", { n: c.max_credits })}</b> {t("call.costTime")}</span>}
         <span className="text-[14px] text-ink-soft">{t("call.refund")}</span>
         <span className="text-[14px] text-ink-soft">{t("call.price")}</span>
       </div>
+      )}
       <label className="flex items-center gap-3 min-h-[44px] cursor-pointer">
         <button type="button" role="switch" aria-checked={share} onClick={() => setShare(!share)}
           className={`relative w-12 h-7 rounded-full border-2 border-ink shrink-0 transition-colors ${share ? "bg-accent" : "bg-paper"}`}>
@@ -480,7 +491,7 @@ export function CallCard({ task }: { task: Task }) {
           <span className="flex flex-col"><span className="text-[15px] font-semibold">{t("call.isBusiness")}</span><span className="text-[13px] text-muted">{t("call.isBusinessHint")}</span></span>
         </label>
       )}
-      {!viaPlan && credits < c.max_credits && <p className="m-0 text-[14px] text-danger font-semibold">{t("call.needCredits", { have: credits, need: c.max_credits })}</p>}
+      {!needsPlan && !viaPlan && credits < c.max_credits && <p className="m-0 text-[14px] text-danger font-semibold">{t("call.needCredits", { have: credits, need: c.max_credits })}</p>}
       {needPhone && (
         <div className="rounded-xl border-2 border-ink bg-paper p-3 flex flex-col gap-2">
           <p className="m-0 font-semibold">{t("call.phoneStep")}</p>
@@ -491,7 +502,7 @@ export function CallCard({ task }: { task: Task }) {
       )}
       {err && <p role="alert" className="m-0 text-[14px] text-danger font-semibold">{err}</p>}
       <div className="flex gap-2 flex-wrap">
-        <Button className={`${BIG} flex-[1_1_180px]`} onClick={() => approve()} disabled={busy || noNumber || (mobile && !isBusiness)}>{closed ? t("call.approveWhenOpen") : t("call.approve")}</Button>
+        {!needsPlan && <Button className={`${BIG} flex-[1_1_180px]`} onClick={() => approve()} disabled={busy || noNumber || (mobile && !isBusiness)}>{closed ? t("call.approveWhenOpen") : t("call.approve")}</Button>}
         <Button variant="outline" onClick={() => setEditing(true)}>{t("call.edit")}</Button>
         <Button variant="outline" onClick={() => run((a) => a.declineCall(task.id))}>{t("call.decline")}</Button>
       </div>

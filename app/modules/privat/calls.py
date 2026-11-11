@@ -3,10 +3,11 @@
 Flow:
 1. The chat only PROPOSES a call (task awaiting_user + private_calls row status proposed). Nothing is dialled.
 2. approve() locks recipient, number, may_ask/may_agree/may_not, window and share_phone, and requires a verified mobile
-   (409 needs_phone) and a weekday 08–18 Copenhagen time (409 outside_hours). Payment: with the trial or a plan and
-   quota left, the call is one of the month's plan calls (paid_via 'plan', no credits move); otherwise ≥ 3 credits
-   (409 insufficient_credits, extra carries calls_left/needs_plan) are reserved (call:<id>:reserve, paid_via
-   'credits'). Then it dials like sales/outbound.dial: the status is committed BEFORE the Vapi request; no answer from
+   (409 needs_phone) and a weekday 08–18 Copenhagen time (409 outside_hours). A plan (or the trial) is required: without
+   one «Ring for mig» stops – 409 needs_plan with a CTA to Konto, and there is NO credits path (decision Fürster
+   2026-11-11). Payment: with quota left, the call is one of the month's plan calls (paid_via 'plan', no credits move);
+   once the month's calls are used, an extra call reserves 3 credits (409 insufficient_credits, extra carries
+   calls_left) (call:<id>:reserve, paid_via 'credits'). Then it dials like sales/outbound.dial: the status is committed BEFORE the Vapi request; no answer from
    Vapi = "unknown" (never redialled automatically).
 3. The end-of-call report (routed by metadata.private_call_id) captures (call:<id>:capture) when the business
    answered and spoke, or releases (+3, call:<id>:release) on no answer / failure. A plan call moves no credits: a
@@ -99,10 +100,25 @@ def problem(db: OrmSession, c: PrivateCall) -> str | None:
 
 # --------------------------------------------------------------------------- proposal
 
+NEEDS_PLAN_CTA = {"label": "Kræver en plan", "href": "/privat/konto"}
+
+
+def require_plan(db: OrmSession, ws_id: uuid.UUID, ent: dict | None = None) -> dict:
+    """«Ring for mig» needs a plan or the trial (decision Fürster 2026-11-11): 409 needs_plan with a CTA to Konto –
+    never a credits path without one. Returns the entitlements."""
+    ent = ent or subscriptions.entitlements(db, ws_id)
+    if not ent["entitled"]:
+        raise Conflict("«Ring for mig» kræver en plan. Opkald er med i alle planer – vælg en under Konto.",
+                       code="needs_plan", extra={"addon": ADDON, "plans": list(addons.CATALOG[ADDON].included_in),
+                                                 "cta": NEEDS_PLAN_CTA})
+    return ent
+
+
 def propose(db: OrmSession, ctx, *, business_name: str, phone: str | None, address: str, price_text: str | None,
             purpose: str, window: str, may_ask=None, may_agree=None, may_not=None, place_id: str | None = None,
             next_open_at=None, phone_source: str | None = None, require_addon: bool = True) -> PrivateTask:
     if require_addon:  # the quiz-funnel proposes the first call before the trial (and so the add-on) is on
+        require_plan(db, ctx.ws_id)
         addons.require(db, ctx.ws_id, ADDON)
     purpose = (purpose or "").strip() or "Aftal en tid"
     window = (window or "").strip()
@@ -142,9 +158,12 @@ def propose(db: OrmSession, ctx, *, business_name: str, phone: str | None, addre
 
 
 def pending_usage_text(db: OrmSession, ws_id: uuid.UUID) -> str:
-    """What approving will cost: the next plan call, or 3 credits."""
+    """What approving will cost: the next plan call, 3 credits for an extra call, or – without a plan – nothing is
+    possible yet."""
     ent = subscriptions.entitlements(db, ws_id)
-    if ent["entitled"] and ent["calls_left"] > 0:
+    if not ent["entitled"]:
+        return "Kræver en plan"
+    if ent["calls_left"] > 0:
         return f"Opkald {ent['calls_used'] + 1} af {ent['calls_quota']} i {subscriptions.plan_label(ent)}, når du godkender"
     return "Højst 3 credits, når du godkender"
 
@@ -192,6 +211,7 @@ def _schedule(db: OrmSession, event_type: str, c: PrivateCall, at) -> None:
 
 def approve(db: OrmSession, ctx, task_id: uuid.UUID, *, window: str | None, share_phone: bool,
             at_next_open: bool = False, confirm_business: bool = False) -> PrivateTask:
+    require_plan(db, ctx.ws_id)
     addons.require(db, ctx.ws_id, ADDON)
     task, c = _own_call_task(db, ctx, task_id)
     # Lock the call and read it FRESH: a parallel «Godkend» (double click, another key) waits here until the first
@@ -211,13 +231,12 @@ def approve(db: OrmSession, ctx, task_id: uuid.UUID, *, window: str | None, shar
     profile = db.scalar(select(PrivateProfile).where(PrivateProfile.workspace_id == ctx.ws_id).with_for_update())
     if profile.phone_verified_at is None or not profile.phone_e164:
         raise Conflict("Bekræft dit mobilnummer, før assistenten ringer for dig", code="needs_phone")
-    ent = subscriptions.entitlements(db, ctx.ws_id)
-    use_plan = ent["entitled"] and ent["calls_left"] > 0
+    ent = require_plan(db, ctx.ws_id)  # again, under the profile lock: the plan may have lapsed meanwhile
+    use_plan = ent["calls_left"] > 0
     if not use_plan and ledger.balance(db, ctx.ws_id) < rules.CALL_CREDITS:
-        raise Conflict("Månedens opkald er brugt – et ekstra opkald reserverer 3 credits" if ent["entitled"]
-                       else "Et opkald reserverer 3 credits", code="insufficient_credits",
+        raise Conflict("Månedens opkald er brugt – et ekstra opkald reserverer 3 credits", code="insufficient_credits",
                        extra={"credits": ledger.balance(db, ctx.ws_id), "needed": rules.CALL_CREDITS,
-                              "calls_left": ent["calls_left"], "needs_plan": not ent["entitled"]})
+                              "calls_left": ent["calls_left"], "needs_plan": False})
     now = _now()
     closed = c.next_open_at is not None and c.next_open_at > now
     later = None
@@ -308,6 +327,7 @@ def decline(db: OrmSession, ctx, task_id: uuid.UUID) -> PrivateTask:
 
 
 def retry(db: OrmSession, ctx, task_id: uuid.UUID) -> PrivateTask:
+    require_plan(db, ctx.ws_id)
     addons.require(db, ctx.ws_id, ADDON)
     task, c = _own_call_task(db, ctx, task_id)
     if c.status == "proposed":
@@ -773,15 +793,15 @@ def handle_call_due(db: OrmSession, ev) -> None:
 
 
 def _still_allowed(db: OrmSession, c: PrivateCall) -> str | None:
-    """Why a scheduled call may no longer be made (None = go): «Ring for mig» switched off, the user's mobile no longer
-    verified, or – for a call paid by the plan – the plan (or trial) has ended."""
+    """Why a scheduled call may no longer be made (None = go): the plan (or trial) has ended – whatever paid for it, as
+    «Ring for mig» stops without a plan –, «Ring for mig» switched off, or the user's mobile no longer verified."""
+    if not subscriptions.entitlements(db, c.workspace_id)["entitled"]:
+        return "dit abonnement er udløbet"
     if not addons.is_enabled(db, c.workspace_id, ADDON):
         return "«Ring for mig» er slået fra"
     profile = db.scalar(select(PrivateProfile).where(PrivateProfile.workspace_id == c.workspace_id))
     if profile is None or profile.phone_verified_at is None or not profile.phone_e164:
         return "dit mobilnummer er ikke bekræftet"
-    if c.paid_via == "plan" and not subscriptions.entitlements(db, c.workspace_id)["entitled"]:
-        return "dit abonnement er udløbet"
     return None
 
 

@@ -359,20 +359,15 @@ def test_pc_sub_12_ent_04_chat_05_expired_local_trial(api, client, pv, db, monke
     assert [m["kind"] for m in out["messages"]][-1] == "draft"
     t = db.get(PrivateTask, uuid.UUID(tid))
     assert (t.status, t.paid_by, t.usage_text) == ("draft", "none", "Ikke betalt endnu")
-    # ENT-04: a call needs 3 credits (the 3 welcome credits)
-    from tests.test_privat_subscription import _approve_plan
-
-    _tid, t2, called = _approve_plan(api, pv, tok, monkeypatch, "call_pbq12")
-    assert t2["usage_text"] == "3 credits reserveret" and len(called) == 1
-    c = db.query(PrivateCall).filter_by(workspace_id=pv.ws(tok)).one()
-    assert c.paid_via == "credits"
+    # ENT-04 – changed by decision Fürster 2026-11-11: without a plan «Ring for mig» STOPS, also with credits (the 3
+    # welcome credits). No proposal, nothing reserved; the chat offers the app (whose «Slå til» answers needs_plan).
+    out = pv.say(tok, "Ring til cykelværkstedet og find en tid torsdag efter klokken tre")
+    assert not any(m["kind"] in ("call_proposal", "clarify") for m in out["messages"]), out["messages"]
+    assert db.query(PrivateCall).filter_by(workspace_id=pv.ws(tok)).count() == 0
     assert [(r.kind, r.amount) for r in db.query(CreditLedger).filter_by(workspace_id=pv.ws(tok))
-            .order_by(CreditLedger.created_at)] == [("grant", 3), ("reserve", -3)]
-    from tests.test_privat import _propose
-
-    tid3 = _propose(pv, tok)
-    r = api.post(tok, f"/privat/calls/{tid3}/approve", {"share_phone": False})
-    assert r.status_code == 409 and r.json()["code"] == "insufficient_credits" and r.json()["needs_plan"] is True
+            .order_by(CreditLedger.created_at)] == [("grant", 3)]
+    r = api.post(tok, "/privat/addons/ring-for-mig/enable")
+    assert r.status_code == 409 and r.json()["code"] == "needs_plan"
 
 
 def test_pc_sub_13_cancel_in_trial_keeps_rights_to_trial_end_then_nothing(api, client, pv, stripe, db):

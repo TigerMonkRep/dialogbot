@@ -645,6 +645,8 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       if (!s.phoneVerified) fail(409, "needs_phone", "Bekræft dit telefonnummer først");
       // Plan quota first (counted when the call is answered); otherwise credits («ekstra opkald»).
       const sb = subscription();
+      // «Ring for mig» stops without a plan (decision 2026-11-11): no credits path then, only «Kræver en plan».
+      if (!sb.entitled) fail(409, "needs_plan", "Opkald kræver en plan");
       const viaPlan = sb.entitled && sb.calls_left > 0;
       if (!viaPlan && s.credits < t.call!.max_credits) fail(409, "insufficient_credits", `Opkaldet kræver ${t.call!.max_credits} credits`);
       const c = t.call!;

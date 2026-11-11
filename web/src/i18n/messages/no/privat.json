@@ -391,7 +391,9 @@
     "useNumber": "Bruk nummeret",
     "isBusiness": "Det er en bedrift",
     "isBusinessHint": "Nummeret ser ut som et mobilnummer. Jeg ringer bare bedrifter.",
-    "demoBusiness": "Dette er en demobedrift som ikke kan ringes. Velg en ekte bedrift."
+    "demoBusiness": "Dette er en demobedrift som ikke kan ringes. Velg en ekte bedrift.",
+    "needsPlan": "Krever en plan",
+    "needsPlanText": "Samtaler er med i alle planer. Uten en plan kan det ikke ringes – heller ikke med kreditter."
   },
   "draft": {
     "label": "Utkast · klart til å lagres",

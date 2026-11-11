@@ -391,7 +391,9 @@
     "useNumber": "Brug nummeret",
     "isBusiness": "Det er en virksomhed",
     "isBusinessHint": "Nummeret ligner et mobilnummer. Jeg ringer kun til virksomheder.",
-    "demoBusiness": "Det er en demovirksomhed, som ikke kan ringes op. Vælg en rigtig virksomhed."
+    "demoBusiness": "Det er en demovirksomhed, som ikke kan ringes op. Vælg en rigtig virksomhed.",
+    "needsPlan": "Kræver en plan",
+    "needsPlanText": "Opkald er med i alle planer. Uden en plan kan der ikke ringes – heller ikke med credits."
   },
   "draft": {
     "label": "Udkast · klar til at gemme",

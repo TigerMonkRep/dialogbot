@@ -391,7 +391,9 @@
     "useNumber": "Använd numret",
     "isBusiness": "Det är ett företag",
     "isBusinessHint": "Numret ser ut som ett mobilnummer. Jag ringer bara företag.",
-    "demoBusiness": "Det här är ett demoföretag som inte kan ringas. Välj ett riktigt företag."
+    "demoBusiness": "Det här är ett demoföretag som inte kan ringas. Välj ett riktigt företag.",
+    "needsPlan": "Kräver en plan",
+    "needsPlanText": "Samtal ingår i alla planer. Utan en plan går det inte att ringa – inte heller med krediter."
   },
   "draft": {
     "label": "Utkast · klart att spara",

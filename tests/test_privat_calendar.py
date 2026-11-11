@@ -113,8 +113,8 @@ def test_confirmed_call_lands_in_the_calendar_file_and_the_feed(api, client, pv,
     token = feed["url"].rsplit("/", 1)[1].removesuffix(".ics")
     assert pv.me(tok) and token not in api.get(tok, "/privat/calendar").text   # the link is never shown again
 
-    tid, p = _approve(api, pv, tok, monkeypatch)  # the credits path ends the trial …
-    pv.set_plan(tok, "plus")  # … and Kalender needs a plan to run (PC-ENT-02/03, Fürster 2026-11-10)
+    tid, p = _approve(api, pv, tok, monkeypatch)  # an extra call (credits) within the trial
+    pv.set_plan(tok, "plus")  # Kalender needs a plan to run (PC-ENT-02/03, Fürster 2026-11-10)
     assert _report(client, p, "customer-ended-call", ANSWER, seconds=130)["outcome"] == "applied"
     msgs = api.get(tok, f"/privat/messages?task_id={tid}").json()
     assert msgs[-1]["text"] == "Opkaldet er slut. Cykelmageren har bekræftet torsdag kl. 15.30. Tiden er lagt i din kalender."

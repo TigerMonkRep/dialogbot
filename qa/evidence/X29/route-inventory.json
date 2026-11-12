@@ -1,11 +1,11 @@
 {
  "counts": {
-  "anonymous": 54,
+  "anonymous": 57,
   "public_api": 25,
   "user": 28,
-  "workspace": 165,
-  "operator": 136,
-  "privat": 105,
+  "workspace": 169,
+  "operator": 141,
+  "privat": 114,
   "excluded": 1
  },
  "routes": [
@@ -318,6 +318,18 @@
    "class": "workspace"
   },
   {
+   "route": "POST /api/v1/workspaces/{workspace_id}/knowledge/import/file",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/knowledge/import/text",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/knowledge/versions/approve-batch",
+   "class": "workspace"
+  },
+  {
    "route": "GET /api/v1/workspaces/{workspace_id}/setup/plan",
    "class": "workspace"
   },
@@ -403,6 +415,10 @@
   },
   {
    "route": "POST /api/v1/workspaces/{workspace_id}/webchat/rotate-key",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/webchat/preview",
    "class": "workspace"
   },
   {
@@ -1554,10 +1570,6 @@
    "class": "privat"
   },
   {
-   "route": "POST /api/v1/privat/sponsor/claim",
-   "class": "privat"
-  },
-  {
    "route": "POST /api/v1/privat/tasks/{task_id}/share",
    "class": "privat"
   },
@@ -1670,6 +1682,10 @@
    "class": "privat"
   },
   {
+   "route": "DELETE /api/v1/privat/messages/{message_id}",
+   "class": "privat"
+  },
+  {
    "route": "POST /api/v1/privat/messages/{message_id}/options/{option_id}",
    "class": "privat"
   },
@@ -1683,6 +1699,10 @@
   },
   {
    "route": "POST /api/v1/privat/calls/{task_id}/retry",
+   "class": "privat"
+  },
+  {
+   "route": "DELETE /api/v1/privat/calls/{task_id}",
    "class": "privat"
   },
   {
@@ -1722,7 +1742,7 @@
    "class": "privat"
   },
   {
-   "route": "POST /api/v1/privat/credits/checkout",
+   "route": "POST /api/v1/privat/balance/checkout",
    "class": "privat"
   },
   {
@@ -1986,6 +2006,38 @@
    "class": "anonymous"
   },
   {
+   "route": "GET /api/v1/privat/household",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/household/invites",
+   "class": "privat"
+  },
+  {
+   "route": "DELETE /api/v1/privat/household/members/{member_id}",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/household/leave",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/data-export",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/data-export",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/data-export/download",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/account/delete",
+   "class": "privat"
+  },
+  {
    "route": "GET /api/v1/workspaces/{workspace_id}/api-keys/scopes",
    "class": "workspace"
   },
@@ -2043,6 +2095,38 @@
   },
   {
    "route": "POST /api/v1/operator/admin/disputes/{dispute_id}/decision",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/unsubscribe",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/unsubscribe",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/webhooks/events",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/operator/outreach/batches",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/outreach/batches/{name}",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/outreach/dispatch",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/outreach/call-queue.csv",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/outreach/suppressions",
    "class": "operator"
   },
   {

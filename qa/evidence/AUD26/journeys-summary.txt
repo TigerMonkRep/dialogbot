@@ -1,0 +1,3 @@
+  123 skipped
+  221 passed (20.1m)
+journeys exit=0

@@ -1,0 +1,7 @@
+/home/claude/audit26/logs/web-static-build.log:tsc exit=0
+/home/claude/audit26/logs/web-static-build.log:i18n exit=0
+/home/claude/audit26/logs/web-static-build.log:lint exit=1
+/home/claude/audit26/logs/web-static-build.log:build exit=0
+/home/claude/audit26/logs/baseline-static.log:ruff exit=0
+/home/claude/audit26/logs/baseline-static.log:upgrade exit=0
+/home/claude/audit26/logs/baseline-static.log:check exit=0

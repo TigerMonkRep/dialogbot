@@ -18,5 +18,7 @@ Run against an isolated stack only: PostgreSQL in Docker/CI (or a Supabase branc
 5. **Public API v1:** API keys, scopes, rate limits, versioning, pagination, webhooks signatures.
 6. **Data consistency:** counters (contacts vs attempts, packages purchased/consumed/unused) derived from one source (backlog DB-003); reception vs campaign records never mixed (DB-004).
 
+7. **Operations & performance (audit role «performance/operations reviewer»):** worker restart mid-job, provider timeouts/expired credentials (fake adapters), migration on a database with representative existing rows (not only empty), `/health/ready` semantics, the hourly `deploy-check` schema-head job, latency of the hot public endpoints (widget, /demo-call, funnel) under a declared provisional load. Never load-test production; backup/restore and Render/Supabase settings are BLOCKED without Fürster's access and must be reported as such.
+
 ## Output
 pytest tests under `api/tests/qa/` (or the repo's existing test dir) named after scenario IDs; findings, status and reports per `qa/README.md`. Message billing-qa for money, security-privacy for access issues. Never change product code.

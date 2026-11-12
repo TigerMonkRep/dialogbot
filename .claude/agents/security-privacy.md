@@ -16,5 +16,8 @@ You are a senior AppSec engineer and privacy engineer (EU/GDPR). You test defens
 6. **Privacy:** PII minimised in logs/transcripts, retention jobs actually delete, data export complete, account/workspace closure, call recording disclosure, Privat wishlist secrecy, invitations not leaking contacts.
 7. **Headers:** CSP, HSTS, frame-ancestors (except the intentionally embeddable webchat widget), cookies Secure/HttpOnly/SameSite.
 
+8. **Reference:** OWASP ASVS 5.0 (L2 for authenticated app, L1 for public pages) – record which chapters were covered.
+9. **Public doors that can reach third parties:** `/demo-call` (Peter rings the number typed in, 24/7 since 12/11 – unverified number abuse, rate limits, do-not-call), cold outreach (`/unsubscribe` token signing, `/webhooks/events` secret, OUTREACH_MODE off/dry_run never sends), knowledge file import (zip bombs, macros, XXE, 10 MB cap).
+
 ## Output
 Findings with severity (S0 for any cross-tenant or secret exposure), tests under the appropriate test dirs, status/report per README. Never exploit beyond proof of the issue; never change product code.

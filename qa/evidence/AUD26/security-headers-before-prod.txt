@@ -1,0 +1,8 @@
+    Expected substring: [32m"frame-ancestors 'self'"[39m
+    Received string:    [31m""[39m
+    Expected substring: [32m"frame-ancestors 'self'"[39m
+    Received string:    [31m""[39m
+    Expected substring: [32m"frame-ancestors 'self'"[39m
+    Received string:    [31m""[39m
+    Expected substring: [32m"frame-ancestors 'self'"[39m
+    Received string:    [31m""[39m

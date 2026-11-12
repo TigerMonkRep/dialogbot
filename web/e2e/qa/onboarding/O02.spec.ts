@@ -40,7 +40,7 @@ test("O02 · udtræk vises som grønt/gult, intet er live før godkendelse, «Re
   await yellow.click();
   await expect(page).toHaveURL(/\/opsaetning\/viden$/); // since 12/11: the guide's own review step
   await expect(page.getByText("Gulvafslibning").first()).toBeVisible();
-  await expect(page.getByText(/Hjemmesiden nævner prisen|145/).first()).toBeVisible();
+  await expect(page.getByText(/Hjemmesiden nævner prisen|(?<!\d)145(?!\d)/).first()).toBeVisible();
   await noOverflow(page);
   await snap(page, ID, info, "ret-det-gule");
   // back: approve all → counts agree with the tags shown

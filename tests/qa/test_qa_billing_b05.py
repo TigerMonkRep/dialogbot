@@ -9,8 +9,6 @@ from __future__ import annotations
 import uuid
 from datetime import UTC, datetime
 
-import pytest
-
 from app.models import ReceptionAgreement
 
 
@@ -49,13 +47,17 @@ def test_b05_agreement_price_snapshot_is_immutable_under_a_list_price_change(api
     assert [x["net_minor"] for x in st["lines"] if x["kind"] == "subscription"] == [249_500]
 
 
-@pytest.mark.xfail(strict=True, reason="B05 campaign order detail: not-implemented")
 def test_b05_order_detail_exists(app):
-    """B05 requirement: campaign order detail with price snapshot, package usage, invoice and refund history. Not built
-    today (xfail strict – turns red when built)."""
+    """B05 in the one-plan model (rewritten 2026-11-12, fix-engineer #26): campaign orders do not exist (no prepaid
+    packages), so an order detail is NOT APPLICABLE. The period statement replaces it: GET /billing/statement?month
+    (running month), GET /billing/usage?month (per call, the invoice's frozen lines, refunds, credits) and
+    GET /billing/invoices. Numbers: tests/qa/test_qa_launch_billing.py::test_b05_period_statement_*."""
     from qa_sec_helpers import all_routes
 
     import app.models as models
 
-    assert [p for _m, p, _r in all_routes(app) if "/orders" in p], "no order route"
-    assert [n for n in dir(models) if n.lower() in ("order", "campaignorder")], "no order model"
+    paths = {p for _m, p, _r in all_routes(app)}
+    assert not [p for p in paths if "/orders" in p], "orders belong to the old campaign packages"
+    assert not [n for n in dir(models) if n.lower() in ("order", "campaignorder")]
+    for p in ("statement", "usage", "invoices"):
+        assert f"/api/v1/workspaces/{{workspace_id}}/billing/{p}" in paths, p

@@ -136,7 +136,15 @@
       "aria": "Slå på eller stäng av Dialogbot",
       "onlyAdmins": "Endast ägare och administratörer kan slå på och stänga av",
       "setupFirst": "Telefonen måste konfigureras innan Dialogbot kan slås på"
-    }
+    },
+    "payTag": "Sista steget",
+    "payNext": "Dialogbot är inställd · välj abonnemang och betalning",
+    "chatOn": "Webbchatten är på",
+    "chatOff": "Webbchatten är inte på",
+    "chatStatusOn": "Svarar på er webbplats. Telefonen är valfri och inte inställd.",
+    "chatStatusOff": "Slå på webbchatten så svarar Dialogbot på er webbplats – utan telefonnummer.",
+    "setUpChat": "Ställ in webbchatten",
+    "turnedOnChatSub": "Den svarar på er webbplats nu."
   },
   "time": {
     "today": "Idag",
@@ -868,7 +876,12 @@
       "confirm": "Bekräfta abonnemang",
       "ownerMustConfirm": "Ägaren måste bekräfta abonnemanget.",
       "older": "Äldre avtal – bekräfta abonnemanget för att byta till det nuvarande abonnemanget.",
-      "note": "Priser är exkl. moms. Ingen bindningstid – säg det till assistenten eller skriv till info@dialogbot.dk om ni vill säga upp. Betalning startar aldrig samtal."
+      "note": "Priser är exkl. moms. Ingen bindningstid – säg det till assistenten eller skriv till info@dialogbot.dk om ni vill säga upp. Betalning startar aldrig samtal.",
+      "fromSetup": "Sista steget: bekräfta abonnemanget nedan och lägg till ett betalkort. Sedan är ni live.",
+      "fromSetupNoCard": "Sista steget: bekräfta abonnemanget nedan. Sedan är ni live.",
+      "fromSetupCard": "Abonnemanget är bekräftat. Sista steget: lägg till ett betalkort nedan.",
+      "fromSetupLive": "Ni är live. Abonnemanget är på plats.",
+      "goToday": "Gå till Idag"
     },
     "usage": {
       "title": "Förbrukning per samtal",

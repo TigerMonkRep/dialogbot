@@ -7,6 +7,7 @@ import { Icon, inputCls } from "@/components/ui";
 import { api, type ApiError } from "@/lib/client";
 import { useRaw, useT } from "@/i18n/client";
 import { LOCALES, LOCALE_NAMES, isLocale } from "@/i18n/config";
+import { profileIsDone } from "@/lib/setup-done";
 import { cardsFromGoals, goalsFromCards, hoursText, originOf, parseHours, parseZones, zonesText, type Cards, type DayVocab, type WeeklyRange } from "@/lib/setup";
 import { MobileActionBar } from "@/components/mobile-action-bar";
 import { FileDrop, ImportStatus, PasteText, ReviewGroups, useImport, type Import } from "@/components/knowledge-import";
@@ -28,9 +29,20 @@ const KINDS = new Set(["opening_hours", "coverage_area", "service", "fact", "kno
 const labelCls = "text-[13px] font-semibold text-ink";
 
 type Save = "idle" | "saving" | "saved" | "error";
+type Group = "profile" | "goals" | "langs" | "hours" | "zones";
+/** What was typed but maybe not saved yet, kept in this tab (sessionStorage) until the server has it – so a reload, a
+ *  closed tab or a lost save never loses what the owner wrote. `seen` = every value the server may have for a field
+ *  (what the page loaded + every value sent); the draft is put back only where the server still has one of those. */
+type Draft = { at: number; values: Record<string, string>; seen: Record<string, string[]> };
+const DRAFT_TTL = 24 * 3600 * 1000;
+const PROFILE_TEXT = ["legal_name", "phone", "description", "website_url", "cvr", "address_line", "postal_code", "city"] as const;
+const draftKey = (wsId: string) => `db_trin1_${wsId}`;
+const readDraft = (wsId: string): Draft | null => {
+  try { const d = JSON.parse(sessionStorage.getItem(draftKey(wsId)) ?? "null") as Draft | null; return d && Date.now() - d.at < DRAFT_TTL ? d : null; } catch { return null; }
+};
 
 /** Trin 1 – Virksomhed. One page, three parts, saved as you type. */
-export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, goals, languages, facts, review = [] }: { wsId: string; canEdit: boolean; canApprove: boolean; aiReady: boolean; cvrReady: boolean; profile: Profile; goals: Goals; languages: Languages; facts: Fact[]; review?: Item[] }) {
+export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, goals, languages, facts, review = [], done = false }: { wsId: string; canEdit: boolean; canApprove: boolean; aiReady: boolean; cvrReady: boolean; profile: Profile; goals: Goals; languages: Languages; facts: Fact[]; review?: Item[]; done?: boolean }) {
   const router = useRouter();
   const t = useT("setup.step1");
   const raw = useRaw();
@@ -51,6 +63,7 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
   const [hours, setHours] = useState(hoursText(pick(hoursItem)?.content.weekly as WeeklyRange[] | undefined, vocab));
   const [zones, setZones] = useState(zonesText(pick(zonesItem)?.content.zones as string[] | undefined));
   const [save, setSave] = useState<Save>("idle");
+  const [going, setGoing] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
   const [hint, setHint] = useState<string | null>(null);
 
@@ -61,32 +74,66 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
   latest.current = { p, cards, langs, primary, hours, zones };
   const timers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
   const pending = useRef(0);
-  const dirty = useRef(new Set<string>());
+  const dirty = useRef(new Set<Group>());
+  /** Groups whose last save failed: retried by the next edit, by «Videre» and before leaving the page. */
+  const failed = useRef(new Set<Group>());
+  /** One save at a time per group: a second save waits for the first and sends the version it returned. Two saves of
+   *  the same group in flight used to send the same version – the second got «ændret et andet sted» and was lost (slow
+   *  server, website suggestions, CVR look-up). */
+  const chain = useRef<Partial<Record<Group, Promise<void>>>>({});
+  const doneRef = useRef(done);
+  const saved = useRef<Profile>(profile);
+  /** Trin 1 just became done (or stopped being done) on the server: let the stepper and «I dag» say so now. */
+  const recheckDone = () => {
+    const isDone = profileIsDone(saved.current, latest.current.cards.phone);
+    if (isDone !== doneRef.current) { doneRef.current = isDone; router.refresh(); }
+  };
 
-  const run = useCallback(async (fn: () => Promise<void>) => {
+  // --- the draft kept in this tab until the server has it ---
+  const seen = useRef<Record<string, string[]>>({});
+  const remember = (k: string, v: string) => { const l = (seen.current[k] ??= []); if (!l.includes(v)) l.push(v); if (l.length > 20) l.shift(); };
+  const snapshot = () => {
+    const x = latest.current;
+    const values: Record<string, string> = { hours: x.hours, zones: x.zones };
+    for (const k of PROFILE_TEXT) values[k] = String(x.p[k] ?? "");
+    return values;
+  };
+  const writeDraft = () => { try { sessionStorage.setItem(draftKey(wsId), JSON.stringify({ at: Date.now(), values: snapshot(), seen: seen.current } satisfies Draft)); } catch { /* private mode: the saves still run */ } };
+  const clearDraft = () => { try { sessionStorage.removeItem(draftKey(wsId)); } catch { /* ignore */ } };
+  const unsaved = () => dirty.current.size > 0 || pending.current > 0 || failed.current.size > 0;
+
+  const run = useCallback(async (group: Group, fn: () => Promise<void>) => {
     pending.current += 1; setSave("saving"); setProblem(null);
-    try { await fn(); pending.current -= 1; if (pending.current === 0 && dirty.current.size === 0) setSave("saved"); }
-    catch (e) {
-      pending.current -= 1; setSave("error");
+    try {
+      await fn(); pending.current -= 1; failed.current.delete(group);
+      if (pending.current === 0 && dirty.current.size === 0 && failed.current.size === 0) { setSave("saved"); clearDraft(); }
+    } catch (e) {
+      pending.current -= 1; failed.current.add(group); setSave("error");
       const err = e as ApiError;
       setProblem(err.code === "version_conflict" ? t("versionConflict") : err.message ?? t("saveFailed"));
     }
-  }, [t]);
+  }, [t]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const saveProfile = useCallback(() => run(async () => {
+  const saveProfile = useCallback(() => run("profile", async () => {
     const x = latest.current.p;
-    if (!x.legal_name.trim()) return;
-    const next = await api<Profile>(`/workspaces/${wsId}/profile`, { method: "PUT", body: JSON.stringify({ ...x, expected_version: ver.current.profile, website_url: x.website_url?.trim() || null, manual_setup: !x.website_url?.trim() }) });
+    // An empty name cannot be saved (the server needs one) – say so, never «Gemt» (F-E2B-13-O01).
+    if (!x.legal_name.trim()) throw { code: "name_required", message: t("nameRequired") };
+    const body = { ...x, expected_version: ver.current.profile, website_url: x.website_url?.trim() || null, manual_setup: !x.website_url?.trim() };
+    for (const k of PROFILE_TEXT) remember(k, String(x[k] ?? ""));
+    const next = await api<Profile>(`/workspaces/${wsId}/profile`, { method: "PUT", body: JSON.stringify(body) });
     ver.current.profile = next.version;
-  }), [run, wsId]);
+    saved.current = next;
+    recheckDone();
+  }), [run, wsId, t, router]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const saveGoals = useCallback(() => run(async () => {
+  const saveGoals = useCallback(() => run("goals", async () => {
     const g = goalsFromCards(latest.current.cards);
     const next = await api<Goals>(`/workspaces/${wsId}/goals`, { method: "PUT", body: JSON.stringify({ ...g, guidance_mode: goals.guidance_mode, conversation_goals: goals.conversation_goals, expected_version: ver.current.goals }) });
     ver.current.goals = next.version;
+    recheckDone();
   }), [run, wsId, goals.guidance_mode, goals.conversation_goals]);
 
-  const saveLangs = useCallback(() => run(async () => {
+  const saveLangs = useCallback(() => run("langs", async () => {
     const main = latest.current.primary;
     const enabled = [main, ...latest.current.langs.filter((c) => c !== main)];
     const next = await api<Languages>(`/workspaces/${wsId}/languages`, { method: "PUT", body: JSON.stringify({ interface_language: languages.interface_language, default_conversation_language: main, report_language: languages.report_language, enabled_conversation_languages: enabled, expected_version: ver.current.languages }) });
@@ -94,7 +141,7 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
   }), [run, wsId, languages.interface_language, languages.report_language]);
 
   /** A fact (hours, area) is saved as a new draft or an edit of the open draft, and approved straight away by someone who may. */
-  const saveFact = useCallback((slot: "hours" | "zones", kind: string, title: string, content: Record<string, unknown>) => run(async () => {
+  const saveFact = useCallback((slot: "hours" | "zones", kind: string, title: string, content: Record<string, unknown>) => run(slot, async () => {
     const cur = items.current[slot];
     let versionId: string;
     if (!cur) {
@@ -115,7 +162,7 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
   }), [run, wsId, canApprove]);
 
   /** Save one group now (also used when the owner presses Videre before the pause has run out). */
-  const exec = useCallback(async (group: string) => {
+  const execNow = useCallback(async (group: Group) => {
     if (group === "profile") await saveProfile();
     if (group === "goals") await saveGoals();
     if (group === "langs") await saveLangs();
@@ -123,12 +170,18 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
       const w = parseHours(latest.current.hours, vocab);
       if (!latest.current.hours.trim()) { setHint(null); return; }
       if (!w) { setHint(t("hoursHint")); return; }
+      remember("hours", latest.current.hours);
       setHint(null); await saveFact("hours", "opening_hours", t("hoursTitle"), { weekly: w });
     }
-    if (group === "zones") { const z = parseZones(latest.current.zones); if (z.length) await saveFact("zones", "coverage_area", t("zonesTitle"), { zones: z }); }
-  }, [saveProfile, saveGoals, saveLangs, saveFact, t, vocab]);
+    if (group === "zones") { const z = parseZones(latest.current.zones); remember("zones", latest.current.zones); if (z.length) await saveFact("zones", "coverage_area", t("zonesTitle"), { zones: z }); }
+  }, [saveProfile, saveGoals, saveLangs, saveFact, t, vocab]); // eslint-disable-line react-hooks/exhaustive-deps
+  const exec = useCallback((group: Group) => {
+    const p = (chain.current[group] ?? Promise.resolve()).then(() => execNow(group));
+    chain.current[group] = p.catch(() => undefined);
+    return p;
+  }, [execNow]);
   /** Short pause after the last keystroke, then save that group. */
-  const later = (group: "profile" | "goals" | "langs" | "hours" | "zones", ms = 900) => {
+  const later = (group: Group, ms = 900) => {
     clearTimeout(timers.current[group]);
     dirty.current.add(group);
     setSave("saving");
@@ -138,10 +191,75 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
       void exec(group).then(() => { if (pending.current === 0 && dirty.current.size === 0) setSave((cur) => (cur === "saving" ? "idle" : cur)); });
     }, ms);
   };
+  /** Save everything that is waiting (or failed) now and wait for it. true = the server has all of it. */
   const flush = async () => {
-    for (const g of [...dirty.current]) { clearTimeout(timers.current[g]); dirty.current.delete(g); await exec(g); }
+    for (const g of new Set([...dirty.current, ...failed.current])) { clearTimeout(timers.current[g]); dirty.current.delete(g); void exec(g); }
+    await Promise.all(Object.values(chain.current));
+    return failed.current.size === 0;
   };
-  useEffect(() => () => { Object.values(timers.current).forEach(clearTimeout); }, []);
+  const flushRef = useRef(flush);
+  flushRef.current = flush;
+
+  // Keep the draft while anything is unsaved (written after React has the new value).
+  useEffect(() => { if (canEdit && unsaved()) writeDraft(); }); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Back after a reload / closed tab: put back what the server never got – only where nobody else changed it since.
+  useEffect(() => {
+    const d = canEdit ? readDraft(wsId) : null;
+    for (const k of PROFILE_TEXT) remember(k, String(profile[k] ?? ""));
+    remember("hours", hours); remember("zones", zones);
+    if (!d) return;
+    const server: Record<string, string> = { hours, zones };
+    for (const k of PROFILE_TEXT) server[k] = String(profile[k] ?? "");
+    const back = Object.keys(d.values).filter((k) => k in server && d.values[k] !== server[k] && (d.seen[k] ?? []).includes(server[k]));
+    if (!back.length) { clearDraft(); return; }
+    seen.current = { ...d.seen, ...seen.current };
+    const prof = back.filter((k) => (PROFILE_TEXT as readonly string[]).includes(k));
+    if (prof.length) { setP((cur) => ({ ...cur, ...Object.fromEntries(prof.map((k) => [k, d.values[k]])) })); later("profile", 50); }
+    if (back.includes("hours")) { setHours(d.values.hours); later("hours", 50); }
+    if (back.includes("zones")) { setZones(d.values.zones); later("zones", 50); }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    // Leaving through any link (stepper, logo, «Ret det gule» …) waits for the saves; a save that fails keeps the owner
+    // here with the error instead of losing what was typed (F-E2B-09-O01).
+    const onClick = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || !unsaved()) return;
+      const a = (e.target as Element | null)?.closest?.("a[href]") as HTMLAnchorElement | null;
+      if (!a || a.target === "_blank" || a.hasAttribute("download")) return;
+      const url = new URL(a.href, location.href);
+      if (url.origin !== location.origin) return;
+      e.preventDefault(); e.stopPropagation();
+      setGoing(true);
+      void flushRef.current().then((ok) => { if (ok) router.push(url.pathname + url.search + url.hash); else setGoing(false); });
+    };
+    // Reload, closed tab, app switched away: send what is waiting now (keepalive outlives the page); the draft covers
+    // the rest if the request never arrives.
+    const onHide = () => {
+      if (!unsaved()) return;
+      writeDraft();
+      if (dirty.current.has("profile") && pending.current === 0 && latest.current.p.legal_name.trim()) {
+        const x = latest.current.p;
+        clearTimeout(timers.current.profile); dirty.current.delete("profile");
+        for (const k of PROFILE_TEXT) remember(k, String(x[k] ?? ""));
+        writeDraft();
+        void api(`/workspaces/${wsId}/profile`, { method: "PUT", keepalive: true, body: JSON.stringify({ ...x, expected_version: ver.current.profile, website_url: x.website_url?.trim() || null, manual_setup: !x.website_url?.trim() }) })
+          .then((n) => { ver.current.profile = (n as Profile).version; }, () => { dirty.current.add("profile"); });
+      }
+    };
+    const onVisibility = () => { if (document.visibilityState === "hidden") onHide(); };
+    document.addEventListener("click", onClick, true);
+    window.addEventListener("pagehide", onHide);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      document.removeEventListener("click", onClick, true);
+      window.removeEventListener("pagehide", onHide);
+      document.removeEventListener("visibilitychange", onVisibility);
+      Object.values(timers.current).forEach(clearTimeout);
+      // Unmounted by an in-app navigation that did not come through a link (back button): save what is waiting.
+      for (const g of dirty.current) void exec(g);
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const field = (k: keyof Profile) => (e: React.ChangeEvent<HTMLInputElement>) => { setP((cur) => ({ ...cur, [k]: e.target.value })); later("profile"); };
 
@@ -229,9 +347,9 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
   const toggle = (k: keyof Cards) => { setCards((c) => ({ ...c, [k]: !c[k] })); later("goals", 400); };
   const toggleLang = (code: string) => { if (code === primary) return; setLangs((cur) => (cur.includes(code) ? cur.filter((c) => c !== code) : [...cur, code])); later("langs", 400); };
   const choosePrimary = (code: string) => { setLangs((cur) => cur.filter((c) => c !== code && c !== primary)); setPrimary(code); later("langs", 400); };
-  const ready = p.legal_name.trim() && (p.phone ?? "").trim() && p.description.trim();
+  // The phone number is needed only when Dialogbot takes the phone; chat only (or campaigns) goes on without one.
+  const ready = profileIsDone(p, cards.phone);
   const next = cards.booking ? 2 : 3;
-  const [going, setGoing] = useState(false);
 
   return (
     <div className="flex flex-col gap-6">
@@ -330,13 +448,14 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
 
       <MobileActionBar className="flex-col-reverse sm:flex-row sm:items-center sm:justify-between">
         <p className="text-[13px] leading-snug text-muted" role="status" aria-live="polite">
-          {save === "saving" ? t("status.saving") : save === "saved" ? t("status.saved") : save === "error" ? "" : t("status.idle")}{t("status.comeBack")}
-          {!ready && <span className="block">{t("status.fillIn")}</span>}
-          {problem && <span className="block text-danger" role="alert">{problem} {problem === t("versionConflict") && <button type="button" className="underline" onClick={() => router.refresh()}>{t("status.reload")}</button>}</span>}
+          {save === "saving" ? t("status.saving") : save === "saved" ? t("status.saved") : save === "error" ? t("status.notSaved") : t("status.idle")}{t("status.comeBack")}
+          {!ready && <span className="block">{cards.phone ? t("status.fillIn") : t("status.fillInNoPhone")}</span>}
+          {problem && <span className="block text-danger" role="alert">{problem} {problem === t("versionConflict") && <button type="button" className="underline" onClick={() => { clearDraft(); window.location.reload(); }}>{t("status.reload")}</button>}</span>}
         </p>
         <button type="button" disabled={!ready || going} onClick={async () => {
-          setGoing(true); await flush();
-          if (pending.current > 0) await new Promise((r) => setTimeout(r, 400));
+          // Only on when the server has everything: a failed save keeps the owner here with the error (never a silent loss).
+          setGoing(true);
+          if (!(await flush())) { setGoing(false); return; }
           router.push(`/opsaetning/${next}`);
         }} className={`inline-flex items-center justify-center gap-2 min-h-[52px] px-6 rounded-xl font-semibold text-[16px] ${ready ? "bg-accent text-white hover:bg-accent-deep" : "bg-line text-muted"} disabled:opacity-70`}>
           {next === 2 ? t("nextTo2") : t("nextTo3")}<Icon name="arrow_forward" size={18} />

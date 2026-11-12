@@ -1,6 +1,6 @@
 {
   "later": {
-    "link": "Jeg gjør resten senere"
+    "link": "Sett opp selv"
   },
   "need": {
     "title": "Du trenger"
@@ -16,6 +16,7 @@
     ],
     "stepAria": "Trinn {n}: {label}",
     "skipped": " (hoppet over)",
+    "done": " (fullført)",
     "laterNote": " – du finner alt igjen under profilikonet → Alle innstillinger."
   },
   "hours": {
@@ -82,6 +83,7 @@
       "de": "Tysk"
     },
     "versionConflict": "Siden er endret et annet sted. Last den inn på nytt for å se den nyeste versjonen.",
+    "nameRequired": "Navnet må fylles ut – ingenting er lagret ennå.",
     "saveFailed": "Kunne ikke lagre. Prøv igjen.",
     "hoursHint": "Skriv f.eks. «Man–fre 07–16» eller «Man–fre 07–16; lør 09–12». Det lagres så snart det kan leses.",
     "hoursTitle": "Åpningstider",
@@ -151,9 +153,11 @@
     "status": {
       "saving": "Lagrer …",
       "saved": "Lagret",
+      "notSaved": "Ikke lagret",
       "idle": "Lagres fortløpende",
       "comeBack": " · du kan alltid komme tilbake hit",
       "fillIn": "Fyll ut navn, telefonnummer og hva dere gjør for å gå videre.",
+      "fillInNoPhone": "Fyll ut navn og hva dere gjør for å gå videre.",
       "reload": "Last inn på nytt"
     },
     "nextTo2": "Videre til trinn 2: kalender og systemer",
@@ -342,6 +346,11 @@
       "oneLine": "Én linje skal inn på nettsiden deres. Du trenger ikke forstå den – send den til den som drifter siden.",
       "codeAria": "Kodelinje",
       "copied": "Kopiert",
+      "notReady": {
+        "no_approved_knowledge": "Godkjenn minst én ting under Kunnskap først – chatten svarer bare ut fra det dere har godkjent.",
+        "no_allowed_origins": "Skriv nettstedets adresse i trinn 1 – chatten kan bare vises der.",
+        "ai_not_configured": "AI-svar er ikke slått på i Dialogbot ennå. Skriv til oss."
+      },
       "copy": "Kopier linjen",
       "sendWebmaster": "Send til webansvarlig",
       "seen": "Linjen er på siden – status er Klar.",
@@ -364,6 +373,9 @@
     "readyNoPhone": "Når du slår på, er Dialogbot klar.",
     "missing": "Mangler: {list}.",
     "goToday": "Gå til I dag",
+    "toPayment": "Videre til abonnement og betaling",
+    "payNext": "Siste steg: bekreft abonnementet.",
+    "payAfter": "Etterpå bekrefter du abonnementet.",
     "turningOn": "Slår på …",
     "turnOn": "Slå på Dialogbot",
     "managersOnly": "Bare eiere og administratorer kan slå på.",

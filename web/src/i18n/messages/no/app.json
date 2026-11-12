@@ -136,7 +136,15 @@
       "aria": "Slå Dialogbot på eller av",
       "onlyAdmins": "Bare eiere og administratorer kan slå på og av",
       "setupFirst": "Telefonen må settes opp før Dialogbot kan slås på"
-    }
+    },
+    "payTag": "Siste steg",
+    "payNext": "Dialogbot er satt opp · velg abonnement og betaling",
+    "chatOn": "Webchatten er på",
+    "chatOff": "Webchatten er ikke på",
+    "chatStatusOn": "Svarer på nettstedet deres. Telefonen er valgfri og ikke satt opp.",
+    "chatStatusOff": "Slå på webchatten, så svarer Dialogbot på nettstedet deres – uten telefonnummer.",
+    "setUpChat": "Sett opp webchatten",
+    "turnedOnChatSub": "Den svarer på nettstedet deres nå."
   },
   "time": {
     "today": "I dag",
@@ -868,7 +876,12 @@
       "confirm": "Bekreft abonnement",
       "ownerMustConfirm": "Eieren må bekrefte abonnementet.",
       "older": "Eldre avtale – bekreft abonnementet for å bytte til det nåværende abonnementet.",
-      "note": "Priser er eks. mva. Ingen bindingstid – si det til assistenten eller skriv til info@dialogbot.dk hvis dere vil si opp. Betaling starter aldri anrop."
+      "note": "Priser er eks. mva. Ingen bindingstid – si det til assistenten eller skriv til info@dialogbot.dk hvis dere vil si opp. Betaling starter aldri anrop.",
+      "fromSetup": "Siste steg: bekreft abonnementet nedenfor og legg til et betalingskort. Da er dere live.",
+      "fromSetupNoCard": "Siste steg: bekreft abonnementet nedenfor. Da er dere live.",
+      "fromSetupCard": "Abonnementet er bekreftet. Siste steg: legg til et betalingskort nedenfor.",
+      "fromSetupLive": "Dere er live. Abonnementet er på plass.",
+      "goToday": "Gå til I dag"
     },
     "usage": {
       "title": "Forbruk per anrop",

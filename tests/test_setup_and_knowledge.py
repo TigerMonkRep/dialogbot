@@ -14,6 +14,25 @@ def _check(plan: dict, key: str) -> dict:
     return next(c for c in plan["checks"] if c["key"] == key)
 
 
+def test_profile_website_written_as_bare_domain_is_saved_with_the_rest(api, two_workspaces):
+    """Guide trin 1 (Fürster 11/11): «rebotti.dk» – the field's own example format – used to fail the whole profile save
+    with 422, so name, phone and description were never stored and trin 1 never became done."""
+    t = two_workspaces
+    tok, ws = t["tok_a"], t["ws_a"]
+    p = api.get(tok, f"/workspaces/{ws}/profile").json()
+    r = api.put(tok, f"/workspaces/{ws}/profile", {
+        "expected_version": p["version"], "legal_name": "Rebotti", "description": "Italiensk restaurant i Aarhus",
+        "phone": "+45 86 12 34 56", "website_url": "  rebotti.dk ", "manual_setup": False})
+    assert r.status_code == 200, r.text
+    assert r.json()["website_url"] == "https://rebotti.dk" and r.json()["phone"] == "+45 86 12 34 56"
+    r = api.put(tok, f"/workspaces/{ws}/profile", {"expected_version": r.json()["version"], "legal_name": "Rebotti",
+                                                   "website_url": "   "})
+    assert r.status_code == 200 and r.json()["website_url"] is None
+    r = api.put(tok, f"/workspaces/{ws}/profile", {"expected_version": r.json()["version"], "legal_name": "Rebotti",
+                                                   "website_url": "ftp://rebotti.dk"})
+    assert r.status_code == 422
+
+
 # --- Acceptance 4: manual setup without URL, multiple/custom categories, languages -----
 
 

@@ -1,6 +1,6 @@
 {
   "later": {
-    "link": "Haré el resto más tarde"
+    "link": "Configúralo tú mismo"
   },
   "need": {
     "title": "Necesitará"
@@ -16,6 +16,7 @@
     ],
     "stepAria": "Paso {n}: {label}",
     "skipped": " (omitido)",
+    "done": " (completado)",
     "laterNote": ": lo encontrará todo de nuevo en el icono de perfil → Todos los ajustes."
   },
   "hours": {
@@ -82,6 +83,7 @@
       "de": "Alemán"
     },
     "versionConflict": "La página se ha modificado en otro lugar. Recárguela para ver la versión más reciente.",
+    "nameRequired": "El nombre es obligatorio: todavía no se ha guardado nada.",
     "saveFailed": "No se ha podido guardar. Inténtelo de nuevo.",
     "hoursHint": "Escriba, por ejemplo, «Lun–vie 07–16» o «Lun–vie 07–16; sáb 09–12». Se guarda en cuanto se puede interpretar.",
     "hoursTitle": "Horario",
@@ -151,9 +153,11 @@
     "status": {
       "saving": "Guardando…",
       "saved": "Guardado",
+      "notSaved": "No guardado",
       "idle": "Se guarda automáticamente",
       "comeBack": " · siempre puede volver aquí",
       "fillIn": "Rellene el nombre, el número de teléfono y a qué se dedican para continuar.",
+      "fillInNoPhone": "Rellena el nombre y a qué os dedicáis para continuar.",
       "reload": "Recargar"
     },
     "nextTo2": "Continuar al paso 2: calendario y sistemas",
@@ -342,6 +346,11 @@
       "oneLine": "Hay que añadir una línea a su web. No necesita entenderla: envíela a quien se encargue de la página.",
       "codeAria": "Línea de código",
       "copied": "Copiado",
+      "notReady": {
+        "no_approved_knowledge": "Aprueba primero al menos un elemento en Conocimiento: el chat solo responde con lo aprobado.",
+        "no_allowed_origins": "Escribe la dirección de vuestra web en el paso 1: el chat solo puede aparecer allí.",
+        "ai_not_configured": "Las respuestas de IA aún no están activadas en Dialogbot. Escríbenos."
+      },
       "copy": "Copiar la línea",
       "sendWebmaster": "Enviar a mi webmaster",
       "seen": "La línea está en la página: el estado es Listo.",
@@ -364,6 +373,9 @@
     "readyNoPhone": "Cuando lo active, Dialogbot estará listo.",
     "missing": "Falta: {list}.",
     "goToday": "Ir a Hoy",
+    "toPayment": "Continuar a suscripción y pago",
+    "payNext": "Último paso: confirma la suscripción.",
+    "payAfter": "Después confirmas la suscripción.",
     "turningOn": "Activando…",
     "turnOn": "Activar Dialogbot",
     "managersOnly": "Solo los propietarios y administradores pueden activarlo.",

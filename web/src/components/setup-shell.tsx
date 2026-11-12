@@ -35,9 +35,10 @@ export async function SetupShell({ step, steps, workspaceName, children, wide = 
                 const here = n === step;
                 return (
                   <li key={label}>
-                    <Link href={`/opsaetning/${n}`} aria-label={`${t("stepAria", { n, label })}${st === "skipped" ? t("skipped") : ""}`} aria-current={here ? "step" : undefined} className="inline-flex items-center justify-center gap-2 min-w-[44px] min-h-[44px] rounded-xl">
+                    <Link href={`/opsaetning/${n}`} aria-label={`${t("stepAria", { n, label })}${st === "done" ? t("done") : st === "skipped" ? t("skipped") : ""}`} aria-current={here ? "step" : undefined} className="inline-flex items-center justify-center gap-2 min-w-[44px] min-h-[44px] rounded-xl">
                       <span className={`w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] border-2 border-ink inline-flex items-center justify-center font-display font-extrabold text-[15px] ${here ? "bg-highlight text-ink" : st === "done" ? "bg-ink text-paper" : "bg-paper text-ink"}`}>
-                        {st === "done" && !here ? <Icon name="check" size={18} /> : n}
+                        {/* done shows as done also on the step you are on (trin 1 filled in = ✓ at once) */}
+                        {st === "done" ? <Icon name="check" size={18} /> : n}
                       </span>
                       <span className={`${here ? "hidden sm:inline" : "hidden md:inline"} text-[14px] ${here ? "font-semibold text-ink" : "text-muted"}`}>{label}{st === "skipped" && !here ? t("skipped") : ""}</span>
                     </Link>
@@ -50,7 +51,7 @@ export async function SetupShell({ step, steps, workspaceName, children, wide = 
         </div>
       </header>
       <main id="main" className="flex-grow w-full pb-action-bar sm:pb-10">
-        <div className={`${wide ? "max-w-[1100px]" : "max-w-[1280px]"} mx-auto px-4 md:px-6 py-5 md:py-8`}>{children}{later && <p className="text-[13px] text-muted mt-6 hidden sm:block"><SetupLater />{t("laterNote")}</p>}</div>
+        <div className={`${wide ? "max-w-[1100px]" : "max-w-[1280px]"} mx-auto px-4 md:px-6 py-5 md:py-8`}>{children}{later && <p className="text-[14px] text-muted mt-6"><SetupLater className="font-semibold text-ink" />{t("laterNote")}</p>}</div>
       </main>
       {assistant && <AssistantDock wsId={assistant.wsId} canChange={assistant.canChange} step={step} column={false} />}
     </div>

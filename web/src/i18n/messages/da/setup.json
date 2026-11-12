@@ -1,6 +1,6 @@
 {
   "later": {
-    "link": "Jeg gør resten senere"
+    "link": "Sæt op selv"
   },
   "need": {
     "title": "Du skal bruge"
@@ -16,6 +16,7 @@
     ],
     "stepAria": "Trin {n}: {label}",
     "skipped": " (sprunget over)",
+    "done": " (fuldført)",
     "laterNote": " – du finder alt igen under profil-ikonet → Alle indstillinger."
   },
   "hours": {
@@ -82,6 +83,7 @@
       "de": "Tysk"
     },
     "versionConflict": "Siden er ændret et andet sted. Genindlæs den for at se det nyeste.",
+    "nameRequired": "Navnet skal udfyldes – det er ikke gemt endnu.",
     "saveFailed": "Kunne ikke gemme. Prøv igen.",
     "hoursHint": "Skriv fx «Man–fre 07–16» eller «Man–fre 07–16; lør 09–12». Det gemmes, så snart det kan læses.",
     "hoursTitle": "Åbningstider",
@@ -151,9 +153,11 @@
     "status": {
       "saving": "Gemmer …",
       "saved": "Gemt",
+      "notSaved": "Ikke gemt",
       "idle": "Gemmes løbende",
       "comeBack": " · du kan altid komme tilbage hertil",
       "fillIn": "Udfyld navn, telefonnummer og hvad I laver for at gå videre.",
+      "fillInNoPhone": "Udfyld navn og hvad I laver for at gå videre.",
       "reload": "Genindlæs"
     },
     "nextTo2": "Videre til trin 2: kalender & systemer",
@@ -342,6 +346,11 @@
       "oneLine": "Én linje skal på jeres hjemmeside. Du behøver ikke forstå den – send den til den, der passer siden.",
       "codeAria": "Kodelinje",
       "copied": "Kopieret",
+      "notReady": {
+        "no_approved_knowledge": "Godkend mindst én ting under Viden først – webchatten svarer kun ud fra det, I har godkendt.",
+        "no_allowed_origins": "Skriv jeres hjemmesides adresse i trin 1 – chatten må kun vises dér.",
+        "ai_not_configured": "Svar fra AI er ikke slået til i Dialogbot endnu. Skriv til os."
+      },
       "copy": "Kopiér linjen",
       "sendWebmaster": "Send til min webmand",
       "seen": "Linjen er på siden – status er Klar.",
@@ -364,6 +373,9 @@
     "readyNoPhone": "Når du tænder, er Dialogbot klar.",
     "missing": "Mangler: {list}.",
     "goToday": "Gå til I dag",
+    "toPayment": "Videre til abonnement og betaling",
+    "payNext": "Sidste skridt: bekræft abonnementet.",
+    "payAfter": "Bagefter bekræfter du abonnementet.",
     "turningOn": "Tænder …",
     "turnOn": "Tænd Dialogbot",
     "managersOnly": "Kun ejere og administratorer kan tænde.",

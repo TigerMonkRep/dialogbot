@@ -136,7 +136,15 @@
       "aria": "Turn Dialogbot on or off",
       "onlyAdmins": "Only owners and admins can turn it on and off",
       "setupFirst": "The phone must be set up before Dialogbot can be turned on"
-    }
+    },
+    "payTag": "Last step",
+    "payNext": "Dialogbot is set up · choose subscription and payment",
+    "chatOn": "The web chat is on",
+    "chatOff": "The web chat is not on",
+    "chatStatusOn": "Answers on your website. The phone is optional and not set up.",
+    "chatStatusOff": "Switch on the web chat and Dialogbot answers on your website – no phone number needed.",
+    "setUpChat": "Set up the web chat",
+    "turnedOnChatSub": "It answers on your website now."
   },
   "time": {
     "today": "Today",
@@ -868,7 +876,12 @@
       "confirm": "Confirm subscription",
       "ownerMustConfirm": "The owner must confirm the subscription.",
       "older": "Older agreement – confirm the subscription to switch to the current subscription.",
-      "note": "Prices are excl. VAT. No commitment – tell the assistant or write to info@dialogbot.dk if you want to cancel. Payment never starts calls."
+      "note": "Prices are excl. VAT. No commitment – tell the assistant or write to info@dialogbot.dk if you want to cancel. Payment never starts calls.",
+      "fromSetup": "Last step: confirm the subscription below and add a payment card. Then you are live.",
+      "fromSetupNoCard": "Last step: confirm the subscription below. Then you are live.",
+      "fromSetupCard": "The subscription is confirmed. Last step: add a payment card below.",
+      "fromSetupLive": "You are live. The subscription is in place.",
+      "goToday": "Go to Today"
     },
     "usage": {
       "title": "Usage per call",

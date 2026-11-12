@@ -136,7 +136,15 @@
       "aria": "Tænd eller sluk Dialogbot",
       "onlyAdmins": "Kun ejere og administratorer kan tænde og slukke",
       "setupFirst": "Telefonen skal sættes op, før Dialogbot kan tændes"
-    }
+    },
+    "payTag": "Sidste skridt",
+    "payNext": "Dialogbot er sat op · vælg abonnement og betaling",
+    "chatOn": "Webchatten er tændt",
+    "chatOff": "Webchatten er ikke tændt",
+    "chatStatusOn": "Svarer på jeres hjemmeside. Telefonen er valgfri og ikke sat op.",
+    "chatStatusOff": "Tænd webchatten, så svarer Dialogbot på jeres hjemmeside – uden telefonnummer.",
+    "setUpChat": "Sæt webchatten op",
+    "turnedOnChatSub": "Den svarer på jeres hjemmeside nu."
   },
   "time": {
     "today": "I dag",
@@ -868,7 +876,12 @@
       "confirm": "Bekræft abonnement",
       "ownerMustConfirm": "Ejeren skal bekræfte abonnementet.",
       "older": "Ældre aftale – bekræft abonnementet for at skifte til det nuværende abonnement.",
-      "note": "Priser er ekskl. moms. Ingen binding – sig det til assistenten eller skriv til info@dialogbot.dk, hvis I vil opsige. Betaling starter aldrig opkald."
+      "note": "Priser er ekskl. moms. Ingen binding – sig det til assistenten eller skriv til info@dialogbot.dk, hvis I vil opsige. Betaling starter aldrig opkald.",
+      "fromSetup": "Sidste skridt: bekræft abonnementet herunder, og tilføj et betalingskort. Så er I live.",
+      "fromSetupNoCard": "Sidste skridt: bekræft abonnementet herunder. Så er I live.",
+      "fromSetupCard": "Abonnementet er bekræftet. Sidste skridt: tilføj et betalingskort herunder.",
+      "fromSetupLive": "Du er live. Abonnementet er på plads.",
+      "goToday": "Gå til I dag"
     },
     "usage": {
       "title": "Forbrug pr. opkald",

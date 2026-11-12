@@ -9,15 +9,18 @@
     "skipToContent": "Zum Inhalt springen",
     "home": "Dialogbot – Heute",
     "nav": "Einrichtung",
-    "steps": [
-      "Unternehmen",
-      "Kalender & Systeme",
-      "Testen & einschalten"
-    ],
     "stepAria": "Schritt {n}: {label}",
-    "skipped": " (übersprungen)",
     "done": " (erledigt)",
-    "laterNote": " – Sie finden alles wieder unter dem Profilsymbol → Alle Einstellungen."
+    "laterNote": " – Sie finden alles wieder unter dem Profilsymbol → Alle Einstellungen.",
+    "labels": {
+      "virksomhed": "Unternehmen",
+      "viden": "Wissen",
+      "telefon": "Telefon",
+      "chat": "Chat",
+      "kalender": "Kalender",
+      "betaling": "Zahlung"
+    },
+    "next": "Weiter zu Schritt {n}: {label}"
   },
   "hours": {
     "days": [
@@ -41,9 +44,9 @@
     "and": "und"
   },
   "step1Page": {
-    "eyebrow": "Ihr Dialogbot · Schritt 1 von 3 · ca. 5 Min.",
+    "eyebrow": "Bauen Sie Ihren Dialogbot · Schritt 1 von {total} · ca. 5 Min.",
     "title": "Wer sind Sie – und was soll er tun?",
-    "intro": "Ein Schritt. Das meiste holen wir von Ihrer Website – Sie korrigieren nur, was nicht stimmt. Alles lässt sich später ändern, indem Sie es dem Assistenten sagen.",
+    "intro": "Beginnen Sie mit der Website: Sie füllt Name, Telefon und Adresse aus. Wählen Sie dann Telefon, Chat oder beides – das bestimmt die nächsten Schritte. Sie korrigieren nur, was falsch ist.",
     "need": [
       [
         "1×",
@@ -94,7 +97,7 @@
     "readOnly": "Ihre Rolle (Leser) kann ansehen, aber nicht bearbeiten.",
     "a": {
       "title": "Von der Website übernehmen",
-      "hintAi": "Dialogbot liest die Seite und schlägt Name, Tätigkeit, Öffnungszeiten und Preise vor.",
+      "hintAi": "Dialogbot liest die Seite und füllt Name, Telefon und Adresse aus – und schlägt Öffnungszeiten und Preise vor.",
       "hintNoAi": "Die Adresse wird gespeichert. Vorschläge von der Website setzen voraus, dass KI eingeschaltet ist.",
       "urlAria": "Adresse der Website",
       "urlPlaceholder": "firma.de",
@@ -104,11 +107,7 @@
       "theSite": "der Seite",
       "approveAll": "Alle {n} bestätigen",
       "fixYellow": "Gelbe Einträge korrigieren",
-      "allApproved": "Alles ist bestätigt und wird jetzt von Dialogbot verwendet.",
-      "siteLabel": "Website",
-      "fileLabel": "Datei hochladen",
-      "textLabel": "Text einfügen",
-      "docsReview": "{n} Vorschläge aus Dateien und Text · freigeben oder ändern"
+      "allApproved": "Alles ist bestätigt und wird jetzt von Dialogbot verwendet."
     },
     "b": {
       "title": "Über Sie",
@@ -138,13 +137,25 @@
       "categoryRemove": "{label} entfernen"
     },
     "c": {
-      "title": "Was soll er für Sie tun?",
-      "hint": "Wählen Sie, was passt. Davon hängt ab, was in Schritt 2 und 3 abgefragt wird.",
+      "title": "Wo soll Dialogbot antworten?",
+      "hint": "Telefon, Chat auf der Website oder beides. Das bestimmt die nächsten Schritte – und ob die Telefonnummer nötig ist.",
       "cards": {
-        "phone": { "title": "Ans Telefon gehen", "sub": "wenn Sie es nicht können – oder immer" },
-        "booking": { "title": "Termine buchen", "sub": "direkt in Ihren Kalender" },
-        "web": { "title": "Auf der Website antworten", "sub": "Webchat – eine Codezeile" },
-        "outbound": { "title": "Kunden anrufen", "sub": "Kampagnen · Minuten aus dem Paket" }
+        "phone": {
+          "title": "Ans Telefon gehen",
+          "sub": "wenn Sie es nicht können – oder immer"
+        },
+        "booking": {
+          "title": "Termine buchen",
+          "sub": "direkt in Ihren Kalender"
+        },
+        "web": {
+          "title": "Auf der Website antworten",
+          "sub": "Webchat – eine Codezeile"
+        },
+        "outbound": {
+          "title": "Kunden anrufen",
+          "sub": "Kampagnen · Minuten aus dem Paket"
+        }
       },
       "langAria": "Sprache",
       "speaks": "Er spricht",
@@ -159,9 +170,7 @@
       "fillIn": "Geben Sie Name, Telefonnummer und Ihre Tätigkeit an, um fortzufahren.",
       "fillInNoPhone": "Füllen Sie Namen und Tätigkeit aus, um fortzufahren.",
       "reload": "Neu laden"
-    },
-    "nextTo2": "Weiter zu Schritt 2: Kalender & Systeme",
-    "nextTo3": "Weiter zu Schritt 3: Testen & einschalten"
+    }
   },
   "create": {
     "verifyFirst": "Bestätigen Sie zuerst Ihre E-Mail-Adresse.",
@@ -174,7 +183,7 @@
     "next": "Weiter"
   },
   "step2Page": {
-    "eyebrow": "Schritt 2 von 3",
+    "eyebrow": "Schritt {n} von {total}",
     "title": "Wo sollen die Termine landen?",
     "need": [
       [
@@ -236,22 +245,7 @@
       ]
     ],
     "defaultsNote": "Die Zeiten richten sich nach Ihren Öffnungszeiten aus Schritt 1. Zu Beginn: Termine von 45 Minuten, 15 Minuten Pause und frühestens morgen. Das lässt sich unter Termine ändern.",
-    "next": "Weiter zu Schritt 3: Testen & einschalten",
     "skip": "Überspringen – ich nutze keinen Kalender"
-  },
-  "step3Page": {
-    "eyebrow": "Schritt 3 von 3 · letzter Schritt",
-    "title": "Stimme wählen, Telefon verbinden – und einschalten",
-    "need": [
-      [
-        "1×",
-        "ein Telefon zum Anrufen"
-      ],
-      [
-        "10",
-        "Sekunden für die Rufumleitung"
-      ]
-    ]
   },
   "step3": {
     "failed": "Das hat nicht geklappt. Bitte versuchen Sie es erneut.",
@@ -329,96 +323,87 @@
       "title": "Telefon",
       "hint": "Sie behalten Ihre Nummer. Wir nehmen nur die Anrufe entgegen."
     },
-    "chat": {
-      "mailSubject": "Eine Zeile für die Website",
-      "mailBody": "Hallo,\n\nkönnten Sie bitte diese eine Zeile in die Website einfügen (direkt vor </body>)?\n\n{code}\n\nVielen Dank!",
-      "title": "Webchat auf der Website",
-      "hint": "Optional. Derselbe Assistent – nur als Chat.",
-      "ready": "Bereit",
-      "on": "Eingeschaltet",
-      "off": "Ausgeschaltet",
-      "onlyOnBefore": "Der Chat darf nur angezeigt werden auf ",
-      "onlyOnAfter": " – der Adresse aus Schritt 1.",
-      "noSite": "Geben Sie in Schritt 1 die Adresse der Website an, damit wir wissen, wo der Chat angezeigt werden darf.",
-      "turningOn": "Wird eingeschaltet …",
-      "turnOn": "Webchat einschalten",
-      "managersOnly": "Nur Inhaber und Administratoren können den Webchat einschalten.",
-      "oneLine": "Eine Zeile muss auf Ihre Website. Sie müssen sie nicht verstehen – schicken Sie sie an die Person, die die Seite betreut.",
-      "codeAria": "Codezeile",
-      "copied": "Kopiert",
-      "notReady": {
-        "no_approved_knowledge": "Geben Sie zuerst mindestens einen Eintrag unter Wissen frei – der Chat antwortet nur mit Freigegebenem.",
-        "no_allowed_origins": "Geben Sie in Schritt 1 Ihre Website-Adresse ein – nur dort darf der Chat erscheinen.",
-        "ai_not_configured": "KI-Antworten sind in Dialogbot noch nicht aktiviert. Schreiben Sie uns."
-      },
-      "copy": "Zeile kopieren",
-      "sendWebmaster": "An meinen Webmaster senden",
-      "seen": "Die Zeile ist auf der Seite – Status ist Bereit.",
-      "notSeen": "Sobald die Zeile auf der Seite ist, wechselt der Status hier von selbst auf «Bereit»."
-    },
     "needs": {
       "confirmNumber": "Ihre Nummer bestätigen",
       "connectPhone": "Telefon verbinden",
-      "testCall": "Testanruf durchführen",
-      "confirmSubscription": "Abonnement bestätigen",
-      "turnOnChat": "Webchat einschalten"
+      "testCall": "Testanruf durchführen"
     },
-    "noChannels": "Sie haben in Schritt 1 weder Telefon noch Website-Antworten gewählt. Die Stimme wird für Kampagnen verwendet.",
     "changeChoice": "Auswahl ändern",
     "isOn": "Dialogbot ist eingeschaltet",
-    "allReady": "Alles bereit – Dialogbot einschalten",
     "almost": "Fast fertig",
     "pauseNote": "Sie können ihn jederzeit unter Heute pausieren.",
     "readyPhone": "Der Testanruf war erfolgreich. Sobald Sie einschalten, nimmt Dialogbot die Anrufe entgegen, die Sie umleiten.",
     "readyNoPhone": "Sobald Sie einschalten, ist Dialogbot bereit.",
     "missing": "Es fehlt: {list}.",
     "goToday": "Zu Heute",
-    "toPayment": "Weiter zu Abo und Zahlung",
-    "payNext": "Letzter Schritt: Bestätigen Sie das Abo.",
-    "payAfter": "Danach bestätigen Sie das Abo.",
     "turningOn": "Wird eingeschaltet …",
-    "turnOn": "Dialogbot einschalten",
     "managersOnly": "Nur Inhaber und Administratoren können einschalten.",
-    "subscriptionNote": "Das Abonnement kostet ab {pMonthly}/Monat zzgl. MwSt. mit {pIncluded} Minuten für ein- und ausgehende Anrufe; danach {pExtraMinute} pro Minute eingehend und ausgehend {pCallAnswered} pro angenommenem Anruf + {pMinute} pro Minute.",
-    "confirmSubscription": "Abonnement bestätigen",
-    "findAgain": "Sie finden alles wieder unter dem Profilsymbol → Alle Einstellungen.",
     "readerTitle": "Der Inhaber richtet Dialogbot ein",
     "campaignsTitle": "Bereit für Ihre erste Kampagne",
     "campaignsText": "Es gibt nichts einzuschalten: Dialogbot ruft erst an, wenn Sie eine Kampagne erstellt und gestartet haben.",
     "campaignsCta": "Erste Kampagne erstellen",
-    "nothingTitle": "Wählen Sie, was Dialogbot tun soll",
-    "nothingText": "In Schritt 1 ist nichts ausgewählt, daher gibt es nichts einzuschalten. Wählen Sie mindestens eine Sache."
+    "nothingTitle": "Wählen Sie, was Dialogbot tun soll"
   },
   "assistant": {
     "setupChips": {
-      "1": [
+      "virksomhed": [
         {
           "label": "Öffnungszeiten",
           "fill": "Öffnungszeiten Mo-Fr 8-16"
         },
         {
-          "label": "Was passiert in Schritt 2?",
-          "say": "In Schritt 2 verbinden Sie Ihren Kalender, damit Termine dort landen. Das ist optional – Sie können es überspringen."
+          "label": "Was passiert danach?",
+          "say": "Danach fügen Sie Wissen hinzu – von der Website, aus einer Datei oder als Text – und richten Telefon und/oder Chat ein. Zum Schluss Abonnement und Zahlung, dann gehen Sie live."
         }
       ],
-      "2": [
+      "viden": [
+        {
+          "label": "Was verwendet Dialogbot?",
+          "say": "Nur, was Sie freigegeben haben. Vorschläge von der Website, aus Dateien und Text sind Entwürfe, bis Sie sie freigeben."
+        },
+        {
+          "label": "Kann ich später mehr hinzufügen?",
+          "say": "Ja. Alles liegt unter Wissen, und Sie können jederzeit mehr hinzufügen oder korrigieren."
+        }
+      ],
+      "telefon": [
+        {
+          "label": "Wie leite ich weiter?",
+          "say": "Tippen Sie den Code aus dem Telefon-Schritt auf Ihrem Telefon ein und drücken Sie Anrufen. Schalten Sie die Weiterleitung mit dem Code darunter wieder aus."
+        },
+        {
+          "label": "Kann ich es rückgängig machen?",
+          "say": "Ja. Sie können Dialogbot unter Heute pausieren und die Weiterleitung auf Ihrem Telefon ausschalten."
+        }
+      ],
+      "chat": [
+        {
+          "label": "Wo füge ich die Zeile ein?",
+          "say": "Direkt vor </body> auf der Website – oder schicken Sie sie mit dem Button an Ihren Webmaster. Sie tut nichts, bis der Chat live ist."
+        },
+        {
+          "label": "Wann geht der Chat live?",
+          "say": "Sobald das Abonnement steht. Bis dahin können Sie ihn hier in der Vorschau ausprobieren."
+        }
+      ],
+      "kalender": [
         {
           "label": "Was tragen Sie in den Kalender ein?",
-          "say": "Einen Termin mit Name, Nummer und Anliegen des Kunden – und eine Bestätigung an Sie. Ihre bestehenden Termine rühre ich nie an."
+          "say": "Einen Termin mit Name, Nummer und Anliegen des Kunden – und eine Bestätigung an Sie. Ihre bestehenden Termine fasse ich nie an."
         },
         {
-          "label": "Was passiert in Schritt 3?",
-          "say": "In Schritt 3 wählen Sie eine Stimme, verbinden das Telefon per Rufumleitung und schalten Dialogbot ein."
+          "label": "Kann ich überspringen?",
+          "say": "Ja. Ohne Kalender nimmt Dialogbot eine Nachricht entgegen, und Sie rufen zurück."
         }
       ],
-      "3": [
+      "betaling": [
         {
-          "label": "Wie richte ich die Rufumleitung ein?",
-          "say": "Tippen Sie den Code aus Schritt 3 auf Ihrem Telefon ein und drücken Sie auf Anrufen. Mit dem Code darunter schalten Sie die Rufumleitung wieder aus."
+          "label": "Warum zuerst zahlen?",
+          "say": "Weder Telefon noch Chat gehen ohne bezahltes Abonnement live. Bis dahin können Sie den Chat in der Vorschau ausprobieren."
         },
         {
-          "label": "Kann ich das rückgängig machen?",
-          "say": "Ja. Sie können Dialogbot unter Heute pausieren und die Rufumleitung auf Ihrem Telefon ausschalten."
+          "label": "Kann ich es rückgängig machen?",
+          "say": "Ja. Sie können Dialogbot unter Heute pausieren."
         }
       ]
     },
@@ -520,5 +505,192 @@
       "setup3": "Testen und einschalten"
     },
     "change": "Etwas ändern"
+  },
+  "videnPage": {
+    "eyebrow": "Schritt {n} von {total} · ca. 5 Min.",
+    "title": "Woraus Dialogbot antwortet",
+    "intro": "Lesen Sie die Website erneut, laden Sie eine Preisliste hoch oder fügen Sie einen Text ein. Daraus werden Vorschläge, die Sie hier freigeben – nichts wird vor der Freigabe verwendet.",
+    "need": [
+      [
+        "1×",
+        "Preisliste, FAQ oder Text",
+        "optional"
+      ],
+      [
+        "5",
+        "Minuten"
+      ]
+    ]
+  },
+  "viden": {
+    "readOnly": "Ihre Rolle (Leser) kann ansehen, aber kein Wissen hinzufügen.",
+    "a": {
+      "title": "Wissen hinzufügen",
+      "hint": "Von der Website, aus einer Datei (PDF, Word, Excel, CSV, Text) oder als eingefügter Text."
+    },
+    "b": {
+      "title": "Vorschläge prüfen",
+      "hint": "Nach Kategorie gruppiert. Geben Sie alle einer Kategorie frei oder korrigieren Sie sie einzeln.",
+      "empty": "Gerade keine Vorschläge zu prüfen. Fügen Sie oben etwas hinzu – oder machen Sie weiter und ergänzen Sie Wissen später.",
+      "all": "Alles, was Dialogbot weiß, finden Sie unter",
+      "allLink": "Wissen"
+    },
+    "approved": "{n|1 Eintrag ist freigegeben|# Einträge sind freigegeben} und werden von Dialogbot verwendet.",
+    "noneApproved": "Noch nichts freigegeben – der Chat antwortet nur aus dem, was Sie freigegeben haben."
+  },
+  "telefonPage": {
+    "eyebrow": "Schritt {n} von {total}",
+    "title": "Stimme, Nummer und Weiterleitung",
+    "intro": "Wählen Sie die Stimme, geben Sie die Nummer an, die Ihre Kunden anrufen, und bestätigen Sie sie. Die Dialogbot-Nummer wird verbunden und getestet, sobald das Abonnement steht.",
+    "need": [
+      [
+        "1×",
+        "ein Telefon zum Anrufen"
+      ],
+      [
+        "10",
+        "Sekunden für die Weiterleitung"
+      ]
+    ],
+    "readOnly": "Ihre Rolle (Leser) kann ansehen, aber das Telefon nicht einrichten.",
+    "liveWhenPaid": "Das Telefon geht live, sobald das Abonnement steht.",
+    "toPayment": "Zur Zahlung",
+    "status": "Auswahlen werden gespeichert, sobald Sie tippen. Sie können jederzeit hierher zurückkommen."
+  },
+  "chatPage": {
+    "eyebrow": "Schritt {n} von {total}",
+    "title": "Chat auf der Website",
+    "intro": "Wo der Chat erscheinen darf, wie er begrüßt, und eine Zeile für die Website. Probieren Sie ihn hier aus, bevor er live geht.",
+    "need": [
+      [
+        "1×",
+        "Zugang zur Website",
+        "oder ein Webmaster"
+      ],
+      [
+        "2",
+        "Minuten"
+      ]
+    ],
+    "readOnly": "Nur Inhaber und Administratoren können den Chat einrichten.",
+    "status": "Domain und Begrüßung werden gespeichert, wenn Sie auf Speichern oder Weiter tippen."
+  },
+  "chat": {
+    "widget": {
+      "title": "Widget",
+      "hint": "Der Chat darf nur auf Ihrer eigenen Domain erscheinen.",
+      "domain": "Ihre Website (Domain)",
+      "domainPlaceholder": "https://firma.de"
+    },
+    "look": {
+      "title": "Aussehen",
+      "greeting": "Begrüßung",
+      "previewAria": "So sieht der Chat auf der Website aus",
+      "header": "Chat mit {name}"
+    },
+    "save": "Speichern",
+    "saving": "Speichert …",
+    "saved": "Gespeichert",
+    "saveFailed": "Das hat nicht geklappt. Versuchen Sie es erneut.",
+    "live": "Live",
+    "onNotLive": "Ein · nicht live",
+    "notLive": "Nicht live",
+    "missing": {
+      "no_approved_knowledge": "Geben Sie unter Wissen mindestens einen Eintrag frei – der Chat antwortet nur aus dem, was Sie freigegeben haben.",
+      "no_allowed_origins": "Geben Sie die Adresse Ihrer Website ein – der Chat darf nur dort erscheinen.",
+      "ai_not_configured": "KI-Antworten sind in Dialogbot noch nicht aktiviert. Schreiben Sie uns."
+    },
+    "code": {
+      "title": "Einbettungscode",
+      "hint": "Eine Zeile auf Ihrer Website. Sie tut nichts, bis der Chat live ist.",
+      "aria": "Codezeile",
+      "copy": "Zeile kopieren",
+      "copied": "Kopiert",
+      "sendWebmaster": "An meinen Webmaster senden",
+      "seen": "Die Zeile ist auf der Seite – Status ist Bereit.",
+      "notSeen": "Sobald die Zeile auf der Seite ist, wechselt der Status hier von selbst auf «Bereit»."
+    },
+    "mailSubject": "Eine Zeile für die Website",
+    "mailBody": "Hallo,\n\nkönnten Sie bitte diese eine Zeile in die Website einfügen (direkt vor </body>)?\n\n{code}\n\nVielen Dank!",
+    "preview": {
+      "title": "Chat ausprobieren",
+      "hint": "Derselbe Assistent und dasselbe freigegebene Wissen. Nur Sie sehen ihn – nichts wird als Gespräch gespeichert.",
+      "onlyYou": "Vorschau – nur Sie",
+      "aria": "Vorschau des Chats",
+      "input": "Nachricht an den Chat schreiben",
+      "placeholder": "Schreiben Sie wie ein Kunde, z. B. «Haben Sie samstags geöffnet?»",
+      "send": "Senden",
+      "thinking": "Schreibt …",
+      "failed": "Die Vorschau hat nicht geantwortet. Versuchen Sie es erneut."
+    },
+    "liveWhenPaid": "Der Chat geht live, sobald das Abonnement steht",
+    "toPayment": "Zur Zahlung",
+    "paidTurnOn": "Das Abonnement steht. Schalten Sie den Chat ein, dann antwortet er den Besuchern auf der Website.",
+    "turnOn": "Webchat einschalten",
+    "turningOn": "Wird eingeschaltet …",
+    "isLive": "Der Chat ist live und antwortet den Besuchern auf der Website.",
+    "managersOnly": "Nur Inhaber und Administratoren können den Chat ausprobieren und einschalten."
+  },
+  "betalingPage": {
+    "eyebrow": "Schritt {n} von {total} · letzter Schritt",
+    "title": "Abonnement und Zahlung – dann gehen Sie live",
+    "intro": "Ein Abonnement. Bestätigen Sie es, fügen Sie eine Zahlungskarte hinzu und gehen Sie dann mit Telefon und Chat live. Vorher geht nichts live.",
+    "need": [
+      [
+        "1×",
+        "Zahlungskarte",
+        "wenn Kartenzahlung eingeschaltet ist"
+      ],
+      [
+        "2",
+        "Minuten"
+      ]
+    ],
+    "plan": {
+      "title": "Abonnement",
+      "hint": "Es gibt ein Abonnement – das gleiche für alle."
+    },
+    "card": {
+      "title": "Zahlungskarte",
+      "hint": "Die Karte wird bei Stripe gespeichert. Jetzt wird nichts abgebucht."
+    },
+    "ownerPays": "Der Inhaber bestätigt das Abonnement und fügt die Zahlungskarte hinzu. Danach kann Dialogbot live gehen.",
+    "paidByOwner": "Das Abonnement steht.",
+    "paid": "Das Abonnement steht. Jetzt kann Dialogbot live gehen.",
+    "notPaidYet": "Das Abonnement steht noch nicht.",
+    "nextConfirm": "Nächster Schritt: Bestätigen Sie das Abonnement und fügen Sie eine Zahlungskarte hinzu.",
+    "nextConfirmNoCard": "Nächster Schritt: Bestätigen Sie das Abonnement. Die Rechnung kommt per E-Mail.",
+    "nextCard": "Das Abonnement ist bestätigt. Letzter Schritt: Fügen Sie eine Zahlungskarte hinzu."
+  },
+  "betaling": {
+    "needs": {
+      "chat": "den Chat einrichten"
+    },
+    "toChat": "Zum Chat",
+    "notYet": "Noch nicht live",
+    "allReady": "Alles bereit – live gehen",
+    "goLive": "Live gehen",
+    "liveWhenPaidChat": "Der Chat geht live, sobald das Abonnement steht.",
+    "liveWhenPaidPhone": "Das Telefon geht live, sobald das Abonnement steht.",
+    "liveWhenPaidBoth": "Telefon und Chat gehen live, sobald das Abonnement steht.",
+    "nothingText": "Unter Unternehmen ist nichts ausgewählt, also gibt es nichts, womit Sie live gehen können. Wählen Sie mindestens eine Sache."
+  },
+  "checklist": {
+    "aria": "Einrichtung",
+    "listAria": "Schritte",
+    "tag": "Nicht fertig",
+    "lastTag": "Letzter Schritt",
+    "next": {
+      "today": "Die Einrichtung ist nicht fertig · nächstes: {label}",
+      "settings": "Der Assistent ist nicht fertig · nächstes: {label}",
+      "guide": "Nächstes: {label}"
+    },
+    "payNext": "Dialogbot ist eingerichtet · Abonnement und Zahlung wählen",
+    "goLive": "Das Abonnement steht · live gehen",
+    "continue": "Weiter",
+    "backToGuide": "Zurück zum Assistenten",
+    "done": "fertig",
+    "todo": "fehlt",
+    "manualCounts": "Was Sie unter Alle Einstellungen einrichten, zählt hier mit."
   }
 }

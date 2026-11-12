@@ -89,9 +89,7 @@
       "webhooksValue": "Webhook firmati verso i vostri sistemi",
       "log": "Registro ed esportazione",
       "logValue": "Tutte le modifiche, dalla più recente"
-    },
-    "guide": "La guida non è finita · prossimo: passo {n}. Ciò che configuri qui conta anche.",
-    "guideCta": "Torna alla guida"
+    }
   },
   "sheet": {
     "close": "Chiudi"

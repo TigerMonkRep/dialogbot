@@ -18,8 +18,8 @@ const ago = (t: T, iso: string | null) => {
 };
 const cardCls = "rounded-2xl border-2 border-ink bg-paper p-5 flex flex-col gap-3 min-h-[170px]";
 
-/** Trin 2 – Kalender & systemer. Optional: the owner can connect a calendar, or skip and let Dialogbot take a message. */
-export function Step2({ wsId, canManage, connectors, booking, goals, notice }: { wsId: string; canManage: boolean; connectors: Connector[]; booking: BookingSettings; goals: { version: number; product_intent: string; guidance_mode: string; conversation_goals: string[]; inbound_phone: boolean; webchat: boolean; callback: boolean }; notice: { kind: "ok" | "error"; text: string } | null }) {
+/** Kalender & systemer. Optional: the owner can connect a calendar, or skip and let Dialogbot take a message. */
+export function Step2({ wsId, canManage, connectors, booking, goals, notice, nextHref, nextLabel }: { nextHref: string; nextLabel: string; wsId: string; canManage: boolean; connectors: Connector[]; booking: BookingSettings; goals: { version: number; product_intent: string; guidance_mode: string; conversation_goals: string[]; inbound_phone: boolean; webchat: boolean; callback: boolean }; notice: { kind: "ok" | "error"; text: string } | null }) {
   const router = useRouter();
   const t = useT("setup.step2");
   const raw = useRaw();
@@ -50,14 +50,14 @@ export function Step2({ wsId, canManage, connectors, booking, goals, notice }: {
   };
   const next = async () => {
     setBusy("next"); setError(null);
-    try { await applyDefaults(); router.push("/opsaetning/3"); }
+    try { await applyDefaults(); router.push(nextHref); }
     catch (e) { setError((e as ApiError).message ?? t("saveFailed")); setBusy(null); }
   };
   const skip = async () => {
     setBusy("skip"); setError(null);
     try {
       await api(`/workspaces/${wsId}/goals`, { method: "PUT", body: JSON.stringify({ product_intent: goals.product_intent, guidance_mode: goals.guidance_mode, conversation_goals: goals.conversation_goals, inbound_phone: goals.inbound_phone, webchat: goals.webchat, callback: goals.callback, booking: false, expected_version: goals.version }) });
-      router.push("/opsaetning/3");
+      router.push(nextHref);
     } catch (e) { setError((e as ApiError).message ?? t("saveFailed")); setBusy(null); }
   };
 
@@ -107,7 +107,7 @@ export function Step2({ wsId, canManage, connectors, booking, goals, notice }: {
       {error && <p role="alert" className="text-[14px] text-danger">{error}</p>}
       <MobileActionBar className="flex-col sm:flex-row sm:items-center">
         <button type="button" onClick={next} disabled={busy !== null} className={`inline-flex items-center justify-center gap-2 min-h-[52px] px-6 rounded-xl font-semibold text-[16px] disabled:opacity-60 ${connected ? "bg-accent text-white hover:bg-accent-deep" : "bg-paper text-accent border-2 border-accent hover:bg-panel"}`}>
-          {t("next")}<Icon name="arrow_forward" size={18} />
+          {nextLabel}<Icon name="arrow_forward" size={18} />
         </button>
         <button type="button" onClick={skip} disabled={busy !== null} className="min-h-[44px] px-2 text-[15px] font-semibold text-ink underline underline-offset-2">{t("skip")}</button>
       </MobileActionBar>

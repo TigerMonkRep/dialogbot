@@ -89,9 +89,7 @@
       "webhooksValue": "Signierte Webhooks an Ihre Systeme",
       "log": "Protokoll und Export",
       "logValue": "Alle Änderungen, neueste zuerst"
-    },
-    "guide": "Der Assistent ist nicht fertig · weiter: Schritt {n}. Was Sie hier einrichten, zählt mit.",
-    "guideCta": "Zurück zum Assistenten"
+    }
   },
   "sheet": {
     "close": "Schließen"

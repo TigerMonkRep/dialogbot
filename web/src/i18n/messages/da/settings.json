@@ -89,9 +89,7 @@
       "webhooksValue": "Signerede webhooks til jeres systemer",
       "log": "Log og eksport",
       "logValue": "Alle ændringer, nyeste først"
-    },
-    "guide": "Guiden er ikke færdig · næste: trin {n}. Det, du sætter op her, tæller med.",
-    "guideCta": "Tilbage til guiden"
+    }
   },
   "sheet": {
     "close": "Luk"

@@ -9,15 +9,18 @@
     "skipToContent": "Spring til indhold",
     "home": "Dialogbot – I dag",
     "nav": "Opsætning",
-    "steps": [
-      "Virksomhed",
-      "Kalender & systemer",
-      "Test & tænd"
-    ],
     "stepAria": "Trin {n}: {label}",
-    "skipped": " (sprunget over)",
     "done": " (fuldført)",
-    "laterNote": " – du finder alt igen under profil-ikonet → Alle indstillinger."
+    "laterNote": " – du finder alt igen under profil-ikonet → Alle indstillinger.",
+    "labels": {
+      "virksomhed": "Virksomhed",
+      "viden": "Viden",
+      "telefon": "Telefon",
+      "chat": "Chat",
+      "kalender": "Kalender",
+      "betaling": "Betaling"
+    },
+    "next": "Videre til trin {n}: {label}"
   },
   "hours": {
     "days": [
@@ -41,9 +44,9 @@
     "and": "og"
   },
   "step1Page": {
-    "eyebrow": "Byg din Dialogbot · trin 1 af 3 · ca. 5 min",
+    "eyebrow": "Byg din Dialogbot · trin 1 af {total} · ca. 5 min",
     "title": "Hvem er I – og hvad skal den gøre?",
-    "intro": "Ét trin. Vi henter det meste fra jeres hjemmeside – du retter kun det, der er forkert. Det kan ændres senere ved at sige det til assistenten.",
+    "intro": "Start med hjemmesiden: den udfylder navn, telefon og adresse. Vælg så telefon, chat eller begge – det bestemmer de næste trin. Du retter kun det, der er forkert.",
     "need": [
       [
         "1×",
@@ -94,7 +97,7 @@
     "readOnly": "Din rolle (læser) kan se, men ikke redigere.",
     "a": {
       "title": "Hent det fra hjemmesiden",
-      "hintAi": "Dialogbot læser siden og foreslår navn, hvad I laver, åbningstider og priser.",
+      "hintAi": "Dialogbot læser siden og udfylder navn, telefon og adresse – og foreslår åbningstider og priser.",
       "hintNoAi": "Adressen gemmes. Forslag fra hjemmesiden kræver, at AI er slået til.",
       "urlAria": "Hjemmesidens adresse",
       "urlPlaceholder": "firma.dk",
@@ -104,11 +107,7 @@
       "theSite": "siden",
       "approveAll": "Godkend alle {n}",
       "fixYellow": "Ret det gule",
-      "allApproved": "Alt er godkendt og bruges nu af Dialogbot.",
-      "siteLabel": "Hjemmeside",
-      "fileLabel": "Upload fil",
-      "textLabel": "Indsæt tekst",
-      "docsReview": "{n} forslag fra filer og tekst · godkend eller ret"
+      "allApproved": "Alt er godkendt og bruges nu af Dialogbot."
     },
     "b": {
       "title": "Om jer",
@@ -138,13 +137,25 @@
       "categoryRemove": "Fjern {label}"
     },
     "c": {
-      "title": "Hvad skal den gøre for jer?",
-      "hint": "Vælg det, der passer. Det bestemmer, hvad trin 2 og 3 spørger om.",
+      "title": "Hvor skal Dialogbot svare?",
+      "hint": "Telefon, chat på hjemmesiden eller begge. Det bestemmer guidens næste trin – og om telefonnummeret skal med.",
       "cards": {
-        "phone": { "title": "Tage telefonen", "sub": "når I ikke kan – eller altid" },
-        "booking": { "title": "Booke aftaler", "sub": "direkte i jeres kalender" },
-        "web": { "title": "Svare på hjemmesiden", "sub": "webchat – én kodelinje" },
-        "outbound": { "title": "Ringe kunder op", "sub": "kampagner · minutter fra pakken" }
+        "phone": {
+          "title": "Tage telefonen",
+          "sub": "når I ikke kan – eller altid"
+        },
+        "booking": {
+          "title": "Booke aftaler",
+          "sub": "direkte i jeres kalender"
+        },
+        "web": {
+          "title": "Svare på hjemmesiden",
+          "sub": "webchat – én kodelinje"
+        },
+        "outbound": {
+          "title": "Ringe kunder op",
+          "sub": "kampagner · minutter fra pakken"
+        }
       },
       "langAria": "Sprog",
       "speaks": "Den taler",
@@ -159,9 +170,7 @@
       "fillIn": "Udfyld navn, telefonnummer og hvad I laver for at gå videre.",
       "fillInNoPhone": "Udfyld navn og hvad I laver for at gå videre.",
       "reload": "Genindlæs"
-    },
-    "nextTo2": "Videre til trin 2: kalender & systemer",
-    "nextTo3": "Videre til trin 3: test & tænd"
+    }
   },
   "create": {
     "verifyFirst": "Bekræft din e-mail først.",
@@ -174,7 +183,7 @@
     "next": "Videre"
   },
   "step2Page": {
-    "eyebrow": "Trin 2 af 3",
+    "eyebrow": "Trin {n} af {total}",
     "title": "Hvor skal aftalerne lande?",
     "need": [
       [
@@ -236,22 +245,7 @@
       ]
     ],
     "defaultsNote": "Tiderne følger jeres åbningstider fra trin 1. Som start: aftaler på 45 minutter, 15 minutters pause og tidligst i morgen. Det kan ændres under Aftaler.",
-    "next": "Videre til trin 3: test & tænd",
     "skip": "Spring over – jeg bruger ingen kalender"
-  },
-  "step3Page": {
-    "eyebrow": "Trin 3 af 3 · sidste trin",
-    "title": "Vælg stemme, forbind telefonen – og tænd",
-    "need": [
-      [
-        "1×",
-        "en telefon at ringe fra"
-      ],
-      [
-        "10",
-        "sekunder til viderestilling"
-      ]
-    ]
   },
   "step3": {
     "failed": "Det lykkedes ikke. Prøv igen.",
@@ -329,96 +323,87 @@
       "title": "Telefon",
       "hint": "Du beholder dit nummer. Vi tager bare opkaldene."
     },
-    "chat": {
-      "mailSubject": "Én linje til hjemmesiden",
-      "mailBody": "Hej,\n\nKan du sætte denne ene linje ind på hjemmesiden (lige før </body>)?\n\n{code}\n\nTak!",
-      "title": "Webchat på hjemmesiden",
-      "hint": "Valgfrit. Den samme assistent – bare som chat.",
-      "ready": "Klar",
-      "on": "Tændt",
-      "off": "Slukket",
-      "onlyOnBefore": "Chatten må kun vises på ",
-      "onlyOnAfter": " – adressen fra trin 1.",
-      "noSite": "Giv hjemmesidens adresse i trin 1, så ved vi, hvor chatten må vises.",
-      "turningOn": "Tænder …",
-      "turnOn": "Tænd webchatten",
-      "managersOnly": "Kun ejere og administratorer kan tænde webchatten.",
-      "oneLine": "Én linje skal på jeres hjemmeside. Du behøver ikke forstå den – send den til den, der passer siden.",
-      "codeAria": "Kodelinje",
-      "copied": "Kopieret",
-      "notReady": {
-        "no_approved_knowledge": "Godkend mindst én ting under Viden først – webchatten svarer kun ud fra det, I har godkendt.",
-        "no_allowed_origins": "Skriv jeres hjemmesides adresse i trin 1 – chatten må kun vises dér.",
-        "ai_not_configured": "Svar fra AI er ikke slået til i Dialogbot endnu. Skriv til os."
-      },
-      "copy": "Kopiér linjen",
-      "sendWebmaster": "Send til min webmand",
-      "seen": "Linjen er på siden – status er Klar.",
-      "notSeen": "Når linjen er på siden, skifter status her til «Klar» af sig selv."
-    },
     "needs": {
       "confirmNumber": "bekræft jeres nummer",
       "connectPhone": "forbind telefonen",
-      "testCall": "gennemfør prøveopkaldet",
-      "confirmSubscription": "bekræft abonnementet",
-      "turnOnChat": "tænd webchatten"
+      "testCall": "gennemfør prøveopkaldet"
     },
-    "noChannels": "I valgte ikke at tage telefonen eller svare på hjemmesiden i trin 1. Stemmen bruges til kampagner.",
     "changeChoice": "Ret valget",
     "isOn": "Dialogbot er tændt",
-    "allReady": "Alt er klar – tænd Dialogbot",
     "almost": "Næsten klar",
     "pauseNote": "Du kan altid pause den fra I dag.",
     "readyPhone": "Prøveopkaldet lykkedes. Når du tænder, tager Dialogbot de opkald, du viderestiller.",
     "readyNoPhone": "Når du tænder, er Dialogbot klar.",
     "missing": "Mangler: {list}.",
     "goToday": "Gå til I dag",
-    "toPayment": "Videre til abonnement og betaling",
-    "payNext": "Sidste skridt: bekræft abonnementet.",
-    "payAfter": "Bagefter bekræfter du abonnementet.",
     "turningOn": "Tænder …",
-    "turnOn": "Tænd Dialogbot",
     "managersOnly": "Kun ejere og administratorer kan tænde.",
-    "subscriptionNote": "Abonnementet er fra {pMonthly}/md. ekskl. moms med {pIncluded} minutter til ind- og udgående opkald; derefter {pExtraMinute} pr. minut ind, og udgående {pCallAnswered} pr. besvaret opkald + {pMinute} pr. minut.",
-    "confirmSubscription": "Bekræft abonnement",
-    "findAgain": "Du finder alt igen under profil-ikonet → Alle indstillinger.",
     "readerTitle": "Ejeren sætter Dialogbot op",
     "campaignsTitle": "Klar til jeres første kampagne",
     "campaignsText": "Der er intet at tænde: Dialogbot ringer først ud, når I har oprettet og startet en kampagne.",
     "campaignsCta": "Opret jeres første kampagne",
-    "nothingTitle": "Vælg hvad Dialogbot skal gøre",
-    "nothingText": "I trin 1 er der ikke valgt noget, så der er intet at tænde. Vælg mindst én ting."
+    "nothingTitle": "Vælg hvad Dialogbot skal gøre"
   },
   "assistant": {
     "setupChips": {
-      "1": [
+      "virksomhed": [
         {
           "label": "Åbningstider",
           "fill": "Åbningstider man-fre 8-16"
         },
         {
-          "label": "Hvad sker der i trin 2?",
-          "say": "I trin 2 forbinder du din kalender, så aftaler lander dér. Det er valgfrit – du kan springe det over."
+          "label": "Hvad sker der bagefter?",
+          "say": "Bagefter henter du viden ind – fra hjemmesiden, en fil eller tekst – og sætter telefon og/eller chat op. Til sidst abonnement og betaling, så går I live."
         }
       ],
-      "2": [
+      "viden": [
+        {
+          "label": "Hvad bruger Dialogbot?",
+          "say": "Kun det, du har godkendt. Forslag fra hjemmesiden, filer og tekst er kladder, indtil du godkender dem."
+        },
+        {
+          "label": "Kan jeg tilføje mere senere?",
+          "say": "Ja. Alt ligger under Viden, og du kan altid hente mere ind eller rette."
+        }
+      ],
+      "telefon": [
+        {
+          "label": "Hvordan viderestiller jeg?",
+          "say": "Tast koden fra telefon-trinnet på din telefon og tryk ring. Slå viderestillingen fra igen med koden under den."
+        },
+        {
+          "label": "Kan jeg fortryde?",
+          "say": "Ja. Du kan sætte Dialogbot på pause fra I dag, og slå viderestillingen fra på din telefon."
+        }
+      ],
+      "chat": [
+        {
+          "label": "Hvor sætter jeg linjen ind?",
+          "say": "Lige før </body> på hjemmesiden – eller send den til jeres webmand med knappen. Den gør intet, før chatten er live."
+        },
+        {
+          "label": "Hvornår går chatten live?",
+          "say": "Når abonnementet er på plads. Indtil da kan du prøve den her i forhåndsvisningen."
+        }
+      ],
+      "kalender": [
         {
           "label": "Hvad skriver I i kalenderen?",
           "say": "En aftale med kundens navn, nummer og ærinde – og en bekræftelse til jer. Jeres eksisterende aftaler rører jeg aldrig."
         },
         {
-          "label": "Hvad sker der i trin 3?",
-          "say": "I trin 3 vælger du stemme, forbinder telefonen med en viderestilling og tænder Dialogbot."
+          "label": "Kan jeg springe over?",
+          "say": "Ja. Uden kalender tager Dialogbot imod en besked, og I ringer tilbage."
         }
       ],
-      "3": [
+      "betaling": [
         {
-          "label": "Hvordan viderestiller jeg?",
-          "say": "Tast koden i trin 3 på din telefon og tryk ring. Slå viderestillingen fra igen med koden under den."
+          "label": "Hvorfor betale først?",
+          "say": "Hverken telefon eller chat går live uden et betalt abonnement. Indtil da kan du prøve chatten i forhåndsvisningen."
         },
         {
           "label": "Kan jeg fortryde?",
-          "say": "Ja. Du kan sætte Dialogbot på pause fra I dag, og slå viderestillingen fra på din telefon."
+          "say": "Ja. Du kan sætte Dialogbot på pause fra I dag."
         }
       ]
     },
@@ -520,5 +505,192 @@
       "setup3": "Test og tænd"
     },
     "change": "Ændr noget"
+  },
+  "videnPage": {
+    "eyebrow": "Trin {n} af {total} · ca. 5 min",
+    "title": "Det, Dialogbot svarer ud fra",
+    "intro": "Læs hjemmesiden igen, upload en prisliste eller indsæt en tekst. Det bliver til forslag, som du godkender her – intet bruges, før det er godkendt.",
+    "need": [
+      [
+        "1×",
+        "prisliste, FAQ eller tekst",
+        "valgfrit"
+      ],
+      [
+        "5",
+        "minutter"
+      ]
+    ]
+  },
+  "viden": {
+    "readOnly": "Din rolle (læser) kan se, men ikke hente viden ind.",
+    "a": {
+      "title": "Hent viden ind",
+      "hint": "Fra hjemmesiden, en fil (PDF, Word, Excel, CSV, tekst) eller tekst, du indsætter."
+    },
+    "b": {
+      "title": "Gennemgå forslagene",
+      "hint": "Grupperet pr. kategori. Godkend alle i en kategori, eller ret dem én ad gangen.",
+      "empty": "Ingen forslag at gennemgå lige nu. Hent noget ind ovenfor – eller gå videre og tilføj viden senere.",
+      "all": "Alt, Dialogbot ved, finder du under",
+      "allLink": "Viden"
+    },
+    "approved": "{n|1 ting er godkendt|# ting er godkendt} og bruges af Dialogbot.",
+    "noneApproved": "Intet er godkendt endnu – chatten svarer kun ud fra det, I har godkendt."
+  },
+  "telefonPage": {
+    "eyebrow": "Trin {n} af {total}",
+    "title": "Stemme, nummer og viderestilling",
+    "intro": "Vælg stemmen, giv det nummer, kunderne ringer til, og bekræft det. Dialogbot-nummeret forbindes og testes, når abonnementet er på plads.",
+    "need": [
+      [
+        "1×",
+        "en telefon at ringe fra"
+      ],
+      [
+        "10",
+        "sekunder til viderestilling"
+      ]
+    ],
+    "readOnly": "Din rolle (læser) kan se, men ikke sætte telefonen op.",
+    "liveWhenPaid": "Telefonen går live, når abonnementet er på plads.",
+    "toPayment": "Til betaling",
+    "status": "Valg gemmes, så snart du trykker. Du kan altid komme tilbage hertil."
+  },
+  "chatPage": {
+    "eyebrow": "Trin {n} af {total}",
+    "title": "Chat på hjemmesiden",
+    "intro": "Hvor chatten må vises, hvordan den hilser, og én linje til hjemmesiden. Prøv den her, før den går live.",
+    "need": [
+      [
+        "1×",
+        "adgang til hjemmesiden",
+        "eller en webmand"
+      ],
+      [
+        "2",
+        "minutter"
+      ]
+    ],
+    "readOnly": "Kun ejere og administratorer kan sætte chatten op.",
+    "status": "Domæne og velkomst gemmes, når du trykker Gem eller Videre."
+  },
+  "chat": {
+    "widget": {
+      "title": "Widget",
+      "hint": "Chatten må kun vises på jeres eget domæne.",
+      "domain": "Jeres hjemmeside (domæne)",
+      "domainPlaceholder": "https://firma.dk"
+    },
+    "look": {
+      "title": "Udseende",
+      "greeting": "Velkomst",
+      "previewAria": "Sådan ser chatten ud på hjemmesiden",
+      "header": "Chat med {name}"
+    },
+    "save": "Gem",
+    "saving": "Gemmer …",
+    "saved": "Gemt",
+    "saveFailed": "Det lykkedes ikke. Prøv igen.",
+    "live": "Live",
+    "onNotLive": "Tændt · ikke live",
+    "notLive": "Ikke live",
+    "missing": {
+      "no_approved_knowledge": "Godkend mindst én ting under Viden – chatten svarer kun ud fra det, I har godkendt.",
+      "no_allowed_origins": "Skriv jeres hjemmesides adresse – chatten må kun vises dér.",
+      "ai_not_configured": "Svar fra AI er ikke slået til i Dialogbot endnu. Skriv til os."
+    },
+    "code": {
+      "title": "Indlejringskode",
+      "hint": "Én linje på jeres hjemmeside. Den gør intet, før chatten er live.",
+      "aria": "Kodelinje",
+      "copy": "Kopiér linjen",
+      "copied": "Kopieret",
+      "sendWebmaster": "Send til min webmand",
+      "seen": "Linjen er på siden – status er Klar.",
+      "notSeen": "Når linjen er på siden, skifter status her til «Klar» af sig selv."
+    },
+    "mailSubject": "Én linje til hjemmesiden",
+    "mailBody": "Hej,\n\nKan du sætte denne ene linje ind på hjemmesiden (lige før </body>)?\n\n{code}\n\nTak!",
+    "preview": {
+      "title": "Prøv chatten",
+      "hint": "Den samme assistent og den samme godkendte viden. Kun du ser den – intet gemmes som samtale.",
+      "onlyYou": "Forhåndsvisning – kun du",
+      "aria": "Forhåndsvisning af chatten",
+      "input": "Skriv en besked til chatten",
+      "placeholder": "Skriv som en kunde, fx «Har I åbent lørdag?»",
+      "send": "Send",
+      "thinking": "Skriver …",
+      "failed": "Forhåndsvisningen svarede ikke. Prøv igen."
+    },
+    "liveWhenPaid": "Chatten går live, når abonnementet er på plads",
+    "toPayment": "Til betaling",
+    "paidTurnOn": "Abonnementet er på plads. Tænd chatten, så svarer den besøgende på hjemmesiden.",
+    "turnOn": "Tænd webchatten",
+    "turningOn": "Tænder …",
+    "isLive": "Chatten er live og svarer besøgende på hjemmesiden.",
+    "managersOnly": "Kun ejere og administratorer kan prøve og tænde chatten."
+  },
+  "betalingPage": {
+    "eyebrow": "Trin {n} af {total} · sidste trin",
+    "title": "Abonnement og betaling – så går I live",
+    "intro": "Ét abonnement. Bekræft det, tilføj et betalingskort, og gå så live med telefon og chat. Intet går live før.",
+    "need": [
+      [
+        "1×",
+        "betalingskort",
+        "når kortbetaling er slået til"
+      ],
+      [
+        "2",
+        "minutter"
+      ]
+    ],
+    "plan": {
+      "title": "Abonnement",
+      "hint": "Der er ét abonnement – det samme for alle."
+    },
+    "card": {
+      "title": "Betalingskort",
+      "hint": "Kortet gemmes hos Stripe. Der trækkes intet nu."
+    },
+    "ownerPays": "Ejeren bekræfter abonnementet og tilføjer betalingskortet. Bagefter kan Dialogbot gå live.",
+    "paidByOwner": "Abonnementet er på plads.",
+    "paid": "Abonnementet er på plads. Nu kan Dialogbot gå live.",
+    "notPaidYet": "Abonnementet er ikke på plads endnu.",
+    "nextConfirm": "Næste skridt: bekræft abonnementet og tilføj et betalingskort.",
+    "nextConfirmNoCard": "Næste skridt: bekræft abonnementet. Fakturaen kommer på e-mail.",
+    "nextCard": "Abonnementet er bekræftet. Sidste skridt: tilføj et betalingskort."
+  },
+  "betaling": {
+    "needs": {
+      "chat": "sæt chatten op"
+    },
+    "toChat": "Til chatten",
+    "notYet": "Ikke live endnu",
+    "allReady": "Alt er klar – gå live",
+    "goLive": "Gå live",
+    "liveWhenPaidChat": "Chatten går live, når abonnementet er på plads.",
+    "liveWhenPaidPhone": "Telefonen går live, når abonnementet er på plads.",
+    "liveWhenPaidBoth": "Telefon og chat går live, når abonnementet er på plads.",
+    "nothingText": "Under Virksomhed er der ikke valgt noget, så der er intet at gå live med. Vælg mindst én ting."
+  },
+  "checklist": {
+    "aria": "Opsætning",
+    "listAria": "Trin",
+    "tag": "Ikke færdig",
+    "lastTag": "Sidste skridt",
+    "next": {
+      "today": "Opsætningen er ikke færdig · næste: {label}",
+      "settings": "Guiden er ikke færdig · næste: {label}",
+      "guide": "Næste: {label}"
+    },
+    "payNext": "Dialogbot er sat op · vælg abonnement og betaling",
+    "goLive": "Abonnementet er på plads · gå live",
+    "continue": "Fortsæt",
+    "backToGuide": "Tilbage til guiden",
+    "done": "klar",
+    "todo": "mangler",
+    "manualCounts": "Det, du sætter op under Alle indstillinger, tæller med her."
   }
 }

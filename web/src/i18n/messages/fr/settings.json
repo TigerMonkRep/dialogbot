@@ -89,9 +89,7 @@
       "webhooksValue": "Webhooks signés vers vos outils",
       "log": "Journal et export",
       "logValue": "Toutes les modifications, les plus récentes d’abord"
-    },
-    "guide": "Le guide n’est pas terminé · suite : étape {n}. Ce que vous configurez ici compte aussi.",
-    "guideCta": "Retour au guide"
+    }
   },
   "sheet": {
     "close": "Fermer"

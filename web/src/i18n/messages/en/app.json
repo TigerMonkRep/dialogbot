@@ -67,11 +67,6 @@
   "overview": {
     "turnedOn": "Dialogbot is on",
     "turnedOnSub": "It will answer the next time customers call.",
-    "notDone": "Not finished",
-    "setupNext": "Setup isn't finished · next: step {n}",
-    "step1": "– business",
-    "step2": "– calendar & systems",
-    "step3": "– test & switch on",
     "continue": "Continue",
     "isOn": "Dialogbot is on",
     "isOff": "Dialogbot is off",
@@ -137,8 +132,6 @@
       "onlyAdmins": "Only owners and admins can turn it on and off",
       "setupFirst": "The phone must be set up before Dialogbot can be turned on"
     },
-    "payTag": "Last step",
-    "payNext": "Dialogbot is set up · choose subscription and payment",
     "chatOn": "The web chat is on",
     "chatOff": "The web chat is not on",
     "chatStatusOn": "Answers on your website. The phone is optional and not set up.",

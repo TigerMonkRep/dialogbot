@@ -67,11 +67,6 @@
   "overview": {
     "turnedOn": "Dialogbot è attivo",
     "turnedOnSub": "Risponderà al telefono alla prossima chiamata dei clienti.",
-    "notDone": "Non completata",
-    "setupNext": "La configurazione non è completata · prossimo: passaggio {n}",
-    "step1": "– azienda",
-    "step2": "– calendario e sistemi",
-    "step3": "– test e attivazione",
     "continue": "Continua",
     "isOn": "Dialogbot è attivo",
     "isOff": "Dialogbot è disattivato",
@@ -137,8 +132,6 @@
       "onlyAdmins": "Solo proprietari e amministratori possono attivare e disattivare",
       "setupFirst": "Il telefono deve essere configurato prima di poter attivare Dialogbot"
     },
-    "payTag": "Ultimo passo",
-    "payNext": "Dialogbot è configurato · scegli abbonamento e pagamento",
     "chatOn": "La chat web è attiva",
     "chatOff": "La chat web non è attiva",
     "chatStatusOn": "Risponde sul vostro sito. Il telefono è facoltativo e non configurato.",

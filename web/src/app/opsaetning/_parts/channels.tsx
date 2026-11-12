@@ -13,7 +13,7 @@ import type { Telephony } from "@/app/app/(admin)/settings/telephony/client";
 
 export type StandardVoice = { key: string; name: string; gender: "female" | "male"; image: string; description: string; sample: boolean };
 export type VoicesData = { engine: "available" | "simulated" | "not_configured"; standard_voices: StandardVoice[]; settings: { version: number; standard_voice: string | null; standard_default: string; pronunciations: { term: string; say: string }[] } };
-export type Webchat = { version: number; enabled: boolean; allowed_origins: string[]; greeting: string; embed_code: string; last_seen_at: string | null; available: boolean; unavailable_reasons: string[] };
+export type Webchat = { version: number; enabled: boolean; allowed_origins: string[]; greeting: string; effective_greeting: string; embed_code: string; last_seen_at: string | null; available: boolean; unavailable_reasons: string[]; setup_missing: string[]; subscription_paid: boolean };
 
 const label = "text-[13px] font-semibold text-ink";
 const btn = "inline-flex items-center justify-center gap-2 min-h-[44px] px-5 rounded-xl font-semibold disabled:opacity-60";
@@ -29,7 +29,7 @@ const Err = ({ text }: { text: string | null }) => (text ? <p role="alert" class
 
 /* ---------------------------------------------------------------- A · Stemme */
 
-function Voice({ wsId, data, canManage, company }: { wsId: string; data: VoicesData; canManage: boolean; company: string }) {
+export function Voice({ wsId, data, canManage, company }: { wsId: string; data: VoicesData; canManage: boolean; company: string }) {
   const router = useRouter();
   const tr = useT("setup.step3");
   const current = data.settings.standard_voice ?? data.settings.standard_default;
@@ -117,7 +117,7 @@ function Voice({ wsId, data, canManage, company }: { wsId: string; data: VoicesD
 
 const SUB = ["mobile", "landline", "ip_pbx", "unknown"] as const;
 
-function Phone({ wsId, t, canManage, profilePhone, company, cvr, address }: { wsId: string; t: Telephony; canManage: boolean; profilePhone: string; company: string; cvr: string; address: string }) {
+export function Phone({ wsId, t, canManage, profilePhone, company, cvr, address }: { wsId: string; t: Telephony; canManage: boolean; profilePhone: string; company: string; cvr: string; address: string }) {
   const router = useRouter();
   const tr = useT("setup.step3");
   const locale = useLocale();
@@ -204,7 +204,7 @@ function Phone({ wsId, t, canManage, profilePhone, company, cvr, address }: { ws
       <div className="flex flex-col gap-3">
         {t.status.code === "provisioning" ? <p className="rounded-xl bg-panel border-[1.5px] border-ink px-4 py-3 text-[14px]" role="status">{t.status.next_step}</p>
           : <p className="text-[15px]">{tr("phone.verifiedIntro")}</p>}
-        {missing.length > 0 && <ul className="list-disc pl-5 text-[14px]">{missing.map((m) => <li key={m.key}>{m.key === "agreement" ? <Link href="/app/konto/abonnement" className="underline font-semibold">{m.text}</Link> : m.text}</li>)}</ul>}
+        {missing.length > 0 && <ul className="list-disc pl-5 text-[14px]">{missing.map((m) => <li key={m.key}>{m.key === "agreement" ? <Link href="/opsaetning/betaling" className="underline font-semibold">{m.text}</Link> : m.text}</li>)}</ul>}
         {canManage && t.status.code !== "provisioning" && <button type="button" className={`${primary} self-start`} disabled={busy !== null || missing.length > 0} onClick={() => act("connect", () => api(`/workspaces/${wsId}/telephony/connect`, { method: "POST" }).then(() => undefined))}>{tr("phone.connect")}</button>}
       </div>
     );
@@ -250,128 +250,225 @@ function Phone({ wsId, t, canManage, profilePhone, company, cvr, address }: { ws
   );
 }
 
-/* ---------------------------------------------------------------- C · Webchat */
 
-function Chat({ wsId, w, canManage, website }: { wsId: string; w: Webchat; canManage: boolean; website: string }) {
+/* ---------------------------------------------------------------- Chat: widget, udseende, kode, forhåndsvisning */
+
+const CHAT_REASONS = ["no_approved_knowledge", "no_allowed_origins", "ai_not_configured"];
+
+/** The website chat, set up before it is paid: where it may be shown, how it greets, the one line for the website and a
+ *  preview where the owner tries it. Visitors get no chat until the subscription is in place (the backend refuses them);
+ *  once paid it is switched on here or under Betaling. */
+export function ChatSetup({ wsId, w, canManage, website, company, onDirty }: { wsId: string; w: Webchat; canManage: boolean; website: string; company: string; onDirty?: (save: (() => Promise<boolean>) | null) => void }) {
   const router = useRouter();
-  const tr = useT("setup.step3");
+  const tr = useT("setup.chat");
+  const [origin, setOrigin] = useState((w.allowed_origins[0] ?? originOf(website) ?? "").replace(/\/$/, ""));
+  const [greeting, setGreeting] = useState(w.greeting);
   const [err, setErr] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
-  const origin = originOf(website);
-  const turnOn = async () => {
-    setBusy(true); setErr(null);
+  const [copied, setCopied] = useState(false);
+  const ver = useRef(w.version);
+  const dirty = origin !== (w.allowed_origins[0] ?? originOf(website) ?? "").replace(/\/$/, "") || greeting !== w.greeting || (!w.allowed_origins.length && Boolean(origin));
+  const save = useCallback(async (enabled = w.enabled): Promise<boolean> => {
+    setBusy(true); setErr(null); setSaved(false);
     try {
-      // The allowed domain comes from the website given in trin 1; nothing else is allowed to load the chat.
-      const origins = Array.from(new Set([...w.allowed_origins, ...(origin ? [origin] : [])]));
-      await api(`/workspaces/${wsId}/webchat`, { method: "PUT", body: JSON.stringify({ expected_version: w.version, enabled: true, greeting: w.greeting, allowed_origins: origins }) });
-      router.refresh();
+      const o = origin.trim();
+      const origins = o ? [/^https?:\/\//.test(o) ? o : `https://${o}`] : [];
+      const r = await api<Webchat>(`/workspaces/${wsId}/webchat`, { method: "PUT", body: JSON.stringify({ expected_version: ver.current, enabled, greeting: greeting.trim(), allowed_origins: origins }) });
+      ver.current = r.version; setSaved(true); router.refresh(); setBusy(false);
+      return true;
     } catch (e) {
-      // Say what is missing instead of «kan ikke slås til endnu» (most often: nothing approved under Viden yet).
-      const reasons = ((e as ApiError & { reasons?: string[] }).reasons ?? []).filter((r) => ["no_approved_knowledge", "no_allowed_origins", "ai_not_configured"].includes(r));
-      setErr(reasons.length ? reasons.map((r) => tr(`chat.notReady.${r}`)).join(" ") : msg(e, tr("failed")));
+      const x = e as ApiError & { reasons?: string[] };
+      const reasons = (x.reasons ?? []).filter((r) => CHAT_REASONS.includes(r));
+      setErr(x.code === "subscription_required" ? tr("liveWhenPaid") : reasons.length ? reasons.map((r) => tr(`missing.${r}`)).join(" ") : msg(e, tr("saveFailed")));
+      setBusy(false);
+      return false;
     }
-    setBusy(false);
-  };
-  const mail = `mailto:?subject=${encodeURIComponent(tr("chat.mailSubject"))}&body=${encodeURIComponent(tr("chat.mailBody", { code: w.embed_code }))}`;
+  }, [wsId, origin, greeting, w.enabled, router, tr]);
+  useEffect(() => { onDirty?.(dirty && canManage ? () => save() : null); }, [dirty, canManage, save, onDirty]);
+  const mail = `mailto:?subject=${encodeURIComponent(tr("mailSubject"))}&body=${encodeURIComponent(tr("mailBody", { code: w.embed_code }))}`;
+  const missing = w.setup_missing.filter((r) => CHAT_REASONS.includes(r));
+  const live = w.enabled && w.available;
   return (
-    <Part letter="C" title={tr("chat.title")} hint={tr("chat.hint")} aside={<Tag>{w.enabled ? (w.last_seen_at ? tr("chat.ready") : tr("chat.on")) : tr("chat.off")}</Tag>}>
-      {!w.enabled ? (
-        <div className="flex flex-col gap-3">
-          <p className="text-[15px]">{origin ? <>{tr("chat.onlyOnBefore")}<b>{origin.replace(/^https?:\/\//, "")}</b>{tr("chat.onlyOnAfter")}</> : <>{tr("chat.noSite")}</>}</p>
-          {canManage && <button type="button" className={`${primary} self-start`} onClick={turnOn} disabled={busy || !origin}>{busy ? tr("chat.turningOn") : tr("chat.turnOn")}</button>}
-          {!canManage && <p className="text-[14px] text-muted">{tr("chat.managersOnly")}</p>}
+    <div className="flex flex-col gap-6">
+      <Part letter="A" title={tr("widget.title")} hint={tr("widget.hint")} aside={<Tag>{live ? tr("live") : w.enabled ? tr("onNotLive") : tr("notLive")}</Tag>}>
+        <div className="grid md:grid-cols-2 gap-4">
+          <label className="flex flex-col gap-1.5"><span className={label}>{tr("widget.domain")}</span>
+            <input className={inputCls} value={origin} onChange={(e) => setOrigin(e.target.value)} inputMode="url" autoCapitalize="none" placeholder={tr("widget.domainPlaceholder")} disabled={!canManage} /></label>
+          <label className="flex flex-col gap-1.5"><span className={label}>{tr("look.greeting")}</span>
+            <input className={inputCls} value={greeting} maxLength={300} onChange={(e) => setGreeting(e.target.value)} placeholder={w.effective_greeting} disabled={!canManage} /></label>
         </div>
-      ) : (
-        <div className="flex flex-col gap-3">
-          <p className="text-[15px]">{tr("chat.oneLine")}</p>
-          <pre className="rounded-xl border-[1.5px] border-ink bg-panel p-3 text-[13px] overflow-x-auto whitespace-pre-wrap break-all font-mono" aria-label={tr("chat.codeAria")}>{w.embed_code}</pre>
-          <div className="flex flex-wrap gap-2">
-            <button type="button" className={outline} onClick={() => { void navigator.clipboard?.writeText(w.embed_code); setCopied(true); }}>{copied ? tr("chat.copied") : tr("chat.copy")}</button>
-            <a href={mail} className={outline}>{tr("chat.sendWebmaster")}</a>
+        {/* Udseende: how the chat opens on the website – the same frame, the same greeting. */}
+        <div className="flex flex-col gap-2" aria-label={tr("look.previewAria")} role="img">
+          <span className="eyebrow">{tr("look.title")}</span>
+          <div className="w-full max-w-[340px] rounded-2xl border-2 border-ink bg-paper overflow-hidden">
+            <div className="bg-ink text-paper px-4 py-2.5 font-display font-bold text-[15px]">{tr("look.header", { name: company })}</div>
+            <div className="p-3"><p className="inline-block max-w-[85%] rounded-xl bg-panel px-3 py-2 text-[14px] text-ink">{greeting.trim() || w.effective_greeting}</p></div>
           </div>
-          <p className="text-[13px] text-muted">{w.last_seen_at ? tr("chat.seen") : tr("chat.notSeen")}</p>
-          {w.unavailable_reasons.length > 0 && <p className="text-[13px] text-muted">{w.unavailable_reasons.join(" ")}</p>}
         </div>
-      )}
-      <Err text={err} />
-    </Part>
+        {canManage && <div className="flex flex-wrap items-center gap-3">
+          <button type="button" className={outline} disabled={busy || !dirty} onClick={() => void save()}>{busy ? tr("saving") : tr("save")}</button>
+          {saved && !dirty && <span role="status" className="text-[14px] text-success font-semibold">{tr("saved")}</span>}
+        </div>}
+        {missing.length > 0 && <ul className="list-disc pl-5 text-[14px] text-ink">{missing.map((r) => <li key={r}>{r === "no_approved_knowledge" ? <Link href="/opsaetning/viden" className="underline font-semibold">{tr(`missing.${r}`)}</Link> : tr(`missing.${r}`)}</li>)}</ul>}
+        <Err text={err} />
+      </Part>
+
+      <Part letter="B" title={tr("code.title")} hint={tr("code.hint")}>
+        <pre className="rounded-xl border-[1.5px] border-ink bg-panel p-3 text-[13px] overflow-x-auto whitespace-pre-wrap break-all font-mono" aria-label={tr("code.aria")}>{w.embed_code}</pre>
+        <div className="flex flex-wrap gap-2">
+          <button type="button" className={outline} onClick={() => { void navigator.clipboard?.writeText(w.embed_code); setCopied(true); }}>{copied ? tr("code.copied") : tr("code.copy")}</button>
+          <a href={mail} className={outline}>{tr("code.sendWebmaster")}</a>
+        </div>
+        <p className="text-[13px] text-muted">{w.last_seen_at ? tr("code.seen") : tr("code.notSeen")}</p>
+      </Part>
+
+      <Part letter="C" title={tr("preview.title")} hint={tr("preview.hint")}>
+        <ChatPreview wsId={wsId} greeting={greeting.trim() || w.effective_greeting} canManage={canManage} />
+      </Part>
+
+      <ChatLiveNote wsId={wsId} w={w} canManage={canManage} missing={missing.length > 0} />
+    </div>
   );
 }
 
-/* ---------------------------------------------------------------- Tænd */
+/** «Chatten går live, når abonnementet er på plads» – or, paid: switch it on here. */
+function ChatLiveNote({ wsId, w, canManage, missing }: { wsId: string; w: Webchat; canManage: boolean; missing: boolean }) {
+  const router = useRouter();
+  const tr = useT("setup.chat");
+  const [err, setErr] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  if (w.enabled && w.available) return <p role="status" className="rounded-2xl bg-success-soft px-4 py-3 text-[15px] font-semibold text-success">{tr("isLive")}</p>;
+  if (!w.subscription_paid) {
+    return (
+      <p className="rounded-2xl border-2 border-ink bg-highlight px-4 py-3 text-[15px] text-ink" data-testid="chat-live-when-paid">
+        <b>{tr("liveWhenPaid")}</b>{" "}<Link href="/opsaetning/betaling" className="underline font-semibold">{tr("toPayment")}</Link>
+      </p>
+    );
+  }
+  const turnOn = async () => {
+    setBusy(true); setErr(null);
+    try { await api(`/workspaces/${wsId}/webchat`, { method: "PUT", body: JSON.stringify({ expected_version: w.version, enabled: true, greeting: w.greeting, allowed_origins: w.allowed_origins }) }); router.refresh(); }
+    catch (e) { setErr(msg(e, tr("saveFailed"))); }
+    setBusy(false);
+  };
+  return (
+    <div className="flex flex-col gap-2 rounded-2xl border-2 border-ink bg-paper px-4 py-3">
+      <p className="text-[15px] text-ink">{tr("paidTurnOn")}</p>
+      {canManage && <button type="button" className={`${primary} self-start`} onClick={turnOn} disabled={busy || missing}>{busy ? tr("turningOn") : tr("turnOn")}</button>}
+      <Err text={err} />
+    </div>
+  );
+}
 
-export function Step3(props: {
-  wsId: string; canManage: boolean; reader?: boolean; goals: { inbound_phone: boolean; webchat: boolean; product_intent: string };
-  voices: VoicesData | null; t: Telephony | null; webchat: Webchat | null; company: string; cvr: string; address: string; phone: string; website: string;
-  /** The subscription (owner/admin only). The guide ends on payment until it is paid (Fürster 11/11); null = not ours to pay. */
-  billing?: { paid: boolean } | null;
+type Turn = { role: "user" | "assistant"; content: string };
+
+/** The owner tries the chat in the app – the same assistant and approved knowledge; nothing is stored, no visitor sees it. */
+export function ChatPreview({ wsId, greeting, canManage }: { wsId: string; greeting: string; canManage: boolean }) {
+  const tr = useT("setup.chat");
+  const [turns, setTurns] = useState<Turn[]>([]);
+  const [text, setText] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  const send = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = text.trim();
+    if (!q || busy) return;
+    const next = [...turns, { role: "user" as const, content: q }];
+    setTurns(next); setText(""); setBusy(true); setErr(null);
+    try {
+      const r = await api<{ reply: string }>(`/workspaces/${wsId}/webchat/preview`, { method: "POST", body: JSON.stringify({ messages: next.slice(-12) }) });
+      setTurns([...next, { role: "assistant", content: r.reply }]);
+    } catch (x) { setErr(msg(x, tr("preview.failed"))); }
+    setBusy(false);
+  };
+  return (
+    <div className="flex flex-col gap-3 max-w-[560px]" data-testid="chat-preview">
+      <span className="self-start px-3 py-1 rounded-full border-[1.5px] border-ink bg-highlight text-[12px] font-semibold uppercase tracking-[0.08em]">{tr("preview.onlyYou")}</span>
+      <ol className="flex flex-col gap-2 rounded-xl border-[1.5px] border-ink bg-panel p-3 min-h-[120px]" aria-live="polite" aria-label={tr("preview.aria")}>
+        <li className="self-start max-w-[85%] rounded-xl bg-paper px-3 py-2 text-[14px]">{greeting}</li>
+        {turns.map((m, i) => <li key={i} className={`max-w-[85%] rounded-xl px-3 py-2 text-[14px] ${m.role === "user" ? "self-end bg-ink text-paper" : "self-start bg-paper text-ink"}`}>{m.content}</li>)}
+        {busy && <li className="self-start text-[13px] text-muted">{tr("preview.thinking")}</li>}
+      </ol>
+      {canManage ? (
+        <form className="flex gap-2" onSubmit={send}>
+          <label htmlFor="chat-preview-input" className="sr-only">{tr("preview.input")}</label>
+          <input id="chat-preview-input" className={`${inputCls} flex-1 min-w-0`} value={text} maxLength={1000} onChange={(e) => setText(e.target.value)} placeholder={tr("preview.placeholder")} />
+          <button type="submit" className={primary} disabled={busy || !text.trim()}>{tr("preview.send")}</button>
+        </form>
+      ) : <p className="text-[14px] text-muted">{tr("managersOnly")}</p>}
+      <Err text={err} />
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------- Gå live (Betaling) */
+
+/** The last thing in Betaling: once the subscription is paid, the chosen channels go live – the phone after its test call,
+ *  the website chat at once. Before that it says plainly that it goes live when the subscription is in place. */
+export function GoLive(props: {
+  wsId: string; canManage: boolean; reader?: boolean; paid: boolean; goals: { inbound_phone: boolean; webchat: boolean; product_intent: string };
+  t: Telephony | null; webchat: Webchat | null; company: string; cvr: string; address: string; phone: string;
 }) {
-  const { wsId, canManage, reader = false, goals, voices, t, webchat, company, cvr, address, phone, website, billing = null } = props;
-  const pay = Boolean(billing && !billing.paid);
+  const { wsId, canManage, reader = false, paid, goals, t, webchat, company, cvr, address, phone } = props;
   const router = useRouter();
   const tr = useT("setup.step3");
+  const tc = useT("setup.betaling");
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const phoneOn = goals.inbound_phone && t;
+  const chatOn = goals.webchat && webchat;
   const needs: string[] = [];
   if (phoneOn) {
     if (!t!.business_number || !t!.verified) needs.push(tr("needs.confirmNumber"));
     else if (!t!.destination) needs.push(tr("needs.connectPhone"));
     else if (t!.test?.status !== "passed" && !t!.active) needs.push(tr("needs.testCall"));
-    if (!t!.agreement_accepted && !t!.active) needs.push(tr("needs.confirmSubscription"));
   }
-  if (goals.webchat && webchat && !webchat.enabled && !phoneOn) needs.push(tr("needs.turnOnChat"));
+  if (chatOn && webchat!.setup_missing.length > 0) needs.push(tc("needs.chat"));
   const ready = needs.length === 0;
-  // Nothing to switch on (only «Ringe kunder op», or nothing chosen in trin 1): no «Tænd» and no «Alt er klar» – the
-  // one next action is the first campaign, or choosing something (F-E2B-03-O07).
   const noChannel = !goals.inbound_phone && !goals.webchat;
   const outbound = goals.product_intent !== "reception";
-  const alreadyOn = phoneOn ? t!.active : Boolean(webchat?.enabled);
+  const alreadyOn = (!phoneOn || t!.active) && (!chatOn || (webchat!.enabled && webchat!.available)) && !noChannel;
 
-  const turnOn = useCallback(async () => {
+  const goLive = useCallback(async () => {
     setBusy(true); setErr(null);
     try {
       if (phoneOn && !t!.active) await api(`/workspaces/${wsId}/telephony/activate`, { method: "POST" });
-      // Not paid yet: the last step is the subscription and card, said plainly; paid: «I dag» with «Dialogbot er tændt».
-      router.push(pay ? "/app/konto?fra=opsaetning#abonnement" : "/app?taendt=1"); router.refresh();
+      if (chatOn && !webchat!.enabled) await api(`/workspaces/${wsId}/webchat`, { method: "PUT", body: JSON.stringify({ expected_version: webchat!.version, enabled: true, greeting: webchat!.greeting, allowed_origins: webchat!.allowed_origins }) });
+      router.push("/app?taendt=1"); router.refresh();
     } catch (e) { setErr(msg(e, tr("failed"))); setBusy(false); }
-  }, [phoneOn, t, wsId, router, tr, pay]);
+  }, [phoneOn, chatOn, t, webchat, wsId, router, tr]);
 
-  return (
-    <div className="flex flex-col gap-6">
-      {voices && <Voice wsId={wsId} data={voices} canManage={canManage} company={company} />}
-      {phoneOn && <Phone wsId={wsId} t={t!} canManage={canManage} profilePhone={phone} company={company} cvr={cvr} address={address} />}
-      {goals.webchat && webchat && <Chat wsId={wsId} w={webchat} canManage={canManage} website={website} />}
-      {!goals.inbound_phone && !goals.webchat && <p className="rounded-2xl border-[1.5px] border-dashed border-ink px-4 py-3 text-[14px] text-ink-soft">{tr("noChannels")} <Link href="/opsaetning/1" className="underline font-semibold text-ink">{tr("changeChoice")}</Link></p>}
-
-      {noChannel ? (
-      <section className="rounded-[20px] bg-ink text-paper p-5 md:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4" aria-labelledby="taend-h">
+  if (noChannel) {
+    return (
+      <section className="rounded-[20px] bg-ink text-paper p-5 md:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4" aria-labelledby="live-h">
         <div>
-          <h2 id="taend-h" className="font-display font-extrabold text-[24px] leading-tight">{outbound ? tr("campaignsTitle") : tr("nothingTitle")}</h2>
-          <p className="text-[14px] text-line mt-1">{outbound ? tr("campaignsText") : tr("nothingText")}</p>
+          <h2 id="live-h" className="font-display font-extrabold text-[24px] leading-tight">{outbound ? tr("campaignsTitle") : tr("nothingTitle")}</h2>
+          <p className="text-[14px] text-line mt-1">{outbound ? tr("campaignsText") : tc("nothingText")}</p>
         </div>
         {outbound
           ? <Link href="/app/kampagner" className={`${btn} bg-highlight text-ink min-h-[52px] px-6 text-[16px]`}>{tr("campaignsCta")}</Link>
-          : <Link href="/opsaetning/1" className={`${btn} bg-highlight text-ink min-h-[52px] px-6 text-[16px]`}>{tr("changeChoice")}</Link>}
+          : <Link href="/opsaetning/virksomhed" className={`${btn} bg-highlight text-ink min-h-[52px] px-6 text-[16px]`}>{tr("changeChoice")}</Link>}
       </section>
-      ) : (
-      <section className="rounded-[20px] bg-ink text-paper p-5 md:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4" aria-labelledby="taend-h">
+    );
+  }
+  const whenPaid = goals.webchat && goals.inbound_phone ? tc("liveWhenPaidBoth") : goals.webchat ? tc("liveWhenPaidChat") : tc("liveWhenPaidPhone");
+  return (
+    <div className="flex flex-col gap-4">
+      {/* Paid: the phone's next single thing (connect the Dialogbot number, the test call) is done right here. */}
+      {paid && phoneOn && !t!.active && <Phone wsId={wsId} t={t!} canManage={canManage} profilePhone={phone} company={company} cvr={cvr} address={address} />}
+      {paid && chatOn && webchat!.setup_missing.length > 0 && <p className="text-[14px] text-ink">{tc("needs.chat")} <Link href="/opsaetning/chat" className="underline font-semibold">{tc("toChat")}</Link></p>}
+      <section className="rounded-[20px] bg-ink text-paper p-5 md:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4" aria-labelledby="live-h">
         <div>
-          {/* A reader cannot see the phone's status (telephony.read is staff+): no «Alt er klar»/«tændt» guesses. */}
-          <h2 id="taend-h" className="font-display font-extrabold text-[24px] leading-tight">{reader ? tr("readerTitle") : alreadyOn ? tr("isOn") : ready ? tr("allReady") : tr("almost")}</h2>
-          {!reader && <p className="text-[14px] text-line mt-1">{alreadyOn ? (pay ? tr("payNext") : tr("pauseNote")) : ready ? (phoneOn ? tr("readyPhone") : tr("readyNoPhone")) + (pay ? ` ${tr("payAfter")}` : "") : tr("missing", { list: needs.join(", ") })}</p>}
+          <h2 id="live-h" className="font-display font-extrabold text-[24px] leading-tight">{reader ? tr("readerTitle") : alreadyOn && paid ? tr("isOn") : !paid ? tc("notYet") : ready ? tc("allReady") : tr("almost")}</h2>
+          {!reader && <p className="text-[14px] text-line mt-1">{!paid ? whenPaid : alreadyOn ? tr("pauseNote") : ready ? (phoneOn ? tr("readyPhone") : tr("readyNoPhone")) : tr("missing", { list: needs.join(", ") })}</p>}
           {err && <p role="alert" className="text-[14px] text-highlight mt-1">{err}</p>}
         </div>
         {canManage ? (
-          alreadyOn ? (pay ? <Link href="/app/konto?fra=opsaetning#abonnement" className={`${btn} bg-highlight text-ink min-h-[52px] px-6`}>{tr("toPayment")}<Icon name="arrow_forward" size={18} /></Link>
-            : <Link href="/app" className={`${btn} bg-highlight text-ink min-h-[52px] px-6`}>{tr("goToday")}</Link>)
-            : <button type="button" onClick={turnOn} disabled={!ready || busy} className={`${btn} bg-highlight text-ink min-h-[52px] px-6 text-[16px]`}><Icon name="power_settings_new" size={20} />{busy ? tr("turningOn") : tr("turnOn")}</button>
+          alreadyOn && paid ? <Link href="/app" className={`${btn} bg-highlight text-ink min-h-[52px] px-6`}>{tr("goToday")}</Link>
+            : <button type="button" onClick={goLive} disabled={!paid || !ready || busy} className={`${btn} bg-highlight text-ink min-h-[52px] px-6 text-[16px]`}><Icon name="power_settings_new" size={20} />{busy ? tr("turningOn") : tc("goLive")}</button>
         ) : <p className="text-[14px] text-line">{tr("managersOnly")}</p>}
       </section>
-      )}
-      {needs.includes(tr("needs.confirmSubscription")) && <p className="text-[14px] text-ink-soft">{tr("subscriptionNote")} <Link href="/app/konto/abonnement" className="underline font-semibold text-ink">{tr("confirmSubscription")}</Link></p>}
-      <p className="text-[13px] text-muted">{tr("findAgain")} <SetupLater /></p>
     </div>
   );
 }

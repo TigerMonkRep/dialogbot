@@ -8,7 +8,7 @@ export type Workspace = { id: string; name: string; role: string; product_intent
  *  business set-up (F-JP-02, F-JE-03); anyone else to creating the first company. */
 async function noWorkspace(): Promise<never> {
   const me = await backend<{ home?: string }>("/auth/me").catch(() => null);
-  redirect(me?.home === "/privat/dag" ? "/privat/dag" : "/opsaetning/1");
+  redirect(me?.home === "/privat/dag" ? "/privat/dag" : "/opsaetning/virksomhed");
 }
 
 /** Resolve the active workspace for server components; redirect to creation when none exists (Privat: to /privat). */

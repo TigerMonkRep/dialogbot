@@ -1114,6 +1114,22 @@
         "title": "CarIn",
         "type": "object"
       },
+      "CardCheckoutIn": {
+        "properties": {
+          "return_to": {
+            "default": "konto",
+            "description": "Where Stripe sends the owner back: Konto (default) or the guide's payment step.",
+            "enum": [
+              "konto",
+              "opsaetning"
+            ],
+            "title": "Return To",
+            "type": "string"
+          }
+        },
+        "title": "CardCheckoutIn",
+        "type": "object"
+      },
       "CategoryIn": {
         "properties": {
           "is_primary": {
@@ -3724,6 +3740,29 @@
           "amount_minor"
         ],
         "title": "PledgeIn",
+        "type": "object"
+      },
+      "PreviewTurn": {
+        "properties": {
+          "content": {
+            "maxLength": 1000,
+            "title": "Content",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "user",
+              "assistant"
+            ],
+            "title": "Role",
+            "type": "string"
+          }
+        },
+        "required": [
+          "role",
+          "content"
+        ],
+        "title": "PreviewTurn",
         "type": "object"
       },
       "ProfileOut": {
@@ -7754,6 +7793,24 @@
           }
         },
         "title": "StartIn",
+        "type": "object"
+      },
+      "app__modules__webchat__router__PreviewIn": {
+        "properties": {
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/PreviewTurn"
+            },
+            "maxItems": 12,
+            "minItems": 1,
+            "title": "Messages",
+            "type": "array"
+          }
+        },
+        "required": [
+          "messages"
+        ],
+        "title": "PreviewIn",
         "type": "object"
       },
       "app__modules__webchat__router__SettingsIn": {
@@ -27806,6 +27863,23 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/CardCheckoutIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "content": {
@@ -38186,6 +38260,74 @@
           }
         },
         "summary": "Update Settings",
+        "tags": [
+          "webchat"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/webchat/preview": {
+      "post": {
+        "description": "The owner tries the chat in the app before it is live (also without a subscription). Stateless: the client sends\nthe turns so far; nothing is stored as a conversation and no connector action runs.",
+        "operationId": "preview_api_v1_workspaces__workspace_id__webchat_preview_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__webchat__router__PreviewIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Preview",
         "tags": [
           "webchat"
         ]

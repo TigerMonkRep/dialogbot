@@ -67,11 +67,6 @@
   "overview": {
     "turnedOn": "Dialogbot ist eingeschaltet",
     "turnedOnSub": "Er geht ans Telefon, wenn Kunden das nächste Mal anrufen.",
-    "notDone": "Nicht fertig",
-    "setupNext": "Die Einrichtung ist nicht abgeschlossen · nächster: Schritt {n}",
-    "step1": "– Unternehmen",
-    "step2": "– Kalender & Systeme",
-    "step3": "– Testen & einschalten",
     "continue": "Fortfahren",
     "isOn": "Dialogbot ist eingeschaltet",
     "isOff": "Dialogbot ist ausgeschaltet",
@@ -137,8 +132,6 @@
       "onlyAdmins": "Nur Inhaber und Administratoren können ein- und ausschalten",
       "setupFirst": "Das Telefon muss eingerichtet sein, bevor Dialogbot eingeschaltet werden kann"
     },
-    "payTag": "Letzter Schritt",
-    "payNext": "Dialogbot ist eingerichtet · Abo und Zahlung wählen",
     "chatOn": "Der Webchat ist an",
     "chatOff": "Der Webchat ist nicht an",
     "chatStatusOn": "Antwortet auf Ihrer Website. Das Telefon ist optional und nicht eingerichtet.",

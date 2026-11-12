@@ -9,15 +9,18 @@
     "skipToContent": "Skip to content",
     "home": "Dialogbot – Today",
     "nav": "Setup",
-    "steps": [
-      "Business",
-      "Calendar & systems",
-      "Test & switch on"
-    ],
     "stepAria": "Step {n}: {label}",
-    "skipped": " (skipped)",
     "done": " (done)",
-    "laterNote": " – you'll find everything again under the profile icon → All settings."
+    "laterNote": " – you'll find everything again under the profile icon → All settings.",
+    "labels": {
+      "virksomhed": "Business",
+      "viden": "Knowledge",
+      "telefon": "Phone",
+      "chat": "Chat",
+      "kalender": "Calendar",
+      "betaling": "Payment"
+    },
+    "next": "On to step {n}: {label}"
   },
   "hours": {
     "days": [
@@ -41,9 +44,9 @@
     "and": "and"
   },
   "step1Page": {
-    "eyebrow": "Build your Dialogbot · step 1 of 3 · approx. 5 min",
+    "eyebrow": "Build your Dialogbot · step 1 of {total} · approx. 5 min",
     "title": "Who are you – and what should it do?",
-    "intro": "One step. We fetch most of it from your website – you only correct what's wrong. You can change it later by telling the assistant.",
+    "intro": "Start with your website: it fills in name, phone and address. Then choose phone, chat or both – that decides the next steps. You only correct what is wrong.",
     "need": [
       [
         "1×",
@@ -94,7 +97,7 @@
     "readOnly": "Your role (reader) can view but not edit.",
     "a": {
       "title": "Fetch it from your website",
-      "hintAi": "Dialogbot reads the site and suggests your name, what you do, opening hours and prices.",
+      "hintAi": "Dialogbot reads the site and fills in name, phone and address – and suggests opening hours and prices.",
       "hintNoAi": "The address is saved. Suggestions from the website require AI to be switched on.",
       "urlAria": "Website address",
       "urlPlaceholder": "company.com",
@@ -104,11 +107,7 @@
       "theSite": "the site",
       "approveAll": "Approve all {n}",
       "fixYellow": "Fix the yellow ones",
-      "allApproved": "Everything is approved and now used by Dialogbot.",
-      "siteLabel": "Website",
-      "fileLabel": "Upload file",
-      "textLabel": "Paste text",
-      "docsReview": "{n} suggestions from files and text · approve or edit"
+      "allApproved": "Everything is approved and now used by Dialogbot."
     },
     "b": {
       "title": "About you",
@@ -138,13 +137,25 @@
       "categoryRemove": "Remove {label}"
     },
     "c": {
-      "title": "What should it do for you?",
-      "hint": "Choose what fits. It decides what steps 2 and 3 ask about.",
+      "title": "Where should Dialogbot answer?",
+      "hint": "Phone, chat on your website or both. It decides the guide's next steps – and whether the phone number is needed.",
       "cards": {
-        "phone": { "title": "Answer the phone", "sub": "when you can't – or always" },
-        "booking": { "title": "Book appointments", "sub": "straight into your calendar" },
-        "web": { "title": "Answer on your website", "sub": "web chat – one line of code" },
-        "outbound": { "title": "Call customers", "sub": "campaigns · minutes from the package" }
+        "phone": {
+          "title": "Answer the phone",
+          "sub": "when you can't – or always"
+        },
+        "booking": {
+          "title": "Book appointments",
+          "sub": "straight into your calendar"
+        },
+        "web": {
+          "title": "Answer on your website",
+          "sub": "web chat – one line of code"
+        },
+        "outbound": {
+          "title": "Call customers",
+          "sub": "campaigns · minutes from the package"
+        }
       },
       "langAria": "Languages",
       "speaks": "It speaks",
@@ -159,9 +170,7 @@
       "fillIn": "Fill in name, phone number and what you do to continue.",
       "fillInNoPhone": "Fill in the name and what you do to continue.",
       "reload": "Reload"
-    },
-    "nextTo2": "Continue to step 2: calendar & systems",
-    "nextTo3": "Continue to step 3: test & switch on"
+    }
   },
   "create": {
     "verifyFirst": "Confirm your email first.",
@@ -174,7 +183,7 @@
     "next": "Continue"
   },
   "step2Page": {
-    "eyebrow": "Step 2 of 3",
+    "eyebrow": "Step {n} of {total}",
     "title": "Where should the appointments land?",
     "need": [
       [
@@ -236,22 +245,7 @@
       ]
     ],
     "defaultsNote": "The times follow your opening hours from step 1. To start with: 45-minute appointments, a 15-minute break and tomorrow at the earliest. You can change it under Appointments.",
-    "next": "Continue to step 3: test & switch on",
     "skip": "Skip – I don't use a calendar"
-  },
-  "step3Page": {
-    "eyebrow": "Step 3 of 3 · last step",
-    "title": "Choose a voice, connect the phone – and switch on",
-    "need": [
-      [
-        "1×",
-        "a phone to call from"
-      ],
-      [
-        "10",
-        "seconds for call forwarding"
-      ]
-    ]
   },
   "step3": {
     "failed": "That didn't work. Please try again.",
@@ -329,96 +323,87 @@
       "title": "Phone",
       "hint": "You keep your number. We just take the calls."
     },
-    "chat": {
-      "mailSubject": "One line for the website",
-      "mailBody": "Hi,\n\nCould you add this one line to the website (just before </body>)?\n\n{code}\n\nThanks!",
-      "title": "Web chat on your website",
-      "hint": "Optional. The same assistant – just as a chat.",
-      "ready": "Ready",
-      "on": "On",
-      "off": "Off",
-      "onlyOnBefore": "The chat may only be shown on ",
-      "onlyOnAfter": " – the address from step 1.",
-      "noSite": "Give your website address in step 1 so we know where the chat may be shown.",
-      "turningOn": "Switching on …",
-      "turnOn": "Switch on the web chat",
-      "managersOnly": "Only owners and administrators can switch on the web chat.",
-      "oneLine": "One line needs to go on your website. You don't need to understand it – send it to whoever looks after the site.",
-      "codeAria": "Line of code",
-      "copied": "Copied",
-      "notReady": {
-        "no_approved_knowledge": "Approve at least one item under Knowledge first – the chat only answers from what you have approved.",
-        "no_allowed_origins": "Enter your website address in step 1 – the chat may only appear there.",
-        "ai_not_configured": "AI answers are not switched on in Dialogbot yet. Write to us."
-      },
-      "copy": "Copy the line",
-      "sendWebmaster": "Send to my web person",
-      "seen": "The line is on the site – status is Ready.",
-      "notSeen": "Once the line is on the site, the status here changes to «Ready» by itself."
-    },
     "needs": {
       "confirmNumber": "confirm your number",
       "connectPhone": "connect the phone",
-      "testCall": "complete the test call",
-      "confirmSubscription": "confirm the subscription",
-      "turnOnChat": "switch on the web chat"
+      "testCall": "complete the test call"
     },
-    "noChannels": "You chose not to answer the phone or the website in step 1. The voice is used for campaigns.",
     "changeChoice": "Change your choice",
     "isOn": "Dialogbot is on",
-    "allReady": "All set – switch on Dialogbot",
     "almost": "Almost ready",
     "pauseNote": "You can always pause it from Today.",
     "readyPhone": "The test call succeeded. When you switch on, Dialogbot takes the calls you forward.",
     "readyNoPhone": "When you switch on, Dialogbot is ready.",
     "missing": "Missing: {list}.",
     "goToday": "Go to Today",
-    "toPayment": "On to subscription and payment",
-    "payNext": "Last step: confirm the subscription.",
-    "payAfter": "Afterwards you confirm the subscription.",
     "turningOn": "Switching on …",
-    "turnOn": "Switch on Dialogbot",
     "managersOnly": "Only owners and administrators can switch it on.",
-    "subscriptionNote": "The subscription is from {pMonthly}/month excl. VAT with {pIncluded} minutes for inbound and outbound calls; then {pExtraMinute} per minute in, and outbound {pCallAnswered} per answered call + {pMinute} per minute.",
-    "confirmSubscription": "Confirm subscription",
-    "findAgain": "You'll find everything again under the profile icon → All settings.",
     "readerTitle": "The owner sets up Dialogbot",
     "campaignsTitle": "Ready for your first campaign",
     "campaignsText": "There is nothing to switch on: Dialogbot only calls out once you have created and started a campaign.",
     "campaignsCta": "Create your first campaign",
-    "nothingTitle": "Choose what Dialogbot should do",
-    "nothingText": "Nothing is chosen in step 1, so there is nothing to switch on. Choose at least one thing."
+    "nothingTitle": "Choose what Dialogbot should do"
   },
   "assistant": {
     "setupChips": {
-      "1": [
+      "virksomhed": [
         {
           "label": "Opening hours",
-          "fill": "Opening hours mon-fri 8-16"
+          "fill": "Opening hours Mon-Fri 8-16"
         },
         {
-          "label": "What happens in step 2?",
-          "say": "In step 2 you connect your calendar so appointments land there. It's optional – you can skip it."
+          "label": "What happens next?",
+          "say": "Next you bring in knowledge – from the website, a file or text – and set up phone and/or chat. Finally subscription and payment, and you go live."
         }
       ],
-      "2": [
+      "viden": [
+        {
+          "label": "What does Dialogbot use?",
+          "say": "Only what you have approved. Suggestions from the website, files and text are drafts until you approve them."
+        },
+        {
+          "label": "Can I add more later?",
+          "say": "Yes. Everything is under Knowledge, and you can always bring in more or correct it."
+        }
+      ],
+      "telefon": [
+        {
+          "label": "How do I forward calls?",
+          "say": "Dial the code from the phone step on your phone and press call. Turn forwarding off again with the code below it."
+        },
+        {
+          "label": "Can I undo it?",
+          "say": "Yes. You can pause Dialogbot from Today and turn forwarding off on your phone."
+        }
+      ],
+      "chat": [
+        {
+          "label": "Where do I put the line?",
+          "say": "Just before </body> on the website – or send it to your web person with the button. It does nothing until the chat is live."
+        },
+        {
+          "label": "When does the chat go live?",
+          "say": "Once the subscription is in place. Until then you can try it here in the preview."
+        }
+      ],
+      "kalender": [
         {
           "label": "What do you write in the calendar?",
           "say": "An appointment with the customer's name, number and errand – and a confirmation to you. I never touch your existing appointments."
         },
         {
-          "label": "What happens in step 3?",
-          "say": "In step 3 you choose a voice, connect the phone with call forwarding and switch on Dialogbot."
+          "label": "Can I skip it?",
+          "say": "Yes. Without a calendar Dialogbot takes a message, and you call back."
         }
       ],
-      "3": [
+      "betaling": [
         {
-          "label": "How do I forward calls?",
-          "say": "Type the code from step 3 on your phone and press call. Turn forwarding off again with the code below it."
+          "label": "Why pay first?",
+          "say": "Neither phone nor chat goes live without a paid subscription. Until then you can try the chat in the preview."
         },
         {
           "label": "Can I undo it?",
-          "say": "Yes. You can pause Dialogbot from Today and turn off forwarding on your phone."
+          "say": "Yes. You can pause Dialogbot from Today."
         }
       ]
     },
@@ -520,5 +505,192 @@
       "setup3": "Test and switch on"
     },
     "change": "Change something"
+  },
+  "videnPage": {
+    "eyebrow": "Step {n} of {total} · approx. 5 min",
+    "title": "What Dialogbot answers from",
+    "intro": "Read the website again, upload a price list or paste a text. It becomes suggestions that you approve here – nothing is used before it is approved.",
+    "need": [
+      [
+        "1×",
+        "price list, FAQ or text",
+        "optional"
+      ],
+      [
+        "5",
+        "minutes"
+      ]
+    ]
+  },
+  "viden": {
+    "readOnly": "Your role (reader) can view, but not bring in knowledge.",
+    "a": {
+      "title": "Bring in knowledge",
+      "hint": "From the website, a file (PDF, Word, Excel, CSV, text) or text you paste."
+    },
+    "b": {
+      "title": "Review the suggestions",
+      "hint": "Grouped by category. Approve everything in a category, or correct them one at a time.",
+      "empty": "No suggestions to review right now. Bring something in above – or go on and add knowledge later.",
+      "all": "Everything Dialogbot knows is under",
+      "allLink": "Knowledge"
+    },
+    "approved": "{n|1 item is approved|# items are approved} and used by Dialogbot.",
+    "noneApproved": "Nothing is approved yet – the chat only answers from what you have approved."
+  },
+  "telefonPage": {
+    "eyebrow": "Step {n} of {total}",
+    "title": "Voice, number and forwarding",
+    "intro": "Choose the voice, give the number your customers call and confirm it. The Dialogbot number is connected and tested once the subscription is in place.",
+    "need": [
+      [
+        "1×",
+        "a phone to call from"
+      ],
+      [
+        "10",
+        "seconds to set up forwarding"
+      ]
+    ],
+    "readOnly": "Your role (reader) can view, but not set up the phone.",
+    "liveWhenPaid": "The phone goes live once the subscription is in place.",
+    "toPayment": "To payment",
+    "status": "Choices are saved as soon as you tap. You can always come back here."
+  },
+  "chatPage": {
+    "eyebrow": "Step {n} of {total}",
+    "title": "Chat on your website",
+    "intro": "Where the chat may be shown, how it greets, and one line for the website. Try it here before it goes live.",
+    "need": [
+      [
+        "1×",
+        "access to the website",
+        "or a web person"
+      ],
+      [
+        "2",
+        "minutes"
+      ]
+    ],
+    "readOnly": "Only owners and administrators can set up the chat.",
+    "status": "Domain and welcome are saved when you tap Save or On to."
+  },
+  "chat": {
+    "widget": {
+      "title": "Widget",
+      "hint": "The chat may only be shown on your own domain.",
+      "domain": "Your website (domain)",
+      "domainPlaceholder": "https://company.com"
+    },
+    "look": {
+      "title": "Appearance",
+      "greeting": "Welcome",
+      "previewAria": "How the chat looks on the website",
+      "header": "Chat with {name}"
+    },
+    "save": "Save",
+    "saving": "Saving …",
+    "saved": "Saved",
+    "saveFailed": "That did not work. Try again.",
+    "live": "Live",
+    "onNotLive": "On · not live",
+    "notLive": "Not live",
+    "missing": {
+      "no_approved_knowledge": "Approve at least one item under Knowledge – the chat only answers from what you have approved.",
+      "no_allowed_origins": "Enter your website's address – the chat may only be shown there.",
+      "ai_not_configured": "AI answers are not switched on in Dialogbot yet. Write to us."
+    },
+    "code": {
+      "title": "Embed code",
+      "hint": "One line on your website. It does nothing until the chat is live.",
+      "aria": "Line of code",
+      "copy": "Copy the line",
+      "copied": "Copied",
+      "sendWebmaster": "Send to my web person",
+      "seen": "The line is on the site – status is Ready.",
+      "notSeen": "Once the line is on the site, the status here changes to «Ready» by itself."
+    },
+    "mailSubject": "One line for the website",
+    "mailBody": "Hi,\n\nCould you add this one line to the website (just before </body>)?\n\n{code}\n\nThanks!",
+    "preview": {
+      "title": "Try the chat",
+      "hint": "The same assistant and the same approved knowledge. Only you see it – nothing is stored as a conversation.",
+      "onlyYou": "Preview – only you",
+      "aria": "Chat preview",
+      "input": "Write a message to the chat",
+      "placeholder": "Write like a customer, e.g. «Are you open on Saturday?»",
+      "send": "Send",
+      "thinking": "Writing …",
+      "failed": "The preview did not answer. Try again."
+    },
+    "liveWhenPaid": "The chat goes live once the subscription is in place",
+    "toPayment": "To payment",
+    "paidTurnOn": "The subscription is in place. Switch the chat on, and it answers visitors on the website.",
+    "turnOn": "Switch on the web chat",
+    "turningOn": "Switching on …",
+    "isLive": "The chat is live and answers visitors on the website.",
+    "managersOnly": "Only owners and administrators can try and switch on the chat."
+  },
+  "betalingPage": {
+    "eyebrow": "Step {n} of {total} · last step",
+    "title": "Subscription and payment – then you go live",
+    "intro": "One subscription. Confirm it, add a payment card, and then go live with phone and chat. Nothing goes live before.",
+    "need": [
+      [
+        "1×",
+        "payment card",
+        "when card payment is switched on"
+      ],
+      [
+        "2",
+        "minutes"
+      ]
+    ],
+    "plan": {
+      "title": "Subscription",
+      "hint": "There is one subscription – the same for everyone."
+    },
+    "card": {
+      "title": "Payment card",
+      "hint": "The card is stored with Stripe. Nothing is charged now."
+    },
+    "ownerPays": "The owner confirms the subscription and adds the payment card. Then Dialogbot can go live.",
+    "paidByOwner": "The subscription is in place.",
+    "paid": "The subscription is in place. Dialogbot can now go live.",
+    "notPaidYet": "The subscription is not in place yet.",
+    "nextConfirm": "Next step: confirm the subscription and add a payment card.",
+    "nextConfirmNoCard": "Next step: confirm the subscription. The invoice comes by e-mail.",
+    "nextCard": "The subscription is confirmed. Last step: add a payment card."
+  },
+  "betaling": {
+    "needs": {
+      "chat": "set up the chat"
+    },
+    "toChat": "To the chat",
+    "notYet": "Not live yet",
+    "allReady": "All set – go live",
+    "goLive": "Go live",
+    "liveWhenPaidChat": "The chat goes live once the subscription is in place.",
+    "liveWhenPaidPhone": "The phone goes live once the subscription is in place.",
+    "liveWhenPaidBoth": "Phone and chat go live once the subscription is in place.",
+    "nothingText": "Nothing is chosen under Business, so there is nothing to go live with. Choose at least one thing."
+  },
+  "checklist": {
+    "aria": "Setup",
+    "listAria": "Steps",
+    "tag": "Not finished",
+    "lastTag": "Last step",
+    "next": {
+      "today": "The setup is not finished · next: {label}",
+      "settings": "The guide is not finished · next: {label}",
+      "guide": "Next: {label}"
+    },
+    "payNext": "Dialogbot is set up · choose subscription and payment",
+    "goLive": "The subscription is in place · go live",
+    "continue": "Continue",
+    "backToGuide": "Back to the guide",
+    "done": "done",
+    "todo": "missing",
+    "manualCounts": "What you set up under All settings counts here too."
   }
 }

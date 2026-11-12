@@ -10,9 +10,7 @@ import { LOCALES, LOCALE_NAMES, isLocale } from "@/i18n/config";
 import { profileIsDone } from "@/lib/setup-done";
 import { cardsFromGoals, goalsFromCards, hoursText, originOf, parseHours, parseZones, zonesText, type Cards, type DayVocab, type WeeklyRange } from "@/lib/setup";
 import { MobileActionBar } from "@/components/mobile-action-bar";
-import { FileDrop, ImportStatus, PasteText, ReviewGroups, useImport, type Import } from "@/components/knowledge-import";
-import { DraftCard } from "@/app/app/(admin)/viden/client";
-import type { Item } from "@/app/app/(admin)/viden/types";
+import { stepHref } from "@/lib/setup-steps";
 
 export type Profile = { version: number; legal_name: string; description: string; website_url: string | null; manual_setup: boolean; cvr: string | null; address_line: string | null; postal_code: string | null; city: string | null; country: string; timezone: string; phone: string | null };
 export type Goals = { version: number; product_intent: string; guidance_mode: string; inbound_phone: boolean; webchat: boolean; callback: boolean; booking: boolean; conversation_goals: string[] };
@@ -41,10 +39,13 @@ const readDraft = (wsId: string): Draft | null => {
   try { const d = JSON.parse(sessionStorage.getItem(draftKey(wsId)) ?? "null") as Draft | null; return d && Date.now() - d.at < DRAFT_TTL ? d : null; } catch { return null; }
 };
 
-/** Trin 1 – Virksomhed. One page, three parts, saved as you type. */
-export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, goals, languages, facts, review = [], done = false }: { wsId: string; canEdit: boolean; canApprove: boolean; aiReady: boolean; cvrReady: boolean; profile: Profile; goals: Goals; languages: Languages; facts: Fact[]; review?: Item[]; done?: boolean }) {
+/** Trin 1 – Virksomhed. One page, three parts, saved as you type: A the website (fills in name, phone, address …),
+ *  B the channels (phone and/or chat – so what is needed, e.g. the phone number, is known from the start), C the rest.
+ *  Files and pasted text are the next step (Viden). */
+export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, goals, languages, facts, done = false }: { wsId: string; canEdit: boolean; canApprove: boolean; aiReady: boolean; cvrReady: boolean; profile: Profile; goals: Goals; languages: Languages; facts: Fact[]; done?: boolean }) {
   const router = useRouter();
   const t = useT("setup.step1");
+  const ts = useT("setup.shell");
   const raw = useRaw();
   const vocab = raw<DayVocab>("setup.hours");
   const kindLabel = (k: string) => (KINDS.has(k) ? t(`kind.${k}`) : k);
@@ -130,8 +131,10 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
     const g = goalsFromCards(latest.current.cards);
     const next = await api<Goals>(`/workspaces/${wsId}/goals`, { method: "PUT", body: JSON.stringify({ ...g, guidance_mode: goals.guidance_mode, conversation_goals: goals.conversation_goals, expected_version: ver.current.goals }) });
     ver.current.goals = next.version;
-    recheckDone();
-  }), [run, wsId, goals.guidance_mode, goals.conversation_goals]);
+    // The channels decide the steps (Telefon, Chat, Kalender): let the stepper show the new ones now.
+    doneRef.current = profileIsDone(saved.current, latest.current.cards.phone);
+    router.refresh();
+  }), [run, wsId, goals.guidance_mode, goals.conversation_goals, router]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const saveLangs = useCallback(() => run("langs", async () => {
     const main = latest.current.primary;
@@ -298,10 +301,10 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
       const sug = imp.profile_suggestion ?? {};
       const fill: Partial<Profile> = {};
       const tags: Tag[] = [];
-      for (const k of ["legal_name", "cvr", "phone", "description", "address_line"] as const) {
+      for (const k of ["legal_name", "cvr", "phone", "description", "address_line", "postal_code", "city"] as const) {
         const v = sug[k];
         if (!v) continue;
-        tags.push({ key: `p-${k}`, label: `${t(`profileTag.${k}`)}: ${v.length > 48 ? `${v.slice(0, 46)}…` : v}`, ok: true });
+        if (k !== "postal_code" && k !== "city") tags.push({ key: `p-${k}`, label: `${t(`profileTag.${k}`)}: ${v.length > 48 ? `${v.slice(0, 46)}…` : v}`, ok: true });
         if (!String((latest.current.p as Record<string, unknown>)[k] ?? "").trim() && k !== "legal_name") (fill as Record<string, string>)[k] = v;
         if (k === "legal_name" && !latest.current.p.legal_name.trim()) fill.legal_name = v;
       }
@@ -328,9 +331,6 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
     } catch (e) { setSite((s) => s && { ...s, busy: false, error: (e as ApiError).message }); }
   };
   const yellow = site?.tags.filter((tg) => !tg.ok).length ?? 0;
-  // --- A (also): a file or pasted text → drafts, reviewed right here per category ---
-  const [docImp, setDocImp] = useImport(wsId, null, () => router.refresh());
-  const docRunning = docImp?.status === "running" || !!site?.busy;
 
   const [cvrNote, setCvrNote] = useState<string | null>(null);
   const cvrLookup = async () => {
@@ -349,36 +349,15 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
   const choosePrimary = (code: string) => { setLangs((cur) => cur.filter((c) => c !== code && c !== primary)); setPrimary(code); later("langs", 400); };
   // The phone number is needed only when Dialogbot takes the phone; chat only (or campaigns) goes on without one.
   const ready = profileIsDone(p, cards.phone);
-  const next = cards.booking ? 2 : 3;
 
   return (
     <div className="flex flex-col gap-6">
       {!canEdit && <p role="status" className="rounded-xl bg-highlight px-4 py-3 text-[14px] text-ink">{t("readOnly")}</p>}
       <Part letter="A" title={t("a.title")} hint={aiReady ? t("a.hintAi") : t("a.hintNoAi")}>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-          <div className="flex flex-col gap-2 rounded-xl border-[1.5px] border-ink p-3">
-            <span className="eyebrow">{t("a.siteLabel")}</span>
-            <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-2">
-              <input aria-label={t("a.urlAria")} className={`${inputCls} flex-1 min-w-0`} placeholder={t("a.urlPlaceholder")} inputMode="url" autoCapitalize="none" value={p.website_url ?? ""} onChange={field("website_url")} disabled={!canEdit} />
-              {aiReady && canEdit && <button type="button" onClick={fetchSite} disabled={site?.busy || docRunning || !(p.website_url ?? "").trim()} className="min-h-[46px] px-5 rounded-xl bg-ink text-paper font-semibold disabled:opacity-60 inline-flex items-center justify-center gap-1.5">{site?.busy && !site.tags.length ? t("a.reading") : <>{t("a.fetch")}<Icon name="arrow_forward" size={16} /></>}</button>}
-            </div>
-          </div>
-          <div className="flex flex-col gap-2 rounded-xl border-[1.5px] border-ink p-3">
-            <span className="eyebrow">{t("a.fileLabel")}</span>
-            {aiReady && canEdit ? <FileDrop wsId={wsId} id="s1-file" disabled={docRunning} onStarted={(i: Import) => setDocImp(i)} /> : <p className="text-[13px] text-muted">{t("a.hintNoAi")}</p>}
-          </div>
-          <div className="flex flex-col gap-2 rounded-xl border-[1.5px] border-ink p-3">
-            <span className="eyebrow">{t("a.textLabel")}</span>
-            {aiReady && canEdit ? <PasteText wsId={wsId} id="s1-text" disabled={docRunning} onStarted={(i: Import) => setDocImp(i)} /> : <p className="text-[13px] text-muted">{t("a.hintNoAi")}</p>}
-          </div>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <input aria-label={t("a.urlAria")} className={`${inputCls} flex-1 min-w-0`} placeholder={t("a.urlPlaceholder")} inputMode="url" autoCapitalize="none" value={p.website_url ?? ""} onChange={field("website_url")} disabled={!canEdit} />
+          {aiReady && canEdit && <button type="button" onClick={fetchSite} disabled={site?.busy || !(p.website_url ?? "").trim()} className="min-h-[46px] px-5 rounded-xl bg-ink text-paper font-semibold disabled:opacity-60 inline-flex items-center justify-center gap-1.5">{site?.busy && !site.tags.length ? t("a.reading") : <>{t("a.fetch")}<Icon name="arrow_forward" size={16} /></>}</button>}
         </div>
-        <div aria-live="polite"><ImportStatus imp={docImp} /></div>
-        {review.length > 0 && (
-          <div className="flex flex-col gap-3" data-testid="s1-review">
-            <span className="eyebrow">{t("a.docsReview", { n: review.length })}</span>
-            <ReviewGroups wsId={wsId} items={review} canApprove={canApprove} card={(i) => <DraftCard wsId={wsId} item={i} canApprove={canApprove} canDraft={canEdit} />} />
-          </div>
-        )}
         {site?.error && <p role="alert" className="text-[14px] text-danger">{site.error}</p>}
         {site && site.tags.length > 0 && (
           <div className="rounded-2xl border-[1.5px] border-ink bg-panel p-4 flex flex-col gap-3" aria-live="polite">
@@ -388,14 +367,36 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
             </ul>
             <div className="flex flex-wrap gap-2">
               {canApprove && !site.approved && site.tags.some((tg) => tg.versionId) && <button type="button" onClick={approveAll} disabled={site.busy} className="min-h-[44px] px-4 rounded-xl bg-paper border-2 border-ink font-semibold hover:bg-panel-deep">{t("a.approveAll", { n: site.tags.filter((tg) => tg.versionId).length })}</button>}
-              {yellow > 0 && !site.approved && <Link href="/app/viden?tab=k05" className="inline-flex items-center min-h-[44px] px-4 rounded-xl bg-paper border-2 border-ink font-semibold hover:bg-panel-deep">{t("a.fixYellow")}</Link>}
+              {yellow > 0 && !site.approved && <Link href={stepHref("viden")} className="inline-flex items-center min-h-[44px] px-4 rounded-xl bg-paper border-2 border-ink font-semibold hover:bg-panel-deep">{t("a.fixYellow")}</Link>}
               {site.approved && <span className="inline-flex items-center min-h-[44px] text-[14px] text-success font-semibold">{t("a.allApproved")}</span>}
             </div>
           </div>
         )}
       </Part>
 
-      <Part letter="B" title={t("b.title")} hint={t("b.hint")}>
+      <Part letter="B" title={t("c.title")} hint={t("c.hint")}>
+        <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {(["phone", "web", "booking", "outbound"] as (keyof Cards)[]).map((k) => [k, t(`c.cards.${k}.title`), t(`c.cards.${k}.sub`)] as const).map(([k, title, sub]) => (
+            <li key={k}>
+              <label className={`flex items-start gap-3 rounded-2xl border-2 border-ink p-4 min-h-[76px] h-full cursor-pointer ${cards[k] ? "bg-highlight" : "bg-paper hover:bg-panel"}`}>
+                <input type="checkbox" className="mt-1 w-5 h-5 accent-ink shrink-0" checked={cards[k]} onChange={() => toggle(k)} disabled={!canEdit} />
+                <span className="flex flex-col"><span className="font-display font-bold text-[17px] text-ink">{title}</span><span className="text-[13px] text-ink-soft">{sub}</span></span>
+              </label>
+            </li>
+          ))}
+        </ul>
+        <div className="flex flex-wrap items-center gap-2" role="group" aria-label={t("c.langAria")}>
+          <span className={labelCls}>{t("c.speaks")}</span>
+          {LANGS.map((c) => {
+            const on = c === primary || langs.includes(c);
+            const l = t(`langNames.${c}`);
+            return <button key={c} type="button" aria-pressed={on} disabled={!canEdit || c === primary} onClick={() => toggleLang(c)} className={`min-h-[44px] px-4 rounded-full border-2 border-ink text-[14px] font-semibold ${on ? "bg-ink text-paper" : "bg-paper text-ink hover:bg-panel"}`}>{on ? l : `+ ${l}`}</button>;
+          })}
+          <span className="text-[13px] text-muted">{t("c.alwaysDanish")}</span>
+        </div>
+      </Part>
+
+      <Part letter="C" title={t("b.title")} hint={t("b.hint")}>
         <div className="grid sm:grid-cols-2 gap-4">
           <label className="flex flex-col gap-1.5"><span className={labelCls}>{t("b.name")}</span><input className={inputCls} value={p.legal_name} onChange={field("legal_name")} disabled={!canEdit} autoComplete="organization" /></label>
           <label className="flex flex-col gap-1.5"><span className={labelCls}>{t("b.phone")}</span><input className={inputCls} value={p.phone ?? ""} onChange={field("phone")} disabled={!canEdit} inputMode="tel" autoComplete="tel" placeholder={t("b.phonePlaceholder")} /></label>
@@ -424,28 +425,6 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
         </details>
       </Part>
 
-      <Part letter="C" title={t("c.title")} hint={t("c.hint")}>
-        <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {(["phone", "booking", "web", "outbound"] as (keyof Cards)[]).map((k) => [k, t(`c.cards.${k}.title`), t(`c.cards.${k}.sub`)] as const).map(([k, title, sub]) => (
-            <li key={k}>
-              <label className={`flex items-start gap-3 rounded-2xl border-2 border-ink p-4 min-h-[76px] h-full cursor-pointer ${cards[k] ? "bg-highlight" : "bg-paper hover:bg-panel"}`}>
-                <input type="checkbox" className="mt-1 w-5 h-5 accent-ink shrink-0" checked={cards[k]} onChange={() => toggle(k)} disabled={!canEdit} />
-                <span className="flex flex-col"><span className="font-display font-bold text-[17px] text-ink">{title}</span><span className="text-[13px] text-ink-soft">{sub}</span></span>
-              </label>
-            </li>
-          ))}
-        </ul>
-        <div className="flex flex-wrap items-center gap-2" role="group" aria-label={t("c.langAria")}>
-          <span className={labelCls}>{t("c.speaks")}</span>
-          {LANGS.map((c) => {
-            const on = c === primary || langs.includes(c);
-            const l = t(`langNames.${c}`);
-            return <button key={c} type="button" aria-pressed={on} disabled={!canEdit || c === primary} onClick={() => toggleLang(c)} className={`min-h-[44px] px-4 rounded-full border-2 border-ink text-[14px] font-semibold ${on ? "bg-ink text-paper" : "bg-paper text-ink hover:bg-panel"}`}>{on ? l : `+ ${l}`}</button>;
-          })}
-          <span className="text-[13px] text-muted">{t("c.alwaysDanish")}</span>
-        </div>
-      </Part>
-
       <MobileActionBar className="flex-col-reverse sm:flex-row sm:items-center sm:justify-between">
         <p className="text-[13px] leading-snug text-muted" role="status" aria-live="polite">
           {save === "saving" ? t("status.saving") : save === "saved" ? t("status.saved") : save === "error" ? t("status.notSaved") : t("status.idle")}{t("status.comeBack")}
@@ -456,9 +435,9 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
           // Only on when the server has everything: a failed save keeps the owner here with the error (never a silent loss).
           setGoing(true);
           if (!(await flush())) { setGoing(false); return; }
-          router.push(`/opsaetning/${next}`);
+          router.push(stepHref("viden"));
         }} className={`inline-flex items-center justify-center gap-2 min-h-[52px] px-6 rounded-xl font-semibold text-[16px] ${ready ? "bg-accent text-white hover:bg-accent-deep" : "bg-line text-muted"} disabled:opacity-70`}>
-          {next === 2 ? t("nextTo2") : t("nextTo3")}<Icon name="arrow_forward" size={18} />
+          {ts("next", { n: 2, label: ts("labels.viden") })}<Icon name="arrow_forward" size={18} />
         </button>
       </MobileActionBar>
     </div>

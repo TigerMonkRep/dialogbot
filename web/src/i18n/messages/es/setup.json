@@ -9,15 +9,18 @@
     "skipToContent": "Saltar al contenido",
     "home": "Dialogbot – Hoy",
     "nav": "Configuración",
-    "steps": [
-      "Empresa",
-      "Calendario y sistemas",
-      "Prueba y activación"
-    ],
     "stepAria": "Paso {n}: {label}",
-    "skipped": " (omitido)",
     "done": " (completado)",
-    "laterNote": ": lo encontrará todo de nuevo en el icono de perfil → Todos los ajustes."
+    "laterNote": ": lo encontrará todo de nuevo en el icono de perfil → Todos los ajustes.",
+    "labels": {
+      "virksomhed": "Empresa",
+      "viden": "Conocimiento",
+      "telefon": "Teléfono",
+      "chat": "Chat",
+      "kalender": "Calendario",
+      "betaling": "Pago"
+    },
+    "next": "Seguir al paso {n}: {label}"
   },
   "hours": {
     "days": [
@@ -41,9 +44,9 @@
     "and": "y"
   },
   "step1Page": {
-    "eyebrow": "Construya su Dialogbot · paso 1 de 3 · unos 5 min",
+    "eyebrow": "Cree su Dialogbot · paso 1 de {total} · aprox. 5 min",
     "title": "¿Quiénes son y qué debe hacer?",
-    "intro": "Un solo paso. Obtenemos casi todo de su web: usted solo corrige lo que esté mal. Puede cambiarse más adelante diciéndoselo al asistente.",
+    "intro": "Empiece por la web: rellena el nombre, el teléfono y la dirección. Luego elija teléfono, chat o ambos: eso decide los siguientes pasos. Solo corrige lo que esté mal.",
     "need": [
       [
         "1×",
@@ -94,7 +97,7 @@
     "readOnly": "Su rol (lector) puede ver, pero no editar.",
     "a": {
       "title": "Obténgalo de su web",
-      "hintAi": "Dialogbot lee la página y propone nombre, actividad, horario y precios.",
+      "hintAi": "Dialogbot lee la página y rellena el nombre, el teléfono y la dirección, y propone horarios y precios.",
       "hintNoAi": "La dirección se guarda. Las propuestas a partir de la web requieren que la IA esté activada.",
       "urlAria": "Dirección de la web",
       "urlPlaceholder": "empresa.es",
@@ -104,11 +107,7 @@
       "theSite": "la página",
       "approveAll": "Aprobar los {n}",
       "fixYellow": "Corregir lo amarillo",
-      "allApproved": "Todo está aprobado y Dialogbot ya lo usa.",
-      "siteLabel": "Sitio web",
-      "fileLabel": "Subir archivo",
-      "textLabel": "Pegar texto",
-      "docsReview": "{n} sugerencias de archivos y texto · aprueba o corrige"
+      "allApproved": "Todo está aprobado y Dialogbot ya lo usa."
     },
     "b": {
       "title": "Sobre ustedes",
@@ -138,13 +137,25 @@
       "categoryRemove": "Quitar {label}"
     },
     "c": {
-      "title": "¿Qué debe hacer por ustedes?",
-      "hint": "Elija lo que corresponda. Determina lo que se pregunta en los pasos 2 y 3.",
+      "title": "¿Dónde debe responder Dialogbot?",
+      "hint": "Teléfono, chat en su web o ambos. Decide los siguientes pasos de la guía y si hace falta el número de teléfono.",
       "cards": {
-        "phone": { "title": "Atender el teléfono", "sub": "cuando usted no pueda, o siempre" },
-        "booking": { "title": "Reservar citas", "sub": "directamente en su calendario" },
-        "web": { "title": "Responder en su web", "sub": "chat web: una línea de código" },
-        "outbound": { "title": "Llamar a clientes", "sub": "campañas · minutos del paquete" }
+        "phone": {
+          "title": "Atender el teléfono",
+          "sub": "cuando usted no pueda, o siempre"
+        },
+        "booking": {
+          "title": "Reservar citas",
+          "sub": "directamente en su calendario"
+        },
+        "web": {
+          "title": "Responder en su web",
+          "sub": "chat web: una línea de código"
+        },
+        "outbound": {
+          "title": "Llamar a clientes",
+          "sub": "campañas · minutos del paquete"
+        }
       },
       "langAria": "Idioma",
       "speaks": "Habla",
@@ -159,9 +170,7 @@
       "fillIn": "Rellene el nombre, el número de teléfono y a qué se dedican para continuar.",
       "fillInNoPhone": "Rellena el nombre y a qué os dedicáis para continuar.",
       "reload": "Recargar"
-    },
-    "nextTo2": "Continuar al paso 2: calendario y sistemas",
-    "nextTo3": "Continuar al paso 3: prueba y activación"
+    }
   },
   "create": {
     "verifyFirst": "Confirme primero su correo electrónico.",
@@ -174,7 +183,7 @@
     "next": "Continuar"
   },
   "step2Page": {
-    "eyebrow": "Paso 2 de 3",
+    "eyebrow": "Paso {n} de {total}",
     "title": "¿Dónde deben registrarse las citas?",
     "need": [
       [
@@ -236,22 +245,7 @@
       ]
     ],
     "defaultsNote": "Los horarios siguen su horario del paso 1. Para empezar: citas de 45 minutos, 15 minutos de pausa y como pronto mañana. Puede cambiarse en Citas.",
-    "next": "Continuar al paso 3: prueba y activación",
     "skip": "Omitir: no uso calendario"
-  },
-  "step3Page": {
-    "eyebrow": "Paso 3 de 3 · último paso",
-    "title": "Elija la voz, conecte el teléfono y actívelo",
-    "need": [
-      [
-        "1×",
-        "un teléfono desde el que llamar"
-      ],
-      [
-        "10",
-        "segundos para el desvío"
-      ]
-    ]
   },
   "step3": {
     "failed": "No ha funcionado. Inténtelo de nuevo.",
@@ -329,96 +323,87 @@
       "title": "Teléfono",
       "hint": "Conserva su número. Nosotros solo atendemos las llamadas."
     },
-    "chat": {
-      "mailSubject": "Una línea para la web",
-      "mailBody": "Hola:\n\n¿Puedes añadir esta línea a la web (justo antes de </body>)?\n\n{code}\n\n¡Gracias!",
-      "title": "Chat web en su página",
-      "hint": "Opcional. El mismo asistente, pero como chat.",
-      "ready": "Listo",
-      "on": "Activado",
-      "off": "Desactivado",
-      "onlyOnBefore": "El chat solo puede mostrarse en ",
-      "onlyOnAfter": ", la dirección del paso 1.",
-      "noSite": "Indique la dirección de su web en el paso 1 para que sepamos dónde puede mostrarse el chat.",
-      "turningOn": "Activando…",
-      "turnOn": "Activar el chat web",
-      "managersOnly": "Solo los propietarios y administradores pueden activar el chat web.",
-      "oneLine": "Hay que añadir una línea a su web. No necesita entenderla: envíela a quien se encargue de la página.",
-      "codeAria": "Línea de código",
-      "copied": "Copiado",
-      "notReady": {
-        "no_approved_knowledge": "Aprueba primero al menos un elemento en Conocimiento: el chat solo responde con lo aprobado.",
-        "no_allowed_origins": "Escribe la dirección de vuestra web en el paso 1: el chat solo puede aparecer allí.",
-        "ai_not_configured": "Las respuestas de IA aún no están activadas en Dialogbot. Escríbenos."
-      },
-      "copy": "Copiar la línea",
-      "sendWebmaster": "Enviar a mi webmaster",
-      "seen": "La línea está en la página: el estado es Listo.",
-      "notSeen": "Cuando la línea esté en la página, el estado cambiará aquí a «Listo» automáticamente."
-    },
     "needs": {
       "confirmNumber": "confirmar su número",
       "connectPhone": "conectar el teléfono",
-      "testCall": "completar la llamada de prueba",
-      "confirmSubscription": "confirmar la suscripción",
-      "turnOnChat": "activar el chat web"
+      "testCall": "completar la llamada de prueba"
     },
-    "noChannels": "En el paso 1 eligió no atender el teléfono ni responder en su web. La voz se usa para campañas.",
     "changeChoice": "Cambiar la elección",
     "isOn": "Dialogbot está activado",
-    "allReady": "Todo listo: active Dialogbot",
     "almost": "Casi listo",
     "pauseNote": "Siempre puede pausarlo desde Hoy.",
     "readyPhone": "La llamada de prueba ha funcionado. Cuando lo active, Dialogbot atenderá las llamadas que usted desvíe.",
     "readyNoPhone": "Cuando lo active, Dialogbot estará listo.",
     "missing": "Falta: {list}.",
     "goToday": "Ir a Hoy",
-    "toPayment": "Continuar a suscripción y pago",
-    "payNext": "Último paso: confirma la suscripción.",
-    "payAfter": "Después confirmas la suscripción.",
     "turningOn": "Activando…",
-    "turnOn": "Activar Dialogbot",
     "managersOnly": "Solo los propietarios y administradores pueden activarlo.",
-    "subscriptionNote": "La suscripción es desde {pMonthly}/mes sin IVA con {pIncluded} minutos para llamadas entrantes y salientes; después {pExtraMinute} por minuto entrante y, en salientes, {pCallAnswered} por llamada atendida + {pMinute} por minuto.",
-    "confirmSubscription": "Confirmar suscripción",
-    "findAgain": "Lo encontrará todo de nuevo en el icono de perfil → Todos los ajustes.",
     "readerTitle": "El propietario configura Dialogbot",
     "campaignsTitle": "Listo para vuestra primera campaña",
     "campaignsText": "No hay nada que activar: Dialogbot solo llama cuando hayáis creado e iniciado una campaña.",
     "campaignsCta": "Crear vuestra primera campaña",
-    "nothingTitle": "Elige qué debe hacer Dialogbot",
-    "nothingText": "No hay nada elegido en el paso 1, así que no hay nada que activar. Elige al menos una cosa."
+    "nothingTitle": "Elige qué debe hacer Dialogbot"
   },
   "assistant": {
     "setupChips": {
-      "1": [
+      "virksomhed": [
         {
           "label": "Horario",
           "fill": "Horario lun-vie 8-16"
         },
         {
-          "label": "¿Qué pasa en el paso 2?",
-          "say": "En el paso 2 conecta su calendario para que las citas se registren allí. Es opcional: puede omitirlo."
+          "label": "¿Qué viene después?",
+          "say": "Después añade conocimiento (desde la web, un archivo o un texto) y configura el teléfono y/o el chat. Por último, suscripción y pago, y se activan."
         }
       ],
-      "2": [
+      "viden": [
         {
-          "label": "¿Qué escriben en el calendario?",
-          "say": "Una cita con el nombre, el número y el motivo del cliente, y una confirmación para ustedes. Nunca toco sus citas existentes."
+          "label": "¿Qué usa Dialogbot?",
+          "say": "Solo lo que usted ha aprobado. Las sugerencias de la web, archivos y textos son borradores hasta que las aprueba."
         },
         {
-          "label": "¿Qué pasa en el paso 3?",
-          "say": "En el paso 3 elige la voz, conecta el teléfono con un desvío y activa Dialogbot."
+          "label": "¿Puedo añadir más después?",
+          "say": "Sí. Todo está en Conocimiento, y siempre puede añadir más o corregirlo."
         }
       ],
-      "3": [
+      "telefon": [
         {
           "label": "¿Cómo desvío las llamadas?",
-          "say": "Marque el código del paso 3 en su teléfono y pulse llamar. Desactive el desvío de nuevo con el código que aparece debajo."
+          "say": "Marque el código del paso de teléfono en su móvil y pulse llamar. Desactive el desvío con el código que aparece debajo."
         },
         {
           "label": "¿Puedo deshacerlo?",
-          "say": "Sí. Puede poner Dialogbot en pausa desde Hoy y desactivar el desvío en su teléfono."
+          "say": "Sí. Puede pausar Dialogbot desde Hoy y desactivar el desvío en su teléfono."
+        }
+      ],
+      "chat": [
+        {
+          "label": "¿Dónde pongo la línea?",
+          "say": "Justo antes de </body> en la web, o envíela a su webmaster con el botón. No hace nada hasta que el chat esté activo."
+        },
+        {
+          "label": "¿Cuándo se activa el chat?",
+          "say": "Cuando la suscripción esté lista. Hasta entonces puede probarlo aquí en la vista previa."
+        }
+      ],
+      "kalender": [
+        {
+          "label": "¿Qué anotan en el calendario?",
+          "say": "Una cita con el nombre, el número y el motivo del cliente, y una confirmación para ustedes. Nunca toco sus citas existentes."
+        },
+        {
+          "label": "¿Puedo saltarlo?",
+          "say": "Sí. Sin calendario, Dialogbot toma un mensaje y ustedes devuelven la llamada."
+        }
+      ],
+      "betaling": [
+        {
+          "label": "¿Por qué pagar primero?",
+          "say": "Ni el teléfono ni el chat se activan sin una suscripción pagada. Hasta entonces puede probar el chat en la vista previa."
+        },
+        {
+          "label": "¿Puedo deshacerlo?",
+          "say": "Sí. Puede pausar Dialogbot desde Hoy."
         }
       ]
     },
@@ -520,5 +505,192 @@
       "setup3": "Probar y activar"
     },
     "change": "Cambiar algo"
+  },
+  "videnPage": {
+    "eyebrow": "Paso {n} de {total} · aprox. 5 min",
+    "title": "Lo que usa Dialogbot para responder",
+    "intro": "Vuelva a leer la web, suba una lista de precios o pegue un texto. Se convierte en sugerencias que usted aprueba aquí: nada se usa antes de aprobarlo.",
+    "need": [
+      [
+        "1×",
+        "lista de precios, FAQ o texto",
+        "opcional"
+      ],
+      [
+        "5",
+        "minutos"
+      ]
+    ]
+  },
+  "viden": {
+    "readOnly": "Su rol (lector) puede ver, pero no añadir conocimiento.",
+    "a": {
+      "title": "Añadir conocimiento",
+      "hint": "Desde la web, un archivo (PDF, Word, Excel, CSV, texto) o un texto que pegue."
+    },
+    "b": {
+      "title": "Revise las sugerencias",
+      "hint": "Agrupadas por categoría. Apruebe todas las de una categoría o corríjalas una a una.",
+      "empty": "No hay sugerencias que revisar ahora. Añada algo arriba, o siga y añada conocimiento más tarde.",
+      "all": "Todo lo que sabe Dialogbot está en",
+      "allLink": "Conocimiento"
+    },
+    "approved": "{n|1 elemento está aprobado|# elementos están aprobados} y Dialogbot los usa.",
+    "noneApproved": "Aún no hay nada aprobado: el chat solo responde a partir de lo que ustedes han aprobado."
+  },
+  "telefonPage": {
+    "eyebrow": "Paso {n} de {total}",
+    "title": "Voz, número y desvío",
+    "intro": "Elija la voz, indique el número al que llaman sus clientes y confírmelo. El número de Dialogbot se conecta y se prueba cuando la suscripción esté lista.",
+    "need": [
+      [
+        "1×",
+        "un teléfono desde el que llamar"
+      ],
+      [
+        "10",
+        "segundos para el desvío"
+      ]
+    ],
+    "readOnly": "Su rol (lector) puede ver, pero no configurar el teléfono.",
+    "liveWhenPaid": "El teléfono se activa cuando la suscripción esté lista.",
+    "toPayment": "Ir al pago",
+    "status": "Las opciones se guardan en cuanto pulsa. Siempre puede volver aquí."
+  },
+  "chatPage": {
+    "eyebrow": "Paso {n} de {total}",
+    "title": "Chat en su web",
+    "intro": "Dónde puede mostrarse el chat, cómo saluda y una línea para la web. Pruébelo aquí antes de que se active.",
+    "need": [
+      [
+        "1×",
+        "acceso a la web",
+        "o a su webmaster"
+      ],
+      [
+        "2",
+        "minutos"
+      ]
+    ],
+    "readOnly": "Solo los propietarios y administradores pueden configurar el chat.",
+    "status": "El dominio y el saludo se guardan al pulsar Guardar o Seguir."
+  },
+  "chat": {
+    "widget": {
+      "title": "Widget",
+      "hint": "El chat solo puede mostrarse en su propio dominio.",
+      "domain": "Su web (dominio)",
+      "domainPlaceholder": "https://empresa.es"
+    },
+    "look": {
+      "title": "Aspecto",
+      "greeting": "Saludo",
+      "previewAria": "Así se ve el chat en la web",
+      "header": "Chat con {name}"
+    },
+    "save": "Guardar",
+    "saving": "Guardando …",
+    "saved": "Guardado",
+    "saveFailed": "No ha funcionado. Inténtelo de nuevo.",
+    "live": "Activo",
+    "onNotLive": "Encendido · no activo",
+    "notLive": "No activo",
+    "missing": {
+      "no_approved_knowledge": "Apruebe al menos un elemento en Conocimiento: el chat solo responde a partir de lo que ustedes han aprobado.",
+      "no_allowed_origins": "Escriba la dirección de su web: el chat solo puede mostrarse allí.",
+      "ai_not_configured": "Las respuestas de IA aún no están activadas en Dialogbot. Escríbenos."
+    },
+    "code": {
+      "title": "Código de inserción",
+      "hint": "Una línea en su web. No hace nada hasta que el chat esté activo.",
+      "aria": "Línea de código",
+      "copy": "Copiar la línea",
+      "copied": "Copiado",
+      "sendWebmaster": "Enviar a mi webmaster",
+      "seen": "La línea está en la página: el estado es Listo.",
+      "notSeen": "Cuando la línea esté en la página, el estado cambiará aquí a «Listo» automáticamente."
+    },
+    "mailSubject": "Una línea para la web",
+    "mailBody": "Hola:\n\n¿Puedes añadir esta línea a la web (justo antes de </body>)?\n\n{code}\n\n¡Gracias!",
+    "preview": {
+      "title": "Pruebe el chat",
+      "hint": "El mismo asistente y el mismo conocimiento aprobado. Solo usted lo ve: no se guarda como conversación.",
+      "onlyYou": "Vista previa: solo usted",
+      "aria": "Vista previa del chat",
+      "input": "Escriba un mensaje al chat",
+      "placeholder": "Escriba como un cliente, p. ej. «¿Abren el sábado?»",
+      "send": "Enviar",
+      "thinking": "Escribiendo …",
+      "failed": "La vista previa no respondió. Inténtelo de nuevo."
+    },
+    "liveWhenPaid": "El chat se activa cuando la suscripción esté lista",
+    "toPayment": "Ir al pago",
+    "paidTurnOn": "La suscripción está lista. Active el chat y responderá a los visitantes de la web.",
+    "turnOn": "Activar el chat web",
+    "turningOn": "Activando…",
+    "isLive": "El chat está activo y responde a los visitantes de la web.",
+    "managersOnly": "Solo los propietarios y administradores pueden probar y activar el chat."
+  },
+  "betalingPage": {
+    "eyebrow": "Paso {n} de {total} · último paso",
+    "title": "Suscripción y pago: y se activan",
+    "intro": "Una suscripción. Confírmela, añada una tarjeta de pago y active el teléfono y el chat. Nada se activa antes.",
+    "need": [
+      [
+        "1×",
+        "tarjeta de pago",
+        "si el pago con tarjeta está activado"
+      ],
+      [
+        "2",
+        "minutos"
+      ]
+    ],
+    "plan": {
+      "title": "Suscripción",
+      "hint": "Hay una sola suscripción, la misma para todos."
+    },
+    "card": {
+      "title": "Tarjeta de pago",
+      "hint": "La tarjeta se guarda en Stripe. Ahora no se cobra nada."
+    },
+    "ownerPays": "El propietario confirma la suscripción y añade la tarjeta de pago. Después Dialogbot puede activarse.",
+    "paidByOwner": "La suscripción está lista.",
+    "paid": "La suscripción está lista. Ahora Dialogbot puede activarse.",
+    "notPaidYet": "La suscripción aún no está lista.",
+    "nextConfirm": "Siguiente paso: confirme la suscripción y añada una tarjeta de pago.",
+    "nextConfirmNoCard": "Siguiente paso: confirme la suscripción. La factura llega por correo electrónico.",
+    "nextCard": "La suscripción está confirmada. Último paso: añada una tarjeta de pago."
+  },
+  "betaling": {
+    "needs": {
+      "chat": "configurar el chat"
+    },
+    "toChat": "Ir al chat",
+    "notYet": "Aún no activo",
+    "allReady": "Todo listo: actívelo",
+    "goLive": "Activar",
+    "liveWhenPaidChat": "El chat se activa cuando la suscripción esté lista.",
+    "liveWhenPaidPhone": "El teléfono se activa cuando la suscripción esté lista.",
+    "liveWhenPaidBoth": "El teléfono y el chat se activan cuando la suscripción esté lista.",
+    "nothingText": "En Empresa no se ha elegido nada, así que no hay nada que activar. Elija al menos una cosa."
+  },
+  "checklist": {
+    "aria": "Configuración",
+    "listAria": "Pasos",
+    "tag": "Sin terminar",
+    "lastTag": "Último paso",
+    "next": {
+      "today": "La configuración no está terminada · siguiente: {label}",
+      "settings": "La guía no está terminada · siguiente: {label}",
+      "guide": "Siguiente: {label}"
+    },
+    "payNext": "Dialogbot está configurado · elija suscripción y pago",
+    "goLive": "La suscripción está lista · actívelo",
+    "continue": "Continuar",
+    "backToGuide": "Volver a la guía",
+    "done": "listo",
+    "todo": "falta",
+    "manualCounts": "Lo que configure en Todos los ajustes también cuenta aquí."
   }
 }

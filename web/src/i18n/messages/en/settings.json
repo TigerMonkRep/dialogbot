@@ -89,9 +89,7 @@
       "webhooksValue": "Signed webhooks to your systems",
       "log": "Log and export",
       "logValue": "All changes, newest first"
-    },
-    "guide": "The guide is not finished · next: step {n}. What you set up here counts too.",
-    "guideCta": "Back to the guide"
+    }
   },
   "sheet": {
     "close": "Close"

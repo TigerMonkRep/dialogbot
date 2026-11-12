@@ -43,7 +43,7 @@ export async function setupStatus(wsId: string, role: string): Promise<SetupStat
 
 export type BillingState = { confirmed: boolean; card: boolean; configured: boolean; paid: boolean };
 
-/** The subscription: confirmed (agreement, model A) and – when card payment is set up – a card on file. Erhverv has no
+/** The subscription: confirmed (the agreement) and – when card payment is set up – a card on file. Erhverv has no
  *  free trial. null for roles that cannot see billing (staff, reader): they are never sent to payment. */
 export async function billingState(wsId: string, role: string): Promise<BillingState | null> {
   if (role !== "owner" && role !== "admin") return null;

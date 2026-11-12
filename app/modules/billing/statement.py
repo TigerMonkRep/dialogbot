@@ -198,14 +198,17 @@ def usage_events(db: OrmSession, workspace_id: uuid.UUID, start: datetime, end: 
     outbound = select(CampaignCall.provider_call_id).where(CampaignCall.provider_call_id.is_not(None))
     demo = select(DemoCall.provider_call_id).where(DemoCall.provider_call_id.is_not(None))
     tests = select(TelephonyTest.provider_call_id).where(TelephonyTest.provider_call_id.is_not(None))
+    # `seconds` is the reported duration (None = no end-of-call report yet: `pending`, counted as 0 minutes until it
+    # arrives; a report after the invoice is billed as late usage – QA C15/B03)
     events = [{"direction": "inbound", "id": str(cid), "at": at, "minutes": _minutes_of([sec]), "campaign_id": None,
-               "credited": cid in pooled_in}
+               "credited": cid in pooled_in, "seconds": sec, "pending": sec is None}
               for cid, at, sec in db.execute(select(Call.id, Call.started_at, Call.duration_seconds).where(
                   Call.workspace_id == workspace_id, Call.started_at >= start, Call.started_at < end,
                   Call.provider_call_id.not_in(outbound), Call.provider_call_id.not_in(demo),
                   Call.provider_call_id.not_in(tests))).all()]
     events += [{"direction": "outbound", "id": str(cid), "at": at, "minutes": _minutes_of([sec]), "campaign_id": camp,
-                "credited": cid in pooled_out, "outcome": outcome or "no_answer"}  # unknown = the cheapest
+                "credited": cid in pooled_out, "outcome": outcome or "no_answer",  # unknown = the cheapest
+                "seconds": sec, "pending": sec is None}
                for cid, at, sec, camp, outcome in db.execute(
                    select(CampaignCall.id, CampaignCall.dialled_at, CampaignCall.connected_seconds, CampaignCall.campaign_id,
                           CampaignCall.outcome_class)

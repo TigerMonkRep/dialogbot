@@ -509,4 +509,11 @@ def invoice_out(i: Invoice) -> dict:
             "currency": i.currency, "tax_source": i.tax_source, "net_minor": i.net_minor, "tax_minor": i.tax_minor, "gross_minor": i.gross_minor,
             "hosted_invoice_url": i.hosted_invoice_url, "invoice_pdf": i.invoice_pdf, "note": i.note,
             "lines": i.lines or [],  # the frozen statement lines of the invoiced month (package usage included)
+            "refunds": refunds_out(i),  # B05: refunds / credit notes Stripe reported for this invoice
             "created_at": i.created_at.isoformat()}
+
+
+def refunds_out(i: Invoice) -> dict:
+    from app.modules.billing import disputes
+
+    return disputes.refunds_out(i)

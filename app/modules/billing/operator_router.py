@@ -15,7 +15,7 @@ from app.core.auth import Principal
 from app.core.errors import NotFound
 from app.db import get_db
 from app.models import CallDispute, Invoice, Workspace
-from app.modules.billing import agreements, customer_market, disputes, markets, statement
+from app.modules.billing import agreements, customer_market, disputes, markets, prices, statement
 from app.modules.reports.service import local_today, tz_of
 from app.modules.voices.operator_router import operator
 
@@ -37,13 +37,32 @@ def customer_billing(db: OrmSession, ws: Workspace, month: date | None = None) -
         by = {d: [e for e in events if e["direction"] == d] for d in ("inbound", "outbound")}
         usage = {"month": month.strftime("%Y-%m"), "currency": currency, "package": pkg,
                  **{d: {"calls": len(v), "minutes": sum(e["minutes"] for e in v),
-                        "extra_minutes": sum(e["extra_minutes"] for e in v), "net_minor": sum(e["net_minor"] for e in v)}
+                        "extra_minutes": sum(e["extra_minutes"] for e in v), "net_minor": sum(e["net_minor"] for e in v),
+                        # outbound: the price by outcome for calls that started after the package (part of net_minor)
+                        "call_fees_net_minor": sum(e["call_net_minor"] for e in v),
+                        "pending_reports": sum(1 for e in v if e.get("pending"))}
                     for d, v in by.items()},
                  "overage_net_minor": sum(e["net_minor"] for e in events)}
     return {"agreement": (agreements.out(a) | {"outbound_extra_minute_net_minor": a.outbound_extra_minute_net_minor,
                                                 "inbound_extra_minute_net_minor": a.inbound_extra_minute_net_minor})
             if a else None,
-            "usage": usage}
+            "usage": usage, "reconciliation": reconciliation(db, ws, tz, currency)}
+
+
+def reconciliation(db: OrmSession, ws: Workspace, tz: str, currency: str) -> dict:
+    """M04 monthly reconciliation: the invoiced months counted again now against what their invoices (and later
+    invoices) billed. What differs comes on the next invoice: usage reported after an invoice («Efterregistreret
+    forbrug», F-BQ-012) and credits for complaints approved after an invoice. Read-only – the same functions the next
+    statement uses, so the operator sees exactly what the next invoice will add or take off."""
+    month = local_today(tz).replace(day=1)
+    late = statement.late_usage_lines(db, ws.id, month, tz)
+    credits = statement.dispute_credit_lines(db, ws.id, month, tz, currency)
+    return {"next_invoice_month": month.strftime("%Y-%m"),
+            "late_usage": [{"period": x["period"], "minutes": x["minutes"], "net_minor": x["net_minor"],
+                            "description": x["description"]} for x in late],
+            "credits": [{"period": x["period"], "dispute_id": x["dispute_id"], "minutes": x["minutes"],
+                         "net_minor": x["net_minor"], "description": x["description"]} for x in credits],
+            "net_minor": sum(x["net_minor"] for x in late + credits)}
 
 
 @router.get("/billing")
@@ -56,8 +75,11 @@ def billing_overview(limit: int = Query(default=100, ge=1, le=500), db: OrmSessi
         open_disputes = db.scalar(select(func.count()).select_from(CallDispute).where(
             CallDispute.workspace_id == ws.id, CallDispute.status == "open")) or 0
         out.append({"id": str(ws.id), "name": ws.name, **customer_billing(db, ws),
+                    # the invoice with its frozen lines (the period snapshot) and what Stripe refunded on it
                     "invoices": [{"month": i.month.strftime("%Y-%m"), "status": i.status, "net_minor": i.net_minor,
-                                  "gross_minor": i.gross_minor, "currency": i.currency, "number": i.number} for i in invoices],
+                                  "tax_minor": i.tax_minor, "gross_minor": i.gross_minor, "currency": i.currency,
+                                  "number": i.number, "lines": i.lines or [], "refunds": disputes.refunds_out(i)}
+                                 for i in invoices],
                     "open_disputes": open_disputes})
     return {"items": out}
 
@@ -66,7 +88,9 @@ def billing_overview(limit: int = Query(default=100, ge=1, le=500), db: OrmSessi
 def list_prices(principal: Principal = Depends(operator)):
     """The list prices per market (read-only; a price changes in app/modules/billing/prices.py / markets.py)."""
     e = markets.export()
-    return {"erhverv": e["erhverv"], "included_minutes": e["includedMinutes"], "currencies": e["currencies"]}
+    return {"erhverv": e["erhverv"], "included_minutes": e["includedMinutes"], "currencies": e["currencies"],
+            # M04: the version of the list (agreements snapshot it; a change never touches an existing agreement)
+            "version": prices.PRICE_LIST_VERSION.isoformat(), "valid_from": prices.SHARED_POOL_FROM.isoformat()}
 
 
 @router.get("/disputes")

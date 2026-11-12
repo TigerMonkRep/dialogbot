@@ -447,7 +447,7 @@ def run_schedules() -> None:
             db.rollback()
             log.warning("privat.birthdays_failed", error=f"{type(exc).__name__}: {exc}")
     with get_session_factory()() as db:
-        try:  # demo calls asked for outside the calling hours: Peter rings when they open
+        try:  # demo calls queued before 12/11 (nothing new is queued): rung at their time or dropped when stale
             from app.modules.sales.service import place_due
 
             n = place_due(db)

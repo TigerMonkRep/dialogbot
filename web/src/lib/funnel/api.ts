@@ -37,7 +37,7 @@ export type Utm = { source?: string; medium?: string; campaign?: string; content
 export type GateBody = { name: string; email: string; phone: string; consent: true; website?: string };
 export type GateResult = { status: "code_sent"; phone_display: string };
 export type VerifyResult = { status: "ok"; next: string };
-/** `scheduled`: asked for outside the calling hours – queued, Peter rings at `scheduled_for` (S0 «Erhverv døgnåbent»). */
+/** Peter rings at once, day and night. `scheduled` / `scheduled_for` only on calls queued before 12/11 (retired window). */
 export type Call = { status: string; summary: string | null; duration_seconds: number | null; audio_url?: string | null; scheduled_for?: string | null };
 /** `call_problem`: why no call was placed (call is null) – the page must say so, never «hun ringer nu» (F-E2A-03-X03). */
 export type Reveal = { call: Call | null; call_problem?: string | null; workspace_id: string | null };

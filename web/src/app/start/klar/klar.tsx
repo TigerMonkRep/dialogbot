@@ -1,9 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useLocale, useT } from "@/i18n/client";
-import { nextOpenLabel } from "@/lib/next-open";
-import { api, type ApiError } from "@/lib/client";
+import { useT } from "@/i18n/client";
+import type { ApiError } from "@/lib/client";
 import { PHONE_DISPLAY, PHONE_TEL } from "@/lib/contact";
 import { track } from "@/components/site-analytics";
 import { Alert, Button } from "@/components/ui";
@@ -13,22 +12,17 @@ import { useFunnelError } from "@/components/funnel/parts";
 import { isDone, type Call } from "@/lib/funnel/api";
 import { InstallStep } from "@/components/install-step";
 
-/** Calling hours from GET /demo-call (the same source as /proev); null when the endpoint is not there. */
-type Info = { available: boolean; open_now: boolean; hours: { from: string; to: string } };
 const POLL_MS = 3000;
 const MAX_WAIT_MS = 150_000;
 
-/** «Hun ringer nu til 12 34 56 78»: the number comes from the gate (kept in sessionStorage), the calling-hours note
- *  from GET /demo-call, and GET /funnel/drafts/{id}/reveal is polled until the call has ended – then its summary is
- *  shown. «Gør hende til jeres» leads into the setup guide with the draft's company already in place. «Hør det igen»
+/** «Hun ringer nu til 12 34 56 78»: the number comes from the gate (kept in sessionStorage), and
+ *  GET /funnel/drafts/{id}/reveal is polled until the call has ended – then its summary is shown. Peter rings at once,
+ *  day and night (Fürster 12/11): there are no calling hours to show and no queue. «Gør hende til jeres» leads into the setup guide with the draft's company already in place. «Hør det igen»
  *  only when the API gives an audio URL. */
 export function Klar() {
   const t = useT("site.funnel.erhverv.klar");
-  const tc = useT("site.proev.chat");
-  const locale = useLocale();
   const say = useFunnelError();
   const f = useFunnel();
-  const [info, setInfo] = useState<Info | null>(null);
   const [call, setCall] = useState<Call | null>(null);
   const [problem, setProblem] = useState<string | null>(null);
   const [err, setErr] = useState<ApiError | null>(null);
@@ -38,7 +32,6 @@ export function Klar() {
   const draft = f.draft;
   const phone = f.gate?.phone_display ?? null;
 
-  useEffect(() => { api<Info>("/demo-call").then(setInfo).catch(() => setInfo(null)); }, []);
   useEffect(() => {
     if (!draft) return;
     let alive = true;
@@ -48,10 +41,9 @@ export function Klar() {
         if (!alive) return;
         setErr(null);
         setCall(r.call);
-        // No call was placed (outside calling hours, already called today, not open yet …): stop polling, say so.
+        // No call was placed (already called today, not open yet …): stop polling, say so.
         if (!r.call && r.call_problem) { setProblem(r.call_problem); return; }
         setProblem(null);
-        if (r.call?.status === "scheduled") return; // queued for the next opening: nothing to wait for now
         if (isDone(r.call)) {
           if (!reported.current) { reported.current = true; track("funnel_call_done", { kind: "erhverv", step: 8, hook: f.hook, industry: draft.answers.industry ?? null, status: r.call?.status }); }
           return;
@@ -69,10 +61,7 @@ export function Klar() {
   }, [draft, f.api, f.hook]);
 
   const done = isDone(call);
-  const queued = call?.status === "scheduled" && call.scheduled_for
-    ? nextOpenLabel(call.scheduled_for, locale, { today: tc("whenToday"), tomorrow: tc("whenTomorrow") }) : null;
   const company = draft?.company?.name ?? draft?.answers.company_name ?? "";
-  const hoursNote = info ? (info.open_now ? t("hours", { from: info.hours.from, to: info.hours.to }) : t("closed", { from: info.hours.from, to: info.hours.to })) : t("hoursFallback");
 
   return (
     <FunnelShell step={0}>
@@ -97,13 +86,6 @@ export function Klar() {
                   <p className="m-0 text-[14px] text-ink-soft">{t("noCallBefore")}<a href={PHONE_TEL} className="font-semibold text-ink">{PHONE_DISPLAY}</a>{t("noCallAfter")}</p>
                 </section>
               </>
-            ) : queued ? (
-              <>
-                <Question title={t("scheduledTitle", queued)} help={company ? t("lead", { company }) : undefined} />
-                <section aria-label={t("statusAria")} aria-live="polite" data-call="scheduled" className="rounded-[22px] border-2 border-ink p-5 flex flex-col gap-3 bg-white">
-                  <p className="m-0 text-[16px] leading-normal text-ink">{t("scheduledText")}</p>
-                </section>
-              </>
             ) : (<>
             <Question title={phone ? t("title", { phone }) : t("titleNoPhone")} help={company ? t("lead", { company }) : undefined} />
             <section aria-label={t("statusAria")} aria-live="polite" data-call={done ? "done" : call?.status ?? "waiting"}
@@ -121,7 +103,6 @@ export function Klar() {
               </div>
               {done && call?.summary && <p className="m-0 text-[16px] leading-normal text-ink" data-summary>{call.summary}</p>}
               {done && !call?.summary && <p className="m-0 text-[15px] text-ink-soft">{t("noSummary")}</p>}
-              {!done && <p className="m-0 text-[14px] text-ink-soft">{hoursNote}</p>}
               {(waitedOut || call?.status === "failed" || call?.status === "no_answer") && (
                 <p className="m-0 text-[14px] text-ink-soft">{t("noCallBefore")}<a href={PHONE_TEL} className="font-semibold text-ink">{PHONE_DISPLAY}</a>{t("noCallAfter")}</p>
               )}

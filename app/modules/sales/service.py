@@ -16,16 +16,19 @@ workspace's inbound number is the public demo number. Numbers on its do-not-call
 Abuse limits for the public door: Danish numbers only (no premium-rate ranges), one web request per number per
 24 hours and a global cap per hour.
 
-The calling hours (SALES_CALL_FROM/SALES_CALL_TO, Copenhagen time) only decide WHEN Peter rings, never whether the
-visitor gets anywhere: outside them a request is queued (status `scheduled`, `scheduled_for` = the next opening) with
-a consent text that says so, and the worker (`place_due`) dials the queue when the hours open. Sign-up never waits for
-a call (S0 «Erhverv døgnåbent»).
+A request from the website (dialogbot.app: /proev, the chat widget, the /start quiz) is rung at once, day and night,
+every day (Fürster 12/11): there are no calling hours for Dialogbot's own demo calls, so nothing is queued and no
+text promises a call «i morgen». Dialogbot's own opening hours (support, the contact page) are something else, and
+customers' reception hours are their own (reception rules). Sign-up never waits for a call (S0 «Erhverv døgnåbent»).
+
+Status `scheduled` exists only on rows queued before that decision (F-HOT16-01, 08–20 window): `place_due` dials
+them at the time they consented to and drops one the worker did not reach within SCHEDULED_STALE_AFTER.
 """
 from __future__ import annotations
 
 import re
 import uuid
-from datetime import UTC, datetime, time, timedelta
+from datetime import UTC, datetime, timedelta
 from zoneinfo import ZoneInfo
 
 from sqlalchemy import func, select
@@ -43,7 +46,6 @@ DK_NUMBER = re.compile(r"^\+45[2-9]\d{7}$")
 PREMIUM = re.compile(r"^\+4590")  # 90xx xxxx: overtakseret
 CONSENT_VERSION_WEB = "demo-call-web-v2"  # v2: names Peter as the caller
 CONSENT_VERSION_SELLER = "demo-call-seller-v2"
-CONSENT_VERSION_WEB_LATER = "demo-call-web-later-v1"  # outside the calling hours: Peter rings when they open
 CONSENT_TEXT_WEB = (f"Ja tak, {script.AGENT_NAME} fra Dialogbot, en digital assistent, må ringe mig op på dette nummer nu "
                     "og vise, hvordan Dialogbot tager telefonen. Opkaldet bliver skrevet ned, og en medarbejder fra "
                     "Dialogbot må kontakte mig bagefter om det, vi talte om.")
@@ -108,55 +110,13 @@ def problem(db: OrmSession) -> str | None:
 
 
 SIGNUP_PATH = "/signup?intent=reception"  # Erhverv self-service sign-up: open day and night, no call needed first
-SCHEDULED_STALE_AFTER = timedelta(hours=12)  # a queued call the worker could not place in time is dropped, not rung
-
-
-def hours() -> tuple[time, time]:
-    """The calling hours. A value that is not a time counts as 00:00, and from == to means always open – so a broken
-    or odd setting can make Peter ring at other times, but never closes anything."""
-    s = get_settings()
-    try:
-        return time.fromisoformat((s.sales_call_from or "").strip()), time.fromisoformat((s.sales_call_to or "").strip())
-    except ValueError:
-        return time(0, 0), time(0, 0)
-
-
-def in_hours(now: datetime) -> bool:
-    start, end = hours()
-    t = now.astimezone(TZ).time()
-    if start == end:
-        return True
-    if start < end:
-        return start <= t < end
-    return t >= start or t < end  # a window over midnight, e.g. 20:00–08:00
-
-
-def next_open(now: datetime) -> datetime:
-    """`now` when Peter may ring now, otherwise the next opening (Copenhagen time, DST-safe), in UTC."""
-    if in_hours(now):
-        return now
-    start, _ = hours()
-    local = now.astimezone(TZ)
-    day = local.date() if local.time() < start else local.date() + timedelta(days=1)
-    return datetime.combine(day, start, tzinfo=TZ).astimezone(UTC)
-
-
-def consent_text_later() -> str:
-    start, _ = hours()
-    return (f"Ja tak, {script.AGENT_NAME} fra Dialogbot, en digital assistent, må ringe mig op på dette nummer, når "
-            f"Dialogbot åbner for opkald igen (fra kl. {start:%H:%M}), og vise, hvordan Dialogbot tager telefonen. "
-            "Opkaldet bliver skrevet ned, og en medarbejder fra Dialogbot må kontakte mig bagefter om det, vi talte om.")
+SCHEDULED_STALE_AFTER = timedelta(hours=12)  # a legacy queued call the worker could not place in time is dropped
 
 
 def info(db: OrmSession) -> dict:
-    start, end = hours()
-    now = _now()
-    open_now = in_hours(now)
-    return {"available": problem(db) is None, "demo_number": demo_number(db), "open_now": open_now,
-            "next_open": None if open_now else next_open(now).isoformat(), "signup_url": SIGNUP_PATH,
-            "hours": {"from": start.strftime("%H:%M"), "to": end.strftime("%H:%M")},
-            "consent_text": CONSENT_TEXT_WEB if open_now else consent_text_later(),
-            "consent_version": CONSENT_VERSION_WEB if open_now else CONSENT_VERSION_WEB_LATER,
+    """What the website needs to offer «Ring mig op nu». Peter rings at once whenever `available` – day and night."""
+    return {"available": problem(db) is None, "demo_number": demo_number(db), "signup_url": SIGNUP_PATH,
+            "consent_text": CONSENT_TEXT_WEB, "consent_version": CONSENT_VERSION_WEB,
             "agent": script.AGENT_NAME,
             "voices": [{k: v[k] for k in ("key", "name", "gender", "image", "description", "sample")}
                        for v in _voices() if v["key"] == AGENT_VOICE],
@@ -271,31 +231,20 @@ def request_web(db: OrmSession, *, phone: str, name: str, company: str, voice: s
     is the same, so the endpoint does not reveal who has opted out. `context` (quiz-funnel): documented facts about
     the company – address, opening hours, what the visitor answered – that the manuscript may use in the role-play.
 
-    Outside the calling hours the call is queued (`scheduled`) for the next opening instead of refused.
-    `consent_version`: the box the visitor ticked on /proev (CONSENT_VERSION_WEB «nu» or CONSENT_VERSION_WEB_LATER);
-    None = the quiz-funnel, whose own gate consent is kept on the draft. A «nu» consent is never used for a later call:
-    409 `demo_consent_later` asks for the matching one (the page was loaded before closing)."""
+    Peter rings at once, at any hour and on any day: nothing is queued. `consent_version` is checked by the router
+    (only CONSENT_VERSION_WEB, «nu»); the quiz-funnel passes None and keeps its own gate consent on the draft."""
     now = _now()
     phone = danish_number(phone)
     if problem(db) is not None:
         raise DemoUnavailable("Demo-opkald er ikke åbnet endnu. Skriv dig på ventelisten, så hører du fra os.")
     ws = sales_workspace(db)
-    later = not in_hours(now)
-    if later and consent_version == CONSENT_VERSION_WEB:
-        start, _ = hours()
-        raise Conflict(f"Vi ringer først igen fra kl. {start:%H:%M}. Sæt kryds igen, hvis vi må ringe dig op der – "
-                       "du kan også oprette dig med det samme.", code="demo_consent_later")
     if db.scalar(select(DemoCall.id).where(DemoCall.phone == phone, DemoCall.source == "web",
                                            DemoCall.created_at > now - WEB_REPEAT_AFTER)):
         raise DemoRateLimited("Vi har allerede ringet til dette nummer i dag. Ring selv til demonummeret, hvis du vil "
                               "prøve igen.", code="demo_already_called")
     _global_cap(db, ws, now)
-    if consent_version == CONSENT_VERSION_WEB_LATER:
-        c_version, c_text = CONSENT_VERSION_WEB_LATER, consent_text_later()
-    else:
-        c_version, c_text = CONSENT_VERSION_WEB, CONSENT_TEXT_WEB
     d = DemoCall(workspace_id=ws.id, source="web", phone=phone, name=name.strip()[:200], company=company.strip()[:200],
-                 consent_version=c_version, consent_text=c_text, consented_at=now,
+                 consent_version=CONSENT_VERSION_WEB, consent_text=CONSENT_TEXT_WEB, consented_at=now,
                  voice_key=AGENT_VOICE, industry=industry if industry in script.INDUSTRIES else None,
                  industry_other=(script.clean_other(industry_other) or None) if industry not in script.INDUSTRIES else None,
                  context=(context or "").strip()[:4000] or None)
@@ -304,22 +253,18 @@ def request_web(db: OrmSession, *, phone: str, name: str, company: str, voice: s
         d.status, d.error = "skipped", "Nummeret står på spærrelisten"
         db.flush()
         return None
-    if later:
-        d.status, d.scheduled_for = "scheduled", next_open(now)
-        db.flush()
-        return d
     db.flush()
     place(db, ws, d)
     return d
 
 
 def place_due(db: OrmSession, limit: int = 5) -> int:
-    """The worker: dial queued web requests once the calling hours are open. A request that waited more than
-    SCHEDULED_STALE_AFTER past its time (the worker was down) is dropped rather than rung out of the blue; a number
-    that opted out meanwhile is skipped. Returns the number of calls placed."""
+    """The worker drains rows queued before 12/11 (nothing new is queued): a row is rung at the time its visitor
+    consented to (`scheduled_for`, the old window's opening), never earlier. A row that waited more than
+    SCHEDULED_STALE_AFTER past that time (the worker was down) is dropped rather than rung out of the blue – a row
+    for 08:00 is never rung after 20:00, so nobody is rung at night for an old request. A number that opted out
+    meanwhile is skipped. Returns the number of calls placed."""
     now = _now()
-    if not in_hours(now):
-        return 0
     due = DemoCall.status == "scheduled", DemoCall.scheduled_for <= now
     if db.scalar(select(DemoCall.id).where(*due).limit(1)) is None or problem(db) is not None:
         return 0  # the common case (nothing queued) costs one indexed query per worker tick

@@ -435,7 +435,6 @@
         "unavailable": "Non al momento"
       },
       "blockerInactive": "La chiamata di prova sarà attivata a breve: fino ad allora la richiamiamo noi manualmente in orario di apertura. Ci chiami al {phone} ({hours}) oppure scriva il suo numero a {email} e la richiameremo.",
-      "blockerOwnNumber": " Può anche chiamare lei il mio numero demo {number}.",
       "chipCall": "Sì, chiamami",
       "chipWhat": "Cosa sai fare?",
       "chipPrice": "Quanto costa?",
@@ -489,13 +488,7 @@
       ],
       "sideNote": "La stessa chat la accompagna anche dopo: quando dice sì, la guida nella configurazione, collega il suo calendario e testa tutto insieme a lei.",
       "signupCta": "Registrati",
-      "signupLine": "Pronto a iniziare? Registrati da solo: è aperto 24 ore su 24.",
-      "closedAskCompany": "In questo momento non chiamo: chiamerò {when} dalle {time}. Non devi aspettare: puoi registrarti subito. Se vuoi comunque la chiamata, scrivimi il nome della tua azienda.",
-      "scheduled": "Grazie. Chiamerò il {number} {when} dalle {time} e mi presenterò come receptionist di {company}. Non devi aspettarmi: puoi registrarti subito qui.",
-      "phoneScheduledTitle": "Peter chiama {when} dalle {time}",
-      "phoneScheduledText": "Puoi registrarti e iniziare già ora: la chiamata arriverà comunque.",
-      "whenToday": "oggi",
-      "whenTomorrow": "domani"
+      "signupLine": "Pronto a iniziare? Registrati da solo: è aperto 24 ore su 24."
     }
   },
   "preview": {
@@ -796,9 +789,6 @@
         "title": "Sta chiamando ora il {phone}",
         "titleNoPhone": "Sta chiamando ora",
         "lead": "Rispondi e chiedi quello che un cliente chiederebbe a {company}.",
-        "hours": "Chiama solo nei giorni feriali tra le {from} e le {to}.",
-        "closed": "Siamo fuori dall'orario delle chiamate (feriali {from}–{to}). Chiamerà appena inizia.",
-        "hoursFallback": "Chiama solo nei giorni feriali durante l'orario di apertura.",
         "waiting": "La chiamata è in arrivo",
         "inProgress": "La conversazione è in corso …",
         "waitedOut": "Non abbiamo avuto risposta alla chiamata",
@@ -815,9 +805,7 @@
         "notLoggedIn": "Accedi per vedere com'è andata la chiamata.",
         "login": "Accedi",
         "statusAria": "Stato della chiamata",
-        "noCallTitle": "Al momento non chiama",
-        "scheduledTitle": "Ti chiamerà {when} dalle {time}",
-        "scheduledText": "Fuori dall'orario di chiamata mettiamo la chiamata in coda. Non devi aspettare: rendila vostra subito."
+        "noCallTitle": "Questa volta non chiama"
       },
       "signupDirect": "Salta il quiz: registrati direttamente"
     }

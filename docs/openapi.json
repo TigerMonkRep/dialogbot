@@ -636,6 +636,61 @@
         "title": "BatchApproveIn",
         "type": "object"
       },
+      "BatchIn": {
+        "properties": {
+          "countries": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 20,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Countries"
+          },
+          "csv": {
+            "anyOf": [
+              {
+                "maxLength": 500000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Alternative to `leads`: CSV text with a header row",
+            "title": "Csv"
+          },
+          "leads": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__outreach__router__LeadIn"
+            },
+            "maxItems": 50,
+            "title": "Leads",
+            "type": "array"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "pattern": "^[A-Za-z0-9_.-]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          }
+        },
+        "title": "BatchIn",
+        "type": "object"
+      },
       "BillIn": {
         "properties": {
           "amount": {
@@ -2873,60 +2928,6 @@
         "title": "LanguagesOut",
         "type": "object"
       },
-      "LeadIn": {
-        "properties": {
-          "contact_email": {
-            "anyOf": [
-              {
-                "format": "email",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Contact Email"
-          },
-          "contact_name": {
-            "default": "",
-            "maxLength": 200,
-            "title": "Contact Name",
-            "type": "string"
-          },
-          "contact_phone": {
-            "anyOf": [
-              {
-                "maxLength": 40,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Contact Phone"
-          },
-          "conversation_id": {
-            "anyOf": [
-              {
-                "format": "uuid",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Conversation Id"
-          },
-          "need_summary": {
-            "default": "",
-            "maxLength": 4000,
-            "title": "Need Summary",
-            "type": "string"
-          }
-        },
-        "title": "LeadIn",
-        "type": "object"
-      },
       "LeadPatch": {
         "properties": {
           "contact_email": {
@@ -4959,6 +4960,27 @@
         "title": "SuggestIn",
         "type": "object"
       },
+      "SuppressIn": {
+        "properties": {
+          "kind": {
+            "default": "email",
+            "pattern": "^(email|domain)$",
+            "title": "Kind",
+            "type": "string"
+          },
+          "value": {
+            "maxLength": 320,
+            "minLength": 3,
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ],
+        "title": "SuppressIn",
+        "type": "object"
+      },
       "SynthIn": {
         "properties": {
           "text": {
@@ -6933,6 +6955,176 @@
           }
         },
         "title": "DecisionIn",
+        "type": "object"
+      },
+      "app__modules__leads__router__LeadIn": {
+        "properties": {
+          "contact_email": {
+            "anyOf": [
+              {
+                "format": "email",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Email"
+          },
+          "contact_name": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Contact Name",
+            "type": "string"
+          },
+          "contact_phone": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Phone"
+          },
+          "conversation_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Conversation Id"
+          },
+          "need_summary": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Need Summary",
+            "type": "string"
+          }
+        },
+        "title": "LeadIn",
+        "type": "object"
+      },
+      "app__modules__outreach__router__LeadIn": {
+        "properties": {
+          "city": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
+          },
+          "company_name": {
+            "maxLength": 200,
+            "title": "Company Name",
+            "type": "string"
+          },
+          "context": {
+            "anyOf": [
+              {
+                "maxLength": 20000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Context"
+          },
+          "country": {
+            "maxLength": 20,
+            "title": "Country",
+            "type": "string"
+          },
+          "email": {
+            "maxLength": 320,
+            "title": "Email",
+            "type": "string"
+          },
+          "email_source": {
+            "default": "unknown",
+            "maxLength": 20,
+            "title": "Email Source",
+            "type": "string"
+          },
+          "email_source_url": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email Source Url"
+          },
+          "niche": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Niche"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "registration_number": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registration Number"
+          },
+          "website": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Website"
+          }
+        },
+        "required": [
+          "company_name",
+          "email",
+          "country"
+        ],
+        "title": "LeadIn",
         "type": "object"
       },
       "app__modules__privat__router__MessageIn": {
@@ -11535,6 +11727,297 @@
         "summary": "Update Request",
         "tags": [
           "assistant-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/outreach/batches": {
+      "post": {
+        "description": "Check, research, write and audit up to 50 leads. Queues audited e-mails; sends nothing.",
+        "operationId": "run_batch_api_v1_operator_outreach_batches_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Run Batch",
+        "tags": [
+          "outreach-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/outreach/batches/{name}": {
+      "get": {
+        "operationId": "batch_report_api_v1_operator_outreach_batches__name__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "title": "Name",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Batch Report",
+        "tags": [
+          "outreach-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/outreach/call-queue.csv": {
+      "get": {
+        "description": "The manual call list (Denmark). By default only companies the CVR register cleared.",
+        "operationId": "call_queue_csv_api_v1_operator_outreach_call_queue_csv_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "include_needs_review",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Include Needs Review",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Call Queue Csv",
+        "tags": [
+          "outreach-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/outreach/dispatch": {
+      "post": {
+        "description": "Hand queued, audited e-mails to the provider (dry_run: render only). Never runs on a schedule.",
+        "operationId": "dispatch_api_v1_operator_outreach_dispatch_post",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Dispatch",
+        "tags": [
+          "outreach-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/outreach/suppressions": {
+      "post": {
+        "operationId": "suppress_api_v1_operator_outreach_suppressions_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuppressIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Suppress",
+        "tags": [
+          "outreach-operator"
         ]
       }
     },
@@ -26365,6 +26848,92 @@
         ]
       }
     },
+    "/api/v1/unsubscribe": {
+      "get": {
+        "description": "The opt-out link in every footer. Takes effect at once and needs nothing from the reader – no login, no form,\nno confirmation step.",
+        "operationId": "unsubscribe_link_api_v1_unsubscribe_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "maxLength": 1000,
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Unsubscribe Link",
+        "tags": [
+          "outreach"
+        ]
+      },
+      "post": {
+        "description": "One-click opt-out for mail clients (List-Unsubscribe-Post, RFC 8058).",
+        "operationId": "unsubscribe_one_click_api_v1_unsubscribe_post",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "maxLength": 1000,
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Unsubscribe One Click",
+        "tags": [
+          "outreach"
+        ]
+      }
+    },
     "/api/v1/voice/vapi/{session_id}": {
       "post": {
         "operationId": "vapi_voice_api_v1_voice_vapi__session_id__post",
@@ -26627,6 +27196,26 @@
         "summary": "Elevenlabs Tool",
         "tags": [
           "webhooks"
+        ]
+      }
+    },
+    "/api/v1/webhooks/events": {
+      "post": {
+        "description": "Events from the sending provider. Resend signs with Svix (RESEND_WEBHOOK_SECRET); any other sender posts\n`{\"event\": \"reply|bounce|complaint|unsubscribe\", \"email\": \"…\"}` with the header X-Outreach-Secret.",
+        "operationId": "provider_events_api_v1_webhooks_events_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Provider Events",
+        "tags": [
+          "outreach"
         ]
       }
     },
@@ -33793,7 +34382,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LeadIn"
+                "$ref": "#/components/schemas/app__modules__leads__router__LeadIn"
               }
             }
           },

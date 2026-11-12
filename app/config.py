@@ -343,6 +343,70 @@ class Settings(BaseSettings):
 
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
 
+    # --- Cold e-mail outreach for Dialogbot's own sales (app/modules/outreach, docs/sales/cold-outreach.md) ----------
+    # off = nothing runs · dry_run = leads are checked, researched, written and audited, nothing is ever sent ·
+    # live = audited e-mails go to the sending provider. Live refuses to start without the settings below.
+    outreach_mode: Literal["off", "dry_run", "live"] = Field(default="off", alias="OUTREACH_MODE")
+    claude_research_model: str = Field(default="claude-sonnet-4-6", alias="CLAUDE_RESEARCH_MODEL")
+    claude_writer_model: str = Field(default="claude-sonnet-4-6", alias="CLAUDE_WRITER_MODEL")
+    claude_auditor_model: str = Field(default="claude-haiku-4-5", alias="CLAUDE_AUDITOR_MODEL")
+    outreach_ai_max_retries: int = Field(default=4, alias="OUTREACH_AI_MAX_RETRIES")  # SDK backoff on 429/5xx
+    outreach_web_search: bool = Field(default=True, alias="OUTREACH_WEB_SEARCH")
+    outreach_min_confidence: float = Field(default=0.6, alias="OUTREACH_MIN_CONFIDENCE")
+    # resend | smtp are implemented; instantly | smartlead are reserved and fail closed (never a green stub).
+    outreach_provider: Literal["resend", "smtp", "instantly", "smartlead"] = Field(default="resend", alias="OUTREACH_PROVIDER")
+    outreach_resend_api_key: str | None = Field(default=None, alias="OUTREACH_RESEND_API_KEY")
+    outreach_smtp_host: str | None = Field(default=None, alias="OUTREACH_SMTP_HOST")
+    outreach_smtp_port: int = Field(default=587, alias="OUTREACH_SMTP_PORT")
+    outreach_smtp_username: str | None = Field(default=None, alias="OUTREACH_SMTP_USERNAME")
+    outreach_smtp_password: str | None = Field(default=None, alias="OUTREACH_SMTP_PASSWORD")
+    # Sender identity. Inboxes: comma-separated addresses the e-mails rotate over, each with its own daily limit.
+    outreach_sender_name: str = Field(default="Dialogbot", alias="OUTREACH_SENDER_NAME")
+    outreach_sender_inboxes: str = Field(default="", alias="OUTREACH_SENDER_INBOXES")
+    outreach_legal_name: str = Field(default="Dialogbot, CVR 25632710", alias="OUTREACH_LEGAL_NAME")
+    # CAN-SPAM and CASL ask for a full postal address (street, postal code). Unset = the short «Aarhus, Denmark»
+    # line, which is fine for a dry run and refused in live mode.
+    outreach_postal_address: str | None = Field(default=None, alias="OUTREACH_POSTAL_ADDRESS")
+    outreach_privacy_url: str = Field(default="https://dialogbot.app/privatliv", alias="OUTREACH_PRIVACY_URL")
+    outreach_daily_limit_per_inbox: int = Field(default=30, alias="OUTREACH_DAILY_LIMIT_PER_INBOX")
+    outreach_daily_limit_per_domain: int = Field(default=150, alias="OUTREACH_DAILY_LIMIT_PER_DOMAIN")
+    # Markets the matrix holds back until a lawyer has signed them off (ES, PL): comma-separated country codes.
+    outreach_signed_off_markets: str = Field(default="", alias="OUTREACH_SIGNED_OFF_MARKETS")
+    # Blocked markets whose valid B2B leads go to the manual call list instead of being dropped.
+    outreach_call_queue_countries: str = Field(default="DK", alias="OUTREACH_CALL_QUEUE_COUNTRIES")
+    # Countries whose phone numbers the callback demo on dialogbot.app actually rings. Live sending to a country
+    # outside this list is refused: the e-mail's only call to action would not work for the reader.
+    outreach_demo_callback_countries: str = Field(default="DK", alias="OUTREACH_DEMO_CALLBACK_COUNTRIES")
+    # Local number the demo rings from, per market. Unset = the copy may not mention a local number.
+    outreach_callback_number_us: str | None = Field(default=None, alias="OUTREACH_CALLBACK_NUMBER_US")
+    outreach_callback_number_uk: str | None = Field(default=None, alias="OUTREACH_CALLBACK_NUMBER_UK")
+    # Display prices in the e-mail. USD and GBP are not billing currencies yet (billing/markets.py bills these
+    # markets in EUR), so they are set here; the other markets read the list price from markets.py.
+    outreach_price_us: str = Field(default="$349/mo", alias="OUTREACH_PRICE_US")
+    outreach_price_uk: str = Field(default="£275/mo", alias="OUTREACH_PRICE_UK")
+    # Shared secret for POST /webhooks/events from providers that do not sign with Svix (header X-Outreach-Secret).
+    outreach_webhook_secret: str | None = Field(default=None, alias="OUTREACH_WEBHOOK_SECRET")
+
+    @property
+    def outreach_inboxes(self) -> list[str]:
+        return [x.strip().lower() for x in self.outreach_sender_inboxes.split(",") if x.strip()]
+
+    @staticmethod
+    def _codes(raw: str) -> set[str]:
+        return {"UK" if x.strip().upper() == "GB" else x.strip().upper() for x in raw.split(",") if x.strip()}
+
+    @property
+    def outreach_signed_off(self) -> set[str]:
+        return self._codes(self.outreach_signed_off_markets)
+
+    @property
+    def outreach_call_queue(self) -> set[str]:
+        return self._codes(self.outreach_call_queue_countries)
+
+    @property
+    def outreach_demo_countries(self) -> set[str]:
+        return self._codes(self.outreach_demo_callback_countries)
+
     @model_validator(mode="after")
     def _fail_closed(self) -> Settings:
         if self.app_env in ("staging", "prod"):
@@ -393,6 +457,18 @@ class Settings(BaseSettings):
                 missing.append("TELEPHONY_PROVIDER=live")
             if missing:
                 raise ValueError("SALES_OUTBOUND_MODE=live requires " + ", ".join(missing))
+        if self.outreach_provider in ("instantly", "smartlead") and self.outreach_mode == "live":
+            raise ValueError(f"OUTREACH_PROVIDER={self.outreach_provider} is not implemented; use resend or smtp")
+        if self.outreach_mode == "live":
+            missing = [n for n, ok in (
+                ("OUTREACH_SENDER_INBOXES", bool(self.outreach_inboxes)),
+                ("OUTREACH_POSTAL_ADDRESS", bool(self.outreach_postal_address)),
+                ("OUTREACH_RESEND_API_KEY", self.outreach_provider != "resend" or bool(self.outreach_resend_api_key)),
+                ("OUTREACH_SMTP_HOST", self.outreach_provider != "smtp" or bool(self.outreach_smtp_host)),
+                ("AI_PROVIDER=anthropic", self.ai_provider == "anthropic"),
+            ) if not ok]
+            if missing:
+                raise ValueError("OUTREACH_MODE=live requires " + ", ".join(missing))
         if self.auth_provider == "external":
             raise ValueError(
                 "AUTH_PROVIDER=external is reserved for a future OIDC integration and is not "

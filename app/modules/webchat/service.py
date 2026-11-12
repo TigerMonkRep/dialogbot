@@ -95,10 +95,17 @@ def greeting_text(db: OrmSession, s: WebchatSettings) -> str:
     return DEFAULT_GREETING.format(name=ws.name if ws else "virksomheden")
 
 
-def unavailable_reasons(db: OrmSession, s: WebchatSettings, *, ignore_enabled: bool = False) -> list[str]:
+def unavailable_reasons(db: OrmSession, s: WebchatSettings, *, ignore_enabled: bool = False,
+                        ignore_subscription: bool = False) -> list[str]:
+    """Why visitors get no chat (empty = live). `subscription_required`: no paid subscription – the chat never goes
+    live without one, like the phone (Fürster 12/11); the owner can still try it in the preview (`preview_reply`)."""
+    from app.modules.billing.agreements import subscription_paid
+
     reasons = []
     if not ignore_enabled and not s.enabled:
         reasons.append("disabled")
+    if not ignore_subscription and not subscription_paid(db, s.workspace_id):
+        reasons.append("subscription_required")
     if not s.allowed_origins:
         reasons.append("no_allowed_origins")
     if capability("webchat").status == "not_implemented":
@@ -205,6 +212,29 @@ def post_visitor_message(db: OrmSession, s: WebchatSettings, conv: Conversation,
     db.commit()
     return {"reply": message_out(reply), "refused": usage.outcome == "refused", "waiting_for_staff": False,
             "remaining_messages": MAX_VISITOR_MESSAGES - conv.visitor_message_count}
+
+
+MAX_PREVIEW_TURNS = 12
+PREVIEW_DAILY_LIMIT = 200  # owner test replies per workspace per day
+
+
+def preview_reply(db: OrmSession, ws: Workspace, user_id: uuid.UUID, turns: list[dict]) -> dict:
+    """The owner tries the chat before it is live (no subscription needed): the same assistant, the same approved
+    knowledge and the same webchat instructions – but nothing is stored as a conversation, no visitor sees it and no
+    connector action runs (a test must never book a real appointment). One `ai_usage` row per reply."""
+    turns = [t for t in turns if t.get("content", "").strip()][-MAX_PREVIEW_TURNS:]
+    while turns and turns[0]["role"] != "user":
+        turns.pop(0)
+    if not turns or turns[-1]["role"] != "user":
+        raise ValidationFailed("Skriv en besked", field_errors=[{"field": "messages"}])
+    since = _now() - timedelta(days=1)
+    n = db.scalar(select(func.count()).select_from(AiUsage).where(
+        AiUsage.workspace_id == ws.id, AiUsage.purpose == "webchat_preview", AiUsage.created_at >= since))
+    if n >= PREVIEW_DAILY_LIMIT:
+        raise RateLimited("Forhåndsvisningen har nået dagens grænse. Prøv igen i morgen.", code="daily_limit")
+    c, usage = complete_logged(db, ws, user_id=user_id, purpose="webchat_preview", messages=_alternate(turns),
+                               channel="webchat")
+    return {"reply": visible_reply(c), "refused": usage.outcome == "refused"}
 
 
 MAX_TOOL_ROUNDS = 3

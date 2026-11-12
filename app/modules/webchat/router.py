@@ -16,6 +16,7 @@ from app.core.errors import Conflict
 from app.core.pagination import PageParams, page
 from app.db import get_db
 from app.models import Conversation, ConversationMessage, WebchatSettings
+from app.modules.billing.agreements import subscription_paid
 from app.modules.integrations import actions
 from app.modules.setup.checks import invalidate_checks
 from app.modules.webchat import feed, service
@@ -41,6 +42,9 @@ def settings_out(db: OrmSession, s: WebchatSettings) -> dict:
         "effective_greeting": service.greeting_text(db, s),
         "available": not service.unavailable_reasons(db, s),
         "unavailable_reasons": service.unavailable_reasons(db, s),
+        # what is still missing before it can go live, leaving out the switch and the subscription: empty = set up
+        "setup_missing": service.unavailable_reasons(db, s, ignore_enabled=True, ignore_subscription=True),
+        "subscription_paid": subscription_paid(db, s.workspace_id),
         "last_seen_at": s.last_seen_at.isoformat() if s.last_seen_at else None,
         "last_seen_origin": s.last_seen_origin,
         "embed_code": f'<script src="{base}/api/v1/public/webchat/loader.js" data-dialogbot-key="{s.widget_key}" async></script>',
@@ -72,7 +76,12 @@ def update_settings(body: SettingsIn, request: Request, ctx: WorkspaceContext = 
     before = _audit_view(s)
     s.allowed_origins, s.greeting = origins, body.greeting.strip()
     if body.enabled:
-        reasons = service.unavailable_reasons(db, s, ignore_enabled=True)
+        # Turning it on = going live for visitors: everything set up AND a paid subscription (Fürster 12/11). Saving an
+        # already-on chat checks the set-up only; the public endpoints refuse visitors as long as it is not paid.
+        reasons = service.unavailable_reasons(db, s, ignore_enabled=True, ignore_subscription=s.enabled)
+        if reasons == ["subscription_required"]:
+            raise Conflict("Chatten går live, når abonnementet er på plads", code="subscription_required",
+                           extra={"reasons": reasons})
         if reasons:
             raise Conflict("Widgetten kan ikke slås til endnu", code="webchat_not_ready", extra={"reasons": reasons})
     s.enabled = body.enabled
@@ -98,6 +107,28 @@ def rotate_key(request: Request, ctx: WorkspaceContext = Depends(require_capabil
                  object_type="webchat_settings", object_id=ctx.workspace.id, request_id=request.state.request_id)
     db.commit()
     return settings_out(db, s)
+
+
+class PreviewTurn(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str = Field(max_length=service.MAX_MESSAGE_CHARS)
+
+
+class PreviewIn(BaseModel):
+    messages: list[PreviewTurn] = Field(min_length=1, max_length=service.MAX_PREVIEW_TURNS)
+
+
+@router.post("/webchat/preview")
+def preview(body: PreviewIn, ctx: WorkspaceContext = Depends(require_capability("webchat.manage")),
+            db: OrmSession = Depends(get_db)):
+    """The owner tries the chat in the app before it is live (also without a subscription). Stateless: the client sends
+    the turns so far; nothing is stored as a conversation and no connector action runs."""
+    from app.models import Workspace
+
+    ws = db.get(Workspace, ctx.workspace.id)
+    out = service.preview_reply(db, ws, ctx.user_id, [t.model_dump() for t in body.messages])
+    db.commit()
+    return out
 
 
 class ConversationOut(BaseModel):

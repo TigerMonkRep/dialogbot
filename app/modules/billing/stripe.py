@@ -166,16 +166,17 @@ def require_vat_number(db: OrmSession, ws_id: uuid.UUID) -> dict:
     return vat
 
 
-def card_checkout(db: OrmSession, ws: Workspace, email: str | None) -> str:
+def card_checkout(db: OrmSession, ws: Workspace, email: str | None, *, return_to: str = "konto") -> str:
     """A Stripe Checkout page (setup mode) where the owner saves a card. Returns its URL. In the workspace's currency
     and the company's language; an EU company outside Denmark must give its VAT number first (409)."""
     require_vat_number(db, ws.id)
     a = ensure_customer(db, ws, email)
     base = get_settings().frontend_base_url
+    back = "/opsaetning/betaling" if return_to == "opsaetning" else "/app/konto"
     s = request("POST", "/checkout/sessions", {
         "mode": "setup", "customer": a.stripe_customer_id, "currency": customer_market.currency_of(db, ws.id).lower(),
         "payment_method_types": ["card"], "locale": customer_market.stripe_locale(customer_market.country_of(db, ws.id)),
-        "success_url": f"{base}/app/konto?card=saved", "cancel_url": f"{base}/app/konto?card=cancelled",
+        "success_url": f"{base}{back}?card=saved", "cancel_url": f"{base}{back}?card=cancelled",
         "metadata": {"workspace_id": str(ws.id)}, "setup_intent_data": {"metadata": {"workspace_id": str(ws.id)}}})
     return s["url"]
 

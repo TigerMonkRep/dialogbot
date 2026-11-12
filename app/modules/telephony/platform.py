@@ -514,6 +514,12 @@ def activate(db: OrmSession, ws_id: uuid.UUID, user_id: uuid.UUID) -> TelephonyS
         raise Conflict("Aktivér først efter et bestået prøveopkald", code="telephony_test_required")
     if agreement(db, ws_id) is None:
         raise Conflict("Bekræft jeres abonnement først", code="telephony_agreement_required")
+    from app.modules.billing.agreements import subscription_paid
+
+    if not subscription_paid(db, ws_id):
+        # Confirmed but not paid (no card while card payment is set up, or an old agreement): the number never goes live
+        # without a paid subscription (Fürster 12/11).
+        raise Conflict("Telefonen går live, når abonnementet er på plads", code="subscription_required")
     s.state, s.activated_at, s.activated_by = "active", _now(), user_id
     return s
 

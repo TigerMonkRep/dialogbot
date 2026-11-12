@@ -4,6 +4,7 @@ import logging
 import re
 import uuid
 from datetime import UTC, date, datetime
+from typing import Literal
 
 from fastapi import APIRouter, Depends, Query, Request, Response
 from pydantic import BaseModel, Field
@@ -137,14 +138,20 @@ def put_vat_number(body: VatNumberIn, request: Request,
     return _account_out(db, ctx)
 
 
+class CardCheckoutIn(BaseModel):
+    return_to: Literal["konto", "opsaetning"] = Field(
+        default="konto", description="Where Stripe sends the owner back: Konto (default) or the guide's payment step.")
+
+
 @router.post("/card/checkout")
-def card_checkout(request: Request, ctx: WorkspaceContext = Depends(require_capability("billing.manage")),
-                  db: OrmSession = Depends(get_db)):
+def card_checkout(request: Request, body: CardCheckoutIn | None = None,
+                  ctx: WorkspaceContext = Depends(require_capability("billing.manage")), db: OrmSession = Depends(get_db)):
     """Stripe Checkout (setup mode): the owner saves a card at Stripe. Nothing is charged now."""
     from app.models import User
 
     user = db.get(User, ctx.user_id)
-    url = stripe.card_checkout(db, ctx.workspace, user.email if user else None)
+    url = stripe.card_checkout(db, ctx.workspace, user.email if user else None,
+                               return_to=body.return_to if body else "konto")
     record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="billing.card_checkout_started",
                  object_type="billing_account", object_id=ctx.workspace.id, request_id=request.state.request_id)
     db.commit()

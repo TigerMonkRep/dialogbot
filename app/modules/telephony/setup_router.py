@@ -20,6 +20,7 @@ from app.core.auth import WorkspaceContext, require_capability
 from app.core.errors import ValidationFailed
 from app.db import get_db
 from app.models import BusinessProfile, KnowledgeItem, ReceptionScript, TelephonyTest, WorkspaceVoiceSettings
+from app.modules.billing.agreements import subscription_paid
 from app.modules.setup.checks import invalidate_checks
 from app.modules.telephony import platform
 
@@ -95,6 +96,7 @@ def overview(db: OrmSession, ctx: WorkspaceContext) -> dict:
                                                                                                  (bp.city if bp else None)) if y)) if x),
                       "uploaded": s.document_key is not None, "note": s.regulatory_note if s.documents_status == "rejected" else ""},
         "agreement_accepted": platform.agreement(db, ctx.workspace.id) is not None,
+        "subscription_paid": subscription_paid(db, ctx.workspace.id),
         "destination": {"e164": dest.e164} if dest is not None and dest.status == "active" else None,
         "guide": _guide(s, dest.e164 if dest is not None and dest.status == "active" else None),
         "answering": _answering(db, ctx.workspace.id),

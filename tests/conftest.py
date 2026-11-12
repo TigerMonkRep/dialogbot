@@ -169,6 +169,13 @@ class Api:
         assert r.status_code == 200, r.text
         return r.json()
 
+    def subscribe(self, token: str, ws: str) -> dict:
+        """The owner confirms the subscription. Without Stripe (tests) that is a paid subscription: the chat and the
+        phone may go live (agreements.subscription_paid)."""
+        r = self.c.post(f"{self.base}/workspaces/{ws}/agreement", json={"model": "A"}, headers=self.h(token))
+        assert r.status_code in (200, 201), r.text
+        return r.json()
+
     def operator(self) -> str:
         """A platform operator (Dialogbot staff) session, created once per test."""
         if getattr(self, "_op", None) is None:

@@ -41,6 +41,22 @@ def current(db: OrmSession, workspace_id: uuid.UUID) -> ReceptionAgreement | Non
                      .order_by(ReceptionAgreement.version.desc()).limit(1))
 
 
+def subscription_paid(db: OrmSession, workspace_id: uuid.UUID) -> bool:
+    """The subscription is «betalt» (Fürster 12/11: neither the phone nor the website chat goes live without it): a
+    confirmed agreement – the current subscription, not an old model-B one, which must be confirmed again – plus a card
+    on file. Where card payment is not set up (no Stripe) there is nothing to add after confirming: invoices come by
+    e-mail. The same rule as the web's `billingState` (lib/setup.server.ts)."""
+    from app.modules.billing import stripe
+
+    a = current(db, workspace_id)
+    if a is None or a.model == "B":
+        return False
+    if not stripe.configured():
+        return True
+    acc = db.get(BillingAccount, workspace_id)
+    return bool(acc and acc.payment_method_id)
+
+
 def create(db: OrmSession, workspace_id: uuid.UUID, model: str, created_by: uuid.UUID, *,
            offer=None) -> ReceptionAgreement:
     """`offer` (an accepted SalesOffer) snapshots the offer's monthly price, VAT, setup fee and package (included

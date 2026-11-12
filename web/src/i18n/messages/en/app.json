@@ -516,7 +516,8 @@
       "consent": "consent",
       "noConsent": "Missing consent – won't be called",
       "attempts": "{n} attempts",
-      "priceNote": "No charge per call inside the package. After it, {answered} (answered), {voicemail} (voicemail) or {noAnswer} (unanswered) per call plus {price} per minute excl. VAT. Stop at any time."
+      "priceNote": "No charge per call inside the package. After it, {answered} (answered), {voicemail} (voicemail) or {noAnswer} (unanswered) per call plus {price} per minute excl. VAT. Stop at any time.",
+      "awaiting": "{n} calls are waiting for their call report – the minutes count once it arrives."
     },
     "new": {
       "title": "New campaign",
@@ -578,7 +579,9 @@
       "confirm": "Confirm the rules for calls",
       "starting": "Starting…",
       "resume": "Resume",
-      "start": "Start campaign"
+      "start": "Start campaign",
+      "needsSubscription": "The campaign can start once the subscription is confirmed and there is a payment card on the account.",
+      "toAccount": "Go to Account"
     },
     "remove": "Remove",
     "dnc": {
@@ -874,7 +877,8 @@
       "fromSetupNoCard": "Last step: confirm the subscription below. Then you are live.",
       "fromSetupCard": "The subscription is confirmed. Last step: add a payment card below.",
       "fromSetupLive": "You are live. The subscription is in place.",
-      "goToday": "Go to Today"
+      "goToday": "Go to Today",
+      "packageLeft": "{n} minutes left in the package this month"
     },
     "usage": {
       "title": "Usage per call",
@@ -897,7 +901,23 @@
       "dispute": "Complain about the call",
       "reason": "What was wrong with the call?",
       "send": "Send complaint",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "packageLeft": "Minute package: {used} of {included} minutes used · {remaining} left · {over} minutes above the package.",
+      "duration": "duration {d}",
+      "pending": "Waiting for the call report – the minutes count once it arrives.",
+      "split": "{pkg} min in the package · {extra} min above the package",
+      "inPackage": "{n} min in the package",
+      "outcome": {
+        "answered": "answered",
+        "voicemail": "voicemail",
+        "no_answer": "unanswered/busy"
+      },
+      "callPrice": "call price after the package {amount}",
+      "total": "total {amount} excl. VAT",
+      "refunded": "Refunded at Stripe: {amount} incl. VAT.",
+      "creditOnInvoice": "Complaint approved: {amount} ({minutes} min) was credited on invoice {number}.",
+      "creditNext": "Complaint approved: {amount} ({minutes} min) will be credited on the next invoice.",
+      "decisionNote": "Dialogbot's reason: {note}"
     },
     "pay": {
       "title": "Payment",

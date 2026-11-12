@@ -23,7 +23,13 @@ test("W11 · tiderne i widgetten er API'ets ledige tider med dato og klokkeslæt
   await chat.getByRole("button", { name: "Book en tid" }).click();
   const form = chat.locator("form.book");
   const starts = form.getByLabel("Tidspunkt");
-  expect(await starts.locator("option").allTextContents()).toEqual(api.slots.map((s: { label: string }) => s.label));
+  // The widget fetches its own slots a moment after `api`. If the clock passes a slot start in between, the first
+  // slot drops out of the widget (CI 131104199645, 11:00:00). So the widget must equal the API's slots from just
+  // before or just after it loaded.
+  const shown = await starts.locator("option").allTextContents();
+  const apiAfter = await (await page.request.get(`${API}/api/v1/public/webchat/${w.key}/booking`)).json();
+  const labels = (a: { slots: { label: string }[] }) => a.slots.map((s) => s.label);
+  expect([labels(api), labels(apiAfter)]).toContainEqual(shown);
   expect(api.slots[0].label).toMatch(/^(mandag|tirsdag|onsdag|torsdag|fredag|lørdag|søndag) \d+\. \w+ kl\. \d\d\.\d\d$/);
   // the 8-hour type only fits 08–16 or 12–20 within 08–20 opening hours: different, fewer times
   await form.getByLabel("Hvad drejer det sig om?").selectOption({ label: "Gulvslibning (heldag)" });

@@ -1577,6 +1577,82 @@
         "title": "DeleteIn",
         "type": "object"
       },
+      "DemoCodeIn": {
+        "properties": {
+          "consent": {
+            "title": "Consent",
+            "type": "boolean"
+          },
+          "consent_version": {
+            "default": "demo-call-web-v2",
+            "maxLength": 40,
+            "title": "Consent Version",
+            "type": "string"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "enum": [
+                  "da",
+                  "en",
+                  "de",
+                  "es",
+                  "fr",
+                  "it",
+                  "no",
+                  "sv"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Language of the SMS text (the page's language); Danish by default",
+            "title": "Language"
+          },
+          "phone": {
+            "maxLength": 30,
+            "minLength": 8,
+            "title": "Phone",
+            "type": "string"
+          },
+          "website": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Website",
+            "type": "string"
+          }
+        },
+        "required": [
+          "phone",
+          "consent"
+        ],
+        "title": "DemoCodeIn",
+        "type": "object"
+      },
+      "DemoVerifyIn": {
+        "properties": {
+          "code": {
+            "maxLength": 12,
+            "minLength": 1,
+            "title": "Code",
+            "type": "string"
+          },
+          "verification_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Verification Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "verification_id",
+          "code"
+        ],
+        "title": "DemoVerifyIn",
+        "type": "object"
+      },
       "DesignBody": {
         "properties": {
           "accent": {
@@ -6000,6 +6076,19 @@
             "title": "Phone",
             "type": "string"
           },
+          "verification_token": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "From POST /demo-call/verify: proves the visitor holds `phone` (one use, 10 minutes). Required.",
+            "title": "Verification Token"
+          },
           "voice": {
             "anyOf": [
               {
@@ -8968,6 +9057,7 @@
         ]
       },
       "post": {
+        "description": "Step 3: Peter rings at once, day and night – only with a verified, unused token for this very number\n(422 `verification_required` without one, 409 `verification_invalid` for a used/expired/other number's token).",
         "operationId": "request_demo_call_api_v1_demo_call_post",
         "requestBody": {
           "content": {
@@ -9040,6 +9130,86 @@
           }
         },
         "summary": "Demo Chat",
+        "tags": [
+          "sales"
+        ]
+      }
+    },
+    "/api/v1/demo-call/code": {
+      "post": {
+        "description": "Step 1 of «Ring mig op nu»: a 6-digit code by SMS to the number (10 minutes, 5 attempts). Peter rings only\nafter the code is entered (F-AUD26-02-P06). Limits per number and per client IP; 429 `sms_rate_limited`.",
+        "operationId": "request_code_api_v1_demo_call_code_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DemoCodeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Request Code",
+        "tags": [
+          "sales"
+        ]
+      }
+    },
+    "/api/v1/demo-call/verify": {
+      "post": {
+        "description": "Step 2: the code → `verification_token` (one use, bound to the number, 10 minutes). A wrong code answers 422\n`code_invalid` with `attempts_left`; after 5 attempts 409 `too_many_attempts`; expired 409 `code_expired`.",
+        "operationId": "verify_code_api_v1_demo_call_verify_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DemoVerifyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Verify Code",
         "tags": [
           "sales"
         ]

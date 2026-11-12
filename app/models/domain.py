@@ -1104,6 +1104,36 @@ class DemoCall(Base):
     created_at: Mapped[datetime] = ts_now()
 
 
+class DemoCallVerification(Base):
+    """An SMS code that proves the visitor holds the number before Peter rings it (F-AUD26-02-P06, Fürster 12/11:
+    «A, SMS-kode først»). 6 digits, 10 minutes, 5 attempts; only HMACs of the code and of the one-time call token are
+    stored, and of the caller's IP (for the per-IP limits). Rows are deleted by the worker after two days."""
+
+    __tablename__ = "demo_call_verifications"
+    __table_args__ = (
+        Index("ix_demo_call_verifications_phone_sent", "phone", "sent_at"),
+        Index("ix_demo_call_verifications_ip_sent", "ip_hash", "sent_at"),
+        Index("ix_demo_call_verifications_call_ip", "call_ip_hash", "consumed_at"),
+        Index("ix_demo_call_verifications_token", "token_hash"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    phone: Mapped[str] = mapped_column(String(20), nullable=False)
+    code_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    language: Mapped[str] = mapped_column(String(5), nullable=False, default="da")
+    ip_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    sent_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    token_hash: Mapped[str | None] = mapped_column(String(64))
+    token_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    consumed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    call_ip_hash: Mapped[str | None] = mapped_column(String(64))
+    demo_call_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("demo_calls.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = ts_now()
+
+
 class BillingAccount(Base):
     """The workspace's Stripe customer and saved card (card data itself stays at Stripe)."""
 

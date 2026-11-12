@@ -1,0 +1,17 @@
+== GET https://dialogbot.app/ (2026-11-12T15:39:23Z)
+HTTP/1.1 200 Connection Established
+HTTP/2 307 
+location: /da
+strict-transport-security: max-age=63072000
+== GET https://dialogbot.app/login (2026-11-12T15:39:23Z)
+HTTP/1.1 200 Connection Established
+HTTP/2 200 
+strict-transport-security: max-age=63072000
+== GET https://dialogbot.app/privat (2026-11-12T15:39:25Z)
+HTTP/1.1 200 Connection Established
+HTTP/2 200 
+strict-transport-security: max-age=63072000
+== GET https://dialogbot.app/signup (2026-11-12T15:39:26Z)
+HTTP/1.1 200 Connection Established
+HTTP/2 200 
+strict-transport-security: max-age=63072000

@@ -1,0 +1,7 @@
+journeys (job 131260343873): 116 skipped;214 passed (10.2m);
+qa-catalog (1) (job 131260344947): 1 skipped;215 passed (12.9m);
+qa-catalog (2) (job 131260344975): 150 skipped;62 passed (5.4m);10 passed (33.4s);
+qa-catalog (3) (job 131260344903): 1 skipped;215 passed (12.2m);
+qa-catalog (4) (job 131260344815): 148 skipped;64 passed (5.4m);
+privat (job 131260345162): 56 passed (1.5m);10 passed (49.8s);2 skipped;10 passed (37.0s);
+test (CI run 43240805372): 2408 passed, 35 skipped, 48 xfailed in 1369.27s

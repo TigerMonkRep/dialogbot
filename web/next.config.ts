@@ -49,8 +49,23 @@ const MOVED: [string, string][] = [
   ["/app/not-yet", "/app/hjaelp"],
 ];
 
+/** Baseline security headers on every page (audit 2026-11-12, F-AUD26-01): no page of dialogbot.app may be framed by
+ *  another site (clickjacking of «Godkend opkald», «Gå live», checkout), browsers must not sniff types, and full URLs
+ *  (tokens in /invite, /verify-email, /password) never leak to other sites through Referer. The embeddable webchat
+ *  is served by the API origin (PUBLIC_BASE_URL/api/v1/public/webchat/{key}/frame), not by this app; the BFF's /api/*
+ *  route handlers are left out anyway, so a proxied API answer keeps the API's own headers. */
+const SECURITY_HEADERS = [
+  { key: "Content-Security-Policy", value: "frame-ancestors 'self'" },
+  { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+];
+
 const nextConfig: NextConfig = {
   env: { APP_VERSION: `v${version}`, APP_COMMIT: commit },
+  async headers() {
+    return [{ source: "/((?!api/).*)", headers: SECURITY_HEADERS }];
+  },
   async rewrites() {
     // Static, password-protected pages kept in web/public/<slug>/index.html (see docs/site-pages.md).
     return [{ source: "/gastrohall", destination: "/gastrohall/index.html" }];

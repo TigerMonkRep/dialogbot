@@ -38,7 +38,7 @@ test("O02 · udtræk vises som grønt/gult, intet er live før godkendelse, «Re
   const yellow = page.getByRole("link", { name: "Ret det gule" });
   await expect(yellow).toBeVisible();
   await yellow.click();
-  await expect(page).toHaveURL(/\/app\/viden\?tab=k05/);
+  await expect(page).toHaveURL(/\/opsaetning\/viden$/); // since 12/11: the guide's own review step
   await expect(page.getByText("Gulvafslibning").first()).toBeVisible();
   await expect(page.getByText(/Hjemmesiden nævner prisen|145/).first()).toBeVisible();
   await noOverflow(page);

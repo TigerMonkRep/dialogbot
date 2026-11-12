@@ -53,7 +53,7 @@ test("O04 · krav: rapportsprog og stemmeprøve i sprogvalget", async ({ page },
   const { wsId } = await freshOwner(page, info);
   await page.goto("/opsaetning/1");
   const reportCtl = await page.getByLabel(/Rapport/i).count();
-  await page.goto("/opsaetning/3");
+  await page.goto("/opsaetning/telefon");
   const hear = await page.getByRole("button", { name: /^Hør / }).count();
   test.info().annotations.push({ type: "gap", description: `rapportsprog-kontrol: ${reportCtl}; «Hør»-knapper i trin 3: ${hear}` });
   const l = (await api(page).get(`/workspaces/${wsId}/languages`)).body;

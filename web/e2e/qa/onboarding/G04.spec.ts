@@ -16,8 +16,9 @@ const open = async (page: Page, n: number) => {
 test("G04 · forklaring pr. trin; Esc lukker; skærmlæser-navn", async ({ page }, info) => {
   const { wsId } = await freshOwner(page, info);
   await completeProfile(page, wsId);
-  for (const [n, chip, said] of [[1, "Hvad sker der i trin 2?", /forbinder du din kalender/], [3, "Hvordan viderestiller jeg?", /Tast koden i trin 3/]] as const) {
-    await page.goto(`/opsaetning/${n}`);
+  // the steps are named since 12/11; Telefon is trin 3 when the phone is chosen (freshOwner: reception = phone)
+  for (const [n, path, chip, said] of [[1, "virksomhed", "Hvad sker der bagefter?", /henter du viden ind/], [3, "telefon", "Hvordan viderestiller jeg?", /Tast koden fra telefon-trinnet/]] as const) {
+    await page.goto(`/opsaetning/${path}`);
     const d = await open(page, n);
     await d.getByRole("button", { name: chip }).click();
     await expect(d.getByText(said)).toBeVisible();

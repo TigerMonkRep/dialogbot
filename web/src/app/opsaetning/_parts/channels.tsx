@@ -461,7 +461,7 @@ export function GoLive(props: {
       <section className="rounded-[20px] bg-ink text-paper p-5 md:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4" aria-labelledby="live-h">
         <div>
           <h2 id="live-h" className="font-display font-extrabold text-[24px] leading-tight">{reader ? tr("readerTitle") : alreadyOn && paid ? tr("isOn") : !paid ? tc("notYet") : ready ? tc("allReady") : tr("almost")}</h2>
-          {!reader && <p className="text-[14px] text-line mt-1">{!paid ? whenPaid : alreadyOn ? tr("pauseNote") : ready ? (phoneOn ? tr("readyPhone") : tr("readyNoPhone")) : tr("missing", { list: needs.join(", ") })}</p>}
+          {!reader && <p className="text-[14px] text-line mt-1">{!paid ? `${whenPaid}${ready ? "" : ` ${tr("missing", { list: needs.join(", ") })}`}` : alreadyOn ? tr("pauseNote") : ready ? (phoneOn ? tr("readyPhone") : tr("readyNoPhone")) : tr("missing", { list: needs.join(", ") })}</p>}
           {err && <p role="alert" className="text-[14px] text-highlight mt-1">{err}</p>}
         </div>
         {canManage ? (

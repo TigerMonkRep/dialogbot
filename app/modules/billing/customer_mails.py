@@ -5,6 +5,8 @@ layout (email_templates.Email; Privat in its orange), 8 languages (email_texts.p
 - payment_failed   dunning (E06): the card was declined – update it in the portal
 - refund           a refund is on its way
 - trial_ending     Stripe's customer.subscription.trial_will_end (3 days before): what will be charged, and when
+- grace_0/1/2      Erhverv: the subscription stopped being paid – chat and phone run 7 more days (billing.grace); mailed
+                   at the start, after about 3 days and the day before the stop, with the last day
 
 Before this, NEITHER product sent payment_failed or refund mails (billing-qa wave 1, E06), and Privat sent none at all.
 Privat's mails are built by integrations.privat_mails.billing (the one Privat mail mechanism: audience privat, 8
@@ -22,8 +24,9 @@ from app.core.languages import normalize as normalize_language
 from app.core.outbox import enqueue
 from app.modules.billing import markets
 
-KINDS = ("receipt", "payment_failed", "refund", "trial_ending")
-_KEY = {"receipt": "receipt", "payment_failed": "failed", "refund": "refund", "trial_ending": "trial"}
+KINDS = ("receipt", "payment_failed", "refund", "trial_ending", "grace_0", "grace_1", "grace_2")
+_KEY = {"receipt": "receipt", "payment_failed": "failed", "refund": "refund", "trial_ending": "trial",
+        "grace_0": "grace0", "grace_1": "grace1", "grace_2": "grace2"}
 
 
 def build(kind: str, *, lang: str, audience: str, amount_minor: int, currency: str, link: str,

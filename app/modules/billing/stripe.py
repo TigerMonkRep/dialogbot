@@ -196,6 +196,12 @@ def save_card_from_setup_intent(db: OrmSession, setup_intent_id: str) -> Billing
     a.payment_method_id, a.card_brand, a.card_last4 = pm_id, str(card.get("brand") or "")[:20], str(card.get("last4") or "")[:4]
     a.card_exp = f"{card.get('exp_month', 0):02d}/{str(card.get('exp_year', ''))[-2:]}" if card.get("exp_month") else None
     a.updated_at = datetime.now(UTC)
+    # A new card ends a failed payment's lapse and the grace at once (Fürster 12/11).
+    a.payment_failed_at = None
+    from app.modules.billing import grace
+
+    db.flush()
+    grace.sync(db, a.workspace_id)
     return a
 
 
@@ -401,11 +407,13 @@ def process_event(db: OrmSession, event: dict) -> str:
         apply_stripe_invoice(inv, obj)
         if kind == "invoice.payment_failed" and inv.status not in TERMINAL:
             inv.status = "payment_failed"
+            _payment_state(db, inv.workspace_id, failed=True)  # the 7 days' grace starts (billing.grace)
             _owner_mail(db, inv.workspace_id, kind="payment_failed", dedupe=f"{obj['id']}:{obj.get('attempt_count') or 1}",
                         amount_minor=int(obj.get("amount_due") or inv.gross_minor or 0),
                         currency=str(obj.get("currency") or "DKK").upper())  # E06 dunning (F-PBQ-08)
         _commission(db, inv, was, kind, obj)
         if inv.status == "paid" and was != "paid":
+            _payment_state(db, inv.workspace_id, failed=False)
             from app.modules.sales.offers import on_invoice_paid
 
             on_invoice_paid(db, inv.workspace_id)  # a company from Dialogbot's own sales becomes a paying customer
@@ -427,6 +435,15 @@ def process_event(db: OrmSession, event: dict) -> str:
                     amount_minor=delta, currency=str(obj.get("currency") or "DKK").upper())  # refund confirmed
         return "applied"
     return "ignored"
+
+
+def _payment_state(db, workspace_id, *, failed: bool) -> None:
+    """A failed payment makes the subscription unpaid (grace); a paid invoice makes it paid again."""
+    from app.modules.billing import grace
+
+    a = account(db, workspace_id, lock=True)
+    a.payment_failed_at = datetime.now(UTC) if failed else None
+    grace.sync(db, workspace_id)
 
 
 def _owner_mail(db, workspace_id, *, kind: str, dedupe: str, amount_minor: int, currency: str) -> None:

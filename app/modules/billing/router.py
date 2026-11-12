@@ -94,11 +94,19 @@ def _account_out(db: OrmSession, ctx: WorkspaceContext) -> dict:
 
     a = db.get(BillingAccount, ctx.workspace.id)
     card = {"brand": a.card_brand, "last4": a.card_last4, "exp": a.card_exp} if a and a.payment_method_id else None
+    # test_mode: Stripe's sandbox (sk_test_) – shown on Konto so nobody believes a real card was charged
+    from app.modules.billing import grace
     from app.modules.integrations.registry import stripe_test_mode
 
-    # test_mode: Stripe's sandbox (sk_test_) – shown on Konto so nobody believes a real card was charged
+    now = datetime.now(UTC)
+    paid = grace.strictly_paid(db, ctx.workspace.id, now)
+    ends = None if paid else grace.grace_ends(a, now)
+    # subscription: paid by the plain rule; else in_grace until grace_ends (chat and phone still run), then stopped
+    subscription = {"paid": paid, "in_grace": bool(ends and now < ends), "grace_ends": ends.isoformat() if ends else None,
+                    "card_expired": bool(a and a.payment_method_id and grace.card_expired(a.card_exp, now)),
+                    "payment_failed": bool(a and a.payment_failed_at)}
     return {"configured": stripe.configured(), "test_mode": stripe.configured() and stripe_test_mode(), "card": card, "billing_email": a.billing_email if a else None,
-            "can_manage": ctx.can("billing.manage")} | customer_market.account_market(db, ctx.workspace.id)
+            "can_manage": ctx.can("billing.manage"), "subscription": subscription} | customer_market.account_market(db, ctx.workspace.id)
 
 
 @router.get("/account")

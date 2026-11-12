@@ -313,6 +313,16 @@ def run_schedules() -> None:
             log.warning("reports.failed", error=f"{type(exc).__name__}: {exc}")
     with get_session_factory()() as db:
         try:
+            from app.modules.billing import grace
+
+            n = grace.run_due(db)  # the 7 days' grace after a paid subscription stops being paid, and its mails
+            if n:
+                log.info("billing.grace", count=n)
+        except Exception as exc:  # noqa: BLE001
+            db.rollback()
+            log.warning("billing.grace_failed", error=f"{type(exc).__name__}: {exc}")
+    with get_session_factory()() as db:
+        try:
             n = sync_calendars(db)
             if n:
                 log.info("calendars.synced", count=n)

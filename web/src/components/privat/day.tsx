@@ -254,7 +254,9 @@ export function DayPage() {
       <TodaySection />
       {own && <FirstOpenInstall />}
       <span className="flex-1" />
-      <AskDock empty={mode !== "loading" && tasks.length === 0} quiet={waiting} />
+      {/* «Empty» only once the first bootstrap has landed (`day` is set with `tasks`): between the mode switch and the
+          data, an account with tasks briefly showed the empty day's greeting and shortcuts. */}
+      <AskDock empty={day !== null && tasks.length === 0} quiet={waiting} />
     </div>
   );
 }

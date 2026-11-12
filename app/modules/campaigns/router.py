@@ -53,6 +53,12 @@ def _call_prices(db: OrmSession, ws_id, currency: str) -> dict:
     return statement.package_terms(agreements.current(db, ws_id), currency)["call"]
 
 
+def _billing_ready(db: OrmSession, c: Campaign) -> bool:
+    from app.modules.billing import agreements
+
+    return c.kind != "customer" or agreements.subscription_paid(db, c.workspace_id)
+
+
 def campaign_out(db: OrmSession, c: Campaign, currency: str | None = None) -> dict:
     currency = currency or customer_market.currency_of(db, c.workspace_id)
     vat_bp = customer_market.vat_of(db, c.workspace_id)["rate_bp"]
@@ -71,6 +77,9 @@ def campaign_out(db: OrmSession, c: Campaign, currency: str | None = None) -> di
                                                          "remaining": cost["package_remaining"]},
             "max_cost_with_package": Money(currency, cost["with_package_net_minor"], vat_bp).snapshot(),
             "outbound_problem": service.outbound_problem(db, c), "legal_confirmation": c.legal_confirmation,
+            # C09: a customer campaign starts (and dials) only with a paid subscription – a confirmed agreement plus a
+            # usable card (only the agreement where card payment is not set up); the page links to Konto otherwise
+            "billing_ready": _billing_ready(db, c),
             "created_at": c.created_at.isoformat(), "started_at": c.started_at.isoformat() if c.started_at else None,
             "completed_at": c.completed_at.isoformat() if c.completed_at else None}
 
@@ -204,6 +213,9 @@ def start_campaign(campaign_id: uuid.UUID, body: StartIn, request: Request,
     if body.accept_max_net_minor < maximum:
         raise Conflict("Prisen er ændret, siden du så den. Genindlæs og bekræft igen.", code="price_changed",
                        extra={"max_net_minor": maximum})
+    if not _billing_ready(db, c):  # C09: never usage without a way to pay it (same rule as the phone and the chat)
+        raise Conflict("Kampagnen kan startes, når abonnementet er bekræftet og der er et betalingskort på kontoen (Konto).",
+                       code="subscription_required", extra={"cta": "/app/konto#abonnement"})
     build_system_prompt(db, ctx.workspace)  # 409 without approved knowledge: the assistant must know the business
     if problem := service.outbound_problem(db, c):
         raise NotImplementedYet(problem, code="outbound_not_configured", extra={"capability": "telephony.outbound"})

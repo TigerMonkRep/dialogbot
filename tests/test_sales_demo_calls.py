@@ -1,5 +1,5 @@
 """Demo calls from Dialogbot's own sales workspace: the public "Ring mig op nu" door (consent, Danish numbers only,
-calling hours, one per number per day, global cap, honeypot, do-not-call kept secret), the seller door (operators
+rung at once day and night, one per number per day, global cap, honeypot, do-not-call kept secret), the seller door (operators
 only, consent confirmed, advertising-protected CVR refused) and call reports → lead/task or do-not-call."""
 from __future__ import annotations
 
@@ -69,7 +69,8 @@ def test_not_configured_is_honest(client, two_workspaces, monkeypatch):
 
 def test_web_request_calls_with_consent_and_limits(client, sales, db):
     info = client.get("/api/v1/demo-call").json()
-    assert info["available"] and info["demo_number"] == "+4570123456" and info["open_now"]
+    assert info["available"] and info["demo_number"] == "+4570123456"
+    assert "open_now" not in info and "next_open" not in info and "hours" not in info  # no calling hours (12/11)
     assert info["consent_version"] == service.CONSENT_VERSION_WEB
     # consent, Danish numbers only, no premium-rate numbers
     assert _web(client, consent=False).status_code == 422
@@ -93,10 +94,10 @@ def test_web_request_calls_with_consent_and_limits(client, sales, db):
     # honeypot: same answer, nothing stored, nobody called
     assert _web(client, phone="21222324", website="http://spam").json() == {"status": "calling"}
     assert db.query(DemoCall).count() == 1 and len(sales["calls"]) == 1
-    # outside calling hours: queued for the next opening, never refused (tests/test_sales_demo_calls_24_7.py)
+    # 22:00: rung at once, like any other time (tests/test_sales_demo_calls_24_7.py)
     sales["clock"][0] = MON_22
-    late = _web(client, phone="21222324", consent_version=service.CONSENT_VERSION_WEB_LATER)
-    assert late.status_code == 202 and late.json()["status"] == "scheduled" and len(sales["calls"]) == 1
+    late = _web(client, phone="21222324")
+    assert late.status_code == 202 and late.json() == {"status": "calling"} and len(sales["calls"]) == 2
 
 
 def test_do_not_call_is_kept_secret_and_global_cap(client, sales, db, monkeypatch):

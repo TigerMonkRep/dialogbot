@@ -8701,7 +8701,7 @@
     },
     "/api/v1/demo-call": {
       "get": {
-        "description": "Whether the website may offer \"Ring mig op nu\", the calling hours and the public demo number.",
+        "description": "Whether the website may offer \"Ring mig op nu\" (Peter then rings at once, day and night) and the public demo\nnumber.",
         "operationId": "demo_info_api_v1_demo_call_get",
         "responses": {
           "200": {

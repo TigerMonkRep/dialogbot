@@ -137,8 +137,6 @@ class Settings(BaseSettings):
     ga4_property_id: str | None = Field(default=None, alias="GA4_PROPERTY_ID")
     ga_service_account_json: str | None = Field(default=None, alias="GA_SERVICE_ACCOUNT_JSON")
     sales_workspace_id: str | None = Field(default=None, alias="SALES_WORKSPACE_ID")
-    sales_call_from: str = Field(default="08:00", alias="SALES_CALL_FROM")  # website requests, Copenhagen time
-    sales_call_to: str = Field(default="20:00", alias="SALES_CALL_TO")
     sales_max_calls_per_hour: int = Field(default=20, alias="SALES_MAX_CALLS_PER_HOUR")
     # The voice of "Peter", who rings visitors and prospects. Unset = the catalogue's Peter (app/modules/voices/standard.py).
     # An ElevenLabs Voice Library id (Vapi → Integrations holds the platform's ElevenLabs key); a Danish male voice.

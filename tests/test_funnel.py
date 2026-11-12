@@ -207,9 +207,9 @@ def test_erhverv_full_path(client, api, funnel, db):
     assert api.login("mette@testmail.dk", "NyAdgangskode!42")
 
 
-def test_erhverv_without_places_hit_and_closed_demo_line(client, api, funnel, db):
-    """A name Google does not know: the workspace still gets the name; outside the calling hours the demo call is
-    queued for the next opening (S0 «Erhverv døgnåbent») – the sign-up never waits for it."""
+def test_erhverv_without_places_hit_and_demo_call_at_night(client, api, funnel, db):
+    """A name Google does not know: the workspace still gets the name; at 22:00 Peter rings at once, like any other
+    time (Fürster 12/11: requests from dialogbot.app are rung day and night) – nothing is queued for «i morgen»."""
     did = client.post("/api/v1/funnel/drafts", json={"kind": "erhverv", "industry": "klinik"}).json()["id"]
     d = _patch(client, did, 2, {"company_name": "Tandlæge Ukendt"})
     assert d["company"]["name"] == "Tandlæge Ukendt" and d["company"]["place_id"] is None and d["build"]["hours"] == "default"
@@ -218,11 +218,11 @@ def test_erhverv_without_places_hit_and_closed_demo_line(client, api, funnel, db
     funnel["clock"][0] = MON_22
     _gate(client, did, email="klinik@testmail.dk", phone="21222324")
     out = client.post(f"/api/v1/funnel/drafts/{did}/verify", json={"code": _code()}).json()
-    assert out["status"] == "ok" and funnel["calls"] == []
+    assert out["status"] == "ok" and len(funnel["calls"]) == 1
+    assert funnel["calls"][0]["customer"]["number"] == "+4521222324"
     rev = api.get(out["session_token"], f"/funnel/drafts/{did}/reveal").json()
-    # 22:00 Monday: Peter rings Tuesday from 08:00; nothing is refused and nobody is rung at night
-    assert rev["call"]["status"] == "scheduled" and rev["call_problem"] is None
-    assert rev["call"]["scheduled_for"] == "2026-09-29T06:00:00+00:00"
+    assert rev["call"]["status"] == "calling" and rev["call_problem"] is None
+    assert rev["call"]["scheduled_for"] is None
     assert rev["next"] and rev["workspace_id"] == out["workspace_id"]
     assert db.get(BusinessProfile, uuid.UUID(out["workspace_id"])).legal_name == "Tandlæge Ukendt"
     assert db.get(WorkspaceVoiceSettings, uuid.UUID(out["workspace_id"])).standard_voice == "camilla"

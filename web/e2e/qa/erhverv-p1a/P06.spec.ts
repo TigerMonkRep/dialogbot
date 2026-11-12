@@ -6,7 +6,7 @@ import { evid, snap, unlock, uniqueIp } from "./p1a-helpers";
  * (POST /demo-call), honest about when it cannot ring. Nothing is dialled here: GET/POST /demo-call are intercepted. */
 const ID = "P06";
 evid(ID);
-const INFO = { available: true, demo_number: "+4570123456", open_now: true, hours: { from: "08:00", to: "20:00" },
+const INFO = { available: true, demo_number: "+4570123456", // no calling hours: Peter rings at once, day and night
   consent_text: "Ja, Dialogbot må ringe mig op én gang nu.", consent_version: "qa", industries: [] };
 
 async function open(page: Page, info: object | number = INFO) {

@@ -435,7 +435,6 @@
         "unavailable": "Ikke lige nu"
       },
       "blockerInactive": "Prøveopkaldet aktiveres snart – indtil da ringer vi til dig manuelt inden for åbningstiden. Ring til os på {phone} ({hours}), eller skriv dit nummer til {email}, så ringer vi til dig.",
-      "blockerOwnNumber": " Du kan også selv ringe til mit demonummer {number}.",
       "chipCall": "Ja, ring til mig",
       "chipWhat": "Hvad kan du?",
       "chipPrice": "Hvad koster det?",
@@ -489,13 +488,7 @@
       ],
       "sideNote": "Den samme chat følger dig videre: Når du siger ja, guider den dig gennem opsætningen, kobler din kalender på og tester det hele sammen med dig.",
       "signupCta": "Opret dig",
-      "signupLine": "Klar til at komme i gang? Opret dig selv – det er åbent døgnet rundt.",
-      "closedAskCompany": "Lige nu ringer jeg ikke ud – jeg ringer {when} fra kl. {time}. Du behøver ikke vente: du kan oprette dig med det samme. Vil du have opkaldet alligevel, så skriv, hvad din virksomhed hedder.",
-      "scheduled": "Tak. Jeg ringer til {number} {when} fra kl. {time} og præsenterer mig som receptionist for {company}. Du behøver ikke vente på mig – du kan oprette dig med det samme her.",
-      "phoneScheduledTitle": "Peter ringer {when} fra kl. {time}",
-      "phoneScheduledText": "Du kan oprette dig og gå i gang allerede nu – opkaldet kommer alligevel.",
-      "whenToday": "i dag",
-      "whenTomorrow": "i morgen"
+      "signupLine": "Klar til at komme i gang? Opret dig selv – det er åbent døgnet rundt."
     }
   },
   "preview": {
@@ -796,9 +789,6 @@
         "title": "Hun ringer nu til {phone}",
         "titleNoPhone": "Hun ringer nu",
         "lead": "Tag telefonen, og spørg, som en kunde ville spørge {company}.",
-        "hours": "Hun ringer kun på hverdage kl. {from}–{to}.",
-        "closed": "Det er uden for ringetiden (hverdage kl. {from}–{to}). Hun ringer, så snart den åbner.",
-        "hoursFallback": "Hun ringer kun på hverdage inden for åbningstiden.",
         "waiting": "Opkaldet er på vej",
         "inProgress": "Samtalen er i gang …",
         "waitedOut": "Vi fik ikke svar på opkaldet",
@@ -815,9 +805,7 @@
         "notLoggedIn": "Log ind for at se, hvordan opkaldet gik.",
         "login": "Log ind",
         "statusAria": "Status for opkaldet",
-        "noCallTitle": "Hun ringer ikke lige nu",
-        "scheduledTitle": "Hun ringer {when} fra kl. {time}",
-        "scheduledText": "Uden for ringetiden sætter vi opkaldet i kø. Du behøver ikke vente – gør hende til jeres med det samme."
+        "noCallTitle": "Hun ringer ikke denne gang"
       },
       "signupDirect": "Spring kvizzen over – opret dig direkte"
     }

@@ -435,7 +435,6 @@
         "unavailable": "Inte just nu"
       },
       "blockerInactive": "Testsamtalet aktiveras snart – fram till dess ringer vi upp dig manuellt inom öppettiderna. Ring oss på {phone} ({hours}), eller skicka ditt nummer till {email}, så ringer vi upp dig.",
-      "blockerOwnNumber": " Du kan också själv ringa mitt demonummer {number}.",
       "chipCall": "Ja, ring mig",
       "chipWhat": "Vad kan du?",
       "chipPrice": "Vad kostar det?",
@@ -489,13 +488,7 @@
       ],
       "sideNote": "Samma chatt följer med dig vidare: När du säger ja guidar den dig genom konfigurationen, kopplar på din kalender och testar allt tillsammans med dig.",
       "signupCta": "Skapa konto",
-      "signupLine": "Redo att börja? Skapa konto själv – det är öppet dygnet runt.",
-      "closedAskCompany": "Just nu ringer jag inte ut – jag ringer {when} från kl. {time}. Du behöver inte vänta: du kan skapa konto direkt. Vill du ändå ha samtalet, skriv vad ditt företag heter.",
-      "scheduled": "Tack. Jag ringer {number} {when} från kl. {time} och presenterar mig som receptionist för {company}. Du behöver inte vänta på mig – du kan skapa konto direkt här.",
-      "phoneScheduledTitle": "Peter ringer {when} från kl. {time}",
-      "phoneScheduledText": "Du kan skapa konto och komma igång redan nu – samtalet kommer ändå.",
-      "whenToday": "i dag",
-      "whenTomorrow": "i morgon"
+      "signupLine": "Redo att börja? Skapa konto själv – det är öppet dygnet runt."
     }
   },
   "preview": {
@@ -796,9 +789,6 @@
         "title": "Hon ringer nu till {phone}",
         "titleNoPhone": "Hon ringer nu",
         "lead": "Svara och fråga som en kund skulle fråga {company}.",
-        "hours": "Hon ringer bara på vardagar kl. {from}–{to}.",
-        "closed": "Det är utanför ringtiden (vardagar kl. {from}–{to}). Hon ringer så snart den öppnar.",
-        "hoursFallback": "Hon ringer bara på vardagar inom öppettiderna.",
         "waiting": "Samtalet är på väg",
         "inProgress": "Samtalet pågår …",
         "waitedOut": "Vi fick inget svar på samtalet",
@@ -815,9 +805,7 @@
         "notLoggedIn": "Logga in för att se hur samtalet gick.",
         "login": "Logga in",
         "statusAria": "Status för samtalet",
-        "noCallTitle": "Hon ringer inte just nu",
-        "scheduledTitle": "Hon ringer {when} från kl. {time}",
-        "scheduledText": "Utanför samtalstiden ställer vi samtalet i kö. Du behöver inte vänta – gör henne till er direkt."
+        "noCallTitle": "Hon ringer inte den här gången"
       },
       "signupDirect": "Hoppa över quizet – skapa konto direkt"
     }

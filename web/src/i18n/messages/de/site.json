@@ -435,7 +435,6 @@
         "unavailable": "Gerade nicht"
       },
       "blockerInactive": "Der Testanruf wird in Kürze aktiviert – bis dahin rufen wir Sie innerhalb der Öffnungszeiten persönlich an. Rufen Sie uns unter {phone} an ({hours}), oder schicken Sie Ihre Nummer an {email}, dann rufen wir Sie an.",
-      "blockerOwnNumber": " Sie können auch selbst meine Demonummer {number} anrufen.",
       "chipCall": "Ja, rufen Sie mich an",
       "chipWhat": "Was können Sie?",
       "chipPrice": "Was kostet das?",
@@ -489,13 +488,7 @@
       ],
       "sideNote": "Derselbe Chat begleitet Sie weiter: Wenn Sie zusagen, führt er Sie durch die Einrichtung, bindet Ihren Kalender an und testet alles gemeinsam mit Ihnen.",
       "signupCta": "Registrieren",
-      "signupLine": "Bereit loszulegen? Registrieren Sie sich selbst – rund um die Uhr.",
-      "closedAskCompany": "Gerade rufe ich nicht an – ich rufe {when} ab {time} Uhr an. Sie müssen nicht warten: Sie können sich sofort registrieren. Möchten Sie den Anruf trotzdem, schreiben Sie mir den Namen Ihres Unternehmens.",
-      "scheduled": "Danke. Ich rufe {number} {when} ab {time} Uhr an und stelle mich als Rezeption von {company} vor. Sie müssen nicht auf mich warten – Sie können sich hier sofort registrieren.",
-      "phoneScheduledTitle": "Peter ruft {when} ab {time} Uhr an",
-      "phoneScheduledText": "Sie können sich schon jetzt registrieren und loslegen – der Anruf kommt trotzdem.",
-      "whenToday": "heute",
-      "whenTomorrow": "morgen"
+      "signupLine": "Bereit loszulegen? Registrieren Sie sich selbst – rund um die Uhr."
     }
   },
   "preview": {
@@ -796,9 +789,6 @@
         "title": "Sie ruft jetzt {phone} an",
         "titleNoPhone": "Sie ruft jetzt an",
         "lead": "Geh ran und frag, was ein Kunde {company} fragen würde.",
-        "hours": "Sie ruft nur werktags zwischen {from} und {to} Uhr an.",
-        "closed": "Das ist außerhalb der Anrufzeiten (werktags {from}–{to} Uhr). Sie ruft an, sobald sie beginnen.",
-        "hoursFallback": "Sie ruft nur werktags innerhalb der Öffnungszeiten an.",
         "waiting": "Der Anruf ist unterwegs",
         "inProgress": "Das Gespräch läuft …",
         "waitedOut": "Wir haben keine Antwort auf den Anruf erhalten",
@@ -815,9 +805,7 @@
         "notLoggedIn": "Melde dich an, um zu sehen, wie der Anruf lief.",
         "login": "Anmelden",
         "statusAria": "Status des Anrufs",
-        "noCallTitle": "Sie ruft gerade nicht an",
-        "scheduledTitle": "Sie ruft {when} ab {time} Uhr an",
-        "scheduledText": "Außerhalb der Anrufzeiten stellen wir den Anruf in die Warteschlange. Sie müssen nicht warten – machen Sie sie gleich zu Ihrer."
+        "noCallTitle": "Diesmal ruft sie nicht an"
       },
       "signupDirect": "Quiz überspringen – direkt registrieren"
     }

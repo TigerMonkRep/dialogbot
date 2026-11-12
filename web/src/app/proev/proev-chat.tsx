@@ -2,20 +2,19 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "@/i18n/link";
 import { InstallStep } from "@/components/install-step";
-import { useLocale, useRaw, useT } from "@/i18n/client";
+import { useRaw, useT } from "@/i18n/client";
 import { api, type ApiError } from "@/lib/client";
 import { EMAIL, PHONE_DISPLAY, PHONE_TEL, SIGNUP_ERHVERV } from "@/lib/contact";
-import { nextOpenLabel } from "@/lib/next-open";
 import { ArrowIcon, CloseIcon, PhoneIcon } from "@/components/site-icons";
 
 /** The "Prøv den" conversation (Proev.dc.html): start → firma → branche (→ andet) → tlf → calling → done.
  *  The call is REAL: POST /demo-call (app/modules/sales) rings the number with our sales assistant. It needs the
  *  visitor's consent (markedsføringsloven § 10) and only works while demo calls are switched on, so the chat reads
- *  GET /demo-call first and says honestly when it cannot ring – it never pretends. Outside the calling hours nothing
- *  stops: the backend queues the call for the next opening (the consent text it returns says so), the chat says when
- *  Peter rings, and «Opret dig» (self-service sign-up, open day and night) is always one click away (S0). */
+ *  GET /demo-call first and says honestly when it cannot ring – it never pretends. Peter rings at once, day and night,
+ *  every day (Fürster 12/11): there are no calling hours and no queue. «Opret dig» (self-service sign-up, open day
+ *  and night) is always one click away (S0). */
 type Info = {
-  available: boolean; demo_number: string | null; open_now: boolean; next_open?: string | null; hours: { from: string; to: string };
+  available: boolean; demo_number: string | null;
   consent_text: string; consent_version: string; industries: { key: string; label: string }[];
 };
 type Step = "start" | "firma" | "branche" | "andet" | "tlf" | "calling" | "done" | "unavailable";
@@ -29,12 +28,6 @@ const BRANCHES: (string | null)[] = ["haandvaerk", "klinik", "skoenhed", "restau
 /** How long the phone card shows "ringer" before the chat moves on. We cannot see when the call ends. */
 const CALL_WINDOW_MS = 45_000;
 
-/** "+4570123456" → "70 12 34 56" */
-function pretty(e164: string) {
-  const d = e164.replace(/^\+45/, "");
-  return d.length === 8 ? d.replace(/(\d{2})(?=\d)/g, "$1 ") : e164;
-}
-
 const chip = "min-h-11 px-4 rounded-full bg-white border-2 border-ink text-ink font-semibold text-[15px] cursor-pointer hover:bg-panel";
 const avatar = "flex-none w-[30px] h-[30px] rounded-full bg-accent inline-flex items-center justify-center font-display font-extrabold text-[13px] text-white";
 
@@ -43,7 +36,6 @@ const avatar = "flex-none w-[30px] h-[30px] rounded-full bg-accent inline-flex i
 export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; onClose?: () => void } = {}) {
   const t = useT("site");
   const raw = useRaw();
-  const locale = useLocale();
   const c = (key: string, vars?: Record<string, string | number>) => t(`proev.chat.${key}`, vars);
   const GREETING = c("greeting");
   const hours = c("hours");
@@ -58,7 +50,6 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
   const [consent, setConsent] = useState(false);
   const [consentError, setConsentError] = useState(false);
   const [pending, setPending] = useState(false);
-  const [scheduledFor, setScheduledFor] = useState<string | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const timers = useRef<number[]>([]);
@@ -78,10 +69,9 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
     setTyping(true);
     later(() => { setTyping(false); push({ from: "bot", text, signup }); if (next) setStep(next); }, ms);
   }, [later, push]);
-  const when = (iso: string) => nextOpenLabel(iso, locale, { today: c("whenToday"), tomorrow: c("whenTomorrow") });
 
-  /** Why we cannot ring at all – or null when we can (now, or queued for the next opening). Honest copy; never claims
-   *  a call was placed. The calling hours are not a reason: outside them the call is queued. */
+  /** Why we cannot ring at all – or null when we can (at once, at any hour). Honest copy; never claims a call was
+   *  placed. */
   const blocker = (): string | null => {
     if (info === null) return null; // still loading: ask on, check again before dialling
     if (info === "error" || !info.available) {
@@ -95,10 +85,6 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
       push({ from: "user", text: c("chipCall") });
       const why = blocker();
       if (why) botSays(why, "unavailable", 700, true);
-      else if (info && info !== "error" && !info.open_now && info.next_open) {
-        const own = info.demo_number ? c("blockerOwnNumber", { number: pretty(info.demo_number) }) : "";
-        botSays(`${c("closedAskCompany", when(info.next_open))}${own}`, "firma", 700, true);
-      }
       else botSays(c("askCompany"), "firma");
     } },
     { label: c("chipWhat"), act: () => { push({ from: "user", text: c("chipWhat") }); botSays(c("answerWhat"), "start"); } },
@@ -115,7 +101,6 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
     timers.current.forEach(clearTimeout); timers.current = [];
     setStep("start"); setHistory([{ from: "bot", text: GREETING }]); setTyping(false); setDraft(""); setFirma("");
     setIndustry({ key: null, other: "" }); setTlf(""); setConsent(false); setConsentError(false); setPending(false);
-    setScheduledFor(null);
   };
 
   /** Anything that is not one of the scripted steps goes to Peter himself: POST /demo-call/chat answers from the
@@ -164,17 +149,10 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
     if (why || info === null || info === "error") { botSays(why ?? c("serviceDown"), "unavailable"); return; }
     setPending(true); setTyping(true);
     try {
-      const r = await api<{ status: string; scheduled_for?: string }>("/demo-call", { method: "POST", body: JSON.stringify({
+      await api("/demo-call", { method: "POST", body: JSON.stringify({
         phone: v, company: firma, consent: true, consent_version: info.consent_version, website: "",
         industry: industry.key ?? "andet", industry_other: industry.key ? null : industry.other || null }) });
       setTyping(false);
-      if (r?.status === "scheduled" && r.scheduled_for) {
-        // Outside the calling hours: queued for the next opening. Never a dead end – sign up now.
-        setScheduledFor(r.scheduled_for);
-        push({ from: "bot", text: c("scheduled", { number: v, company: firma, ...when(r.scheduled_for) }), signup: true });
-        setStep("done");
-        return;
-      }
       push({ from: "bot", text: c("callingNow", { number: v, company: firma }) });
       setStep("calling");
       later(() => botSays(c("callSent", { phone: PHONE_DISPLAY }), "done", 700, true), CALL_WINDOW_MS);
@@ -183,12 +161,6 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
       const a = err as ApiError;
       const msg = a?.message || c("callFailed");
       if (a?.code === "demo_unavailable") botSays(msg, "unavailable", 700, true);
-      else if (a?.code === "demo_consent_later") {
-        // The page was opened before closing: fetch the consent for a later call and ask again.
-        api<Info>("/demo-call").then((i) => setInfo({ ...i, industries: i.industries ?? [] })).catch(() => setInfo("error"));
-        setConsent(false);
-        botSays(msg, "tlf", 700, true);
-      }
       else botSays(c("callRetry", { message: msg, phone: PHONE_DISPLAY }), "tlf");
     } finally { setPending(false); }
   };
@@ -204,7 +176,6 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
     : c("consentFallback");
 
   const phone = calling ? null
-    : done && scheduledFor ? [c("phoneScheduledTitle", when(scheduledFor)), c("phoneScheduledText")]
     : done ? [c("phoneDoneTitle"), c("phoneDoneText")]
     : step === "unavailable" ? [c("phoneUnavailableTitle"), c("phoneUnavailableText", { hours, phone: PHONE_DISPLAY, email: EMAIL })]
     : [c("phoneIdleTitle"), c("phoneIdleText")];

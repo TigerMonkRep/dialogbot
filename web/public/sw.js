@@ -11,7 +11,7 @@
  *  Push: payload {title, body, url, tag}; a click focuses the app on `url` (default /privat/dag).
  *
  *  The VERSION line is rewritten by scripts/sw-version.mjs (npm prebuild). */
-const VERSION = "dev";
+const VERSION = "ed90daf87d";
 const AUDIENCE = "privat";
 const SCOPE = "/privat/";
 const HOME = "/privat/dag";

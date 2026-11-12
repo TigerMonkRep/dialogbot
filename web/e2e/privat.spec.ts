@@ -272,8 +272,17 @@ for (const width of [375, 1440]) {
       await expect(page).toHaveURL(/\/privat\/apps$/);
       await expect(page.getByTestId("toast")).toContainText("Ring for mig er slået fra");
       await expect(page.getByRole("heading", { name: "Slået fra · dine data er gemt" })).toBeVisible();
+      // Min dag shows the shortcut chips on an empty day only (the examples hold it otherwise), so empty it first. The
+      // chips render in the same pass as the loaded tasks and add-ons: «Lav en liste» there is the signal that the day has
+      // loaded, and only then does «Ring for mig» missing mean anything (it used to pass on a flash before the data).
+      await page.goto("/privat/konto");
+      await page.getByRole("button", { name: "Vis tom dag" }).click();
+      await expect(page.locator("[data-busy]")).toHaveAttribute("data-busy", "false");
       await page.goto("/privat/dag");
-      await expect(page.locator("button:visible", { hasText: "Lav en liste" })).toHaveCount(1);
+      const dock = page.getByTestId("day-chat-card");
+      await expect(dock.getByRole("button", { name: "Lav en liste", exact: true })).toBeVisible();
+      await expect(page.getByTestId("your-turn")).toHaveCount(0);
+      await expect(dock.getByRole("button", { name: "Mind mig om", exact: true })).toBeVisible();
       await expect(page.getByRole("button", { name: "Ring for mig", exact: true })).toHaveCount(0);
       await say(page, "Ring til cykelværkstedet og aftal aflevering torsdag efter kl. 15");
       await expect(chat(page).getByRole("heading", { name: "Ring for mig er ikke slået til" })).toBeVisible();
@@ -283,6 +292,21 @@ for (const width of [375, 1440]) {
       await chat(page).getByRole("button", { name: /Cykelmageren/ }).click();
       await expect(chat(page).getByRole("heading", { name: "Skal jeg ringe til Cykelmageren?" })).toBeVisible();
       await expect(page.locator("button", { hasText: /^Ring for mig$/ }).first()).toBeAttached();
+    });
+
+    test("Min dag med opgaver: den tomme dags hilsen og genveje blinker aldrig, mens dagen indlæses", async ({ page }) => {
+      // Every DOM change is recorded from the first byte, so a flash of a single commit is caught (it lasted ~60 ms).
+      await page.addInitScript(() => {
+        const w = window as unknown as { __dockChips: number };
+        w.__dockChips = 0;
+        new MutationObserver(() => {
+          const n = [...document.querySelectorAll("[data-testid='day-chat-card'] button")].filter((b) => b.textContent?.trim() === "Lav en liste").length;
+          w.__dockChips = Math.max(w.__dockChips, n);
+        }).observe(document, { subtree: true, childList: true });
+      });
+      await open(page);
+      await expect(page.getByTestId("your-turn")).toBeVisible();
+      expect(await page.evaluate(() => (window as unknown as { __dockChips: number }).__dockChips)).toBe(0);
     });
 
     test("delt indkøbsliste: den andens tilføjelse vises med navn", async ({ page }) => {

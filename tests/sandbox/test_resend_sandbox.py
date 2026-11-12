@@ -6,7 +6,7 @@
   Resend webhook (app/modules/webhooks/resend.py): an `email.bounced` event for the REAL message id, signed locally with
   a dummy secret, must move our row's provider_status to "bounced". (The sending-only key cannot read events back.)
 
-The sender: SANDBOX_EMAIL_FROM, else EMAIL_FROM unless it is the dev default on *.local, else noreply@dialogbot.dk.
+The sender: SANDBOX_EMAIL_FROM, else EMAIL_FROM unless it is the dev default on *.local, else noreply@mail.dialogbot.dk.
 It must be on the domain the restricted key is allowed to send from. The recipient guard (conftest.resend_guard)
 stops any other address before the request is made.
 """
@@ -29,7 +29,7 @@ from .conftest import RESEND_TEST_RECIPIENTS
 
 pytestmark = [pytest.mark.sandbox, pytest.mark.sandbox_resend, pytest.mark.usefixtures("resend_test_key")]
 
-DEFAULT_FROM = "Dialogbot <noreply@dialogbot.dk>"
+DEFAULT_FROM = "Dialogbot <noreply@mail.dialogbot.dk>"
 # Built at runtime so the X29 secret scanner never sees a whsec_-shaped literal; it is a dummy, not a real secret.
 DUMMY_WEBHOOK_SECRET = "whsec_" + base64.b64encode(b"sandbox-dummy-not-a-real-secret").decode()
 

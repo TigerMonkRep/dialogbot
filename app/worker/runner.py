@@ -449,7 +449,10 @@ def run_schedules() -> None:
     with get_session_factory()() as db:
         try:  # demo calls queued before 12/11 (nothing new is queued): rung at their time or dropped when stale
             from app.modules.sales.service import place_due
+            from app.modules.sales.verification import purge as purge_codes
 
+            purge_codes(db)  # SMS-code rows (the visitor's number) after two days
+            db.commit()
             n = place_due(db)
             if n:
                 log.info("sales.demo_calls_placed_from_queue", count=n)

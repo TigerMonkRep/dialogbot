@@ -58,8 +58,8 @@ jobs:
         env:
           STRIPE_SECRET_KEY: ${{ secrets.SANDBOX_STRIPE_SECRET_KEY }}
           RESEND_API_KEY: ${{ secrets.SANDBOX_RESEND_API_KEY }}
-          # Optional repository variable: the verified Resend sender (default in the tests: noreply@dialogbot.dk).
-          SANDBOX_EMAIL_FROM: ${{ vars.SANDBOX_EMAIL_FROM }}
+          # Optional repository variable: the verified Resend sender (a repository variable or, if created there, a secret); (default in the tests: noreply@mail.dialogbot.dk).
+          SANDBOX_EMAIL_FROM: ${{ vars.SANDBOX_EMAIL_FROM || secrets.SANDBOX_EMAIL_FROM }}
           # A missing secret fails the job instead of skipping everything into a green run.
           SANDBOX_REQUIRE_KEYS: "1"
         run: pytest -m sandbox tests/sandbox -rA

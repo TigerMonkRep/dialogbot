@@ -28,6 +28,7 @@ from app.models.domain import (  # noqa: F401
     ConversationMessage,
     DailyReport,
     DemoCall,
+    DemoCallVerification,
     DiscountCode,
     DiscountRedemption,
     DoNotCall,

@@ -21,7 +21,7 @@ from app.modules.ai import service as ai
 from app.modules.sales import script
 from app.modules.sales import service as sales_service
 from app.modules.voices.standard import STANDARD_VOICES
-from tests.test_sales_demo_calls import sales  # noqa: F401  (fixture)
+from tests.test_sales_demo_calls import _web, sales  # noqa: F401  (fixture)
 
 ROOT = Path(__file__).resolve().parents[2]
 OTHER_NAMES = ("Clara", "Astrid")
@@ -91,7 +91,8 @@ def test_x05_proev_chat_greets_as_peter_in_every_locale():
 
 def test_x05_chat_then_call_request_rings_with_peter_on_the_entered_number(client, sales, db):  # noqa: F811
     assert client.post("/api/v1/demo-call/chat", json={"messages": [{"role": "user", "content": "Kan I tage telefonen for en VVS'er?"}]}).status_code == 200
-    r = client.post("/api/v1/demo-call", json=_proev_body(voice="camilla"))  # an old client asking for Camilla
+    # what proev-chat.tsx does: code by SMS → the code → the call (F-AUD26-02-P06); an old client asking for Camilla
+    r = _web(client, **_proev_body(voice="camilla"))
     assert r.status_code == 202 and r.json() == {"status": "calling"}
     assert len(sales["calls"]) == 1  # placed into the outbox stub – never to Vapi
     payload = sales["calls"][0]

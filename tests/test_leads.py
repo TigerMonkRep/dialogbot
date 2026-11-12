@@ -30,8 +30,13 @@ def fake(monkeypatch):
 
 
 @pytest.fixture
-def chat(api, client, two_workspaces, fake):
-    """Workspace A with a live widget and one conversation with one exchange."""
+def chat(api, client, two_workspaces, fake, monkeypatch):
+    """Workspace A with a live widget and one conversation with one exchange. The chat goes live only with a paid
+    subscription (test_live_gate.py); these tests are about leads and the lead's own agreement checks («no_agreement»,
+    versions), so the subscription is treated as paid here instead of confirming an agreement up front."""
+    from app.modules.billing import agreements
+
+    monkeypatch.setattr(agreements, "subscription_paid", lambda db, ws_id: True)
     t = two_workspaces
     it = api.knowledge(t["tok_a"], t["ws_a"], "service", "Afslibning", {"price_net_minor": 14500})
     api.submit(t["tok_a"], t["ws_a"], it["open_draft"]["id"])

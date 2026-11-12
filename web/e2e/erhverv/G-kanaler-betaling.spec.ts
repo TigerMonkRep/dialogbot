@@ -263,6 +263,7 @@ test("Telefon-kunde: telefon → nummer → betaling → forbind og prøveopkald
   await post(page, `/operator/telephony/workspaces/${wsId}/jobs/run`);
   await page.reload();
   await page.getByRole("button", { name: "Start prøveopkald" }).click();
+  await expect(page.getByText(/ring nu fra en anden telefon/)).toBeVisible(); // the test is waiting before the call comes
   await passTestCall(page, wsId, info);
   await page.reload();
   await expect(page.getByText(/Prøveopkaldet lykkedes \(simuleret\)/)).toBeVisible();
@@ -330,6 +331,7 @@ test("Begge kanaler: Telefon og Chat i trinlinjen, tjeklisten følger med på I 
   await post(page, `/operator/telephony/workspaces/${wsId}/jobs/run`);
   await page.reload();
   await page.getByRole("button", { name: "Start prøveopkald" }).click();
+  await expect(page.getByText(/ring nu fra en anden telefon/)).toBeVisible(); // the test is waiting before the call comes
   await passTestCall(page, wsId, info);
   await page.reload();
   // paid but not live yet: I dag says «gå live»

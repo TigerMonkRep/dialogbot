@@ -426,6 +426,7 @@ def test_phone_tool_calls_and_webchat_tool_use_show_in_inbox(api, client, two_wo
     assert [(x["action"], x["status"], x["simulated"]) for x in detail["actions"]] == [
         ("send_sms_bekraeftelse", "ok", True), ("send_sms_bekraeftelse", "refused", False)]
     # webchat: the model calls a tool, the result goes back, the reply is stored, the action is in the trail
+    api.subscribe(tok, ws)  # the chat goes live only with a paid subscription
     wc = api.get(tok, f"/workspaces/{ws}/webchat").json()
     r = api.put(tok, f"/workspaces/{ws}/webchat", {"enabled": True, "allowed_origins": ["https://fjordgulv.dk"],
                                                    "greeting": "", "expected_version": wc["version"]})

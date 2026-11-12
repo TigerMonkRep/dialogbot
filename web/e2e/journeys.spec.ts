@@ -398,7 +398,8 @@ test("12 · Henvendelse: kunde beder om kontakt i webchat, ejer kvalificerer, be
   await expect(page.getByRole("heading", { name: "Henrik Villumsen" })).toBeVisible();
   await expect(page.getByText(`Ring Henrik Villumsen op – ${windowLabel}`)).toBeVisible();
   await expect(page.getByText(/Ønsker opkald/)).toBeVisible();
-  await expect(page.getByText("Abonnementet er ikke bekræftet endnu", { exact: false }).first()).toBeVisible();
+  // confirmed before the chat could go live (Fürster 12/11) – so no «ikke bekræftet» hint on the lead
+  await expect(page.getByText("Abonnementet er ikke bekræftet endnu", { exact: false })).toHaveCount(0);
   await page.getByLabel("Kvalificering").selectOption("qualified");
   await page.getByLabel("Forløb").selectOption("contacted");
   await page.getByRole("button", { name: "Gem", exact: true }).click();

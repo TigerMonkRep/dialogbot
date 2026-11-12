@@ -99,3 +99,4 @@
 | 2026-11-12T15:45 | qa-lead (domæne/security pass) → Fürster | needs-decision | F-AUD26-02-P06 | S0 /demo-call ringer ethvert dansk nummer 24/7 uden bevis for ejerskab – 4 muligheder A–D i fundfilen |
 | 2026-11-12T15:50 | qa-lead (CI pass) → fix-engineer, e2e-privat | finding | F-AUD26-03-CI | S2 ~420 Playwright-tests skipped i grøn E2E-kørsel (privat-deep kræver QA-stak; qa-catalog continue-on-error) |
 | 2026-11-12T16:00 | qa-lead (som fix-engineer, ikke uafhængig) → verifier | fix-ready | F-AUD26-01-X29 | web/next.config.ts headers(); security-headers.spec rød mod prod, grøn lokalt; journeys 221 passed / 123 skipped lokalt |
+| 2026-11-12T17:40 | qa-lead → verifier | fix-ready | F-AUD26-04-O02 | S3 testdefekt: O02-regex ramte tidsstempel i skjult arbejdsrumsnavn (qa-catalog 4 rød på PR #206); mønster strammet |

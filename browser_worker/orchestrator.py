@@ -235,6 +235,10 @@ def _drive(run_id: uuid.UUID, replay: bool, ttl: int, poll: float, session_facto
         with get_session_factory()() as db:
             if not service.enter_awaiting(db, run_id, ba, changed=replay):
                 return
+            # The first heartbeat goes in the same commit as awaiting_approval: a yes that lands before the first
+            # _wait_for_decision tick must already see the live session (otherwise it is treated as a replay).
+            run = db.get(BrowserRun, run_id)
+            run.result = {**(run.result or {}), "_live_until": (_now() + timedelta(seconds=LIVE_HEARTBEAT_SECONDS)).isoformat()}
             db.commit()
         outcome = _wait_for_decision(run_id, session, ttl, poll)
         if outcome != "approved":

@@ -11,7 +11,7 @@ test("S09 · loggen viser hvem og hvornår, nyeste først, og tælleren passer m
   await expect(page).toHaveURL(/ark=log/);
   const api = await (await page.request.get(`/api/backend/workspaces/${wsId}/audit?limit=25`)).json();
   await expect(page.getByText(new RegExp(`^${api.total} `))).toBeVisible();
-  const rows = page.locator("ol > li");
+  const rows = page.getByRole("dialog").locator("ol > li"); // the log sheet (the page behind it has the setup checklist)
   await expect(rows).toHaveCount(Math.min(api.total, 25));
   await expect(rows.first()).toContainText("E2E Ejer"); // actor
   await expect(rows.first()).toContainText(/\d{1,2}[.:]\d{2}/); // time
@@ -25,7 +25,7 @@ test("S09 · det ændrede objekt står i loggen (fx hvilken kategori, hvilken si
   const api = await (await page.request.get(`/api/backend/workspaces/${wsId}/audit?limit=5`)).json();
   expect(api.items[0].action).toBe("category.added");
   await page.goto("/app/indstillinger?ark=log");
-  const first = page.locator("ol > li").first();
+  const first = page.getByRole("dialog").locator("ol > li").first();
   await page.screenshot({ path: `${EVID("S09")}/${info.project.name}-objekt.png`, fullPage: true });
   // the audit row has object_type/after (the category); the page renders only the action label, actor and time
   await expect(first).toContainText("Gulvafslibning", { timeout: 5_000 }); // known: fail fast

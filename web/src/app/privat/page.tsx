@@ -10,6 +10,7 @@ import { planCheckoutHref } from "@/lib/privat/plans";
 import { InstallApp } from "@/components/install-app";
 import { Mark, Tilted } from "@/components/mark";
 import { AudienceMemory } from "@/components/audience-memory";
+import { TravelpayoutsVerify } from "@/components/privat/travelpayouts-verify";
 import { getLocale, getRaw, getT } from "@/i18n/server";
 import { HTML_LANG, type Locale } from "@/i18n/config";
 import { market, schemaPrice } from "@/lib/markets";
@@ -209,6 +210,8 @@ export default async function PrivatLanding() {
           <SiteLink href="/privat/vilkaar" className="inline-flex items-center min-h-8 text-ink no-underline hover:text-accent">{t("landing.footer.terms")}</SiteLink>
         </div>
       </footer>
+      {/* Travelpayouts site verification (off by default; sandboxed – lib/travelpayouts.ts). This page only. */}
+      <TravelpayoutsVerify />
     </div>
   );
 }

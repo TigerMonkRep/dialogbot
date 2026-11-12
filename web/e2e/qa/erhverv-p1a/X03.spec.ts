@@ -112,8 +112,12 @@ test("X03 · tilbage og genindlæs midt i: svarene står der stadig; gaten kan i
   await page.keyboard.press("Escape");
   await page.locator("[data-next]").click();
   await expect(page).toHaveURL(/\/start\/3$/);
+  // The tick is saved by a background PATCH (erhverv-steps.tsx: `void answer(3, …)`), and the estimate appears
+  // before it returns. Reload only once the draft is saved, otherwise the reload can race the PATCH (CI 131096024320).
+  const saved = page.waitForResponse((r) => r.request().method() === "PATCH" && /\/funnel\/drafts\//.test(r.url()) && r.ok());
   await page.getByRole("checkbox", { name: "Efter kl. 16" }).click();
   await expect(page.locator("[data-estimate]")).toBeVisible();
+  await saved;
   await page.reload();
   await expect(page).toHaveURL(/\/start\/3$/);
   await expect(page.getByRole("checkbox", { name: "Efter kl. 16" })).toHaveAttribute("aria-checked", "true");

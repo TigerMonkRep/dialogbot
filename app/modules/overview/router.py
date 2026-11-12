@@ -84,8 +84,11 @@ def notifications(db: OrmSession, ctx: WorkspaceContext) -> list[dict]:
                         .order_by(SourceImport.created_at.desc()).limit(1))
         if imp:
             ok = imp.status == "done"
+            what = {"file": f"Filen {imp.source_name or ''}".rstrip(), "text": "Den indsatte tekst"}.get(imp.source_type,
+                                                                                                         "Hjemmesiden")
             items.append({"id": f"import:{imp.id}", "kind": "import", "at": imp.finished_at,
-                          "title": f"Hjemmesiden er læst: {len(imp.created_items)} forslag" if ok else "Importen fra hjemmesiden fejlede",
+                          "title": f"{what} er læst: {len(imp.created_items)} forslag" if ok
+                          else ("Importen fra hjemmesiden fejlede" if imp.source_type == "website" else "Importen fejlede"),
                           "body": "" if ok else (imp.error or ""), "href": "/app/viden"})
     items.sort(key=lambda i: i["at"], reverse=True)
     return items[:40]

@@ -102,7 +102,11 @@
       "theSite": "le site",
       "approveAll": "Tout valider ({n})",
       "fixYellow": "Corriger ce qui est en jaune",
-      "allApproved": "Tout est validé et désormais utilisé par Dialogbot."
+      "allApproved": "Tout est validé et désormais utilisé par Dialogbot.",
+      "siteLabel": "Site web",
+      "fileLabel": "Importer un fichier",
+      "textLabel": "Coller du texte",
+      "docsReview": "{n} suggestions issues de fichiers et de texte · approuvez ou corrigez"
     },
     "b": {
       "title": "À propos de vous",
@@ -124,7 +128,12 @@
       "address": "Adresse",
       "postalCode": "Code postal",
       "city": "Ville",
-      "cvrLooked": "Recherché : {note}"
+      "cvrLooked": "Recherché : {note}",
+      "categories": "Secteurs (un ou plusieurs)",
+      "categoryAdd": "Ajouter un secteur",
+      "categoryPlaceholder": "Par ex. Ponçage de parquet",
+      "categoryAddButton": "Ajouter",
+      "categoryRemove": "Retirer {label}"
     },
     "c": {
       "title": "Que doit-il faire pour vous ?",

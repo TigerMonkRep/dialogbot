@@ -7,6 +7,7 @@ import { Need } from "@/components/setup-parts";
 import { SetupShell } from "@/components/setup-shell";
 import { getRaw, getT } from "@/i18n/server";
 import { CreateWorkspace, Step1, type Fact, type Goals, type Languages, type Profile } from "./step1";
+import type { Item } from "@/app/app/(admin)/viden/types";
 
 /** Trin 1 af 3 – Virksomhed. */
 export default async function Trin1({ searchParams }: { searchParams: Promise<{ ny?: string }> }) {
@@ -45,10 +46,12 @@ export default async function Trin1({ searchParams }: { searchParams: Promise<{ 
   ]);
   const capOn = (k: string) => caps.items.some((c) => c.key === k && c.status !== "not_implemented");
   const facts = items.items.filter((i) => i.kind === "opening_hours" || i.kind === "coverage_area");
+  // suggestions from an uploaded file or pasted text (the website's own suggestions are shown as chips in part A)
+  const review = (items.items as unknown as Item[]).filter((i) => i.open_draft?.source_type === "extraction" && i.open_draft.review_note?.source_type && i.open_draft.review_note.source_type !== "website");
   return (
     <SetupShell step={1} steps={st.steps} workspaceName={ws.name} wide later assistant={{ wsId: ws.id, canChange: canEdit }}>
       {head}
-      <Step1 wsId={ws.id} canEdit={canEdit} canApprove={canApprove} aiReady={capOn("knowledge.source_import")} cvrReady={capOn("cvr.lookup")} profile={profile} goals={goals} languages={languages} facts={facts} />
+      <Step1 wsId={ws.id} canEdit={canEdit} canApprove={canApprove} aiReady={capOn("knowledge.source_import")} cvrReady={capOn("cvr.lookup")} profile={profile} goals={goals} languages={languages} facts={facts} review={review} />
     </SetupShell>
   );
 }

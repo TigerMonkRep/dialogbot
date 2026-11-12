@@ -617,6 +617,25 @@
         "title": "BasisIn",
         "type": "object"
       },
+      "BatchApproveIn": {
+        "properties": {
+          "version_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 200,
+            "minItems": 1,
+            "title": "Version Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "version_ids"
+        ],
+        "title": "BatchApproveIn",
+        "type": "object"
+      },
       "BillIn": {
         "properties": {
           "amount": {
@@ -5107,6 +5126,33 @@
         "title": "TestIn",
         "type": "object"
       },
+      "TextImportIn": {
+        "properties": {
+          "text": {
+            "maxLength": 200000,
+            "minLength": 20,
+            "title": "Text",
+            "type": "string"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "TextImportIn",
+        "type": "object"
+      },
       "TokenIn": {
         "properties": {
           "token": {
@@ -5664,6 +5710,18 @@
             "format": "uuid",
             "title": "Item Id",
             "type": "string"
+          },
+          "review_note": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Review Note"
           },
           "source_ref": {
             "anyOf": [
@@ -32198,6 +32256,143 @@
         ]
       }
     },
+    "/api/v1/workspaces/{workspace_id}/knowledge/import/file": {
+      "post": {
+        "description": "Upload one document (raw bytes; `name` = file name): PDF, DOCX, XLSX, CSV, TXT/MD, ≤ 10 MB / 200 pages.\nThe type is checked from the bytes now; the text is read and analysed in the background. The file is never\nstored: the bytes are dropped when the text has been read.",
+        "operationId": "import_file_api_v1_workspaces__workspace_id__knowledge_import_file_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "title": "Name",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Import File",
+        "tags": [
+          "knowledge"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/knowledge/import/text": {
+      "post": {
+        "description": "Paste up to 200 000 characters; analysed and sorted into drafts in the background. The text is not stored.",
+        "operationId": "import_text_api_v1_workspaces__workspace_id__knowledge_import_text_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TextImportIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Import Text",
+        "tags": [
+          "knowledge"
+        ]
+      }
+    },
     "/api/v1/workspaces/{workspace_id}/knowledge/imports/latest": {
       "get": {
         "operationId": "latest_import_api_v1_workspaces__workspace_id__knowledge_imports_latest_get",
@@ -32852,6 +33047,74 @@
           }
         },
         "summary": "Review Queue",
+        "tags": [
+          "knowledge"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/knowledge/versions/approve-batch": {
+      "post": {
+        "description": "«Godkend alle (i kategorien)»: approve several drafts in one transaction – all or nothing. Every version must\nbelong to this workspace; approving an already approved one is a no-op (safe to repeat).",
+        "operationId": "approve_batch_api_v1_workspaces__workspace_id__knowledge_versions_approve_batch_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchApproveIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Approve Batch",
         "tags": [
           "knowledge"
         ]

@@ -14,8 +14,7 @@ from sqlalchemy import select
 from app.models import AiUsage, BillingAccount, Conversation, WebchatSettings
 from app.modules.billing import stripe
 from tests.qa.test_qa_voice_R02 import _knowledge, no_network  # noqa: F401
-from tests.test_telephony_platform import _approve_docs, _ready, _run_jobs  # noqa: F401
-from tests.test_telephony_platform import _hook, fake  # noqa: F401
+from tests.test_telephony_platform import _approve_docs, _hook, _ready, _run_jobs, fake  # noqa: F401
 from tests.test_webchat import PUB, SITE, _approve, _enable, _say, _settings, _start
 from tests.test_webchat import fake as ai_fake  # noqa: F401
 
@@ -27,7 +26,7 @@ def _card(db, ws: str) -> None:
     db.commit()
 
 
-def test_chat_is_not_live_for_visitors_before_the_subscription_is_paid(api, client, two_workspaces, ai_fake, db):
+def test_chat_is_not_live_for_visitors_before_the_subscription_is_paid(api, client, two_workspaces, ai_fake, db):  # noqa: F811
     t = two_workspaces
     tok, ws = t["tok_a"], t["ws_a"]
     _approve(api, tok, ws)
@@ -64,7 +63,7 @@ def test_chat_is_not_live_for_visitors_before_the_subscription_is_paid(api, clie
     assert _say(client, key, conv, "Hvad koster afslibning?").json()["reply"]["text"].startswith("[fake] svar på")
 
 
-def test_with_card_payment_the_card_is_part_of_paid(api, client, two_workspaces, ai_fake, db, monkeypatch):
+def test_with_card_payment_the_card_is_part_of_paid(api, client, two_workspaces, ai_fake, db, monkeypatch):  # noqa: F811
     t = two_workspaces
     tok, ws = t["tok_a"], t["ws_a"]
     _approve(api, tok, ws)
@@ -79,7 +78,7 @@ def test_with_card_payment_the_card_is_part_of_paid(api, client, two_workspaces,
     assert client.get(f"{PUB}/{key}/status", headers={"origin": SITE}).json() == {"available": True}
 
 
-def test_a_chat_switched_on_earlier_answers_no_visitor_while_not_paid(api, client, two_workspaces, ai_fake, db):
+def test_a_chat_switched_on_earlier_answers_no_visitor_while_not_paid(api, client, two_workspaces, ai_fake, db):  # noqa: F811
     """A chat that was switched on before this rule (or whose payment lapsed): the public endpoints refuse visitors."""
     t = two_workspaces
     tok, ws = t["tok_a"], t["ws_a"]

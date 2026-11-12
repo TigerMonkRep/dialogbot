@@ -1,0 +1,65 @@
+name: provider-sandbox
+
+# Our real Stripe and Resend adapters against the providers' TEST surfaces (tests/sandbox). Not a required check.
+# - Stripe: test mode only (the tests abort on any key that is not sk_test_/rk_test_).
+# - Resend: mails only to delivered@resend.dev / bounced@resend.dev (guarded in tests/sandbox/conftest.py).
+# - Twilio is deliberately out of scope.
+# No pull_request trigger: secrets are never exposed to PR code, from forks or otherwise.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 2 * * *"  # nightly, 02:17 UTC
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: provider-sandbox
+  cancel-in-progress: false
+
+jobs:
+  provider-sandbox:
+    name: provider-sandbox
+    # Only in the main repository (a fork's schedule or dispatch has no business here, and no secrets).
+    if: github.repository == 'TigerMonkRep/dialogbot'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: dialogbot_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      APP_ENV: test
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@localhost:5432/dialogbot_test
+      TEST_DATABASE_URL: postgresql+psycopg://postgres:postgres@localhost:5432/dialogbot_test
+      ENABLE_DEV_TOOLS: "true"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install locked dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.lock
+      - name: Provider sandbox tests (Stripe test mode, Resend test inboxes)
+        env:
+          STRIPE_SECRET_KEY: ${{ secrets.SANDBOX_STRIPE_SECRET_KEY }}
+          RESEND_API_KEY: ${{ secrets.SANDBOX_RESEND_API_KEY }}
+          # Optional repository variable: the verified Resend sender (default in the tests: noreply@dialogbot.dk).
+          SANDBOX_EMAIL_FROM: ${{ vars.SANDBOX_EMAIL_FROM }}
+          # A missing secret fails the job instead of skipping everything into a green run.
+          SANDBOX_REQUIRE_KEYS: "1"
+        run: pytest -m sandbox tests/sandbox -rA

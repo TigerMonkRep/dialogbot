@@ -1086,7 +1086,7 @@ class DemoCall(Base):
     seller_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     note: Mapped[str] = mapped_column(String(500), nullable=False, default="")
     status: Mapped[str] = mapped_column(String(16), nullable=False, default="calling")
-    # `scheduled`: asked for outside the calling hours; the worker rings at this time (the next opening)
+    # `scheduled`: only rows queued before 12/11 (08–20 window, retired); the worker rings at this time or drops it
     scheduled_for: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     provider_call_id: Mapped[str | None] = mapped_column(String(100), index=True)
     outcome: Mapped[str | None] = mapped_column(String(24))  # interested | callback | not_interested | opt_out

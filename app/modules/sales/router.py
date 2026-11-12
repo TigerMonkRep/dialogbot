@@ -22,7 +22,8 @@ operator_router = APIRouter(prefix="/operator/sales", tags=["sales-operator"])
 
 @public_router.get("")
 def demo_info(db: OrmSession = Depends(get_db)):
-    """Whether the website may offer "Ring mig op nu", the calling hours and the public demo number."""
+    """Whether the website may offer "Ring mig op nu" (Peter then rings at once, day and night) and the public demo
+    number."""
     return service.info(db)
 
 
@@ -43,7 +44,7 @@ def request_demo_call(body: WebIn, db: OrmSession = Depends(get_db)):
     if not body.consent:
         raise ValidationFailed("Sæt kryds, hvis vores assistent må ringe dig op",
                                field_errors=[{"field": "consent", "message": "Påkrævet"}])
-    if body.consent_version not in (service.CONSENT_VERSION_WEB, service.CONSENT_VERSION_WEB_LATER):
+    if body.consent_version != service.CONSENT_VERSION_WEB:  # incl. the retired «ring later» consent of 11/11
         raise ValidationFailed("Genindlæs siden og prøv igen", code="consent_outdated")
     if body.website:  # a bot filled the hidden field: same answer, nothing stored, nobody called
         return {"status": "calling"}
@@ -58,11 +59,7 @@ def request_demo_call(body: WebIn, db: OrmSession = Depends(get_db)):
     if d is not None and d.status == "failed":
         raise ApiError("Vi kunne ikke ringe op lige nu. Prøv igen om lidt, eller ring selv til vores demonummer.",
                        code="demo_call_failed", status_code=502)
-    now = service._now()
-    if not service.in_hours(now):  # queued for the next opening (also for a do-not-call number: same answer)
-        return {"status": "scheduled", "scheduled_for": (d.scheduled_for if d is not None and d.scheduled_for
-                                                         else service.next_open(now)).isoformat()}
-    return {"status": "calling"}
+    return {"status": "calling"}  # also for a do-not-call number: the same answer, nobody rung
 
 
 class ChatTurn(BaseModel):

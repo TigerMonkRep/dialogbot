@@ -2,7 +2,9 @@ import { expect, test, type Page, type TestInfo } from "@playwright/test";
 import type { Server } from "node:http";
 import { DEMO_PASSWORD, PREVIEW_CODE, latestMailLink, serve, shot, uniqueEmail } from "../helpers";
 
-/* Guide trin 1 (Fürster 11/11 23:20: «den registrerer ikke step 1 … gemmer ikke tingene på step 1»).
+/* Guide trin 1 – Virksomhed (Fürster 11/11 23:20: «den registrerer ikke step 1 … gemmer ikke tingene på step 1»).
+ * Since 12/11 the steps follow the channels: Virksomhed → Viden → Telefon/Chat → Betaling, at /opsaetning/<navn>; the
+ * old /opsaetning/1 still leads to Virksomhed (the signup's verify link uses it).
  * A real new Erhverv customer: /signup → verify-mail link → /opsaetning/1 → creates the workspace → fills trin 1 in four
  * ways: (a) «Videre», (b) straight to the next step in the stepper, (c) reload, (d) fetch from the website first.
  * Every way: the backend has the data, the stepper marks trin 1 done, and the data is there on return and after reload.
@@ -32,7 +34,7 @@ async function signup(page: Page, info: TestInfo, company: string) {
   await expect(page).toHaveURL(/\/verify-email/);
   await page.goto(await latestMailLink(page.request, /\/verify-email\?token=[\w-]+/));
   await page.getByRole("link", { name: /Fortsæt til arbejdsrum/ }).click();
-  await expect(page).toHaveURL(/\/opsaetning\/1/);
+  await expect(page).toHaveURL(/\/opsaetning\/virksomhed/);
   await page.getByLabel("Navn (som den siger det)").fill(company);
   await page.getByRole("button", { name: "Videre" }).click();
   await expect(page.getByLabel("Hvad I laver – én sætning")).toBeVisible({ timeout: 15_000 });
@@ -84,13 +86,13 @@ test("Trin 1 (a) · udfyld og tryk «Videre»: gemt, trin 1 fuldført, data stå
   const wsId = await signup(page, info, `Rebotti A ${info.project.name} ${Date.now()}`);
   await slowSaves(page);
   await fillStep1(page);
-  await page.getByRole("button", { name: /Videre til trin/ }).click();
-  await expect(page).toHaveURL(/\/opsaetning\/[23]$/, { timeout: 20_000 });
+  await page.getByRole("button", { name: "Videre til trin 2: Viden" }).click();
+  await expect(page).toHaveURL(/\/opsaetning\/viden$/, { timeout: 20_000 });
   expect(await profile(page, wsId)).toMatchObject(WANT);
   await step1Done(page);
   await shot(page, info, "trin1-a-videre");
   await page.getByRole("navigation", { name: "Opsætning" }).getByRole("link", { name: /Trin 1/ }).click();
-  await expect(page).toHaveURL(/\/opsaetning\/1$/);
+  await expect(page).toHaveURL(/\/opsaetning\/virksomhed$/);
   await step1Shows(page);
   await page.reload();
   await step1Shows(page);
@@ -102,11 +104,12 @@ test("Trin 1 (b) · udfyld og klik straks trin 2 i trinlinjen: intet går tabt, 
   await fillStep1(page);
   // no pause: the stepper link right after the last keystroke
   await page.getByRole("navigation", { name: "Opsætning" }).getByRole("link", { name: /Trin 2/ }).click();
-  await expect(page).toHaveURL(/\/opsaetning\/[23]$/, { timeout: 20_000 }); // trin 2 is skipped without booking
+  await expect(page).toHaveURL(/\/opsaetning\/viden$/, { timeout: 20_000 }); // trin 2 = Viden
   expect(await profile(page, wsId)).toMatchObject(WANT);
   await step1Done(page);
   await shot(page, info, "trin1-b-trinlinje");
-  await page.goto("/opsaetning/1");
+  await page.goto("/opsaetning/1"); // old address → Virksomhed
+  await expect(page).toHaveURL(/\/opsaetning\/virksomhed$/);
   await step1Shows(page);
 });
 
@@ -118,7 +121,8 @@ test("Trin 1 (c) · udfyld og genindlæs siden: det skrevne er gemt og står der
   await step1Shows(page);
   // what the reload cut off is sent again from the tab's draft – the server has it moments later
   await expect.poll(() => profile(page, wsId), { timeout: 15_000 }).toMatchObject(WANT);
-  await page.goto("/opsaetning/3");
+  await page.goto("/opsaetning/3"); // the old address of the last step still works: on to the first channel step
+  await expect(page).toHaveURL(/\/opsaetning\/telefon$/);
   await step1Done(page);
   await shot(page, info, "trin1-c-reload");
 });
@@ -143,11 +147,12 @@ test("Trin 1 (d) · hent fra hjemmesiden først, ret derefter trin 1: alt gemmes
   await expect(page.getByRole("status").getByText(/^Gemt/)).toBeVisible({ timeout: 20_000 });
   await expect(page.getByText("Siden er ændret et andet sted.")).toHaveCount(0);
   expect(await profile(page, wsId)).toMatchObject({ ...WANT, website_url: `http://127.0.0.1:${SITE_PORT}/` });
-  await page.getByRole("navigation", { name: "Opsætning" }).getByRole("link", { name: /Trin 3/ }).click();
-  await expect(page).toHaveURL(/\/opsaetning\/3$/);
+  await page.getByRole("navigation", { name: "Opsætning" }).getByRole("link", { name: /Trin 3: Telefon/ }).click();
+  await expect(page).toHaveURL(/\/opsaetning\/telefon$/);
   await step1Done(page);
   await shot(page, info, "trin1-d-hjemmeside");
-  await page.goto("/opsaetning/1");
+  await page.goto("/opsaetning/1"); // old address → Virksomhed
+  await expect(page).toHaveURL(/\/opsaetning\/virksomhed$/);
   await step1Shows(page);
   await page.reload();
   await step1Shows(page);
@@ -162,7 +167,7 @@ test("Trin 1 (e) · hjemmeside skrevet som «rebotti.dk» (som feltets eksempel)
   await expect(page.locator("main").getByRole("alert")).toHaveCount(0);
   expect(await profile(page, wsId)).toMatchObject({ ...WANT, website_url: "https://rebotti.dk" });
   await page.getByRole("button", { name: /Videre til trin/ }).click();
-  await expect(page).toHaveURL(/\/opsaetning\/[23]$/);
+  await expect(page).toHaveURL(/\/opsaetning\/viden$/);
   await step1Done(page);
   await shot(page, info, "trin1-e-domaene");
 });

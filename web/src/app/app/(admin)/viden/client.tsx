@@ -346,7 +346,8 @@ export function Sources({ wsId, defaultUrl, initial, aiReady, openWith }: { wsId
   const running = imp?.status === "running";
   const start = useSubmit(async () => { setImp(await api<Import>(`/workspaces/${wsId}/knowledge/import`, { method: "POST", body: JSON.stringify({ url }) })); return true; });
   const tab = (k: "site" | "file" | "text", icon: string, label: string) => (
-    <button type="button" className={`${BTN} gap-1.5 ${open === k ? "bg-ink text-paper hover:bg-ink" : ""}`} aria-expanded={open === k} aria-controls={`src-${k}`} onClick={() => setOpen(open === k ? null : k)}><Icon name={icon} size={18} />{label}</button>
+    // the open tab: ink on paper reversed – built without BTN's own bg/text classes, which won over these (white on white)
+    <button type="button" className={`${open === k ? BTN.replace("bg-paper", "bg-ink").replace("text-ink", "text-paper").replace("hover:bg-panel", "hover:bg-ink") : BTN} gap-1.5`} aria-expanded={open === k} aria-controls={`src-${k}`} onClick={() => setOpen(open === k ? null : k)}><Icon name={icon} size={18} />{label}</button>
   );
   return (
     <div className="flex flex-col gap-3 w-full md:w-auto md:max-w-[640px]">

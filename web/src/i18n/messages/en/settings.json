@@ -433,7 +433,9 @@
       "ai_not_configured": "No AI provider is configured in this environment.",
       "noKnowledgeBefore": "There is no approved knowledge yet – approve at least one topic in the",
       "noKnowledgeLink": "knowledge centre",
-      "noKnowledgeAfter": "."
+      "noKnowledgeAfter": ".",
+      "subscription_required": "The chat goes live once the subscription is in place.",
+      "subscriptionLink": "To payment"
     },
     "pill": {
       "active": "Active on your domains",

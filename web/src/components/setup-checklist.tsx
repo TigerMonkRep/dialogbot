@@ -12,7 +12,8 @@ import { Icon } from "./ui";
  *   - paid, a channel not live yet → «gå live»
  *  Renders nothing when everything is done. `where` only changes the words of the headline and the link. */
 export async function SetupChecklist({ st, where }: { st: SetupStatus; where: "today" | "settings" | "guide" }) {
-  if (st.done) return null;
+  // In the guide (Betaling) only while something before it is missing – the step itself is the payment and going live.
+  if (st.done || (where === "guide" && st.setupDone)) return null;
   const t = await getT("setup.checklist");
   const ts = await getT("setup.shell");
   const label = (k: string) => ts(`labels.${k}`);

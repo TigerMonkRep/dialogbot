@@ -433,7 +433,9 @@
       "ai_not_configured": "Ingen AI-leverantör är konfigurerad i den här miljön.",
       "noKnowledgeBefore": "Det finns ingen godkänd kunskap än – godkänn minst ett ämne i",
       "noKnowledgeLink": "kunskapscentret",
-      "noKnowledgeAfter": "."
+      "noKnowledgeAfter": ".",
+      "subscription_required": "Chatten går live när abonnemanget är på plats.",
+      "subscriptionLink": "Till betalning"
     },
     "pill": {
       "active": "Aktiv på era domäner",

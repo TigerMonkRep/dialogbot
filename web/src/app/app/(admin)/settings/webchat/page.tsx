@@ -44,6 +44,8 @@ export default async function WebchatPage() {
 }
 
 function reason(t: T, r: string): React.ReactNode {
+  // Fürster 12/11: the chat never goes live for visitors without a paid subscription.
+  if (r === "subscription_required") return <>{t("webchat.reason.subscription_required")} <Link href="/opsaetning/betaling" className="text-ink underline font-semibold">{t("webchat.reason.subscriptionLink")}</Link></>;
   if (r === "no_approved_knowledge") return <>{t("webchat.reason.noKnowledgeBefore")} <Link href="/app/knowledge" className="text-ink underline">{t("webchat.reason.noKnowledgeLink")}</Link>{t("webchat.reason.noKnowledgeAfter")}</>;
   return ["disabled", "no_allowed_origins", "ai_not_configured"].includes(r) ? t(`webchat.reason.${r}`) : r;
 }

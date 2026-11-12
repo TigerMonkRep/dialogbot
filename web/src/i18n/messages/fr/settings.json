@@ -433,7 +433,9 @@
       "ai_not_configured": "Aucun fournisseur d’IA n’est configuré dans cet environnement.",
       "noKnowledgeBefore": "Il n’y a pas encore de connaissance validée – validez au moins un sujet dans",
       "noKnowledgeLink": "le centre de connaissances",
-      "noKnowledgeAfter": "."
+      "noKnowledgeAfter": ".",
+      "subscription_required": "Le chat est mis en service dès que l’abonnement est en place.",
+      "subscriptionLink": "Vers le paiement"
     },
     "pill": {
       "active": "Actif sur vos domaines",

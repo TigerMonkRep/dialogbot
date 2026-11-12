@@ -10,6 +10,7 @@ import { HTML_LANG } from "@/i18n/config";
 import type { Telephony } from "@/app/app/(admin)/settings/telephony/client";
 import { CardAndVat, ConfirmSubscription } from "@/app/app/(admin)/konto/billing";
 import { kr as krDa } from "@/app/app/(admin)/leads/format";
+import { SetupChecklist } from "@/components/setup-checklist";
 import { GoLive, type Webchat } from "../_parts/channels";
 
 type Agreement = { current: { version: number; model: string; currency?: string; monthly: { net_minor: number }; included_minutes?: number; inbound_extra_minute?: { net_minor: number }; outbound_extra_minute?: { net_minor: number } } | null;
@@ -53,6 +54,7 @@ export default async function BetalingStep({ searchParams }: { searchParams: Pro
     <SetupShell step="betaling" steps={st.steps} workspaceName={ws.name} wide assistant={{ wsId: ws.id, canChange: staff }}>
       <StepHead n={n} eyebrow={t("eyebrow", { n, total: st.steps.length })} title={t("title")} intro={t("intro")} need={raw<[string, string, string?][]>("setup.betalingPage.need")} needTitle={raw<string>("setup.need.title")} />
       <div className="flex flex-col gap-6">
+        <SetupChecklist st={st} where="guide" />
         {card === "saved" && <p role="status" className="rounded-xl bg-success-soft px-4 py-3 text-[14px] font-semibold text-success">{ta("account.sub.cardSaved")}</p>}
         {admin && agr && acc && terms ? (<>
           <Part letter="A" title={t("plan.title")} hint={t("plan.hint")}>

@@ -89,9 +89,7 @@
       "webhooksValue": "Signerede webhooks til jeres systemer",
       "log": "Log og eksport",
       "logValue": "Alle ændringer, nyeste først"
-    },
-    "guide": "Guiden er ikke færdig · næste: trin {n}. Det, du sætter op her, tæller med.",
-    "guideCta": "Tilbage til guiden"
+    }
   },
   "sheet": {
     "close": "Luk"
@@ -435,7 +433,9 @@
       "ai_not_configured": "Ingen AI-udbyder er konfigureret i dette miljø.",
       "noKnowledgeBefore": "Der er ingen godkendt viden endnu – godkend mindst ét emne i",
       "noKnowledgeLink": "videnscentret",
-      "noKnowledgeAfter": "."
+      "noKnowledgeAfter": ".",
+      "subscription_required": "Chatten går live, når abonnementet er på plads.",
+      "subscriptionLink": "Til betaling"
     },
     "pill": {
       "active": "Aktiv på jeres domæner",

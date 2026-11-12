@@ -51,6 +51,7 @@ def _enable(api, tok, ws, origins=(SITE,), enabled=True, greeting=""):
 def live(api, two_workspaces, fake):
     t = two_workspaces
     _approve(api, t["tok_a"], t["ws_a"])
+    api.subscribe(t["tok_a"], t["ws_a"])  # the chat goes live only with a paid subscription (test_live_needs_paid_…)
     r = _enable(api, t["tok_a"], t["ws_a"], origins=[SITE + "/", "https://Shop.Fjordgulv.example"])
     assert r.status_code == 200, r.text
     return t | {"key": r.json()["widget_key"]}
@@ -74,11 +75,14 @@ def test_settings_defaults_roles_and_readiness(api, two_workspaces, db):
     assert s["enabled"] is False and s["widget_key"].startswith("wk_") and s["allowed_origins"] == []
     assert "Fjord Gulvservice ApS" in s["effective_greeting"]
     assert s["widget_key"] in s["embed_code"] and "/api/v1/public/webchat/loader.js" in s["embed_code"]
-    assert set(s["unavailable_reasons"]) == {"disabled", "no_allowed_origins", "ai_not_configured", "no_approved_knowledge"}
+    assert set(s["unavailable_reasons"]) == {"disabled", "subscription_required", "no_allowed_origins", "ai_not_configured",
+                                             "no_approved_knowledge"}
+    assert set(s["setup_missing"]) == {"no_allowed_origins", "ai_not_configured", "no_approved_knowledge"}
+    assert s["subscription_paid"] is False
     # enabling without AI and approved knowledge is refused with reasons
     r = _enable(api, t["tok_a"], t["ws_a"])
     assert r.status_code == 409 and r.json()["code"] == "webchat_not_ready"
-    assert set(r.json()["reasons"]) == {"ai_not_configured", "no_approved_knowledge"}
+    assert set(r.json()["reasons"]) == {"subscription_required", "ai_not_configured", "no_approved_knowledge"}
     staff = api.add_member(t["tok_a"], t["ws_a"], "staff@testmail.dk", "staff")
     reader = api.add_member(t["tok_a"], t["ws_a"], "reader@testmail.dk", "reader")
     assert api.get(staff, f"/workspaces/{t['ws_a']}/webchat").status_code == 200
@@ -165,6 +169,7 @@ def test_refusal_is_masked_in_widget(client, live):
 
 def test_other_widget_key_cannot_read_conversation(client, api, live, fake):
     _approve(api, live["tok_b"], live["ws_b"], "Kaffe")
+    api.subscribe(live["tok_b"], live["ws_b"])
     key_b = _enable(api, live["tok_b"], live["ws_b"], origins=["https://havnebord.example"]).json()["widget_key"]
     conv = _start(client, live["key"]).json()
     r = client.get(f"{PUB}/{key_b}/conversations/{conv['conversation_id']}/messages",

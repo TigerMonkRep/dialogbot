@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
+import { setupStatus } from "@/lib/setup.server";
 import { kr as krDa } from "../leads/format";
 import { CardAndVat, ConfirmSubscription, DiscountCode, InvoiceMonth, ReferralCode } from "./billing";
 import { EU_COUNTRIES } from "@/lib/markets";
@@ -66,6 +67,9 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
     backend<Discount>(`/workspaces/${ws.id}/billing/discount`).catch(() => null),
   ]) : [null, null, null, null, null, null];
   const pending = invitations.filter((i) => i.status === "pending");
+  // From the guide: is every chosen channel live? (only asked then)
+  const setupLive = fra === "opsaetning" && admin ? (await setupStatus(ws.id, ws.role).catch(() => null))?.live ?? null : null;
+  const tc = await getT("setup.checklist");
   const confirmed = !!agr?.current && agr.current.model !== "B";
   // The customer's own agreement (its snapshot) once confirmed; the list price it would get otherwise
   const cur = confirmed ? agr!.current! : null;
@@ -124,7 +128,10 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
               {/* The guide ends here until the subscription is paid (Fürster 11/11): one plain next step, or «Du er live». */}
               {fra === "opsaetning" && (() => {
                 const paid = confirmed && (!!acc.card || !acc.configured);
-                return paid
+                // Paid but a chosen channel not live yet: the guide's last step switches it on (nothing goes live before payment).
+                return paid && setupLive === false
+                  ? <p role="status" className="rounded-xl bg-success-soft px-4 py-3 text-[15px] font-semibold text-success">{tc("goLive")} <Link href="/opsaetning/betaling" className="underline">{tc("continue")}</Link></p>
+                  : paid
                   ? <p role="status" className="rounded-xl bg-success-soft px-4 py-3 text-[15px] font-semibold text-success">{t("account.sub.fromSetupLive")} <Link href="/app" className="underline">{t("account.sub.goToday")}</Link></p>
                   : <p role="status" className="rounded-xl border-2 border-ink bg-paper px-4 py-3 text-[15px] font-semibold text-ink">{!confirmed ? (acc.configured ? t("account.sub.fromSetup") : t("account.sub.fromSetupNoCard")) : t("account.sub.fromSetupCard")}</p>;
               })()}
@@ -237,7 +244,7 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
         <div className="flex flex-col gap-2 px-5 py-5 rounded-2xl bg-paper border-2 border-ink">
           <span className="eyebrow">{t("account.ws.title")}</span>
           <p className="text-[15px] font-semibold text-ink">{ws.name} <span className="font-normal text-muted">· {t("account.ws.this")}</span></p>
-          <Link href="/opsaetning/1?ny=1" className="inline-flex items-center min-h-[44px] text-[14px] font-semibold text-accent hover:underline">+ {t("account.ws.new")}</Link>
+          <Link href="/opsaetning/virksomhed?ny=1" className="inline-flex items-center min-h-[44px] text-[14px] font-semibold text-accent hover:underline">+ {t("account.ws.new")}</Link>
         </div>
         <div className="flex flex-col gap-2 px-5 py-5 rounded-2xl bg-paper border-2 border-ink">
           <span className="eyebrow">{t("account.data.title")}</span>

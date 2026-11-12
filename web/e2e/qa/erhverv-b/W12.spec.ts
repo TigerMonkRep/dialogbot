@@ -19,6 +19,8 @@ test("W12 · kunden booker i widgetten: samtykke kræves, bekræftet, tiden-tage
   await page.request.post(`/api/backend/workspaces/${wsId}/bookings/types`, { headers: CSRF, data: { name: "Besigtigelse", duration_minutes: 60 } });
   const s = await (await page.request.get(`/api/backend/workspaces/${wsId}/bookings/settings`)).json();
   expect((await page.request.put(`/api/backend/workspaces/${wsId}/bookings/settings`, { headers: CSRF, data: { expected_version: s.version, enabled: true, lead_time_hours: 0, horizon_days: 7, buffer_minutes: 0 } })).ok()).toBeTruthy();
+  // the chat answers visitors only with a paid subscription (Fürster 12/11); no Stripe in E2E: confirmed = paid
+  expect((await page.request.post(`/api/backend/workspaces/${wsId}/agreement`, { headers: CSRF, data: { model: "A" } })).ok()).toBeTruthy();
   const wc = await (await page.request.get(`/api/backend/workspaces/${wsId}/webchat`)).json();
   const w = await (await page.request.put(`/api/backend/workspaces/${wsId}/webchat`, { headers: CSRF, data: { expected_version: wc.version, enabled: true, allowed_origins: [SITE], greeting: "" } })).json();
   servers.push(await serve(4127, `<!doctype html><html lang="da"><head><title>Kundeside</title></head><body><h1>Fjord Gulv</h1>${w.embed_code}</body></html>`));

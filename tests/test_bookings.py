@@ -65,6 +65,7 @@ def test_webchat_booking_and_feed(api, client, two_workspaces, db, monkeypatch):
     t = two_workspaces
     tok, ws = t["tok_a"], t["ws_a"]
     type_id = _setup(api, t)
+    api.subscribe(tok, ws)  # the chat goes live only with a paid subscription
     wc = api.get(tok, f"/workspaces/{ws}/webchat").json()
     r = api.put(tok, f"/workspaces/{ws}/webchat", {"expected_version": wc["version"], "enabled": True,
                                                   "allowed_origins": ["https://fjord.dk"], "greeting": ""})

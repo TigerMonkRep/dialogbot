@@ -3,7 +3,9 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
-import { billingState, setupStatus } from "@/lib/setup.server";
+import { setupStatus } from "@/lib/setup.server";
+import { stepHref } from "@/lib/setup-steps";
+import { SetupChecklist } from "@/components/setup-checklist";
 import { Icon } from "@/components/ui";
 import { PowerToggle, type TelephonyCode } from "./client";
 import { InstallBanner } from "@/components/install-step";
@@ -34,25 +36,24 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
   const t = await getT("app");
   const lang = HTML_LANG[await getLocale()];
   const { taendt } = await searchParams;
-  // The three setup steps come first. «Jeg gør resten senere» (cookie) lets people look around before they are done.
+  // The guide comes first until everything is set up. «Sæt op selv» (cookie) lets people look around before they are
+  // done. Only payment / going live left: «I dag» with the checklist's «Sidste skridt» instead of the guide.
   const st = await setupStatus(ws.id, ws.role);
   const staff = ws.role !== "reader";
   // Readers cannot do the setup (nor read the phone's status) – they look at I dag, never at the steps (F-E2B-04-G01).
-  if (staff && !taendt && !st.done && !(await cookies()).get("db_setup_later")) redirect(`/opsaetning/${st.next}`);
+  if (staff && !taendt && !st.setupDone && !(await cookies()).get("db_setup_later")) redirect(stepHref(st.next));
   const canManage = ws.role === "owner" || ws.role === "admin";
-  const [ov, tel, calls, appts, goals, billing] = await Promise.all([
+  const [ov, tel, calls, appts, goals] = await Promise.all([
     backend<Overview>(`/workspaces/${ws.id}/overview`),
     staff ? backend<Telephony>(`/workspaces/${ws.id}/telephony`).catch(() => null) : Promise.resolve(null),
     staff ? backend<{ items: Row[] }>(`/workspaces/${ws.id}/conversations/feed?limit=5`).catch(() => null) : Promise.resolve(null),
     staff ? backend<{ items: Appt[]; timezone: string }>(`/workspaces/${ws.id}/bookings?days=30`).catch(() => null) : Promise.resolve(null),
     backend<{ product_intent: string }>(`/workspaces/${ws.id}/goals`).catch(() => null),
-    billingState(ws.id, ws.role),
   ]);
   // Chat only (no «Tage telefonen» in trin 1): the status is the website chat's, and no phone is asked for.
   const chatOnly = !st.goals.inbound_phone && st.goals.webchat;
-  const chatOn = Boolean(st.webchat?.enabled);
-  // Set up but not paid: the one next step is the subscription (Erhverv has no free trial).
-  const payNext = st.done && billing !== null && !billing.paid;
+  // «tændt» = live for visitors: switched on AND paid (the chat never answers visitors before that).
+  const chatOn = Boolean(st.webchat?.live);
   const nextAppts = appts?.items.filter((a) => new Date(a.starts_at) >= new Date()).slice(0, 3) ?? [];
   const k = ov.kpis;
   const code: TelephonyCode = tel?.status.code ?? "not_started";
@@ -64,28 +65,16 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
       {/* LEFT: the three things you can SEE */}
       <section className="flex-[999_1_560px] min-w-0 flex flex-col gap-5">
         {/* Only when the phone really is on – campaigns-only or nothing chosen has nothing that «tager telefonen» (F-E2B-03-O07). */}
-        {taendt && st.done && (chatOnly ? chatOn : on) && (
+        {taendt && (chatOnly ? chatOn : on) && (
           <div role="status" className="stamp-in flex items-center gap-3 px-5 py-4 rounded-2xl border-2 border-ink bg-highlight shadow-block-sm">
             <Icon name="power_settings_new" size={26} />
             <span className="font-display font-extrabold text-[20px] text-ink">{t("overview.turnedOn")}</span>
             <span className="text-[14px] text-ink-soft">{chatOnly ? t("overview.turnedOnChatSub") : t("overview.turnedOnSub")}</span>
           </div>
         )}
-        {!st.done && (
-          <Link href={`/opsaetning/${st.next}`} className="flex flex-wrap items-center gap-3 px-5 py-4 rounded-2xl border-2 border-dashed border-ink bg-paper hover:bg-panel">
-            <span className="inline-flex px-2.5 py-1 rounded-full bg-highlight text-[11px] font-semibold uppercase tracking-[0.08em]">{t("overview.notDone")}</span>
-            <span className="flex-1 min-w-[200px] text-[15px] font-semibold text-ink">{t("overview.setupNext", { n: st.next })} {st.next === 1 ? t("overview.step1") : st.next === 2 ? t("overview.step2") : t("overview.step3")}</span>
-            <span className="inline-flex items-center gap-1 text-[14px] font-semibold text-ink">{t("overview.continue")}<Icon name="arrow_forward" size={18} /></span>
-          </Link>
-        )}
-
-        {payNext && (
-          <Link href="/app/konto?fra=opsaetning#abonnement" className="flex flex-wrap items-center gap-3 px-5 py-4 rounded-2xl border-2 border-ink bg-highlight hover:bg-panel">
-            <span className="inline-flex px-2.5 py-1 rounded-full bg-paper text-[11px] font-semibold uppercase tracking-[0.08em]">{t("overview.payTag")}</span>
-            <span className="flex-1 min-w-[200px] text-[15px] font-semibold text-ink">{t("overview.payNext")}</span>
-            <span className="inline-flex items-center gap-1 text-[14px] font-semibold text-ink">{t("overview.continue")}<Icon name="arrow_forward" size={18} /></span>
-          </Link>
-        )}
+        {/* The setup's checklist – the same as in the guide and in «Alle indstillinger». Staff and readers see it only
+            while something is to be set up: paying is the owner's. */}
+        {(canManage || !st.setupDone) && <SetupChecklist st={st} where="today" />}
 
         {/* First open after the login (once-dismissible): the app on the home screen. Hidden in the installed app. */}
         <InstallBanner audience="erhverv" />

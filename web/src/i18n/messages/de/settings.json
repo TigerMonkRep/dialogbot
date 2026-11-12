@@ -89,9 +89,7 @@
       "webhooksValue": "Signierte Webhooks an Ihre Systeme",
       "log": "Protokoll und Export",
       "logValue": "Alle Änderungen, neueste zuerst"
-    },
-    "guide": "Der Assistent ist nicht fertig · weiter: Schritt {n}. Was Sie hier einrichten, zählt mit.",
-    "guideCta": "Zurück zum Assistenten"
+    }
   },
   "sheet": {
     "close": "Schließen"
@@ -435,7 +433,9 @@
       "ai_not_configured": "In dieser Umgebung ist kein KI-Anbieter konfiguriert.",
       "noKnowledgeBefore": "Es gibt noch kein bestätigtes Wissen – bestätigen Sie mindestens ein Thema im",
       "noKnowledgeLink": "Wissenscenter",
-      "noKnowledgeAfter": "."
+      "noKnowledgeAfter": ".",
+      "subscription_required": "Der Chat geht live, sobald das Abonnement steht.",
+      "subscriptionLink": "Zur Zahlung"
     },
     "pill": {
       "active": "Aktiv auf Ihren Domains",

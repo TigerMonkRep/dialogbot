@@ -9,15 +9,18 @@
     "skipToContent": "Hoppa till innehållet",
     "home": "Dialogbot – Idag",
     "nav": "Konfiguration",
-    "steps": [
-      "Företag",
-      "Kalender & system",
-      "Testa & slå på"
-    ],
     "stepAria": "Steg {n}: {label}",
-    "skipped": " (överhoppat)",
     "done": " (klart)",
-    "laterNote": " – du hittar allt igen under profilikonen → Alla inställningar."
+    "laterNote": " – du hittar allt igen under profilikonen → Alla inställningar.",
+    "labels": {
+      "virksomhed": "Företag",
+      "viden": "Kunskap",
+      "telefon": "Telefon",
+      "chat": "Chatt",
+      "kalender": "Kalender",
+      "betaling": "Betalning"
+    },
+    "next": "Vidare till steg {n}: {label}"
   },
   "hours": {
     "days": [
@@ -41,9 +44,9 @@
     "and": "och"
   },
   "step1Page": {
-    "eyebrow": "Bygg din Dialogbot · steg 1 av 3 · ca 5 min",
+    "eyebrow": "Bygg din Dialogbot · steg 1 av {total} · ca 5 min",
     "title": "Vilka är ni – och vad ska den göra?",
-    "intro": "Ett steg. Vi hämtar det mesta från er webbplats – du rättar bara det som är fel. Allt kan ändras senare genom att säga det till assistenten.",
+    "intro": "Börja med webbplatsen: den fyller i namn, telefon och adress. Välj sedan telefon, chatt eller båda – det avgör nästa steg. Du rättar bara det som är fel.",
     "need": [
       [
         "1×",
@@ -94,7 +97,7 @@
     "readOnly": "Din roll (läsare) kan se men inte redigera.",
     "a": {
       "title": "Hämta det från webbplatsen",
-      "hintAi": "Dialogbot läser sidan och föreslår namn, vad ni gör, öppettider och priser.",
+      "hintAi": "Dialogbot läser sidan och fyller i namn, telefon och adress – och föreslår öppettider och priser.",
       "hintNoAi": "Adressen sparas. Förslag från webbplatsen kräver att AI är påslaget.",
       "urlAria": "Webbplatsens adress",
       "urlPlaceholder": "foretag.se",
@@ -104,11 +107,7 @@
       "theSite": "sidan",
       "approveAll": "Godkänn alla {n}",
       "fixYellow": "Rätta det gula",
-      "allApproved": "Allt är godkänt och används nu av Dialogbot.",
-      "siteLabel": "Webbplats",
-      "fileLabel": "Ladda upp fil",
-      "textLabel": "Klistra in text",
-      "docsReview": "{n} förslag från filer och text · godkänn eller rätta"
+      "allApproved": "Allt är godkänt och används nu av Dialogbot."
     },
     "b": {
       "title": "Om er",
@@ -138,13 +137,25 @@
       "categoryRemove": "Ta bort {label}"
     },
     "c": {
-      "title": "Vad ska den göra åt er?",
-      "hint": "Välj det som passar. Det avgör vad steg 2 och 3 frågar om.",
+      "title": "Var ska Dialogbot svara?",
+      "hint": "Telefon, chatt på webbplatsen eller båda. Det avgör guidens nästa steg – och om telefonnumret behövs.",
       "cards": {
-        "phone": { "title": "Svara i telefon", "sub": "när ni inte kan – eller alltid" },
-        "booking": { "title": "Boka möten", "sub": "direkt i er kalender" },
-        "web": { "title": "Svara på webbplatsen", "sub": "webbchatt – en kodrad" },
-        "outbound": { "title": "Ringa upp kunder", "sub": "kampanjer · minuter från paketet" }
+        "phone": {
+          "title": "Svara i telefon",
+          "sub": "när ni inte kan – eller alltid"
+        },
+        "booking": {
+          "title": "Boka möten",
+          "sub": "direkt i er kalender"
+        },
+        "web": {
+          "title": "Svara på webbplatsen",
+          "sub": "webbchatt – en kodrad"
+        },
+        "outbound": {
+          "title": "Ringa upp kunder",
+          "sub": "kampanjer · minuter från paketet"
+        }
       },
       "langAria": "Språk",
       "speaks": "Den talar",
@@ -159,9 +170,7 @@
       "fillIn": "Fyll i namn, telefonnummer och vad ni gör för att gå vidare.",
       "fillInNoPhone": "Fyll i namn och vad ni gör för att gå vidare.",
       "reload": "Ladda om"
-    },
-    "nextTo2": "Vidare till steg 2: kalender & system",
-    "nextTo3": "Vidare till steg 3: testa & slå på"
+    }
   },
   "create": {
     "verifyFirst": "Bekräfta din e-post först.",
@@ -174,7 +183,7 @@
     "next": "Vidare"
   },
   "step2Page": {
-    "eyebrow": "Steg 2 av 3",
+    "eyebrow": "Steg {n} av {total}",
     "title": "Var ska bokningarna hamna?",
     "need": [
       [
@@ -236,22 +245,7 @@
       ]
     ],
     "defaultsNote": "Tiderna följer era öppettider från steg 1. Som start: bokningar på 45 minuter, 15 minuters paus och tidigast i morgon. Det kan ändras under Bokningar.",
-    "next": "Vidare till steg 3: testa & slå på",
     "skip": "Hoppa över – jag använder ingen kalender"
-  },
-  "step3Page": {
-    "eyebrow": "Steg 3 av 3 · sista steget",
-    "title": "Välj röst, anslut telefonen – och slå på",
-    "need": [
-      [
-        "1×",
-        "en telefon att ringa från"
-      ],
-      [
-        "10",
-        "sekunder för vidarekoppling"
-      ]
-    ]
   },
   "step3": {
     "failed": "Det gick inte. Försök igen.",
@@ -329,96 +323,87 @@
       "title": "Telefon",
       "hint": "Du behåller ditt nummer. Vi tar bara samtalen."
     },
-    "chat": {
-      "mailSubject": "En rad till webbplatsen",
-      "mailBody": "Hej,\n\nKan du lägga in den här raden på webbplatsen (precis före </body>)?\n\n{code}\n\nTack!",
-      "title": "Webbchatt på webbplatsen",
-      "hint": "Valfritt. Samma assistent – fast som chatt.",
-      "ready": "Klar",
-      "on": "På",
-      "off": "Av",
-      "onlyOnBefore": "Chatten får bara visas på ",
-      "onlyOnAfter": " – adressen från steg 1.",
-      "noSite": "Ange webbplatsens adress i steg 1, så vet vi var chatten får visas.",
-      "turningOn": "Slår på …",
-      "turnOn": "Slå på webbchatten",
-      "managersOnly": "Endast ägare och administratörer kan slå på webbchatten.",
-      "oneLine": "En rad ska in på er webbplats. Du behöver inte förstå den – skicka den till den som sköter sidan.",
-      "codeAria": "Kodrad",
-      "copied": "Kopierat",
-      "notReady": {
-        "no_approved_knowledge": "Godkänn minst en sak under Kunskap först – chatten svarar bara utifrån det ni har godkänt.",
-        "no_allowed_origins": "Skriv er webbplats adress i steg 1 – chatten får bara visas där.",
-        "ai_not_configured": "AI-svar är inte påslagna i Dialogbot än. Skriv till oss."
-      },
-      "copy": "Kopiera raden",
-      "sendWebmaster": "Skicka till min webbansvarige",
-      "seen": "Raden finns på sidan – status är Klar.",
-      "notSeen": "När raden finns på sidan ändras status här till «Klar» av sig själv."
-    },
     "needs": {
       "confirmNumber": "bekräfta ert nummer",
       "connectPhone": "anslut telefonen",
-      "testCall": "genomför testsamtalet",
-      "confirmSubscription": "bekräfta abonnemanget",
-      "turnOnChat": "slå på webbchatten"
+      "testCall": "genomför testsamtalet"
     },
-    "noChannels": "Ni valde varken att svara i telefon eller på webbplatsen i steg 1. Rösten används till kampanjer.",
     "changeChoice": "Ändra valet",
     "isOn": "Dialogbot är påslagen",
-    "allReady": "Allt är klart – slå på Dialogbot",
     "almost": "Nästan klart",
     "pauseNote": "Du kan alltid pausa den från Idag.",
     "readyPhone": "Testsamtalet lyckades. När du slår på tar Dialogbot de samtal du vidarekopplar.",
     "readyNoPhone": "När du slår på är Dialogbot redo.",
     "missing": "Saknas: {list}.",
     "goToday": "Gå till Idag",
-    "toPayment": "Vidare till abonnemang och betalning",
-    "payNext": "Sista steget: bekräfta abonnemanget.",
-    "payAfter": "Efteråt bekräftar du abonnemanget.",
     "turningOn": "Slår på …",
-    "turnOn": "Slå på Dialogbot",
     "managersOnly": "Endast ägare och administratörer kan slå på.",
-    "subscriptionNote": "Abonnemanget kostar från {pMonthly}/mån. exkl. moms med {pIncluded} minuter för in- och utgående samtal; därefter {pExtraMinute} per minut in, och utgående {pCallAnswered} per besvarat samtal + {pMinute} per minut.",
-    "confirmSubscription": "Bekräfta abonnemang",
-    "findAgain": "Du hittar allt igen under profilikonen → Alla inställningar.",
     "readerTitle": "Ägaren konfigurerar Dialogbot",
     "campaignsTitle": "Redo för er första kampanj",
     "campaignsText": "Det finns inget att slå på: Dialogbot ringer först ut när ni har skapat och startat en kampanj.",
     "campaignsCta": "Skapa er första kampanj",
-    "nothingTitle": "Välj vad Dialogbot ska göra",
-    "nothingText": "Inget är valt i steg 1, så det finns inget att slå på. Välj minst en sak."
+    "nothingTitle": "Välj vad Dialogbot ska göra"
   },
   "assistant": {
     "setupChips": {
-      "1": [
+      "virksomhed": [
         {
           "label": "Öppettider",
           "fill": "Öppettider mån-fre 8-16"
         },
         {
-          "label": "Vad händer i steg 2?",
-          "say": "I steg 2 ansluter du din kalender så att bokningarna hamnar där. Det är valfritt – du kan hoppa över det."
+          "label": "Vad händer sedan?",
+          "say": "Sedan hämtar du in kunskap – från webbplatsen, en fil eller text – och ställer in telefon och/eller chatt. Till sist abonnemang och betalning, så går ni live."
         }
       ],
-      "2": [
+      "viden": [
+        {
+          "label": "Vad använder Dialogbot?",
+          "say": "Bara det du har godkänt. Förslag från webbplatsen, filer och text är utkast tills du godkänner dem."
+        },
+        {
+          "label": "Kan jag lägga till mer senare?",
+          "say": "Ja. Allt finns under Kunskap, och du kan alltid hämta in mer eller rätta."
+        }
+      ],
+      "telefon": [
+        {
+          "label": "Hur kopplar jag vidare?",
+          "say": "Slå koden från telefonsteget på din telefon och tryck ring. Stäng av vidarekopplingen igen med koden under."
+        },
+        {
+          "label": "Kan jag ångra?",
+          "say": "Ja. Du kan pausa Dialogbot från Idag och stänga av vidarekopplingen på telefonen."
+        }
+      ],
+      "chat": [
+        {
+          "label": "Var lägger jag in raden?",
+          "say": "Precis före </body> på webbplatsen – eller skicka den till er webbansvarige med knappen. Den gör ingenting förrän chatten är live."
+        },
+        {
+          "label": "När går chatten live?",
+          "say": "När abonnemanget är på plats. Tills dess kan du prova den här i förhandsvisningen."
+        }
+      ],
+      "kalender": [
         {
           "label": "Vad skriver ni i kalendern?",
           "say": "En bokning med kundens namn, nummer och ärende – och en bekräftelse till er. Era befintliga bokningar rör jag aldrig."
         },
         {
-          "label": "Vad händer i steg 3?",
-          "say": "I steg 3 väljer du röst, ansluter telefonen med en vidarekoppling och slår på Dialogbot."
+          "label": "Kan jag hoppa över?",
+          "say": "Ja. Utan kalender tar Dialogbot emot ett meddelande, och ni ringer tillbaka."
         }
       ],
-      "3": [
+      "betaling": [
         {
-          "label": "Hur vidarekopplar jag?",
-          "say": "Slå koden i steg 3 på din telefon och tryck ring. Stäng av vidarekopplingen igen med koden under den."
+          "label": "Varför betala först?",
+          "say": "Varken telefon eller chatt går live utan ett betalt abonnemang. Tills dess kan du prova chatten i förhandsvisningen."
         },
         {
-          "label": "Kan jag ångra mig?",
-          "say": "Ja. Du kan pausa Dialogbot från Idag och stänga av vidarekopplingen på din telefon."
+          "label": "Kan jag ångra?",
+          "say": "Ja. Du kan pausa Dialogbot från Idag."
         }
       ]
     },
@@ -520,5 +505,193 @@
       "setup3": "Testa och slå på"
     },
     "change": "Ändra något"
+  },
+  "videnPage": {
+    "eyebrow": "Steg {n} av {total} · ca 5 min",
+    "title": "Det Dialogbot svarar utifrån",
+    "intro": "Läs webbplatsen igen, ladda upp en prislista eller klistra in en text. Det blir förslag som du godkänner här – inget används innan det är godkänt.",
+    "need": [
+      [
+        "1×",
+        "prislista, FAQ eller text",
+        "valfritt"
+      ],
+      [
+        "5",
+        "minuter"
+      ]
+    ]
+  },
+  "viden": {
+    "readOnly": "Din roll (läsare) kan se men inte hämta in kunskap.",
+    "a": {
+      "title": "Hämta in kunskap",
+      "hint": "Från webbplatsen, en fil (PDF, Word, Excel, CSV, text) eller text du klistrar in."
+    },
+    "b": {
+      "title": "Gå igenom förslagen",
+      "hint": "Grupperade per kategori. Godkänn alla i en kategori, eller rätta dem en i taget.",
+      "empty": "Inga förslag att gå igenom just nu. Hämta in något ovan – eller gå vidare och lägg till kunskap senare.",
+      "all": "Allt Dialogbot vet hittar du under",
+      "allLink": "Kunskap"
+    },
+    "approved": "{n|1 sak är godkänd|# saker är godkända} och används av Dialogbot.",
+    "noneApproved": "Inget är godkänt än – chatten svarar bara utifrån det ni har godkänt."
+  },
+  "telefonPage": {
+    "eyebrow": "Steg {n} av {total}",
+    "title": "Röst, nummer och vidarekoppling",
+    "intro": "Välj röst, ange numret som kunderna ringer till och bekräfta det. Dialogbot-numret kopplas in och testas när abonnemanget är på plats.",
+    "need": [
+      [
+        "1×",
+        "en telefon att ringa från"
+      ],
+      [
+        "10",
+        "sekunder för vidarekoppling"
+      ]
+    ],
+    "readOnly": "Din roll (läsare) kan se men inte ställa in telefonen.",
+    "liveWhenPaid": "Telefonen går live när abonnemanget är på plats.",
+    "toPayment": "Till betalning",
+    "status": "Val sparas så fort du trycker. Du kan alltid komma tillbaka hit."
+  },
+  "chatPage": {
+    "eyebrow": "Steg {n} av {total}",
+    "title": "Chatt på webbplatsen",
+    "intro": "Var chatten får visas, hur den hälsar och en rad till webbplatsen. Prova den här innan den går live.",
+    "need": [
+      [
+        "1×",
+        "åtkomst till webbplatsen",
+        "eller en webbansvarig"
+      ],
+      [
+        "2",
+        "minuter"
+      ]
+    ],
+    "readOnly": "Bara ägare och administratörer kan ställa in chatten.",
+    "status": "Domän och välkomsthälsning sparas när du trycker Spara eller Vidare."
+  },
+  "chat": {
+    "widget": {
+      "title": "Widget",
+      "hint": "Chatten får bara visas på er egen domän.",
+      "domain": "Er webbplats (domän)",
+      "domainPlaceholder": "https://foretag.se"
+    },
+    "look": {
+      "title": "Utseende",
+      "greeting": "Välkomsthälsning",
+      "previewAria": "Så här ser chatten ut på webbplatsen",
+      "header": "Chatta med {name}"
+    },
+    "save": "Spara",
+    "saving": "Sparar …",
+    "saved": "Sparat",
+    "saveFailed": "Det gick inte. Försök igen.",
+    "live": "Live",
+    "onNotLive": "På · inte live",
+    "notLive": "Inte live",
+    "missing": {
+      "no_approved_knowledge": "Godkänn minst en sak under Kunskap – chatten svarar bara utifrån det ni har godkänt.",
+      "no_allowed_origins": "Skriv er webbplats adress – chatten får bara visas där.",
+      "ai_not_configured": "AI-svar är inte påslagna i Dialogbot än. Skriv till oss."
+    },
+    "code": {
+      "title": "Inbäddningskod",
+      "hint": "En rad på er webbplats. Den gör ingenting förrän chatten är live.",
+      "aria": "Kodrad",
+      "copy": "Kopiera raden",
+      "copied": "Kopierat",
+      "sendWebmaster": "Skicka till min webbansvarige",
+      "seen": "Raden finns på sidan – status är Klar.",
+      "notSeen": "När raden finns på sidan ändras status här till «Klar» av sig själv."
+    },
+    "mailSubject": "En rad till webbplatsen",
+    "mailBody": "Hej,\n\nKan du lägga in den här raden på webbplatsen (precis före </body>)?\n\n{code}\n\nTack!",
+    "preview": {
+      "title": "Prova chatten",
+      "hint": "Samma assistent och samma godkända kunskap. Bara du ser den – inget sparas som samtal.",
+      "onlyYou": "Förhandsvisning – bara du",
+      "aria": "Förhandsvisning av chatten",
+      "input": "Skriv ett meddelande till chatten",
+      "placeholder": "Skriv som en kund, t.ex. «Har ni öppet på lördag?»",
+      "send": "Skicka",
+      "thinking": "Skriver …",
+      "failed": "Förhandsvisningen svarade inte. Försök igen."
+    },
+    "liveWhenPaid": "Chatten går live när abonnemanget är på plats",
+    "toPayment": "Till betalning",
+    "paidTurnOn": "Abonnemanget är på plats. Slå på chatten, så svarar den besökare på webbplatsen.",
+    "turnOn": "Slå på webbchatten",
+    "turningOn": "Slår på …",
+    "isLive": "Chatten är live och svarar besökare på webbplatsen.",
+    "managersOnly": "Bara ägare och administratörer kan prova och slå på chatten."
+  },
+  "betalingPage": {
+    "eyebrow": "Steg {n} av {total} · sista steget",
+    "title": "Abonnemang och betalning – sedan går ni live",
+    "intro": "Ett abonnemang. Bekräfta det, lägg till ett betalkort och gå sedan live med telefon och chatt. Inget går live innan.",
+    "need": [
+      [
+        "1×",
+        "betalkort",
+        "när kortbetalning är påslaget"
+      ],
+      [
+        "2",
+        "minuter"
+      ]
+    ],
+    "plan": {
+      "title": "Abonnemang",
+      "hint": "Det finns ett abonnemang – samma för alla."
+    },
+    "card": {
+      "title": "Betalkort",
+      "hint": "Kortet sparas hos Stripe. Inget dras nu."
+    },
+    "ownerPays": "Ägaren bekräftar abonnemanget och lägger till betalkortet. Sedan kan Dialogbot gå live.",
+    "paidByOwner": "Abonnemanget är på plats.",
+    "paid": "Abonnemanget är på plats. Nu kan Dialogbot gå live.",
+    "notPaidYet": "Abonnemanget är inte på plats än.",
+    "nextConfirm": "Nästa steg: bekräfta abonnemanget och lägg till ett betalkort.",
+    "nextConfirmNoCard": "Nästa steg: bekräfta abonnemanget. Fakturan kommer via e-post.",
+    "nextCard": "Abonnemanget är bekräftat. Sista steget: lägg till ett betalkort."
+  },
+  "betaling": {
+    "needs": {
+      "chat": "ställ in chatten"
+    },
+    "toChat": "Till chatten",
+    "notYet": "Inte live än",
+    "allReady": "Allt är klart – gå live",
+    "goLive": "Gå live",
+    "liveWhenPaidChat": "Chatten går live när abonnemanget är på plats.",
+    "liveWhenPaidPhone": "Telefonen går live när abonnemanget är på plats.",
+    "liveWhenPaidBoth": "Telefon och chatt går live när abonnemanget är på plats.",
+    "nothingText": "Under Företag är inget valt, så det finns inget att gå live med. Välj minst en sak."
+  },
+  "checklist": {
+    "aria": "Inställning",
+    "listAria": "Steg",
+    "tag": "Inte klar",
+    "lastTag": "Sista steget",
+    "next": {
+      "today": "Inställningen är inte klar · nästa: {label}",
+      "settings": "Guiden är inte klar · nästa: {label}",
+      "guide": "Nästa: {label}"
+    },
+    "payNext": "Dialogbot är inställd · välj abonnemang och betalning",
+    "goLive": "Abonnemanget är på plats · gå live",
+    "continue": "Fortsätt",
+    "backToGuide": "Tillbaka till guiden",
+    "done": "klar",
+    "todo": "saknas",
+    "manualCounts": "Det du ställer in under Alla inställningar räknas här.",
+    "grace": "Betalningen saknas · chatt och telefon fortsätter till och med {date} – uppdatera betalkortet"
   }
 }

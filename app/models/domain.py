@@ -14,6 +14,7 @@ from sqlalchemy import (
     Index,
     Integer,
     LargeBinary,
+    SmallInteger,
     String,
     Text,
     UniqueConstraint,
@@ -1107,6 +1108,7 @@ class BillingAccount(Base):
     """The workspace's Stripe customer and saved card (card data itself stays at Stripe)."""
 
     __tablename__ = "billing_accounts"
+    __table_args__ = (CheckConstraint("grace_mails between 0 and 3", name="ck_billing_accounts_grace_mails"),)
 
     workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), primary_key=True)
     stripe_customer_id: Mapped[str | None] = mapped_column(String(64), unique=True)
@@ -1118,6 +1120,11 @@ class BillingAccount(Base):
     # The company's VAT number, normalised ("SE556677889901", "EL123456789", "123456789MVA"). An EU company outside
     # Denmark is invoiced without VAT (reverse charge) only with one (app/modules/billing/markets.py).
     vat_number: Mapped[str | None] = mapped_column(String(32))
+    # 7 days' grace when a paid subscription stops being paid (app/modules/billing/grace.py, Fürster 12/11)
+    first_paid_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    unpaid_since: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    payment_failed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    grace_mails: Mapped[int] = mapped_column(SmallInteger, nullable=False, server_default="0", default=0)
     created_at: Mapped[datetime] = ts_now()
     updated_at: Mapped[datetime] = ts_now()
 

@@ -4,7 +4,8 @@ import { DEMO_PASSWORD, PREVIEW_CODE, latestMailLink, shot, uniqueEmail } from "
 /* S0 «Erhverv døgnåbent» (Fürster 11/11): a business can sign up and choose its plan day and night, without being rung
  * first, and the chat links to the sign-up. The browser clock is set to 21:30 Copenhagen time and nothing may close,
  * hide or say «lukket». Since 12/11 Peter also rings at once at any hour (no calling hours at all).
- * Flow: /erhverv → «Opret dig» → /signup → verify mail link → opsætning trin 1 → Konto: bekræft abonnement → card
+ * Flow: /erhverv → «Opret dig» → /signup → verify mail link → opsætning (Virksomhed) → the guide's last step Betaling:
+ * bekræft abonnement → card
  * checkout (Stripe Checkout faked in the browser when Stripe is configured; CI has no Stripe keys, so the honest
  * «ikke sat op» note is checked instead – as journey 16 does). */
 const NIGHT = new Date("2026-11-11T21:30:00+01:00");
@@ -54,21 +55,22 @@ test("S0 · efter kl. 20: /erhverv → Opret dig → signup → bekræft mail �
   await page.goto(link);
   await expect(page.getByText("Din e-mail er bekræftet.")).toBeVisible();
   await page.getByRole("link", { name: /Fortsæt til arbejdsrum/ }).click();
-  await expect(page).toHaveURL(/\/opsaetning\/1/);
+  await expect(page).toHaveURL(/\/opsaetning\/virksomhed/);
   await page.getByLabel("Navn (som den siger det)").fill("S0 Nat ApS");
   await page.getByRole("button", { name: "Videre" }).click();
   await expect(page.getByRole("checkbox", { name: /Tage telefonen/ })).toBeChecked(); // the intent from sign-up
   await shot(page, info, "s0-opsaetning");
 
-  // Plan: the owner confirms the subscription on Konto (no call, no person needed), then the card.
-  await page.context().addCookies([{ name: "db_setup_later", value: "1", url: page.url() }]);
-  await page.goto("/app/konto#abonnement");
+  // Plan: the guide's visible last step, Betaling – the owner confirms the subscription (no call, no person needed),
+  // then the card. Reached from the stepper, as at any hour.
+  await page.getByRole("navigation", { name: "Opsætning" }).getByRole("link", { name: /Betaling/ }).click();
+  await expect(page).toHaveURL(/\/opsaetning\/betaling$/);
   await page.getByRole("button", { name: "Bekræft abonnement" }).click();
   await expect(page.getByText(/Bekræftet · aftale v1/)).toBeVisible();
   const addCard = page.getByRole("button", { name: "Tilføj betalingskort" });
   if (await addCard.isVisible().catch(() => false)) {
-    // Stripe configured (test keys): Stripe Checkout is faked – it returns straight to Konto as Stripe would.
-    await page.route("**/billing/card/checkout", (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ url: "/app/konto?card=saved" }) }));
+    // Stripe configured (test keys): Stripe Checkout is faked – it returns straight to the Betaling step as Stripe would.
+    await page.route("**/billing/card/checkout", (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ url: "/opsaetning/betaling?card=saved" }) }));
     await addCard.click();
     await expect(page).toHaveURL(/card=saved/);
     await expect(page.getByText("Tak – kortet er gemt hos Stripe.", { exact: false })).toBeVisible();

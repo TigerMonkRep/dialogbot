@@ -3,6 +3,7 @@ import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
 import { getT } from "@/i18n/server";
 import { setupStatus } from "@/lib/setup.server";
+import { SetupChecklist } from "@/components/setup-checklist";
 import { Sheet } from "./sheet";
 import { SettingsTiles, type Chapter, type Row } from "./tiles";
 import BookingSheet from "./_sheets/booking";
@@ -58,7 +59,7 @@ export default async function IndstillingerPage({ searchParams }: { searchParams
     ] },
     { n: 2, title: t("overview.knowledge.title"), sub: t("overview.knowledge.sub"), rows: [
       row({ label: t("overview.knowledge.known"), value: know ? t("overview.knowledge.knownValue", { n: know.items.length, rev: know.knowledge_revision }) : "–", status: know && know.items.length > 0 ? "ready" : "off", href: "/app/viden" }),
-      row({ label: t("overview.knowledge.about"), value: t("overview.knowledge.aboutValue"), status: "ready", href: "/opsaetning/1" }),
+      row({ label: t("overview.knowledge.about"), value: t("overview.knowledge.aboutValue"), status: "ready", href: "/opsaetning/virksomhed" }),
     ] },
     { n: 3, title: t("overview.channels.title"), sub: t("overview.channels.sub"), rows: [
       row({ label: t("overview.channels.webchat"), value: web ? (web.available ? t("overview.channels.activeOn", { n: web.allowed_origins.length }) : web.enabled ? t("overview.channels.onMissing") : t("overview.channels.off")) : "–", status: web?.available ? "ready" : web?.enabled ? "soon" : "off", ark: "webchat" }),
@@ -96,13 +97,8 @@ export default async function IndstillingerPage({ searchParams }: { searchParams
         <h1 className="font-display font-extrabold text-[26px] sm:text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("overview.title")}</h1>
         <p className="text-[15px] leading-relaxed text-ink-soft max-w-[640px]">{t("overview.intro")}</p>
       </div>
-      {/* Set up by hand here or in the guide – both count; the way back to the guide while it is not finished. */}
-      {st && !st.done && (
-        <Link href={`/opsaetning/${st.next}`} className="flex flex-wrap items-center gap-3 px-5 py-4 rounded-2xl border-2 border-dashed border-ink bg-paper hover:bg-panel">
-          <span className="flex-1 min-w-[200px] text-[15px] font-semibold text-ink">{t("overview.guide", { n: st.next })}</span>
-          <span className="text-[14px] font-semibold text-ink underline underline-offset-2">{t("overview.guideCta")}</span>
-        </Link>
-      )}
+      {/* Set up by hand here or in the guide – both count (the same checklist as on «I dag»); «Tilbage til guiden». */}
+      {st && <SetupChecklist st={st} where="settings" />}
       <SettingsTiles chapters={chapters} canChange={staff} />
       {ark && (
         <Sheet title={t(`overview.sheets.${ark}`)} closeLabel={t("sheet.close")}>

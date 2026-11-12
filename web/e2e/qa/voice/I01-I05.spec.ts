@@ -14,6 +14,8 @@ async function seedChatLead(page: Page, wsId: string, who: string) {
     await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/submit`, { headers: CSRF });
     expect((await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/approve`, { headers: CSRF })).ok()).toBeTruthy();
   }
+  // the chat answers visitors only with a paid subscription (Fürster 12/11); no Stripe in E2E: confirmed = paid
+  expect((await page.request.post(`/api/backend/workspaces/${wsId}/agreement`, { headers: CSRF, data: { model: "A" } })).ok()).toBeTruthy();
   const wc = await (await page.request.get(`/api/backend/workspaces/${wsId}/webchat`)).json();
   const w = await (await page.request.put(`/api/backend/workspaces/${wsId}/webchat`, { headers: CSRF, data: { expected_version: wc.version, enabled: true, allowed_origins: ["http://localhost:4199"], greeting: "" } })).json();
   const apiOrigin = new URL(w.embed_code.match(/src="([^"]+)"/)![1]).origin;

@@ -57,7 +57,7 @@ export function WorkspaceChip({ workspaces, current, compact = false, plain = fa
               </button>
             </li>
           ))}
-          <li className="border-t-[1.5px] border-ink mt-1 pt-1"><Link href="/opsaetning/1?ny=1" onClick={() => setOpen(false)} className={`${MENU_ITEM} text-accent`}><Icon name="add_circle" size={18} />{t("shell.newWorkspace")}</Link></li>
+          <li className="border-t-[1.5px] border-ink mt-1 pt-1"><Link href="/opsaetning/virksomhed?ny=1" onClick={() => setOpen(false)} className={`${MENU_ITEM} text-accent`}><Icon name="add_circle" size={18} />{t("shell.newWorkspace")}</Link></li>
         </ul>
       )}
     </div>

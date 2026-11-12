@@ -67,11 +67,6 @@
   "overview": {
     "turnedOn": "Dialogbot är påslagen",
     "turnedOnSub": "Den svarar i telefon nästa gång kunderna ringer.",
-    "notDone": "Inte klar",
-    "setupNext": "Konfigurationen är inte klar · nästa: steg {n}",
-    "step1": "– företag",
-    "step2": "– kalender & system",
-    "step3": "– testa & slå på",
     "continue": "Fortsätt",
     "isOn": "Dialogbot är påslagen",
     "isOff": "Dialogbot är avstängd",
@@ -137,8 +132,6 @@
       "onlyAdmins": "Endast ägare och administratörer kan slå på och stänga av",
       "setupFirst": "Telefonen måste konfigureras innan Dialogbot kan slås på"
     },
-    "payTag": "Sista steget",
-    "payNext": "Dialogbot är inställd · välj abonnemang och betalning",
     "chatOn": "Webbchatten är på",
     "chatOff": "Webbchatten är inte på",
     "chatStatusOn": "Svarar på er webbplats. Telefonen är valfri och inte inställd.",

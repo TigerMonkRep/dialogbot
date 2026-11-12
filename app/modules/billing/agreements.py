@@ -41,6 +41,16 @@ def current(db: OrmSession, workspace_id: uuid.UUID) -> ReceptionAgreement | Non
                      .order_by(ReceptionAgreement.version.desc()).limit(1))
 
 
+def subscription_paid(db: OrmSession, workspace_id: uuid.UUID) -> bool:
+    """The subscription is «betalt» (Fürster 12/11: neither the phone nor the website chat goes live without it): a
+    confirmed agreement plus a usable card – or only the confirmed agreement where card payment (Stripe) is not set up –
+    or within the 7 days' grace after a paid subscription stopped being paid (billing.grace). The same rule as the
+    web's `billingState` (lib/setup.server.ts), which shows the plain state."""
+    from app.modules.billing import grace
+
+    return grace.subscription_paid(db, workspace_id)
+
+
 def create(db: OrmSession, workspace_id: uuid.UUID, model: str, created_by: uuid.UUID, *,
            offer=None) -> ReceptionAgreement:
     """`offer` (an accepted SalesOffer) snapshots the offer's monthly price, VAT, setup fee and package (included

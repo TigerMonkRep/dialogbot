@@ -128,7 +128,8 @@ function Panel({ title, subtitle, chips, msgs, busy, test, canChange, onSend, on
   );
 }
 
-export function AssistantDock({ wsId, canChange, step, column = true, name }: { wsId: string; canChange: boolean; step?: 1 | 2 | 3; column?: boolean; name?: string }) {
+/** `step`: the guide step's number (what «trin N» says); `chips`: its key in setup.assistant.setupChips (virksomhed …). */
+export function AssistantDock({ wsId, canChange, step, chips: chipKey, column = true, name }: { wsId: string; canChange: boolean; step?: number; chips?: string; column?: boolean; name?: string }) {
   const path = usePathname();
   const router = useRouter();
   const t = useT("setup.assistant");
@@ -214,7 +215,7 @@ export function AssistantDock({ wsId, canChange, step, column = true, name }: { 
     else if ("say" in c) { add({ from: "user", text: c.label }); add({ from: "bot", text: c.say }); }
     else if ("test" in c) { setTest(true); add({ from: "bot", text: t("testIntro"), test: true }); }
   };
-  const chips = step ? raw<Record<string, Chip[]>>("setup.assistant.setupChips")?.[String(step)] ?? [] : [...(pageChips(t).find((c) => c.match(path))?.chips ?? fallbackChips(t)), wishChip(t)];
+  const chips = step ? raw<Record<string, Chip[]>>("setup.assistant.setupChips")?.[chipKey ?? ""] ?? [] : [...(pageChips(t).find((c) => c.match(path))?.chips ?? fallbackChips(t)), wishChip(t)];
   const title = step ? t("titleStep", { step }) : t("title");
   const subtitle = step ? t("subtitleStep") : t("subtitle");
   const panelProps = { title, subtitle, chips, msgs, busy, test, canChange, onSend: send, onChip: chip, onApply: apply, onDecline: decline, onLeaveTest: () => { setTest(false); add({ from: "bot", text: t("backToChanges") }); } };

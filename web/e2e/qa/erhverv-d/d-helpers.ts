@@ -38,6 +38,8 @@ export async function widgetWorkspace(page: Page, info: TestInfo, opts: { bookin
     const r = await page.request.put(`/api/backend/workspaces/${wsId}/bookings/settings`, { headers: CSRF, data: { expected_version: s.version, enabled: true, lead_time_hours: 0, horizon_days: 7, buffer_minutes: 0 } });
     expect(r.ok(), await r.text()).toBeTruthy();
   }
+  // the chat answers visitors only with a paid subscription (Fürster 12/11); no Stripe in E2E: confirmed = paid
+  expect((await page.request.post(`/api/backend/workspaces/${wsId}/agreement`, { headers: CSRF, data: { model: "A" } })).ok()).toBeTruthy();
   const wc = await (await page.request.get(`/api/backend/workspaces/${wsId}/webchat`)).json();
   const put = await page.request.put(`/api/backend/workspaces/${wsId}/webchat`, { headers: CSRF, data: { expected_version: wc.version, enabled: true, allowed_origins: [SITE], greeting: opts.greeting ?? "" } });
   expect(put.ok(), await put.text()).toBeTruthy();

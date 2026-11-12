@@ -65,6 +65,7 @@ def _connect_google(api, client, t) -> None:
 
 def _widget(api, client, t):
     tok, ws = t["tok_a"], t["ws_a"]
+    api.subscribe(tok, ws)  # the chat goes live only with a paid subscription
     wc = api.get(tok, f"/workspaces/{ws}/webchat").json()
     r = api.put(tok, f"/workspaces/{ws}/webchat", {"expected_version": wc["version"], "enabled": True,
                                                   "allowed_origins": ["https://fjord.dk"], "greeting": ""})

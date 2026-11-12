@@ -7,7 +7,7 @@ import { CSRF, EVID } from "./d-helpers";
 test("S01 · adresse, åbningstider og primært sprog rettes, gemmes automatisk og står der efter reload", async ({ page }, info) => {
   const { wsId } = await freshOwner(page, info);
   await page.goto("/app/settings/business");
-  await expect(page).toHaveURL(/\/opsaetning\/1$/);
+  await expect(page).toHaveURL(/\/opsaetning\/virksomhed$/);
   await page.getByText("CVR og adresse (valgfrit)").click(); // opens the <details> with CVR/address
   await page.getByLabel("Adresse", { exact: true }).fill("Søndergade 12");
   await page.getByLabel("Postnummer", { exact: true }).fill("8000");

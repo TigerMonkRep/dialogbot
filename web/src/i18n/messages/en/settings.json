@@ -89,9 +89,7 @@
       "webhooksValue": "Signed webhooks to your systems",
       "log": "Log and export",
       "logValue": "All changes, newest first"
-    },
-    "guide": "The guide is not finished · next: step {n}. What you set up here counts too.",
-    "guideCta": "Back to the guide"
+    }
   },
   "sheet": {
     "close": "Close"
@@ -435,7 +433,9 @@
       "ai_not_configured": "No AI provider is configured in this environment.",
       "noKnowledgeBefore": "There is no approved knowledge yet – approve at least one topic in the",
       "noKnowledgeLink": "knowledge centre",
-      "noKnowledgeAfter": "."
+      "noKnowledgeAfter": ".",
+      "subscription_required": "The chat goes live once the subscription is in place.",
+      "subscriptionLink": "To payment"
     },
     "pill": {
       "active": "Active on your domains",

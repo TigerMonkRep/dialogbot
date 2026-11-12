@@ -22,22 +22,27 @@ Priserne står også i `app/modules/billing/prices.py` og `docs/pricing.md`; de 
   minutterne. En kontakt ringes højst 2 gange og taler højst 3 minutter (højst 14 kr. pr. kontakt); før start vises
   den højeste mulige pris.
 - Minutter krediteres kun, når kunden klager over et opkald (ingen automatisk kreditering).
-- Opsætning: gør-det-selv er med (tre trin, ca. 30 minutter). Skræddersyet opsætning fra Dialogbots specialister
+- Opsætning: gør-det-selv er med (guiden, ca. 30 minutter). Skræddersyet opsætning fra Dialogbots specialister
   koster 5.000 kr. én gang (valgfrit).
 - Ingen binding. Opsigelse til udgangen af måneden: skriv det til assistenten (så sendes det til Dialogbot-teamet)
   eller til info@dialogbot.dk.
 - Betaling: kort gemmes hos Stripe under Konto; hver måned faktureres bagud. Uden kort faktureres måneden ikke.
   Fakturaer ses under Konto. Betaling starter aldrig opkald.
 
-## Opsætning (byggevejledningen, tre trin)
-1. Om virksomheden (/opsaetning/1): hjemmeside-adresse, CVR eller navn, telefonnummer. Dialogbot læser hjemmesiden
-   og foreslår beskrivelse, åbningstider, ydelser og priser som kladder – man godkender eller retter. Priser gættes
-   aldrig.
-2. Kalender (/opsaetning/2): forbind Google Kalender eller Microsoft 365, eller spring over. Dialogbot skriver kun nye
-   aftaler i kalenderen og rører aldrig eksisterende aftaler. Start-regler: aftaler på 45 minutter, 15 minutters
-   pause, tidligst i morgen.
-3. Test og tænd (/opsaetning/3): vælg stemme, forbind telefonen med viderestilling, lav et prøveopkald og tænd.
-- Man kan springe trin over og finde alt igen under Alle indstillinger.
+## Opsætning (guiden – trinene følger de kanaler, man vælger)
+1. Virksomhed (/opsaetning/virksomhed): hjemmeside-adresse først – Dialogbot læser hjemmesiden og udfylder navn,
+   telefon og adresse og foreslår beskrivelse, åbningstider, ydelser og priser som kladder. Priser gættes aldrig.
+   Her vælger man også, om Dialogbot skal tage telefonen, svare i chat på hjemmesiden eller begge.
+2. Viden (/opsaetning/viden): hent mere fra hjemmesiden, en fil eller indsat tekst, og godkend eller ret forslagene.
+3. Telefon (/opsaetning/telefon, kun hvis telefonen er valgt): stemme, nummeret kunderne ringer til, viderestilling.
+4. Chat (/opsaetning/chat, kun hvis chatten er valgt): domæne, velkomst, én linje til hjemmesiden og en
+   forhåndsvisning, hvor ejeren kan prøve chatten.
+5. Kalender (/opsaetning/kalender, kun hvis «Booke aftaler» er valgt): forbind Google Kalender eller Microsoft 365,
+   eller spring over. Dialogbot skriver kun nye aftaler og rører aldrig eksisterende aftaler.
+6. Betaling (/opsaetning/betaling): bekræft abonnementet og tilføj betalingskort; så forbindes og testes telefonen,
+   og man går live. Hverken telefon eller chat går live uden et betalt abonnement – før det kan ejeren prøve chatten i
+   forhåndsvisningen, men besøgende på hjemmesiden får ingen chat.
+- Man kan sætte op selv under Alle indstillinger; det tæller med i guiden.
 
 ## Viden (/app/viden)
 - Ydelser og priser (ekskl. moms), åbningstider, kørselsområde, faste svar på spørgsmål, tilbud, og emner den ikke

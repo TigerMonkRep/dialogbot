@@ -11,7 +11,7 @@ test("O01 · gammel adresse /onboarding/business lander på trin 1; første bes�
   const u = await freshUser(browser, info, "o01new");
   const p = u.page;
   await p.goto("/onboarding/business");
-  await expect(p).toHaveURL(/\/opsaetning\/1$/);
+  await expect(p).toHaveURL(/\/opsaetning\/virksomhed$/);
   const name = p.getByLabel("Navn (som den siger det)");
   const go = p.getByRole("button", { name: "Videre" });
   // validation: 0–1 chars cannot create
@@ -125,10 +125,12 @@ test("O01 · krav: flere/egne kategorier og dokumentupload findes i UI", async (
   const main = page.locator("main");
   // Requirement O01 asks for dynamic multiple/custom categories and optional documents. Recorded honestly: is there any control?
   const categoryControl = await main.getByText(/Kategori|Branche/i).count();
-  const fileInput = await main.locator("input[type=file]").count();
+  // since 12/11 the documents (file, text) are the guide's next step, Viden, right after Virksomhed
+  await page.goto("/opsaetning/viden");
+  const fileInput = await page.locator("main").locator("input[type=file]").count();
   test.info().annotations.push({ type: "gap", description: `kategori-kontroller: ${categoryControl}, dokument-felter: ${fileInput}` });
   expect.soft(categoryControl, "ingen kategori-kontrol i trin 1 (kategori afledes skjult)").toBeGreaterThan(0);
-  expect.soft(fileInput, "ingen dokumentupload i trin 1").toBeGreaterThan(0);
+  expect.soft(fileInput, "ingen dokumentupload i guiden (Viden)").toBeGreaterThan(0);
 });
 
 test("O01 · skriv og klik straks videre i trinlinjen: det skrevne må ikke gå tabt", async ({ page }, info) => {
@@ -137,7 +139,7 @@ test("O01 · skriv og klik straks videre i trinlinjen: det skrevne må ikke gå 
   await page.getByLabel("Hvad I laver – én sætning").fill("Tømrer og snedker i Silkeborg");
   // within the 0.9 s save pause the owner taps «3» in the header stepper (mobile: the number; desktop: the label)
   await page.getByRole("link", { name: /Trin 3/ }).click();
-  await expect(page).toHaveURL(/\/opsaetning\/3/);
+  await expect(page).toHaveURL(/\/opsaetning\/(telefon|chat|betaling)/);
   await page.waitForTimeout(2000);
   const stored = (await api(page).get(`/workspaces/${wsId}/profile`)).body.description;
   await page.goto("/opsaetning/1");

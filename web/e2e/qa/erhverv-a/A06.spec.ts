@@ -23,7 +23,7 @@ const myWorkspaces = async (page: Page) => (await (await page.request.get("/api/
 test("A06 · ubekræftet kan ikke oprette; bekræftet opretter ét arbejdsrum (også ved dobbeltklik) med hensigten fra tilmeldingen", async ({ page }, info) => {
   await verifiedNoWorkspace(page, info, "both", false);
   await page.goto("/onboarding/workspace");
-  await expect(page).toHaveURL(/\/opsaetning\/1$/);
+  await expect(page).toHaveURL(/\/opsaetning\/virksomhed$/);
   await expect(page.getByText("Bekræft din e-mail først.")).toBeVisible();
   await page.getByLabel("Navn (som den siger det)").fill("QA Ubekræftet ApS");
   await expect(page.getByRole("button", { name: "Videre" })).toBeDisabled();
@@ -32,7 +32,7 @@ test("A06 · ubekræftet kan ikke oprette; bekræftet opretter ét arbejdsrum (o
   await page.context().clearCookies();
   await verifiedNoWorkspace(page, info, "campaigns");
   await page.goto("/onboarding/workspace");
-  await expect(page).toHaveURL(/\/opsaetning\/1$/);
+  await expect(page).toHaveURL(/\/opsaetning\/virksomhed$/);
   const name = `QA A06 ${info.project.name} ${Date.now()}`;
   await page.getByLabel("Navn (som den siger det)").fill(name);
   await page.getByRole("button", { name: "Videre" }).dblclick();

@@ -89,9 +89,7 @@
       "webhooksValue": "Webhooks firmados hacia sus sistemas",
       "log": "Registro y exportación",
       "logValue": "Todos los cambios, los más recientes primero"
-    },
-    "guide": "La guía no está terminada · siguiente: paso {n}. Lo que configures aquí también cuenta.",
-    "guideCta": "Volver a la guía"
+    }
   },
   "sheet": {
     "close": "Cerrar"
@@ -435,7 +433,9 @@
       "ai_not_configured": "No hay ningún proveedor de IA configurado en este entorno.",
       "noKnowledgeBefore": "Aún no hay información aprobada: apruebe al menos un tema en el",
       "noKnowledgeLink": "centro de información",
-      "noKnowledgeAfter": "."
+      "noKnowledgeAfter": ".",
+      "subscription_required": "El chat se activa cuando la suscripción esté lista.",
+      "subscriptionLink": "Ir al pago"
     },
     "pill": {
       "active": "Activo en sus dominios",

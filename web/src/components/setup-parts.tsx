@@ -26,3 +26,20 @@ export function Part({ letter, title, hint, aside, children }: { letter: string;
     </section>
   );
 }
+
+/** The head of a guide step: its number, «Trin 2 af 5 · …», the title, a line of intro and «Du skal bruge». */
+export function StepHead({ n, eyebrow, title, intro, need, needTitle }: { n: number; eyebrow: string; title: string; intro?: string; need?: [string, string, string?][]; needTitle?: string }) {
+  return (
+    <div className="flex flex-col gap-3 mb-6">
+      <div className="flex items-center gap-4">
+        <span className="shrink-0 w-14 h-14 rounded-[14px] bg-highlight text-ink font-display font-extrabold text-[30px] inline-flex items-center justify-center" aria-hidden>{n}</span>
+        <div className="min-w-0">
+          <span className="eyebrow">{eyebrow}</span>
+          <h1 className="font-display font-extrabold text-[27px] sm:text-[30px] md:text-[40px] leading-[1.05] tracking-[-0.8px] sm:tracking-[-1px] text-ink">{title}</h1>
+        </div>
+      </div>
+      {intro && <p className="text-[16px] text-ink-soft max-w-[620px]">{intro}</p>}
+      {need && needTitle && <Need items={need} title={needTitle} />}
+    </div>
+  );
+}

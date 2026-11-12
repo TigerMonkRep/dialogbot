@@ -592,5 +592,5 @@ KINDS: dict[str, Kind] = {k.key: k for k in (
          _v_webchat, _d_webchat, _a_webchat, "/app/indstillinger?ark=webchat"),
     Kind("business_profile", "Virksomhedsoplysninger", "profile.edit",
          'params: kun de felter der ændres: {"phone": "+45 …", "website_url": "https://…", "address_line": "…", "postal_code": "8000", "city": "…", "description": "hvad virksomheden laver"}.',
-         _v_profile, _d_profile, _a_profile, "/opsaetning/1"),
+         _v_profile, _d_profile, _a_profile, "/opsaetning/virksomhed"),
 )}

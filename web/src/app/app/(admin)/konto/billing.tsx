@@ -18,11 +18,12 @@ export function ConfirmSubscription({ wsId, label }: { wsId: string; label: stri
 /** Opens Stripe Checkout (setup mode) where the owner saves a card. Nothing is charged there. An EU company outside
  *  Denmark must give its VAT number first: the backend answers 409 `vat_number_required`, and `onVatRequired` moves
  *  the owner to the VAT number field. */
-export function AddCard({ wsId, hasCard, onVatRequired }: { wsId: string; hasCard: boolean; onVatRequired?: () => void }) {
+export function AddCard({ wsId, hasCard, onVatRequired, returnTo }: { wsId: string; hasCard: boolean; onVatRequired?: () => void; returnTo?: "opsaetning" }) {
   const t = useT("app");
   const go = useSubmit(async () => {
     try {
-      const r = await api<{ url: string }>(`/workspaces/${wsId}/billing/card/checkout`, { method: "POST", body: "{}" });
+      // returnTo: Stripe sends the owner back to the guide's payment step instead of Konto
+      const r = await api<{ url: string }>(`/workspaces/${wsId}/billing/card/checkout`, { method: "POST", body: JSON.stringify(returnTo ? { return_to: returnTo } : {}) });
       window.location.assign(r.url);
     } catch (e) {
       const err = e as ApiError;
@@ -38,8 +39,8 @@ const VAT_REQUIRED = "vat_number_required";
 /** The card plus – for a company outside Denmark – its VAT number (PUT …/billing/vat-number). Shown when the account's
  *  country is an EU country other than DK (required: invoiced without VAT, reverse charge) or Norway (optional), and
  *  always after the backend refused a card with 409 `vat_number_required`. */
-export function CardAndVat({ wsId, hasCard, canManage, vatNumber, vatMode }: {
-  wsId: string; hasCard: boolean; canManage: boolean; vatNumber: string | null; vatMode: "required" | "optional" | null;
+export function CardAndVat({ wsId, hasCard, canManage, vatNumber, vatMode, returnTo }: {
+  wsId: string; hasCard: boolean; canManage: boolean; vatNumber: string | null; vatMode: "required" | "optional" | null; returnTo?: "opsaetning";
 }) {
   const t = useT("app");
   const router = useRouter();
@@ -74,7 +75,7 @@ export function CardAndVat({ wsId, hasCard, canManage, vatNumber, vatMode }: {
           {!fieldErr && <ErrorBox error={save.error} />}
         </form>
       )}
-      {canManage ? <AddCard wsId={wsId} hasCard={hasCard} onVatRequired={() => setForced(true)} /> : null}
+      {canManage ? <AddCard wsId={wsId} hasCard={hasCard} onVatRequired={() => setForced(true)} returnTo={returnTo} /> : null}
     </div>
   );
 }

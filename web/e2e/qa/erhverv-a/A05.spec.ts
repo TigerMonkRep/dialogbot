@@ -57,7 +57,7 @@ test("A05 · ukendt link, forkert konto, log ind og acceptér, dobbeltklik, genb
   await expect(p2).toHaveURL(new RegExp(link.replace(/[-/]/g, "\\$&") + "$"));
   const accept = p2.getByRole("button", { name: "Acceptér invitation" });
   await accept.dblclick();
-  await expect(p2).toHaveURL(/\/opsaetning\/1|\/app/);
+  await expect(p2).toHaveURL(/\/opsaetning\/virksomhed|\/app/);
   const list = (await (await p2.request.get("/api/backend/workspaces")).json()) as { id: string; role: string }[];
   expect(list).toEqual([expect.objectContaining({ id: owner.wsId, role: "reader" })]);
   await p2.screenshot({ path: `${EVID}/${info.project.name}-accepteret.png`, fullPage: true });

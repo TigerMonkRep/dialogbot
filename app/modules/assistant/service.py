@@ -77,9 +77,12 @@ PAGES: list[tuple[str, str, str, str]] = [
     ("log", "/app/indstillinger?ark=log", "Aktivitetslog", "hvem ændrede hvad og hvornår"),
     ("account", "/app/konto", "Konto", "team, roller, invitationer, abonnement, kort, fakturaer, appens sprog"),
     ("help", "/app/hjaelp", "Hjælp", "hjælpeartikler"),
-    ("setup1", "/opsaetning/1", "Om virksomheden", "trin 1: virksomhed, hjemmeside, CVR, telefon, adresse, åbningstider"),
-    ("setup2", "/opsaetning/2", "Kalender", "trin 2: forbind kalenderen"),
-    ("setup3", "/opsaetning/3", "Test og tænd", "trin 3: stemme, telefon, prøveopkald, tænd"),
+    ("setup1", "/opsaetning/virksomhed", "Om virksomheden", "guiden, trin 1: hjemmeside, navn, telefon, adresse, åbningstider, telefon og/eller chat"),
+    ("setup_knowledge", "/opsaetning/viden", "Viden i guiden", "guiden: hent viden fra hjemmeside, fil eller tekst og godkend forslagene"),
+    ("setup_phone", "/opsaetning/telefon", "Telefon i guiden", "guiden: stemme, nummer, viderestilling"),
+    ("setup_chat", "/opsaetning/chat", "Chat i guiden", "guiden: domæne, velkomst, kode til hjemmesiden, prøv chatten"),
+    ("setup2", "/opsaetning/kalender", "Kalender", "guiden: forbind kalenderen"),
+    ("setup3", "/opsaetning/betaling", "Betaling og gå live", "guiden, sidste trin: abonnement, betalingskort, prøveopkald, gå live"),
 ]
 PAGE_BY_HREF = {href: (key, label) for key, href, label, _ in PAGES}
 

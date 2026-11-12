@@ -67,11 +67,6 @@
   "overview": {
     "turnedOn": "Dialogbot er tændt",
     "turnedOnSub": "Den tager telefonen, næste gang kunderne ringer.",
-    "notDone": "Ikke færdig",
-    "setupNext": "Opsætningen er ikke færdig · næste: trin {n}",
-    "step1": "– virksomhed",
-    "step2": "– kalender & systemer",
-    "step3": "– test & tænd",
     "continue": "Fortsæt",
     "isOn": "Dialogbot er tændt",
     "isOff": "Dialogbot er slukket",
@@ -137,8 +132,6 @@
       "onlyAdmins": "Kun ejere og administratorer kan tænde og slukke",
       "setupFirst": "Telefonen skal sættes op, før Dialogbot kan tændes"
     },
-    "payTag": "Sidste skridt",
-    "payNext": "Dialogbot er sat op · vælg abonnement og betaling",
     "chatOn": "Webchatten er tændt",
     "chatOff": "Webchatten er ikke tændt",
     "chatStatusOn": "Svarer på jeres hjemmeside. Telefonen er valgfri og ikke sat op.",

@@ -89,9 +89,7 @@
       "webhooksValue": "Signerte webhooks til systemene deres",
       "log": "Logg og eksport",
       "logValue": "Alle endringer, nyeste først"
-    },
-    "guide": "Veiviseren er ikke ferdig · neste: trinn {n}. Det du setter opp her, teller med.",
-    "guideCta": "Tilbake til veiviseren"
+    }
   },
   "sheet": {
     "close": "Lukk"
@@ -435,7 +433,9 @@
       "ai_not_configured": "Ingen AI-leverandør er konfigurert i dette miljøet.",
       "noKnowledgeBefore": "Det finnes ingen godkjent kunnskap ennå – godkjenn minst ett emne i",
       "noKnowledgeLink": "kunnskapssenteret",
-      "noKnowledgeAfter": "."
+      "noKnowledgeAfter": ".",
+      "subscription_required": "Chatten går live når abonnementet er på plass.",
+      "subscriptionLink": "Til betaling"
     },
     "pill": {
       "active": "Aktiv på domenene deres",

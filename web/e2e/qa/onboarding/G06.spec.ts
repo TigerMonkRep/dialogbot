@@ -2,12 +2,12 @@ import { expect, test, type Page } from "@playwright/test";
 import { freshOwner } from "../../helpers";
 import { CSRF, api, colleague, completeProfile, setGoals, snap } from "./e2b";
 
-/* QA G06 (E2B) – /app/setup/launch → trin 3 «Tænd Dialogbot».
+/* QA G06 (E2B) – /app/setup/launch → Betaling «Gå live» (since 12/11 the last, visible step; paid first).
  * Krav: "Activation review and explicit module-specific actions; payment, publishing and campaign launch remain separate."
- * Kilde: web/src/app/opsaetning/3/step3.tsx:321-327,336-346; app/modules/telephony (activate); app/modules/setup/router.py:172-179. */
+ * Kilde: web/src/app/opsaetning/_parts/channels.tsx (GoLive); app/modules/telephony (activate); app/modules/setup/router.py:172-179. */
 const ID = "G06";
 
-/** Walks the simulated phone setup until «Tænd Dialogbot» is enabled (same path as journeys «Opsætning trin 1→3»). */
+/** Walks the simulated phone setup in Betaling (paid) until «Gå live» is enabled. */
 async function phoneReady(page: Page, wsId: string, info: import("@playwright/test").TestInfo) {
   const post = async (path: string, data: unknown = {}) => {
     const r = await page.request.post(`/api/backend${path}`, { headers: CSRF, data });
@@ -18,7 +18,7 @@ async function phoneReady(page: Page, wsId: string, info: import("@playwright/te
   const own = `+4521${String(Date.now()).slice(-6)}`;
   await completeProfile(page, wsId, { phone: own, cvr: "12345674", address_line: "Havnevej 12", postal_code: "8000", city: "Aarhus C" });
   await setGoals(page, wsId, { product_intent: "reception", inbound_phone: true, webchat: false, callback: true, booking: false });
-  await page.goto("/opsaetning/3");
+  await page.goto("/opsaetning/betaling");
   await page.getByLabel("Hvad slags abonnement er det?").selectOption("mobile");
   await page.getByRole("button", { name: "Gem nummer" }).click();
   await page.getByRole("button", { name: "Ring mig op med en kode" }).click();
@@ -47,7 +47,7 @@ async function phoneReady(page: Page, wsId: string, info: import("@playwright/te
     artifact: { messages: [{ role: "bot", message: "Dette er et prøveopkald." }, { role: "user", message: "Hej." }] } } } });
   expect((await rep.json()).outcome).toBe("applied");
   await page.reload();
-  await expect(page.getByText("Alt er klar – tænd Dialogbot")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Alt er klar – gå live" })).toBeVisible();
 }
 
 test("G06 · Tænd: 500 vises og intet skifter side; dobbeltklik aktiverer én gang; betaling/kampagner røres ikke", async ({ page }, info) => {
@@ -56,15 +56,15 @@ test("G06 · Tænd: 500 vises og intet skifter side; dobbeltklik aktiverer én g
   await phoneReady(page, wsId, info);
   const before = (await api(page).get(`/workspaces/${wsId}/campaigns`)).body;
   await page.route(`**/api/backend/workspaces/${wsId}/telephony/activate`, (r) => r.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ code: "internal", message: "Intern fejl (QA)" }) }));
-  await page.getByRole("button", { name: "Tænd Dialogbot" }).click();
+  await page.getByRole("button", { name: "Gå live" }).click();
   await expect(page.getByText("Intern fejl (QA)")).toBeVisible();
-  await expect(page).toHaveURL(/\/opsaetning\/3$/);
-  await expect(page.getByRole("button", { name: "Tænd Dialogbot" })).toBeEnabled();
+  await expect(page).toHaveURL(/\/opsaetning\/betaling$/);
+  await expect(page.getByRole("button", { name: "Gå live" })).toBeEnabled();
   await snap(page, ID, info, "taend-500");
   await page.unroute(`**/api/backend/workspaces/${wsId}/telephony/activate`);
   let calls = 0;
   page.on("request", (r) => { if (r.url().endsWith("/telephony/activate") && r.method() === "POST") calls++; });
-  await page.getByRole("button", { name: "Tænd Dialogbot" }).dblclick();
+  await page.getByRole("button", { name: "Gå live" }).dblclick();
   await expect(page).toHaveURL(/\/app\?taendt=1/);
   await expect(page.getByText("Dialogbot er tændt").first()).toBeVisible();
   expect(calls, "dobbeltklik sendte flere aktiveringer").toBe(1);
@@ -77,7 +77,7 @@ test("G06 · medarbejder kan ikke tænde (UI og API); generiske aktiveringskomma
   const { wsId } = await freshOwner(page, info);
   await completeProfile(page, wsId);
   const staff = await colleague(page, browser, info, wsId, "staff");
-  await staff.page.goto("/opsaetning/3");
+  await staff.page.goto("/opsaetning/betaling");
   await expect(staff.page.getByText("Kun ejere og administratorer kan tænde.")).toBeVisible();
   expect((await api(staff.page).send("POST", `/workspaces/${wsId}/telephony/activate`)).status).toBe(403);
   const rec = await api(page).send("POST", `/workspaces/${wsId}/setup/activate/reception`);

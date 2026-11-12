@@ -54,8 +54,8 @@ const MOVED: [string, string][] = [
  *  (tokens in /invite, /verify-email, /password) never leak to other sites through Referer. The embeddable webchat
  *  is served by the API origin (PUBLIC_BASE_URL/api/v1/public/webchat/{key}/frame), not by this app; the BFF's /api/*
  *  route handlers are left out anyway, so a proxied API answer keeps the API's own headers. */
+const FRAME_CSP = { key: "Content-Security-Policy", value: "frame-ancestors 'self'" };
 const SECURITY_HEADERS = [
-  { key: "Content-Security-Policy", value: "frame-ancestors 'self'" },
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
@@ -64,7 +64,12 @@ const SECURITY_HEADERS = [
 const nextConfig: NextConfig = {
   env: { APP_VERSION: `v${version}`, APP_COMMIT: commit },
   async headers() {
-    return [{ source: "/((?!api/).*)", headers: SECURITY_HEADERS }];
+    // /privat/tp-verify sets its own, stricter CSP («sandbox allow-scripts; frame-ancestors 'self'», #205); a config
+    // header would replace it (F-VER26-01), so the page-wide frame-ancestors CSP skips exactly that route.
+    return [
+      { source: "/((?!api/).*)", headers: SECURITY_HEADERS },
+      { source: "/((?!api/|privat/tp-verify).*)", headers: [FRAME_CSP] },
+    ];
   },
   async rewrites() {
     // Static, password-protected pages kept in web/public/<slug>/index.html (see docs/site-pages.md).

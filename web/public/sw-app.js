@@ -12,7 +12,7 @@
  *
  *  Keep this file standalone (no importScripts). The caching part is duplicated in sw.js (Privat) on purpose.
  *  The VERSION line is rewritten by scripts/sw-version.mjs (npm prebuild). */
-const VERSION = "dev";
+const VERSION = "ed90daf87d";
 const AUDIENCE = "erhverv";
 const SCOPE = "/app/";
 const HOME = "/app";

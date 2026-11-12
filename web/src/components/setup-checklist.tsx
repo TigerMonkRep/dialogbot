@@ -1,5 +1,6 @@
 import Link from "@/i18n/link";
-import { getT } from "@/i18n/server";
+import { getLocale, getT } from "@/i18n/server";
+import { HTML_LANG } from "@/i18n/config";
 import type { SetupStatus } from "@/lib/setup.server";
 import { stepHref } from "@/lib/setup-steps";
 import { Icon } from "./ui";
@@ -13,18 +14,23 @@ import { Icon } from "./ui";
  *  Renders nothing when everything is done. `where` only changes the words of the headline and the link. */
 export async function SetupChecklist({ st, where }: { st: SetupStatus; where: "today" | "settings" | "guide" }) {
   // In the guide (Betaling) only while something before it is missing – the step itself is the payment and going live.
-  if (st.done || (where === "guide" && st.setupDone)) return null;
+  if ((st.done && !st.billing?.graceEnds) || (where === "guide" && st.setupDone)) return null;
   const t = await getT("setup.checklist");
   const ts = await getT("setup.shell");
   const label = (k: string) => ts(`labels.${k}`);
   const last = st.setupDone;
-  const head = !last
+  // A paid subscription that stopped being paid: 7 days' grace, then chat and phone stop – the one thing to do now.
+  const grace = st.billing?.graceEnds ? new Date(st.billing.graceEnds) : null;
+  const lang = HTML_LANG[await getLocale()];
+  const head = grace && where !== "guide"
+    ? t("grace", { date: new Date(grace.getTime() - 1000).toLocaleDateString(lang, { day: "numeric", month: "long" }) })
+    : !last
     ? t(`next.${where}`, { label: label(st.next) })
     : !st.paid ? t("payNext") : t("goLive");
   const cta = where === "settings" && !last ? t("backToGuide") : t("continue");
   return (
     <section aria-label={t("aria")} data-testid="setup-checklist" className={`flex flex-col gap-3 px-5 py-4 rounded-2xl border-2 ${last ? "border-ink bg-highlight" : "border-dashed border-ink bg-paper"}`}>
-      <Link href={stepHref(last ? "betaling" : st.next)} className="flex flex-wrap items-center gap-3 rounded-xl hover:underline underline-offset-2">
+      <Link href={stepHref(last || grace ? "betaling" : st.next)} className="flex flex-wrap items-center gap-3 rounded-xl hover:underline underline-offset-2">
         <span className={`inline-flex px-2.5 py-1 rounded-full ${last ? "bg-paper" : "bg-highlight"} text-[11px] font-semibold uppercase tracking-[0.08em]`}>{last ? t("lastTag") : t("tag")}</span>
         <span className="flex-1 min-w-[200px] text-[15px] font-semibold text-ink">{head}</span>
         <span className="inline-flex items-center gap-1 text-[14px] font-semibold text-ink">{cta}<Icon name="arrow_forward" size={18} /></span>

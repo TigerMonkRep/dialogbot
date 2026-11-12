@@ -691,6 +691,7 @@
     "backToGuide": "Tilbake til guiden",
     "done": "klar",
     "todo": "mangler",
-    "manualCounts": "Det du setter opp under Alle innstillinger, teller med her."
+    "manualCounts": "Det du setter opp under Alle innstillinger, teller med her.",
+    "grace": "Betalingen mangler · chat og telefon fortsetter til og med {date} – oppdater betalingskortet"
   }
 }

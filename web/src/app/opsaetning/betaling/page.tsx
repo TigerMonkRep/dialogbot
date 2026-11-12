@@ -34,6 +34,7 @@ export default async function BetalingStep({ searchParams }: { searchParams: Pro
   ]);
   const t = await getT("setup.betalingPage");
   const ta = await getT("app");
+  const tc = await getT("setup.checklist");
   const raw = await getRaw();
   const lang = HTML_LANG[await getLocale()];
   const n = stepNumber("betaling", st.goals);
@@ -82,7 +83,7 @@ export default async function BetalingStep({ searchParams }: { searchParams: Pro
           <p role="status" className="rounded-xl border-2 border-ink bg-paper px-4 py-3 text-[15px] text-ink">{st.paid ? t("paidByOwner") : t("ownerPays")}</p>
         )}
         <p role="status" data-testid="betaling-status" className={`rounded-xl px-4 py-3 text-[15px] font-semibold ${st.paid ? "bg-success-soft text-success" : "border-2 border-ink bg-paper text-ink"}`}>
-          {st.paid ? t("paid") : !admin ? t("notPaidYet") : !confirmed ? (acc?.configured ? t("nextConfirm") : t("nextConfirmNoCard")) : t("nextCard")}
+          {st.billing?.graceEnds ? tc("grace", { date: new Date(new Date(st.billing.graceEnds).getTime() - 1000).toLocaleDateString(lang, { day: "numeric", month: "long" }) }) : st.paid ? t("paid") : !admin ? t("notPaidYet") : !confirmed ? (acc?.configured ? t("nextConfirm") : t("nextConfirmNoCard")) : t("nextCard")}
         </p>
         <GoLive wsId={ws.id} canManage={admin} reader={!staff} paid={st.paid} goals={st.goals} t={tel} webchat={webchat}
           company={profile.legal_name} cvr={profile.cvr ?? ""} address={address} phone={profile.phone ?? ""} />

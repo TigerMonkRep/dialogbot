@@ -38,7 +38,7 @@ test("A03 · afventer → send nyt link → bekræftet; tilstanden overlever gen
   expect((await (await page.request.get("/api/backend/auth/me")).json()).email_verified).toBe(true);
   await snap(page, info, ID, "bekraeftet");
   await page.getByRole("link", { name: /Fortsæt til arbejdsrum/ }).click();
-  await expect(page).toHaveURL(/\/opsaetning\/1|\/onboarding/);
+  await expect(page).toHaveURL(/\/opsaetning\/virksomhed|\/onboarding/);
   // The banner in the app is gone for a verified user
   await page.goto("/app");
   await expect(page.getByRole("link", { name: /bekræft/i })).toHaveCount(0);

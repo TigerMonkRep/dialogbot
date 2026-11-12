@@ -4,7 +4,9 @@ import { profileIsDone } from "./setup-done";
 import { stepsFor, type StepKey, type StepState } from "./setup-steps";
 
 export type { StepKey, StepState } from "./setup-steps";
-export type BillingState = { confirmed: boolean; card: boolean; configured: boolean; paid: boolean };
+/** `paid` is the plain rule; `graceEnds` is set while a paid subscription that stopped being paid (card expired/removed,
+ *  payment failed) still runs – 7 days, Fürster 12/11 (backend billing.grace). */
+export type BillingState = { confirmed: boolean; card: boolean; configured: boolean; paid: boolean; graceEnds: string | null };
 type Tel = { status: { code: string }; active: boolean; business_number: string | null; verified: boolean; documents: { required: boolean; status: string }; subscription_paid?: boolean };
 type Chat = { enabled: boolean; available: boolean; setup_missing?: string[]; unavailable_reasons: string[]; subscription_paid?: boolean };
 
@@ -38,13 +40,15 @@ export async function billingState(wsId: string, role: string): Promise<BillingS
   if (role !== "owner" && role !== "admin") return null;
   const [agr, acc] = await Promise.all([
     backend<{ current: { model: string } | null }>(`/workspaces/${wsId}/agreement`).catch(() => null),
-    backend<{ configured: boolean; card: unknown | null }>(`/workspaces/${wsId}/billing/account`).catch(() => null),
+    backend<{ configured: boolean; card: unknown | null; subscription?: { paid: boolean; in_grace: boolean; grace_ends: string | null } }>(`/workspaces/${wsId}/billing/account`).catch(() => null),
   ]);
   if (!agr || !acc) return null;
   const confirmed = Boolean(agr.current && agr.current.model !== "B");
   const card = Boolean(acc.card);
   // Without card payment set up (no Stripe) there is nothing more to do than confirming: invoices come by e-mail.
-  return { confirmed, card, configured: acc.configured, paid: confirmed && (card || !acc.configured) };
+  const sub = acc.subscription;
+  return { confirmed, card, configured: acc.configured, paid: sub ? sub.paid : confirmed && (card || !acc.configured),
+    graceEnds: sub?.in_grace ? sub.grace_ends : null };
 }
 
 /** Where the workspace is in the guide – read from the real data only, so what is done on the ordinary settings pages

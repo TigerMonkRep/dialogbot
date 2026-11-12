@@ -691,6 +691,7 @@
     "backToGuide": "Zurück zum Assistenten",
     "done": "fertig",
     "todo": "fehlt",
-    "manualCounts": "Was Sie unter Alle Einstellungen einrichten, zählt hier mit."
+    "manualCounts": "Was Sie unter Alle Einstellungen einrichten, zählt hier mit.",
+    "grace": "Zahlung fehlt · Chat und Telefon laufen bis einschließlich {date} weiter – aktualisieren Sie Ihre Zahlungskarte"
   }
 }

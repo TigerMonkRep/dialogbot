@@ -691,6 +691,7 @@
     "backToGuide": "Retour au guide",
     "done": "prêt",
     "todo": "manquant",
-    "manualCounts": "Ce que vous configurez sous Tous les réglages compte aussi ici."
+    "manualCounts": "Ce que vous configurez sous Tous les réglages compte aussi ici.",
+    "grace": "Paiement manquant · le chat et le téléphone continuent jusqu’au {date} inclus – mettez à jour votre carte de paiement"
   }
 }

@@ -691,6 +691,7 @@
     "backToGuide": "Tillbaka till guiden",
     "done": "klar",
     "todo": "saknas",
-    "manualCounts": "Det du ställer in under Alla inställningar räknas här."
+    "manualCounts": "Det du ställer in under Alla inställningar räknas här.",
+    "grace": "Betalningen saknas · chatt och telefon fortsätter till och med {date} – uppdatera betalkortet"
   }
 }

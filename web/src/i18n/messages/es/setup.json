@@ -691,6 +691,7 @@
     "backToGuide": "Volver a la guía",
     "done": "listo",
     "todo": "falta",
-    "manualCounts": "Lo que configure en Todos los ajustes también cuenta aquí."
+    "manualCounts": "Lo que configure en Todos los ajustes también cuenta aquí.",
+    "grace": "Falta el pago · el chat y el teléfono siguen funcionando hasta el {date} inclusive: actualice su tarjeta de pago"
   }
 }

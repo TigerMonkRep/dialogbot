@@ -691,6 +691,7 @@
     "backToGuide": "Back to the guide",
     "done": "done",
     "todo": "missing",
-    "manualCounts": "What you set up under All settings counts here too."
+    "manualCounts": "What you set up under All settings counts here too.",
+    "grace": "Payment missing · chat and phone keep running until and including {date} – update your payment card"
   }
 }

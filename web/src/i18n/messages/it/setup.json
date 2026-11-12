@@ -691,6 +691,7 @@
     "backToGuide": "Torna alla guida",
     "done": "pronto",
     "todo": "manca",
-    "manualCounts": "Ciò che configura in Tutte le impostazioni conta anche qui."
+    "manualCounts": "Ciò che configura in Tutte le impostazioni conta anche qui.",
+    "grace": "Pagamento mancante · chat e telefono continuano fino al {date} incluso – aggiorni la Sua carta di pagamento"
   }
 }

@@ -8,6 +8,7 @@ on:
 
 jobs:
   journeys:
+    if: ${{ false }}  # DIAG
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     services:
@@ -103,6 +104,7 @@ jobs:
       fail-fast: false
       matrix:
         shard: [1, 2, 3, 4]
+        sw: ["on", "off"]  # DIAG
     services:
       postgres:
         image: postgres:16
@@ -172,16 +174,24 @@ jobs:
           # erhverv-p1a reads the fake SMS codes from the API log ("Start API and worker" writes api.log in the repo root).
           P1_API_LOG: ${{ github.workspace }}/api.log
           # X23 offline page: lets Playwright route/observe requests made by the service worker (context.setOffline).
-          PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS: "1"
+          PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS: ${{ matrix.sw == 'on' && '1' || '' }}
+          DEBUG: pw:browser*
         # Playwright stops itself before the job's 45-minute timeout. A cancelled job makes the whole E2E run
         # "cancelled", and Render's checksPass then never deploys (main 215b75f, 11/11). A failed job is
         # absorbed by continue-on-error; a cancelled one is not.
-        run: npx playwright test e2e/qa --shard=${{ matrix.shard }}/4 --global-timeout=1920000
+        run: |
+          nproc; free -m
+          (while true; do echo "$(date +%T) $(free -m | awk 'NR==2{print "used="$3" avail="$7}') $(ps -eo rss,comm --sort=-rss | head -4 | tail -3 | tr '\n' ' ')"; sleep 5; done) > ../mem.log 2>&1 &
+          npx playwright test e2e/qa --shard=${{ matrix.shard }}/4 --global-timeout=1920000 2> ../pw-stderr.log || rc=$?
+          sudo dmesg -T | grep -iE 'oom|killed process|segfault' || echo "dmesg: no oom/kill"
+          grep -E 'process did exit|<launched>' ../pw-stderr.log | tail -20 || true
+          sort -t= -k2 -n ../mem.log | tail -3
+          exit ${rc:-0}
       - name: Upload screenshots and report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-qa-${{ matrix.shard }}-${{ github.sha }}
+          name: e2e-qa-${{ matrix.shard }}-${{ matrix.sw }}-${{ github.sha }}
           path: |
             web/e2e-screens
             web/playwright-report
@@ -189,11 +199,14 @@ jobs:
             api.log
             worker.log
             web.log
+            mem.log
+            pw-stderr.log
           retention-days: 14
 
   # Dialogbot Privat and the two quiz-funnels in fake mode: everything is simulated in the browser, so no API or
   # database is needed.
   privat:
+    if: ${{ false }}  # DIAG
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:

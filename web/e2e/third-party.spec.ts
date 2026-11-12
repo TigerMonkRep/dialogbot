@@ -64,6 +64,7 @@ test.describe("ingen Travelpayouts-script, ingen nye faner", () => {
   }
 
   test("forsiden med husket Erhverv-dør («åbner appen i en browser»): intet Travelpayouts, ingen popup", async ({ page, context, baseURL }) => {
+    test.skip(fake, "fake-buildet har preview-låsen uden koder (privat-jobbet); journeys-jobbet dækker den");
     const { tp, popups } = await guard(context);
     await unlockPreview(page);
     await context.addCookies([{ name: "db_aud", value: "erhverv", url: baseURL ?? "http://localhost:3000" }]);

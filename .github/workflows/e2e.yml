@@ -229,15 +229,20 @@ jobs:
           if getent hosts azure.archive.ubuntu.com >/dev/null; then npx playwright install --with-deps chromium; else echo "apt unreachable (GitHub runner DNS 11/11) – chromium without apt; the runner image carries its libraries"; npx playwright install chromium; fi
           npm run build
           nohup npm run start -- -p 3000 > ../web.log 2>&1 &
-          for i in $(seq 1 30); do curl -sf -o /dev/null localhost:3000/privat && break; sleep 1; done
+          # The same build once more with the Travelpayouts verification flag on (read at runtime on the server), for
+          # e2e/third-party.spec.ts – the other specs run against :3000 with the flag off, like production by default.
+          NEXT_PUBLIC_TRAVELPAYOUTS_VERIFY=1 nohup npm run start -- -p 3001 > ../web-tp.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf -o /dev/null localhost:3000/privat && curl -sf -o /dev/null localhost:3001/privat && break; sleep 1; done
       - name: Playwright – Dialogbot Privat (375 + 1440 px)
         working-directory: web
         run: npx playwright test e2e/privat.spec.ts --project=desktop-1440
       - name: Playwright – quiz-funnels /start og /privat/start (390 + 1440 px)
         working-directory: web
         run: npx playwright test e2e/funnel.spec.ts
-      - name: Playwright – intet Travelpayouts-script, ingen nye faner (Privat-appen i fake mode)
+      - name: Playwright – Travelpayouts kun sandboxet på /privat med flaget, ingen nye faner (fake mode)
         working-directory: web
+        env:
+          TP_VERIFY_BASE_URL: http://localhost:3001
         run: npx playwright test e2e/third-party.spec.ts --project=desktop-1440
       - name: Upload report
         if: always()
@@ -248,4 +253,5 @@ jobs:
             web/playwright-report
             web/test-results
             web.log
+            web-tp.log
           retention-days: 14

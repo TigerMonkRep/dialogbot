@@ -369,6 +369,9 @@ def gate(db: OrmSession, d: FunnelDraft, *, name: str, email: str, phone: str, c
     now = _now()
     if d.code_sent_at and now - d.code_sent_at < RESEND_AFTER:
         raise Conflict("Vent et øjeblik, før du beder om en ny kode", code="too_soon")
+    from app.modules.sales.verification import number_sms_budget
+
+    number_sms_budget(db, e164)  # codes to one number from all public doors, shared with «Ring mig op nu»
     code = f"{secrets.randbelow(1_000_000):06d}"
     d.gate = {"name": name, "email": email.strip()[:320], "phone_e164": e164, "consent_version": CONSENT_VERSION,
               "consent_text": CONSENT_TEXT_ERHVERV if d.kind == "erhverv" else CONSENT_TEXT_PRIVAT,

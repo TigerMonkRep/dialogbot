@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "@/i18n/link";
 import { InstallStep } from "@/components/install-step";
-import { useRaw, useT } from "@/i18n/client";
+import { useLocale, useRaw, useT } from "@/i18n/client";
 import { api, type ApiError } from "@/lib/client";
 import { EMAIL, PHONE_DISPLAY, PHONE_TEL, SIGNUP_ERHVERV } from "@/lib/contact";
 import { ArrowIcon, CloseIcon, PhoneIcon } from "@/components/site-icons";
@@ -12,12 +12,17 @@ import { ArrowIcon, CloseIcon, PhoneIcon } from "@/components/site-icons";
  *  visitor's consent (markedsføringsloven § 10) and only works while demo calls are switched on, so the chat reads
  *  GET /demo-call first and says honestly when it cannot ring – it never pretends. Peter rings at once, day and night,
  *  every day (Fürster 12/11): there are no calling hours and no queue. «Opret dig» (self-service sign-up, open day
- *  and night) is always one click away (S0). */
+ *  and night) is always one click away (S0).
+ *  Before Peter rings, the visitor proves the number with a 6-digit SMS code (F-AUD26-02-P06, Fürster 12/11 «A, SMS-kode
+ *  først»): POST /demo-call/code → step «kode» («Vi har sendt en kode til …», «Send igen» after 30 s) →
+ *  POST /demo-call/verify → POST /demo-call with the one-time token. Errors come by `code` in the page's language. */
 type Info = {
   available: boolean; demo_number: string | null;
   consent_text: string; consent_version: string; industries: { key: string; label: string }[];
 };
-type Step = "start" | "firma" | "branche" | "andet" | "tlf" | "calling" | "done" | "unavailable";
+type Step = "start" | "firma" | "branche" | "andet" | "tlf" | "kode" | "calling" | "done" | "unavailable";
+/** The SMS code sent to the number the visitor typed (POST /demo-call/code). */
+type Pending = { id: string; phone: string; display: string; sentAt: number; resendAfter: number };
 /** `signup`: the message carries an «Opret dig» button to the self-service sign-up. */
 type Msg = { from: "bot" | "user"; text: string; signup?: boolean };
 
@@ -36,6 +41,7 @@ const avatar = "flex-none w-[30px] h-[30px] rounded-full bg-accent inline-flex i
 export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; onClose?: () => void } = {}) {
   const t = useT("site");
   const raw = useRaw();
+  const locale = useLocale();
   const c = (key: string, vars?: Record<string, string | number>) => t(`proev.chat.${key}`, vars);
   const GREETING = c("greeting");
   const hours = c("hours");
@@ -50,6 +56,9 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
   const [consent, setConsent] = useState(false);
   const [consentError, setConsentError] = useState(false);
   const [pending, setPending] = useState(false);
+  const [verif, setVerif] = useState<Pending | null>(null);
+  const [codeError, setCodeError] = useState<string | null>(null);
+  const [now, setNow] = useState(() => Date.now());
   const endRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const timers = useRef<number[]>([]);
@@ -60,7 +69,13 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
     return () => t.forEach(clearTimeout);
   }, []);
   useEffect(() => { endRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" }); }, [history, typing]);
-  useEffect(() => { if (step === "firma" || step === "andet" || step === "tlf") inputRef.current?.focus(); }, [step]);
+  useEffect(() => { if (step === "firma" || step === "andet" || step === "tlf" || step === "kode") inputRef.current?.focus(); }, [step]);
+  // the «Send igen» countdown
+  useEffect(() => {
+    if (step !== "kode") return;
+    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, [step]);
 
   const push = useCallback((m: Msg) => setHistory((h) => h.concat(m)), []);
   const later = useCallback((fn: () => void, ms: number) => { timers.current.push(window.setTimeout(fn, ms)); }, []);
@@ -101,6 +116,71 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
     timers.current.forEach(clearTimeout); timers.current = [];
     setStep("start"); setHistory([{ from: "bot", text: GREETING }]); setTyping(false); setDraft(""); setFirma("");
     setIndustry({ key: null, other: "" }); setTlf(""); setConsent(false); setConsentError(false); setPending(false);
+    setVerif(null); setCodeError(null);
+  };
+
+  /** The visitor-facing text for an error of the code/verify/call endpoints, in the page's language. */
+  const errorText = (a: ApiError | undefined): string => {
+    switch (a?.code) {
+      case "too_soon": return c("errTooSoon");
+      case "sms_rate_limited": return c("errSmsLimit", { phone: PHONE_DISPLAY });
+      case "sms_failed": return c("errSmsFailed", { phone: PHONE_DISPLAY });
+      case "code_invalid": return c("errCodeWrong", { left: Number((a as ApiError & { attempts_left?: number }).attempts_left ?? 0) });
+      case "code_expired": return c("errCodeExpired");
+      case "too_many_attempts": return c("errTooManyAttempts");
+      case "verification_invalid": case "verification_required": return c("errVerificationInvalid");
+      case "demo_already_called": return c("errAlreadyCalled", { phone: PHONE_DISPLAY });
+      case "demo_rate_limited": return c("errCallLimit", { phone: PHONE_DISPLAY });
+      case "validation_failed": if (a.field_errors?.some((f) => f.field === "phone")) return c("errNumber");
+    }
+    return a?.message || c("callFailed"); // anything else: the server's own words, as before
+  };
+
+  /** Step 1: the code by SMS to the number (also «Send igen»). */
+  const sendCode = async (phone: string, again: boolean): Promise<boolean> => {
+    if (info === null || info === "error") return false;
+    const r = await api<{ verification_id: string; phone_display: string | null; resend_after: number }>("/demo-call/code", {
+      method: "POST", body: JSON.stringify({ phone, consent: true, consent_version: info.consent_version, website: "", language: locale }) });
+    setVerif({ id: r.verification_id, phone, display: r.phone_display || phone, sentAt: Date.now(), resendAfter: r.resend_after || 30 });
+    setNow(Date.now()); setCodeError(null); setTlf(r.phone_display || phone);
+    push({ from: "bot", text: again ? c("codeResent", { number: r.phone_display || phone }) : c("codeSent", { number: r.phone_display || phone }) });
+    return true;
+  };
+
+  const resend = async () => {
+    if (!verif || pending) return;
+    setPending(true);
+    try { await sendCode(verif.phone, true); }
+    catch (err) { setCodeError(errorText(err as ApiError)); }
+    finally { setPending(false); }
+  };
+
+  const changeNumber = () => { setVerif(null); setCodeError(null); setDraft(""); setStep("tlf"); };
+
+  /** Steps 2 and 3: the code → a one-time token → Peter rings the proven number at once. */
+  const confirmCode = async (code: string) => {
+    if (!verif || info === null || info === "error") return;
+    if (!/^\d{6}$/.test(code)) { setCodeError(c("errCodeFormat")); return; }
+    setPending(true); setCodeError(null);
+    try {
+      const v = await api<{ verification_token: string }>("/demo-call/verify", { method: "POST",
+        body: JSON.stringify({ verification_id: verif.id, code }) });
+      setDraft(""); setTyping(true);
+      await api("/demo-call", { method: "POST", body: JSON.stringify({
+        phone: verif.phone, company: firma, consent: true, consent_version: info.consent_version, website: "",
+        industry: industry.key ?? "andet", industry_other: industry.key ? null : industry.other || null,
+        verification_token: v.verification_token }) });
+      setTyping(false);
+      push({ from: "bot", text: c("callingNow", { number: verif.display, company: firma }) });
+      setStep("calling");
+      later(() => botSays(c("callSent", { phone: PHONE_DISPLAY }), "done", 700, true), CALL_WINDOW_MS);
+    } catch (err) {
+      setTyping(false);
+      const a = err as ApiError;
+      if (a?.code === "demo_unavailable") botSays(a.message || c("callFailed"), "unavailable", 700, true);
+      else if (a?.code === "demo_call_failed") botSays(c("callRetry", { message: a.message || c("callFailed"), phone: PHONE_DISPLAY }), "tlf");
+      else setCodeError(errorText(a));
+    } finally { setPending(false); }
   };
 
   /** Anything that is not one of the scripted steps goes to Peter himself: POST /demo-call/chat answers from the
@@ -126,6 +206,11 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
     const v = draft.trim();
     if (!v || pending) return;
     if (step === "start" || step === "unavailable" || step === "calling" || step === "done") { await ask(v); return; }
+    if (step === "kode") {
+      const code = v.replace(/\s/g, "");
+      if (!/\d/.test(code)) { await ask(v); return; } // a question, not a code: Peter answers, the step stays
+      await confirmCode(code); return;
+    }
     if (step === "branche") {
       push({ from: "user", text: v }); setDraft(""); setIndustry({ key: null, other: v });
       botSays(c("askNumber", { company: firma }), "tlf");
@@ -149,29 +234,25 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
     if (why || info === null || info === "error") { botSays(why ?? c("serviceDown"), "unavailable"); return; }
     setPending(true); setTyping(true);
     try {
-      await api("/demo-call", { method: "POST", body: JSON.stringify({
-        phone: v, company: firma, consent: true, consent_version: info.consent_version, website: "",
-        industry: industry.key ?? "andet", industry_other: industry.key ? null : industry.other || null }) });
+      await sendCode(v, false);
       setTyping(false);
-      push({ from: "bot", text: c("callingNow", { number: v, company: firma }) });
-      setStep("calling");
-      later(() => botSays(c("callSent", { phone: PHONE_DISPLAY }), "done", 700, true), CALL_WINDOW_MS);
+      setStep("kode");
     } catch (err) {
       setTyping(false);
       const a = err as ApiError;
-      const msg = a?.message || c("callFailed");
-      if (a?.code === "demo_unavailable") botSays(msg, "unavailable", 700, true);
-      else botSays(c("callRetry", { message: msg, phone: PHONE_DISPLAY }), "tlf");
+      if (a?.code === "demo_unavailable") botSays(a.message || c("callFailed"), "unavailable", 700, true);
+      else botSays(c("callRetry", { message: errorText(a), phone: PHONE_DISPLAY }), "tlf");
     } finally { setPending(false); }
   };
 
   const hasInput = true; // the chips are shortcuts; the visitor can always write to Peter instead
   const placeholder = step === "firma" ? c("placeholderCompany") : step === "andet" ? c("placeholderOther")
-    : step === "tlf" ? c("placeholderPhone") : step === "branche" ? c("placeholderBranch")
+    : step === "tlf" ? c("placeholderPhone") : step === "kode" ? c("placeholderCode") : step === "branche" ? c("placeholderBranch")
     : c("placeholderDefault");
   const done = step === "done";
   const calling = step === "calling";
-  const pastOne = step === "tlf" || calling || done;
+  const pastOne = step === "tlf" || step === "kode" || calling || done;
+  const waitLeft = verif ? Math.max(0, Math.ceil((verif.sentAt + verif.resendAfter * 1000 - now) / 1000)) : 0;
   const consentText = info && info !== "error" ? info.consent_text
     : c("consentFallback");
 
@@ -248,14 +329,30 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
           {hasInput && (
             <form onSubmit={send} className="flex flex-col gap-3">
               <div className="flex gap-2.5">
-                <label htmlFor="chat-input" className="sr-only">{placeholder}</label>
-                <input ref={inputRef} id="chat-input" type="text" inputMode={step === "tlf" ? "tel" : "text"} value={draft}
-                  onChange={(e) => setDraft(e.target.value)} placeholder={placeholder} autoComplete={step === "tlf" ? "tel" : "organization"} disabled={pending}
+                <label htmlFor="chat-input" className="sr-only">{step === "kode" ? c("codeLabel") : placeholder}</label>
+                <input ref={inputRef} id="chat-input" type="text" inputMode={step === "tlf" ? "tel" : step === "kode" ? "numeric" : "text"} value={draft}
+                  onChange={(e) => { setDraft(e.target.value); if (step === "kode") setCodeError(null); }} placeholder={placeholder}
+                  autoComplete={step === "tlf" ? "tel" : step === "kode" ? "one-time-code" : "organization"} disabled={pending}
+                  maxLength={step === "kode" ? 12 : undefined} aria-invalid={step === "kode" && !!codeError} aria-describedby={step === "kode" ? "code-hint" : undefined}
                   className="flex-1 min-w-0 min-h-12 px-4 rounded-xl border-2 border-ink text-base text-ink bg-white placeholder:text-muted/70" />
                 <button type="submit" disabled={pending} className="inline-flex items-center gap-2 min-h-12 px-[18px] rounded-xl bg-accent hover:bg-accent-deep text-white font-semibold text-[15px] cursor-pointer disabled:opacity-60">
-                  {step === "tlf" && /\d{8}/.test(draft.replace(/[\s+\-()]/g, "")) ? c("callMe") : c("send")}<ArrowIcon size={16} />
+                  {step === "kode" ? c("confirmCode") : step === "tlf" && /\d{8}/.test(draft.replace(/[\s+\-()]/g, "")) ? c("callMe") : c("send")}<ArrowIcon size={16} />
                 </button>
               </div>
+              {step === "kode" && verif && (
+                <div data-code-step className="flex flex-col gap-2 text-[14px] leading-normal">
+                  <p className="m-0 font-semibold">{c("codeSentShort", { number: verif.display })}</p>
+                  <p id="code-hint" role={codeError ? "alert" : undefined} className={`m-0 ${codeError ? "text-danger font-semibold" : "text-ink-soft"}`}>
+                    {codeError ?? c("codeHelp")}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <button type="button" data-resend onClick={resend} disabled={pending || waitLeft > 0} className={`${chip} disabled:opacity-60 disabled:cursor-not-allowed`}>
+                      {waitLeft > 0 ? c("resendIn", { s: waitLeft }) : c("resend")}
+                    </button>
+                    <button type="button" onClick={changeNumber} disabled={pending} className={chip}>{c("changeNumber")}</button>
+                  </div>
+                </div>
+              )}
               {step === "tlf" && (
                 <>
                   {/* Honeypot: hidden from people, filled by bots; the backend then stores nothing and calls nobody. */}

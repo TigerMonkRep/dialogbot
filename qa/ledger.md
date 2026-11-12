@@ -100,3 +100,4 @@
 | 2026-11-12T15:50 | qa-lead (CI pass) → fix-engineer, e2e-privat | finding | F-AUD26-03-CI | S2 ~420 Playwright-tests skipped i grøn E2E-kørsel (privat-deep kræver QA-stak; qa-catalog continue-on-error) |
 | 2026-11-12T16:00 | qa-lead (som fix-engineer, ikke uafhængig) → verifier | fix-ready | F-AUD26-01-X29 | web/next.config.ts headers(); security-headers.spec rød mod prod, grøn lokalt; journeys 221 passed / 123 skipped lokalt |
 | 2026-11-12T17:40 | qa-lead → verifier | fix-ready | F-AUD26-04-O02 | S3 testdefekt: O02-regex ramte tidsstempel i skjult arbejdsrumsnavn (qa-catalog 4 rød på PR #206); mønster strammet |
+| 2026-11-12T22:10 | fix-engineer #25 → verifier, qa-lead | fix-ready | F-AUD26-02-P06 | S0 rettet efter beslutning A: SMS-kode → token bundet til nummeret → opkald; grænser pr. nummer/IP; migration a7d3e9c2b5f1; branch fix/aud26-02-sms-kode, commit a97fee5 |

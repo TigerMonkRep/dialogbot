@@ -33,6 +33,9 @@ def sales(api, two_workspaces, monkeypatch):
     api.approve(tok, ws, it["open_draft"]["id"])
     api.map_number(ws, "+4570123456", "pn_sales", outbound=True)
     calls: list[dict] = []
+    from app.modules.integrations.connectors.fakes import WORLD
+
+    WORLD.reset()
 
     def fake_call(payload):
         calls.append(payload)
@@ -45,8 +48,46 @@ def sales(api, two_workspaces, monkeypatch):
     get_settings.cache_clear()
 
 
-def _web(client, **body):
+def _unproven(client, **body):
+    """POST /demo-call without the SMS code: what a client that does not hold the number can send."""
     return client.post("/api/v1/demo-call", json={"phone": "20 30 40 50", "consent": True} | body)
+
+
+def last_code(phone_e164: str) -> str | None:
+    """The code in the newest simulated SMS to the number (connectors/fakes: nothing is sent)."""
+    import re
+
+    from app.modules.integrations.connectors.fakes import WORLD
+
+    for m in reversed(WORLD.sms):
+        if m["to"] == phone_e164:
+            return re.search(r"\b(\d{6})\b", m["body"]).group(1)
+    return None
+
+
+def _e164(phone: str) -> str:
+    from app.modules.campaigns.service import normalize_phone
+
+    return normalize_phone(phone) or phone
+
+
+def _web(client, **body):
+    """The visitor's whole «Ring mig op nu»: code by SMS → the code → the call (F-AUD26-02-P06). Returns the first
+    response that is not a success, else the call's."""
+    b = {"phone": "20 30 40 50", "consent": True} | body
+    if b.get("website"):  # honeypot: the bot posts straight to the call
+        return client.post("/api/v1/demo-call", json=b)
+    r = client.post("/api/v1/demo-call/code", json={k: b[k] for k in ("phone", "consent", "consent_version", "language")
+                                                     if k in b})
+    if r.status_code != 202:
+        return r
+    code = last_code(_e164(b["phone"]))
+    if code is None:  # nothing was sent (do-not-call): the visitor never gets a code
+        return r
+    v = client.post("/api/v1/demo-call/verify", json={"verification_id": r.json()["verification_id"], "code": code})
+    if v.status_code != 200:
+        return v
+    return client.post("/api/v1/demo-call", json=b | {"verification_token": v.json()["verification_token"]})
 
 
 def _report(client, call_id, messages, reason="customer-ended-call"):
@@ -104,12 +145,22 @@ def test_do_not_call_is_kept_secret_and_global_cap(client, sales, db, monkeypatc
     db.add(DoNotCall(workspace_id=uuid.UUID(sales["ws"]), phone="+4520304050", source="call"))
     db.commit()
     r = _web(client)
-    assert r.status_code == 202 and r.json() == {"status": "calling"}  # same answer as a real call
-    assert sales["calls"] == [] and db.query(DemoCall).one().status == "skipped"
-    monkeypatch.setenv("SALES_MAX_CALLS_PER_HOUR", "2")
+    # the same answer as for any number – but no SMS is sent, so no code, no call, nothing rung
+    assert r.status_code == 202 and r.json()["status"] == "code_sent" and r.json()["phone_display"]
+    other = client.post("/api/v1/demo-call/code", json={"phone": "21 22 23 24", "consent": True})
+    assert set(r.json()) == set(other.json())
+    from app.modules.integrations.connectors.fakes import WORLD
+
+    assert [m["to"] for m in WORLD.sms] == ["+4521222324"]
+    assert sales["calls"] == [] and db.query(DemoCall).count() == 0
+    guessed = client.post("/api/v1/demo-call/verify", json={"verification_id": r.json()["verification_id"],
+                                                             "code": "123456"})
+    assert guessed.status_code == 422 and guessed.json()["code"] == "code_invalid"
+    monkeypatch.setenv("SALES_MAX_CALLS_PER_HOUR", "1")
     get_settings.cache_clear()
+    sales["clock"][0] = MON_10.replace(minute=1)  # past the 30 s resend wait of 21 22 23 24
     assert _web(client, phone="21222324").status_code == 202
-    capped = _web(client, phone="22334455")
+    capped = _web(client, phone="22334455")  # the cap is checked before a code is sent
     assert capped.status_code == 429 and capped.json()["code"] == "demo_rate_limited"
 
 
@@ -181,7 +232,7 @@ def test_peter_rings_whatever_voice_is_asked_for_and_the_script_adapts(client, s
     info = client.get("/api/v1/demo-call").json()
     assert info["agent"] == "Peter" and [v["key"] for v in info["voices"]] == ["peter"]  # Camilla is not offered here
     assert {i["key"] for i in info["industries"]} == set(script.INDUSTRIES)
-    assert _web(client, voice="christel").status_code == 422
+    assert _unproven(client, voice="christel").status_code == 422  # checked before anything is spent
     r = _web(client, name="Mette Hansen", company="Hansen VVS", voice="camilla", industry="haandvaerk")
     assert r.status_code == 202
     payload = sales["calls"][-1]["assistant"]

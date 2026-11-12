@@ -60,8 +60,10 @@ def test_do_not_call_stays_secret_at_night(client, sales, db):  # noqa: F811
     db.commit()
     sales["clock"][0] = THU_0300
     r = _web(client)
-    assert r.status_code == 202 and r.json() == {"status": "calling"}  # the same answer as everybody else
-    assert sales["calls"] == [] and db.query(DemoCall).one().status == "skipped"
+    assert r.status_code == 202 and r.json()["status"] == "code_sent"  # the same answer as everybody else
+    from app.modules.integrations.connectors.fakes import WORLD
+
+    assert WORLD.sms == [] and sales["calls"] == [] and db.query(DemoCall).count() == 0  # no SMS, nobody rung
 
 
 @pytest.mark.parametrize("frm, to", [("08:00", "20:00"), ("09:00", "17:00"), ("20:00", "08:00"), ("bad", "x")])

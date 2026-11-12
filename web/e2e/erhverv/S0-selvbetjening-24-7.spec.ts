@@ -102,6 +102,12 @@ for (const when of AT_ONCE) {
       posted = r.request().postDataJSON();
       return r.fulfill({ status: 202, contentType: "application/json", body: JSON.stringify({ status: "calling" }) });
     });
+    // Since F-AUD26-02-P06 the call needs an SMS code first (/demo-call/code → /verify → /demo-call with the token).
+    let codes = 0;
+    await page.route("**/api/backend/demo-call/code", (r) => { codes++; return r.fulfill({ status: 202, contentType: "application/json",
+      body: JSON.stringify({ status: "code_sent", verification_id: "v-s0", phone_display: "20 30 40 50", resend_after: 30, expires_in: 600 }) }); });
+    await page.route("**/api/backend/demo-call/verify", (r) => r.fulfill({ status: 200, contentType: "application/json",
+      body: JSON.stringify({ status: "verified", verification_token: "t-s0" }) }));
     let asked: { messages: { content: string }[] } | null = null;
     await page.route("**/api/backend/demo-call/chat", async (r) => {
       asked = r.request().postDataJSON();
@@ -133,8 +139,14 @@ for (const when of AT_ONCE) {
     await expect(page.getByText(/må ringe mig op på dette nummer nu/)).toBeVisible(); // the consent is «nu»
     await page.getByRole("checkbox").check();
     await page.getByRole("button", { name: /Ring mig op/ }).click();
+    // The SMS code comes first – right away, at any hour – then the call.
+    await expect.poll(() => codes).toBe(1);
+    await expect(page.locator("[data-code-step]")).toContainText("Vi har sendt en kode til 20 30 40 50");
+    expect(posted).toBeNull();
+    await page.locator("#chat-input").fill("123456");
+    await page.locator("#chat-input").press("Enter");
     await expect(log.getByText(/Jeg ringer til 20 30 40 50 nu – du får et opkald fra Peter fra Dialogbot inden for et minut/)).toBeVisible();
-    expect(posted).toMatchObject({ phone: "20 30 40 50", company: "S0 Byg ApS", consent: true, consent_version: "demo-call-web-v2" });
+    expect(posted).toMatchObject({ phone: "20 30 40 50", company: "S0 Byg ApS", consent: true, consent_version: "demo-call-web-v2", verification_token: "t-s0" });
     await expect(page.getByText(TOMORROW_WORDS)).toHaveCount(0);
     await expect(page.getByText(CLOSED_WORDS)).toHaveCount(0);
     await shot(page, info, `s0-chat-straks-${when.name.replace(/\W+/g, "")}`);

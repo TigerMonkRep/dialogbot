@@ -13,8 +13,10 @@ outbound-approved number places the call, and interested prospects become leads 
 workspace's inbound number is the public demo number. Numbers on its do-not-call list are never called, and
 "ring ikke igen" adds the number to it.
 
-Abuse limits for the public door: Danish numbers only (no premium-rate ranges), one web request per number per
-24 hours and a global cap per hour.
+Abuse limits for the public door: the visitor proves the number with an SMS code first (verification.py,
+F-AUD26-02-P06: the consent box alone was ticked by whoever typed the number), Danish numbers only (no premium-rate
+ranges), one web request per number per 24 hours, per-number and per-IP limits on codes and calls, and a global cap
+per hour. The quiz-funnel rings only the number its own SMS code proved.
 
 A request from the website (dialogbot.app: /proev, the chat widget, the /start quiz) is rung at once, day and night,
 every day (Fürster 12/11): there are no calling hours for Dialogbot's own demo calls, so nothing is queued and no
@@ -117,7 +119,7 @@ def info(db: OrmSession) -> dict:
     """What the website needs to offer «Ring mig op nu». Peter rings at once whenever `available` – day and night."""
     return {"available": problem(db) is None, "demo_number": demo_number(db), "signup_url": SIGNUP_PATH,
             "consent_text": CONSENT_TEXT_WEB, "consent_version": CONSENT_VERSION_WEB,
-            "agent": script.AGENT_NAME,
+            "agent": script.AGENT_NAME, "verification": "sms_code",
             "voices": [{k: v[k] for k in ("key", "name", "gender", "image", "description", "sample")}
                        for v in _voices() if v["key"] == AGENT_VOICE],
             "industries": [{"key": k, "label": v["label"], "icon": v["icon"], "examples": v["examples"]}
@@ -154,6 +156,14 @@ def danish_number(raw: str) -> str:
 
 def _blocked(db: OrmSession, ws: Workspace, phone: str) -> bool:
     return db.scalar(select(DoNotCall.id).where(DoNotCall.workspace_id == ws.id, DoNotCall.phone == phone)) is not None
+
+
+def check_not_called_today(db: OrmSession, phone: str, now: datetime) -> None:
+    """One web request per number per WEB_REPEAT_AFTER (also checked before an SMS code is sent)."""
+    if db.scalar(select(DemoCall.id).where(DemoCall.phone == phone, DemoCall.source == "web",
+                                           DemoCall.created_at > now - WEB_REPEAT_AFTER)):
+        raise DemoRateLimited("Vi har allerede ringet til dette nummer i dag. Ring selv til demonummeret, hvis du vil "
+                              "prøve igen.", code="demo_already_called")
 
 
 def _global_cap(db: OrmSession, ws: Workspace, now: datetime) -> None:
@@ -238,10 +248,7 @@ def request_web(db: OrmSession, *, phone: str, name: str, company: str, voice: s
     if problem(db) is not None:
         raise DemoUnavailable("Demo-opkald er ikke åbnet endnu. Skriv dig på ventelisten, så hører du fra os.")
     ws = sales_workspace(db)
-    if db.scalar(select(DemoCall.id).where(DemoCall.phone == phone, DemoCall.source == "web",
-                                           DemoCall.created_at > now - WEB_REPEAT_AFTER)):
-        raise DemoRateLimited("Vi har allerede ringet til dette nummer i dag. Ring selv til demonummeret, hvis du vil "
-                              "prøve igen.", code="demo_already_called")
+    check_not_called_today(db, phone, now)
     _global_cap(db, ws, now)
     d = DemoCall(workspace_id=ws.id, source="web", phone=phone, name=name.strip()[:200], company=company.strip()[:200],
                  consent_version=CONSENT_VERSION_WEB, consent_text=CONSENT_TEXT_WEB, consented_at=now,

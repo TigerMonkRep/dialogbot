@@ -1,6 +1,7 @@
 """Demo calls: the public "Ring mig op nu" door on dialogbot.dk and the operator (seller) door. See service.py."""
 from __future__ import annotations
 
+import uuid
 from typing import Literal
 
 from fastapi import APIRouter, Depends, Query, Request, Response, status
@@ -13,7 +14,7 @@ from app.core.auth import Principal
 from app.core.errors import ApiError, NotFound, ValidationFailed
 from app.db import get_db
 from app.models import DemoCall
-from app.modules.sales import service
+from app.modules.sales import service, verification
 from app.modules.voices.operator_router import operator
 
 public_router = APIRouter(prefix="/demo-call", tags=["sales"])
@@ -37,24 +38,79 @@ class WebIn(BaseModel):
     voice: str | None = Field(default=None, max_length=40, description="Ignored: the assistant that rings is always Peter (kept so older clients keep working)")
     industry: str | None = Field(default=None, max_length=40, description="Line of business; adapts the sales script")
     industry_other: str | None = Field(default=None, max_length=120, description="The visitor's own words when industry is 'andet'")
+    verification_token: str | None = Field(default=None, max_length=100, description="From POST /demo-call/verify: proves the visitor holds `phone` (one use, 10 minutes). Required.")
+
+
+def _check_consent(consent: bool, version: str) -> None:
+    if not consent:
+        raise ValidationFailed("Sæt kryds, hvis vores assistent må ringe dig op",
+                               field_errors=[{"field": "consent", "message": "Påkrævet"}])
+    if version != service.CONSENT_VERSION_WEB:  # incl. the retired «ring later» consent of 11/11
+        raise ValidationFailed("Genindlæs siden og prøv igen", code="consent_outdated")
+
+
+class DemoCodeIn(BaseModel):
+    phone: str = Field(min_length=8, max_length=30)
+    consent: bool
+    consent_version: str = Field(default=service.CONSENT_VERSION_WEB, max_length=40)
+    website: str = Field(default="", max_length=200)  # honeypot
+    language: Literal["da", "en", "de", "es", "fr", "it", "no", "sv"] | None = Field(
+        default=None, description="Language of the SMS text (the page's language); Danish by default")
+
+
+@public_router.post("/code", status_code=status.HTTP_202_ACCEPTED)
+def request_code(body: DemoCodeIn, request: Request, db: OrmSession = Depends(get_db)):
+    """Step 1 of «Ring mig op nu»: a 6-digit code by SMS to the number (10 minutes, 5 attempts). Peter rings only
+    after the code is entered (F-AUD26-02-P06). Limits per number and per client IP; 429 `sms_rate_limited`."""
+    from app.modules.privat.lookup_limits import client_ip
+
+    _check_consent(body.consent, body.consent_version)
+    if body.website:  # a bot filled the hidden field: same answer, nothing stored, no SMS
+        return {"status": "code_sent", "verification_id": str(uuid.uuid4()), "phone_display": None,
+                "resend_after": int(verification.RESEND_AFTER.total_seconds()),
+                "expires_in": int(verification.CODE_TTL.total_seconds())}
+    out = verification.start(db, phone=body.phone, ip=client_ip(request), language=body.language)
+    db.commit()
+    return out
+
+
+class DemoVerifyIn(BaseModel):
+    verification_id: str = Field(min_length=1, max_length=64)
+    code: str = Field(min_length=1, max_length=12)
+
+
+@public_router.post("/verify")
+def verify_code(body: DemoVerifyIn, db: OrmSession = Depends(get_db)):
+    """Step 2: the code → `verification_token` (one use, bound to the number, 10 minutes). A wrong code answers 422
+    `code_invalid` with `attempts_left`; after 5 attempts 409 `too_many_attempts`; expired 409 `code_expired`."""
+    try:
+        out = verification.verify(db, verification_id=body.verification_id, code=body.code)
+    except ValidationFailed:
+        db.commit()  # the attempt counts even though the request fails
+        raise
+    db.commit()
+    return out
 
 
 @public_router.post("", status_code=status.HTTP_202_ACCEPTED)
-def request_demo_call(body: WebIn, db: OrmSession = Depends(get_db)):
-    if not body.consent:
-        raise ValidationFailed("Sæt kryds, hvis vores assistent må ringe dig op",
-                               field_errors=[{"field": "consent", "message": "Påkrævet"}])
-    if body.consent_version != service.CONSENT_VERSION_WEB:  # incl. the retired «ring later» consent of 11/11
-        raise ValidationFailed("Genindlæs siden og prøv igen", code="consent_outdated")
+def request_demo_call(body: WebIn, request: Request, db: OrmSession = Depends(get_db)):
+    """Step 3: Peter rings at once, day and night – only with a verified, unused token for this very number
+    (422 `verification_required` without one, 409 `verification_invalid` for a used/expired/other number's token)."""
+    from app.modules.privat.lookup_limits import client_ip
+
+    _check_consent(body.consent, body.consent_version)
     if body.website:  # a bot filled the hidden field: same answer, nothing stored, nobody called
         return {"status": "calling"}
     from app.modules.voices import standard
 
     if body.voice is not None and body.voice not in standard.STANDARD_VOICES:
         raise ValidationFailed("Vælg en af stemmerne", field_errors=[{"field": "voice", "message": "Ukendt stemme"}])
+    v = verification.consume(db, token=body.verification_token, phone=body.phone, ip=client_ip(request))
     d = service.request_web(db, phone=body.phone, name=body.name, company=body.company, voice=body.voice,
                             industry=body.industry, industry_other=body.industry_other,
                             consent_version=body.consent_version)
+    if d is not None:
+        v.demo_call_id = d.id
     db.commit()
     if d is not None and d.status == "failed":
         raise ApiError("Vi kunne ikke ringe op lige nu. Prøv igen om lidt, eller ring selv til vores demonummer.",

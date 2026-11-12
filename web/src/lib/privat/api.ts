@@ -226,6 +226,9 @@ export type Addon = {
   included?: boolean;
   /** Needs trial/Plus/Familie – POST /enable answers 409 needs_plan otherwise. */
   requires_plan?: boolean;
+  /** Switched on, but stopped because the plan has lapsed (trial over, cancelled, unpaid): no reminders, no new things;
+   *  the data is kept and comes back with a plan (F-PBQ-06). Its endpoints answer `needs_plan`. */
+  needs_plan?: boolean;
   /** Plans whose rights include it (empty = free for everyone). */
   included_in?: string[];
   // «Mine apps» (docs/privat-api.md «Apps: Mine apps og Butikken»). Optional so older backends still type-check.

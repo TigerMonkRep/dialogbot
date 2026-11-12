@@ -1499,7 +1499,8 @@
       "free": "Gratis",
       "allPlans": "Med i alle planer",
       "plan": "Plus · Familie",
-      "soon": "Kommer snart"
+      "soon": "Kommer snart",
+      "needsPlan": "Krever plan"
     },
     "cat": {
       "alle": "Alle",
@@ -1620,7 +1621,11 @@
     "planTextEndedAll": "{name} er med i alle planer. Velg en plan for å bruke den.",
     "planTextBasis": "Du har Basis. {name} er med i Plus og Familie.",
     "onInMine": "{n|1 app er slått på|# apper er slått på} – se Mine apper",
-    "yourThings": "Dine ting her ({n})"
+    "yourThings": "Dine ting her ({n})",
+    "pausedSection": "Satt på pause · krever en plan",
+    "pausedLine": "Krever en plan – dataene dine er lagret.",
+    "pausedTitle": "{name} er satt på pause",
+    "pausedText": "Prøveperioden eller planen er over, så {name} kjører ikke nå – ingen påminnelser og ingenting nytt. Dataene dine er lagret og kommer tilbake så snart du har en plan igjen."
   },
   "familyHousehold": {
     "title": "Husstand",

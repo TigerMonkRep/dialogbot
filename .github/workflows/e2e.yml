@@ -171,12 +171,25 @@ jobs:
         env:
           # erhverv-p1a reads the fake SMS codes from the API log ("Start API and worker" writes api.log in the repo root).
           P1_API_LOG: ${{ github.workspace }}/api.log
-          # X23 offline page: lets Playwright route/observe requests made by the service worker (context.setOffline).
-          PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS: "1"
+          # e2e/qa/pwa runs in its own step below. It needs PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS, and that flag
+          # must NOT be set for the rest of the catalogue: with it, Playwright inspects the network of every service
+          # worker, and the app registers one on every /app and /privat page. The Chromium browser process then
+          # segfaulted now and then when a context closed (dmesg «headless_shell segfault at 1b0», pw:browser
+          # «signal=SIGSEGV», diag run 43189656440). The worker's next test failed with «browser.newContext: Target
+          # page, context or browser has been closed» or «browserContext.close: Test ended.» (11/11–12/11).
+          PW_QA_SKIP_PWA: "1"
         # Playwright stops itself before the job's 45-minute timeout. A cancelled job makes the whole E2E run
         # "cancelled", and Render's checksPass then never deploys (main 215b75f, 11/11). A failed job is
         # absorbed by continue-on-error; a cancelled one is not.
         run: npx playwright test e2e/qa --shard=${{ matrix.shard }}/4 --global-timeout=1920000
+      - name: Playwright QA catalogue – PWA/offline (X23, service-worker network events)
+        if: ${{ matrix.shard == 2 && !cancelled() }}  # shard 2 is one of the two short shards (~6 min)
+        working-directory: web
+        env:
+          # X23 offline page: lets Playwright route/observe requests made by the service worker (context.setOffline).
+          PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS: "1"
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report-pwa  # keep the catalogue step's report and traces
+        run: npx playwright test e2e/qa/pwa --output=test-results-pwa --global-timeout=600000
       - name: Upload screenshots and report
         if: always()
         uses: actions/upload-artifact@v4
@@ -185,7 +198,9 @@ jobs:
           path: |
             web/e2e-screens
             web/playwright-report
+            web/playwright-report-pwa
             web/test-results
+            web/test-results-pwa
             api.log
             worker.log
             web.log

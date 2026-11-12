@@ -6,7 +6,9 @@ export default defineConfig({
   testDir: "./e2e",
   // e2e/qa/** is the QA scenario catalogue; CI runs it in its own sharded job (.github/workflows/e2e.yml qa-catalog),
   // so the journeys job sets PW_SKIP_QA=1. Locally: `npx playwright test e2e/qa`.
-  testIgnore: process.env.PW_SKIP_QA ? ["qa/**"] : [],
+  // PW_QA_SKIP_PWA=1 leaves out e2e/qa/pwa, which needs PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1 and runs in its
+  // own step. That flag crashes Chromium now and then when the whole catalogue runs with it (see e2e.yml qa-catalog).
+  testIgnore: [...(process.env.PW_SKIP_QA ? ["qa/**"] : []), ...(process.env.PW_QA_SKIP_PWA ? ["qa/pwa/**"] : [])],
   timeout: 60_000,
   expect: { timeout: 10_000 },
   fullyParallel: false,

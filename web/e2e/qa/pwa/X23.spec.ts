@@ -3,7 +3,9 @@ import { freshOwner, shot } from "../../helpers";
 
 /* X23 (i18n-a11y-qa, bølge 2 / M2): PWA – manifest pr. målgruppe (blå/orange ikoner, start_url, scope),
  * install-prompt aldrig ved første visning, offlineside, versionerede SW-caches, opdaterings-toast,
- * ingen cachede logged-in sider. Kører mod den fulde stak (localhost = secure context, så SW registreres). */
+ * ingen cachede logged-in sider. Kører mod den fulde stak (localhost = secure context, så SW registreres).
+ * Offlinetesten kræver PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1. På CI køres filen i sit eget trin med flaget
+ * (e2e.yml qa-catalog), fordi flaget får Chromium til at gå ned i resten af kataloget. */
 
 const CSRF = { "x-requested-with": "dialogbot" };
 

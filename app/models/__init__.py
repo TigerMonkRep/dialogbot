@@ -89,6 +89,13 @@ from app.models.identity import (  # noqa: F401
     User,
     Workspace,
 )
+from app.models.outreach import (  # noqa: F401, E402
+    OutreachCallQueue,
+    OutreachLead,
+    OutreachLog,
+    OutreachMessage,
+    OutreachSuppression,
+)
 from app.models.privat import (  # noqa: F401, E402
     CreditLedger,
     PrivateAddonEnabled,

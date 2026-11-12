@@ -86,6 +86,17 @@ Fuld kontrakt: [`docs/api-contract.md`](docs/api-contract.md) og [`docs/openapi.
 - `docs/final-report.md` — slutrapport for etapen
 - `docs/social-media.md` — automatiske opslag på Dialogbots Facebook, Instagram og TikTok (indhold, opsætning, styring)
 
+## Cold outreach (Dialogbots eget salg)
+
+Kold B2B-e-mail til godkendte markeder med en deterministisk `ComplianceEngine` foran fem agenter (Anthropic SDK).
+Slået fra som standard (`OUTREACH_MODE=off`). Tørkørsel for US- og UK-leads uden at sende noget:
+
+```bash
+OUTREACH_MODE=dry_run python -m scripts.outreach_dry_run app/modules/outreach/data/sample_leads.csv --countries US,UK
+```
+
+Alt om markeder, opsætning, tørkørsel og hvad der skal på plads før `live`: [`docs/sales/cold-outreach.md`](docs/sales/cold-outreach.md).
+
 ## Frontend (`web/`)
 
 Next.js 16 + TypeScript + Tailwind 4. Kører mod API'et via same-origin BFF (`/api/backend/*`) med session i httpOnly-cookie.

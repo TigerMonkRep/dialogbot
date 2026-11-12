@@ -235,5 +235,6 @@ def two_workspaces(api):
     return {"tok_a": tok_a, "ws_a": ws_a, "tok_b": tok_b, "ws_b": ws_b}
 
 
+from tests.outreach_fixtures import outreach  # noqa: E402, F401  (cold outreach fixtures, tests/test_outreach_*.py)
 from tests.privat_fixtures import pv  # noqa: E402, F401  (Dialogbot Privat fixtures, tests/test_privat*.py)
 from tests.sales_fixtures import ring, salg  # noqa: E402, F401  (sales channel fixtures, tests/test_sales_channel_*.py)

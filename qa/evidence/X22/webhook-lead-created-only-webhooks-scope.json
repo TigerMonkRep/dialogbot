@@ -1,11 +1,11 @@
 {
- "id": "evt_cc4efaf700d75047b5cccf7cbfc92c2c",
+ "id": "evt_d9200c51776c5374b832d91be5b86d1f",
  "type": "lead.created",
- "created_at": "2026-11-12T09:00:56.299929+00:00",
- "workspace_id": "0b86193c-7987-4114-b4c1-0777b7be075c",
+ "created_at": "2026-11-12T13:13:54.451644+00:00",
+ "workspace_id": "79e8140d-3d3d-4c07-92cc-f6776e1e99d9",
  "data": {
   "source": "manual",
-  "lead_id": "05812523-3026-455d-b0df-f1c9ba14f6c1",
+  "lead_id": "9e3aef69-d64b-423e-aea3-5c2a9c765a02",
   "contact_name": "Mette Hansen",
   "need_summary": "Tilbud",
   "contact_email": "mette@example.dk",

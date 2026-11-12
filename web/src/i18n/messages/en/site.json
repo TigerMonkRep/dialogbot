@@ -435,7 +435,6 @@
         "unavailable": "Not right now"
       },
       "blockerInactive": "The test call will be switched on soon – until then we'll call you ourselves within opening hours. Call us on {phone} ({hours}), or email your number to {email} and we'll call you.",
-      "blockerOwnNumber": " You can also call my demo number yourself: {number}.",
       "chipCall": "Yes, call me",
       "chipWhat": "What can you do?",
       "chipPrice": "What does it cost?",
@@ -489,13 +488,7 @@
       ],
       "sideNote": "The same chat stays with you: once you say yes, it guides you through the setup, connects your calendar and tests everything together with you.",
       "signupCta": "Sign up",
-      "signupLine": "Ready to start? Sign up yourself – it's open around the clock.",
-      "closedAskCompany": "I'm not calling out right now – I'll call {when} from {time}. You don't have to wait: you can sign up straight away. If you'd still like the call, tell me your company's name.",
-      "scheduled": "Thanks. I'll call {number} {when} from {time} and introduce myself as {company}'s receptionist. You don't have to wait for me – you can sign up straight away here.",
-      "phoneScheduledTitle": "Peter calls {when} from {time}",
-      "phoneScheduledText": "You can sign up and get started right now – the call still comes.",
-      "whenToday": "today",
-      "whenTomorrow": "tomorrow"
+      "signupLine": "Ready to start? Sign up yourself – it's open around the clock."
     }
   },
   "preview": {
@@ -796,9 +789,6 @@
         "title": "She is calling {phone} now",
         "titleNoPhone": "She is calling now",
         "lead": "Pick up and ask what a customer would ask {company}.",
-        "hours": "She only calls on weekdays between {from} and {to}.",
-        "closed": "This is outside calling hours (weekdays {from}–{to}). She calls as soon as they open.",
-        "hoursFallback": "She only calls on weekdays during opening hours.",
         "waiting": "The call is on its way",
         "inProgress": "The conversation is in progress …",
         "waitedOut": "We got no answer on the call",
@@ -815,9 +805,7 @@
         "notLoggedIn": "Log in to see how the call went.",
         "login": "Log in",
         "statusAria": "Call status",
-        "noCallTitle": "She isn't calling right now",
-        "scheduledTitle": "She calls {when} from {time}",
-        "scheduledText": "Outside calling hours we queue the call. You don't have to wait – make her yours right away."
+        "noCallTitle": "She won't call this time"
       },
       "signupDirect": "Skip the quiz – sign up directly"
     }

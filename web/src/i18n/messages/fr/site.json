@@ -435,7 +435,6 @@
         "unavailable": "Pas pour le moment"
       },
       "blockerInactive": "L’appel test sera bientôt activé – d’ici là, nous vous appelons manuellement pendant les heures d’ouverture. Appelez-nous au {phone} ({hours}) ou envoyez votre numéro à {email}, et nous vous rappellerons.",
-      "blockerOwnNumber": " Vous pouvez aussi appeler vous-même mon numéro de démonstration {number}.",
       "chipCall": "Oui, appelez-moi",
       "chipWhat": "Que savez-vous faire ?",
       "chipPrice": "Combien ça coûte ?",
@@ -489,13 +488,7 @@
       ],
       "sideNote": "Le même chat vous accompagne ensuite : quand vous dites oui, il vous guide dans la configuration, connecte votre agenda et teste tout avec vous.",
       "signupCta": "Inscrivez-vous",
-      "signupLine": "Prêt à commencer ? Inscrivez-vous vous-même : c'est ouvert 24 h/24.",
-      "closedAskCompany": "Je n'appelle pas pour le moment : j'appellerai {when} à partir de {time}. Inutile d'attendre : vous pouvez vous inscrire tout de suite. Si vous voulez quand même l'appel, indiquez le nom de votre entreprise.",
-      "scheduled": "Merci. J'appellerai le {number} {when} à partir de {time} et je me présenterai comme réceptionniste de {company}. Inutile de m'attendre : vous pouvez vous inscrire tout de suite ici.",
-      "phoneScheduledTitle": "Peter appelle {when} à partir de {time}",
-      "phoneScheduledText": "Vous pouvez vous inscrire et commencer dès maintenant : l'appel aura lieu quand même.",
-      "whenToday": "aujourd'hui",
-      "whenTomorrow": "demain"
+      "signupLine": "Prêt à commencer ? Inscrivez-vous vous-même : c'est ouvert 24 h/24."
     }
   },
   "preview": {
@@ -796,9 +789,6 @@
         "title": "Elle appelle maintenant le {phone}",
         "titleNoPhone": "Elle appelle maintenant",
         "lead": "Décrochez et posez les questions qu'un client poserait à {company}.",
-        "hours": "Elle n'appelle qu'en semaine entre {from} et {to}.",
-        "closed": "C'est en dehors des heures d'appel (en semaine {from}–{to}). Elle appellera dès l'ouverture.",
-        "hoursFallback": "Elle n'appelle qu'en semaine, pendant les heures d'ouverture.",
         "waiting": "L'appel arrive",
         "inProgress": "La conversation est en cours …",
         "waitedOut": "Nous n'avons pas eu de réponse à l'appel",
@@ -815,9 +805,7 @@
         "notLoggedIn": "Connectez-vous pour voir comment s'est passé l'appel.",
         "login": "Se connecter",
         "statusAria": "État de l'appel",
-        "noCallTitle": "Elle n'appelle pas pour le moment",
-        "scheduledTitle": "Elle appelle {when} à partir de {time}",
-        "scheduledText": "En dehors des heures d'appel, nous mettons l'appel en file d'attente. Inutile d'attendre : adoptez-la dès maintenant."
+        "noCallTitle": "Elle n'appellera pas cette fois"
       },
       "signupDirect": "Passez le quiz : inscrivez-vous directement"
     }

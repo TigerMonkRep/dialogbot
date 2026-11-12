@@ -4,7 +4,7 @@ import { useState } from "react";
 import { api, fieldError, type ApiError } from "@/lib/client";
 import { Alert, Button, ErrorBox, Field, Input, useSubmit } from "@/components/ui";
 
-export type SalesInfo = { available: boolean; problem: string | null; demo_number: string | null; hours: { from: string; to: string } };
+export type SalesInfo = { available: boolean; problem: string | null; demo_number: string | null };
 export type DemoRow = {
   id: string; source: "web" | "seller"; phone: string; name: string; company: string; cvr: string | null; status: string;
   outcome: string | null; summary: string; error: string | null; note: string; lead_id: string | null; created_at: string | null;

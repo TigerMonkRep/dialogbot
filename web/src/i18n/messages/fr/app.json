@@ -383,6 +383,48 @@
       "noTypes": "Aucun",
       "ask": "Dites-le à l’assistant – il vous montre la règle avant qu’elle ne s’applique. Toutes les règles :",
       "allSettings": "Tous les paramètres → Rendez-vous"
+    },
+    "messages": {
+      "link": "Messages au client",
+      "eyebrow": "Rendez-vous · messages",
+      "title": "Messages sur les rendez-vous",
+      "intro": "Voici les messages sur un rendez-vous : au client par SMS et e-mail en votre nom, et à vous quand un rendez-vous demande une personne. Choisissez le message et la langue.",
+      "noSend": "Aperçu uniquement : rien n'est envoyé d'ici.",
+      "status": "Aujourd'hui, Dialogbot n'envoie que le SMS de confirmation, quand l'assistant ou vous le demandez. Les autres messages sont prêts comme modèles.",
+      "language": "Langue",
+      "variantsAria": "Choisir un message",
+      "toCustomer": "Au client",
+      "toYou": "À vous",
+      "sms": "SMS",
+      "email": "E-mail",
+      "smsMeta": "{chars} caractères · {segments|1 SMS|# SMS} · {encoding}",
+      "fromLabel": "De",
+      "subject": "Objet",
+      "sample": "Rempli avec des données d'exemple.",
+      "booking": "Rempli avec l'un de vos rendez-vous.",
+      "frame": "Aperçu de l'e-mail",
+      "noSms": "Envoyé uniquement par e-mail à vous.",
+      "back": "Retour aux rendez-vous",
+      "desc": {
+        "request_receipt": "Quand un client demande un horaire à confirmer.",
+        "confirmed": "Quand l'horaire est confirmé.",
+        "reminder": "Avant le rendez-vous.",
+        "proposed_change": "Quand vous proposez un autre horaire.",
+        "rescheduled": "Quand le rendez-vous a été déplacé.",
+        "cancelled": "Quand le rendez-vous a été annulé.",
+        "owner_attention": "Quand l'agenda n'a pas pu être mis à jour ou qu'un rendez-vous doit être confirmé.",
+        "delivery_failure": "Quand un message au client n'a pas pu être remis."
+      },
+      "label": {
+        "request_receipt": "Demande reçue",
+        "confirmed": "Rendez-vous confirmé",
+        "reminder": "Rappel",
+        "proposed_change": "Nouvel horaire proposé",
+        "rescheduled": "Rendez-vous déplacé",
+        "cancelled": "Rendez-vous annulé",
+        "owner_attention": "Votre attention est requise",
+        "delivery_failure": "Échec de l'envoi"
+      }
     }
   },
   "leads": {
@@ -451,7 +493,9 @@
     "noName": "(sans nom)",
     "created": "créée {at}",
     "wantsCall": "Souhaite être rappelé {window}",
-    "seeConversation": "Voir la conversation"
+    "seeConversation": "Voir la conversation",
+    "phoneVerified": "Numéro confirmé par code SMS",
+    "callbackCancelled": "Le client a annulé le rappel"
   },
   "campaigns": {
     "status": {

@@ -1,1 +1,6 @@
 not-implemented: ingen kundevendt side til at aflyse tilbagekald eller styre kommunikationspræferencer/opt-out; ingen tokens. tests/qa/test_qa_w12_bk15.py::test_w13_manage_link_not_built (pass, dokumenterer 404).
+
+2026-11-13 bygget (feat/webchat-w04-w09-w13): sikkert kundelink /kunde/<token> efter «Bliv kontaktet» (vises i widgetten):
+se opringningen, «Aflys opringningen» (lead.callback_cancelled_at, åbne opgaver lukkes) og «Ring ikke til mig i
+kampagner» (spærrelisten, source=customer). Ugyldigt/erstattet/andet formåls link → «Linket virker ikke», udløbet → 410.
+Kun HMAC af token gemmes. 8 sprog. Evidens: web/e2e/qa/erhverv-d/W09.spec.ts, tests/qa/test_qa_w04_w09_w13.py.

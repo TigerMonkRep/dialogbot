@@ -98,6 +98,10 @@ class Email:
     rows: list[tuple[str, str]] = field(default_factory=list)  # label/value facts shown in a panel (the day's numbers)
     lang: str = "da"  # the language of the layout's own words (greeting, button fallback, footer company line)
     audience: str = "erhverv"  # "privat": the Privat orange (#C4461A), the Privat icon and «Dialogbot Privat» in the header
+    # A mail sent on behalf of a customer's business to ITS customer (booking messages, E07): the business's name
+    # replaces Dialogbot in the header and the signature, and `footer_line` replaces Dialogbot's company line.
+    sender: str | None = None
+    footer_line: str | None = None
 
     def text(self) -> str:
         lang = self.lang
@@ -109,7 +113,8 @@ class Email:
             parts += [f"{self.button_label or t(lang, 'open')}: {self.button_url}", ""]
         if self.note:
             parts += [self.note, ""]
-        parts += [t(lang, "regards"), "Dialogbot", "", "—", self.footer_reason, f"{t(lang, 'company_line')} · dialogbot.dk"]
+        parts += [t(lang, "regards"), self.sender or "Dialogbot", "", "—", self.footer_reason,
+                  self.footer_line or f"{t(lang, 'company_line')} · dialogbot.dk"]
         return "\n".join(parts).strip() + "\n"
 
     def html(self) -> str:
@@ -118,7 +123,12 @@ class Email:
         logo = f"{base}{PRIVAT_LOGO_PATH if self.audience == 'privat' else LOGO_PATH}"
         e = html.escape
         accent = PRIVAT_ACCENT if self.audience == "privat" else ACCENT
-        brand = "Dialogbot Privat" if self.audience == "privat" else "Dialogbot"
+        brand = self.sender or ("Dialogbot Privat" if self.audience == "privat" else "Dialogbot")
+        logo_td = "" if self.sender else (
+            f'<td style="vertical-align:middle;"><img src="{e(logo, quote=True)}" width="36" height="36" alt="" '
+            f'style="display:block;border:0;border-radius:10px;"></td>')
+        company = e(self.footer_line) if self.footer_line else (
+            f'{e(t(lang, "company_line"))} · <a href="{e(base, quote=True)}" style="color:{MUTED};">dialogbot.dk</a>')
         paras = "".join(
             f'<p class="tx" style="margin:0 0 16px;font:16px/1.6 {FONT};color:{INK_SOFT};">'
             f'{e(p).replace(chr(10), "<br>")}</p>' for p in self.paragraphs)
@@ -164,17 +174,17 @@ class Email:
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
 <tr><td style="padding:0 4px 20px;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
-<td style="vertical-align:middle;"><img src="{e(logo, quote=True)}" width="36" height="36" alt="" style="display:block;border:0;border-radius:10px;"></td>
-<td class="wm" style="vertical-align:middle;padding-left:10px;font:800 22px/1 {HEAD_FONT};color:{INK};letter-spacing:-0.3px;">{brand}</td>
+{logo_td}
+<td class="wm" style="vertical-align:middle;padding-left:{0 if self.sender else 10}px;font:800 22px/1 {HEAD_FONT};color:{INK};letter-spacing:-0.3px;">{brand}</td>
 </tr></table></td></tr>
 <tr><td class="card" style="background:{PAPER};border:2px solid {INK};border-radius:20px;">
 <div class="pad" style="padding:32px 32px 16px;">
 {step}<h1 class="hd h1" style="margin:0 0 20px;font:800 26px/1.25 {HEAD_FONT};color:{INK};letter-spacing:-0.3px;">{e(self.heading)}</h1>
 {panel}{paras}{button}{note}
-<p class="tx" style="margin:8px 0 16px;font:16px/1.6 {FONT};color:{INK_SOFT};">{e(t(lang, "regards"))}<br><strong class="hd" style="color:{INK};">Dialogbot</strong></p>
+<p class="tx" style="margin:8px 0 16px;font:16px/1.6 {FONT};color:{INK_SOFT};">{e(t(lang, "regards"))}<br><strong class="hd" style="color:{INK};">{e(self.sender or "Dialogbot")}</strong></p>
 </div></td></tr>
 <tr><td class="mt" style="padding:20px 8px 0;font:12px/1.6 {FONT};color:{MUTED};text-align:center;">
-{e(self.footer_reason)}<br>{e(t(lang, "company_line"))} · <a href="{e(base, quote=True)}" style="color:{MUTED};">dialogbot.dk</a>
+{e(self.footer_reason)}<br>{company}
 </td></tr>
 </table></td></tr></table></body></html>"""
 
@@ -419,7 +429,8 @@ def to_payload(mail: Email) -> dict:
     return {"subject": mail.subject, "heading": mail.heading, "paragraphs": mail.paragraphs,
             "button_label": mail.button_label, "button_url": mail.button_url, "note": mail.note,
             "footer_reason": mail.footer_reason, "preheader": mail.preheader, "step": mail.step,
-            "rows": [list(r) for r in mail.rows], "lang": mail.lang, "audience": mail.audience}
+            "rows": [list(r) for r in mail.rows], "lang": mail.lang, "audience": mail.audience,
+            "sender": mail.sender, "footer_line": mail.footer_line}
 
 
 def from_payload(p: dict) -> Email:
@@ -470,4 +481,13 @@ def samples() -> dict[str, Email]:
                                          48),
         "from_plain": from_plain("Gammel besked", "Hej Mads\n\nTekst her.\n\nSe det her: https://www.dialogbot.dk/x\n\n"
                                                   "Venlig hilsen\nDialogbot"),
+        **_booking_samples(),
     }
+
+
+def _booking_samples() -> dict[str, Email]:
+    """The booking messages (E07, app/modules/bookings/messages.py): the six to the business's customer, sent in the
+    business's name, and the two to the business."""
+    from app.modules.bookings import messages
+
+    return {f"booking_{k}": r["email"] for k, r in messages.samples("da").items()}

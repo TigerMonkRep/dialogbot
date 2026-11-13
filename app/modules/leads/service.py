@@ -34,6 +34,8 @@ def lead_out(lead: Lead, tasks: list[Task] | None = None) -> dict:
     d |= {"id": str(lead.id), "conversation_id": str(lead.conversation_id) if lead.conversation_id else None,
           "callback_from": lead.callback_from.isoformat() if lead.callback_from else None,
           "callback_to": lead.callback_to.isoformat() if lead.callback_to else None,
+          "phone_verified_at": lead.phone_verified_at.isoformat() if lead.phone_verified_at else None,
+          "callback_cancelled_at": lead.callback_cancelled_at.isoformat() if lead.callback_cancelled_at else None,
           "agreement_id": str(lead.agreement_id) if lead.agreement_id else None,
           "billing_decided_at": lead.billing_decided_at.isoformat() if lead.billing_decided_at else None,
           "billing_decided_by": str(lead.billing_decided_by) if lead.billing_decided_by else None,

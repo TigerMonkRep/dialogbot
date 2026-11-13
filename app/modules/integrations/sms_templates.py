@@ -31,6 +31,7 @@ TEXTS: dict[str, dict[str, str]] = {
         "contact": "Kontakt {business}: {details}.",
         "phone": "tlf. {phone}",
         "when": "{weekday} {day}. {month} kl. {hh}.{mm}",
+        "code": "Din kode er {code}. Den gælder i 10 minutter. Har du ikke bedt {business} om at kontakte dig, kan du se bort fra beskeden.",
     },
     "en": {
         "sign": "{text} Kind regards, {business}",
@@ -42,6 +43,7 @@ TEXTS: dict[str, dict[str, str]] = {
         "contact": "Contact {business}: {details}.",
         "phone": "tel. {phone}",
         "when": "{weekday} {day} {month} at {hh}:{mm}",
+        "code": "Your code is {code}. It is valid for 10 minutes. If you did not ask {business} to contact you, please ignore this message.",
     },
     "de": {
         "sign": "{text} Freundliche Grüße, {business}",
@@ -53,6 +55,7 @@ TEXTS: dict[str, dict[str, str]] = {
         "contact": "So erreichen Sie {business}: {details}.",
         "phone": "Tel. {phone}",
         "when": "{weekday}, {day}. {month} um {hh}:{mm} Uhr",
+        "code": "Ihr Code lautet {code}. Er gilt 10 Minuten. Wenn Sie {business} nicht um Kontakt gebeten haben, ignorieren Sie diese Nachricht.",
     },
     "es": {
         "sign": "{text} Saludos, {business}",
@@ -64,6 +67,7 @@ TEXTS: dict[str, dict[str, str]] = {
         "contact": "Contacto de {business}: {details}.",
         "phone": "tel. {phone}",
         "when": "{weekday} {day} de {month} a las {hh}:{mm}",
+        "code": "Su código es {code}. Vale durante 10 minutos. Si no ha pedido a {business} que le contacte, ignore este mensaje.",
     },
     "fr": {
         "sign": "{text} Cordialement, {business}",
@@ -75,6 +79,7 @@ TEXTS: dict[str, dict[str, str]] = {
         "contact": "Pour contacter {business} : {details}.",
         "phone": "tél. {phone}",
         "when": "{weekday} {day} {month} à {hh}h{mm}",
+        "code": "Votre code est {code}. Il est valable 10 minutes. Si vous n'avez pas demandé à {business} de vous contacter, ignorez ce message.",
     },
     "it": {
         "sign": "{text} Cordiali saluti, {business}",
@@ -86,6 +91,7 @@ TEXTS: dict[str, dict[str, str]] = {
         "contact": "Contatti di {business}: {details}.",
         "phone": "tel. {phone}",
         "when": "{weekday} {day} {month} alle {hh}:{mm}",
+        "code": "Il Suo codice è {code}. Vale per 10 minuti. Se non ha chiesto a {business} di contattarLa, ignori questo messaggio.",
     },
     "no": {
         "sign": "{text} Mvh {business}",
@@ -97,6 +103,7 @@ TEXTS: dict[str, dict[str, str]] = {
         "contact": "Kontakt {business}: {details}.",
         "phone": "tlf. {phone}",
         "when": "{weekday} {day}. {month} kl. {hh}.{mm}",
+        "code": "Koden din er {code}. Den gjelder i 10 minutter. Har du ikke bedt {business} om å kontakte deg, kan du se bort fra meldingen.",
     },
     "sv": {
         "sign": "{text} Mvh {business}",
@@ -108,6 +115,7 @@ TEXTS: dict[str, dict[str, str]] = {
         "contact": "Kontakta {business}: {details}.",
         "phone": "tel. {phone}",
         "when": "{weekday} {day} {month} kl. {hh}.{mm}",
+        "code": "Din kod är {code}. Den gäller i 10 minuter. Har du inte bett {business} att kontakta dig kan du bortse från meddelandet.",
     },
 }
 
@@ -189,6 +197,12 @@ def call_back(business: str, lang: str = "da") -> str:
     return sign(_t(lang, "call_back", business=business), business, lang)
 
 
+def code(business: str, code_value: str, lang: str = "da") -> str:
+    """The SMS code a customer types in the chat («Bliv kontaktet», W04) or on their booking link (W13). Signed by the
+    business like every other text; tells a person who did not ask to ignore it."""
+    return sign(_t(lang, "code", business=business, code=code_value), business, lang)
+
+
 def opening_hours(business: str, hours: str, lang: str = "da") -> str:
     return sign(_t(lang, "opening_hours", business=business, hours=hours), business, lang)
 
@@ -210,6 +224,7 @@ def samples(lang: str = "da") -> dict[str, str]:
         "booking": booking(b, "Mette Nielsen", "Besigtigelse",
                            "tirsdag 3. nov. kl. 10.00" if lang == "da" else when(start, "Europe/Copenhagen", lang), lang),
         "ring_tilbage": call_back(b, lang),
+        "kode": code(b, "123456", lang),
         "aabningstider": opening_hours(b, f"{d[0]}–{d[4]} 07:00–16:00, {d[5]} 09:00–12:00", lang),
         "adresse": address(b, "Vesterbrogade 12 8000 Aarhus C", lang),
         "kontakt": contact(b, f"{phone('93 70 34 33', lang)}, hansenvvs.dk", lang),

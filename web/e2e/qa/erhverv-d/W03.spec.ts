@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
-import { closeAll, EVID, visitor, widgetWorkspace, type Widget } from "./d-helpers";
+import { smsCodeFor } from "../erhverv-p1a/p1a-helpers";
+import { closeAll, confirmCode, EVID, uniquePhone, visitor, widgetWorkspace, type Widget } from "./d-helpers";
 
 /* W03 – callback request: «Name, phone/country, reason and language; explicit callback request and validation.» */
 let w: Widget | null = null;
@@ -30,14 +31,16 @@ test("W03 · validering (navn, kontakt, telefon ved tidsrum, samtykke, ugyldigt 
   await expect(err).toHaveText("Tjek e-mail og telefonnummer."); // server 422 on the phone pattern
   // nothing was created by the rejected attempts
   expect((await (await page.request.get(`/api/backend/workspaces/${w.wsId}/leads`)).json()).total).toBe(0);
-  await form.getByLabel("Telefon").fill("+45 20 30 40 50");
+  const phone = uniquePhone();
+  await form.getByLabel("Telefon").fill(phone.display);
   const label = await form.getByLabel("Hvornår må vi ringe?").locator("option:checked").textContent();
   await send.click();
+  await confirmCode(chat, phone.e164); // W04: the number is proven with the SMS code first
   await expect(chat.getByText("Tak, Henrik Villumsen! Virksomheden kontakter dig hurtigst muligt.")).toBeVisible();
   await v.screenshot({ path: `${EVID("W03")}/${info.project.name}-sendt.png` });
   const leads = (await (await page.request.get(`/api/backend/workspaces/${w.wsId}/leads`)).json()).items;
   expect(leads.length).toBe(1);
-  expect([leads[0].contact_name, leads[0].contact_phone, leads[0].contact_email]).toEqual(["Henrik Villumsen", "+45 20 30 40 50", "henrik@example.com"]);
+  expect([leads[0].contact_name, leads[0].contact_phone, leads[0].contact_email]).toEqual(["Henrik Villumsen", phone.display, "henrik@example.com"]);
   expect(leads[0].callback_from).toBeTruthy();
   const tasks = (await (await page.request.get(`/api/backend/workspaces/${w.wsId}/tasks`)).json()).items;
   expect(tasks.map((t: { title: string }) => t.title)).toContain(`Ring Henrik Villumsen op – ${label}`);
@@ -54,9 +57,15 @@ test("W03 · dobbeltklik på Send giver ét lead og én opgave", async ({ page, 
   await chat.getByRole("button", { name: "Bliv kontaktet af en medarbejder" }).click();
   const form = chat.locator("form.contact");
   await form.getByLabel("Navn").fill("Peter Holm");
-  await form.getByLabel("Telefon").fill("+45 31 32 33 34");
+  const phone = uniquePhone();
+  await form.getByLabel("Telefon").fill(phone.display);
   await form.getByLabel("Virksomheden må kontakte mig om min henvendelse.").check();
-  await form.getByRole("button", { name: "Send" }).dblclick();
+  await form.getByRole("button", { name: "Send" }).click();
+  // W04: the code step; the double click lands on «Bekræft», which sends the form once
+  const code = chat.locator(".code-step");
+  await expect(code).toBeVisible();
+  await code.getByLabel("Kode fra SMS").fill(await smsCodeFor(phone.e164));
+  await code.getByRole("button", { name: "Bekræft" }).dblclick();
   await expect(chat.getByText("Tak, Peter Holm!").first()).toBeVisible();
   await page.waitForTimeout(1000);
   const leads = (await (await page.request.get(`/api/backend/workspaces/${w.wsId}/leads`)).json()).items;

@@ -1035,6 +1035,23 @@
         "title": "BusinessNumberIn",
         "type": "object"
       },
+      "CalendarRetryIn": {
+        "properties": {
+          "confirm_not_created": {
+            "default": false,
+            "title": "Confirm Not Created",
+            "type": "boolean"
+          },
+          "note": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Note",
+            "type": "string"
+          }
+        },
+        "title": "CalendarRetryIn",
+        "type": "object"
+      },
       "CampaignIn": {
         "properties": {
           "call_days": {
@@ -1590,6 +1607,87 @@
           "kind"
         ],
         "title": "CreateIn",
+        "type": "object"
+      },
+      "CustomerCancelIn": {
+        "properties": {
+          "session": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Session"
+          }
+        },
+        "title": "CustomerCancelIn",
+        "type": "object"
+      },
+      "CustomerMoveIn": {
+        "properties": {
+          "session": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Session"
+          },
+          "start": {
+            "maxLength": 40,
+            "minLength": 10,
+            "title": "Start",
+            "type": "string"
+          }
+        },
+        "required": [
+          "start"
+        ],
+        "title": "CustomerMoveIn",
+        "type": "object"
+      },
+      "CustomerPreferencesIn": {
+        "properties": {
+          "calls_opt_out": {
+            "description": "True = the number goes on the business's do-not-call list (campaigns)",
+            "title": "Calls Opt Out",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "calls_opt_out"
+        ],
+        "title": "CustomerPreferencesIn",
+        "type": "object"
+      },
+      "CustomerVerifyIn": {
+        "properties": {
+          "code": {
+            "maxLength": 12,
+            "minLength": 1,
+            "title": "Code",
+            "type": "string"
+          },
+          "verification_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Verification Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "verification_id",
+          "code"
+        ],
+        "title": "CustomerVerifyIn",
         "type": "object"
       },
       "DataRequestIn": {
@@ -4562,6 +4660,30 @@
         "title": "ResetRequestIn",
         "type": "object"
       },
+      "ResumeIn": {
+        "properties": {
+          "note": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Note",
+            "type": "string"
+          }
+        },
+        "title": "ResumeIn",
+        "type": "object"
+      },
+      "RetryIn": {
+        "properties": {
+          "note": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Note",
+            "type": "string"
+          }
+        },
+        "title": "RetryIn",
+        "type": "object"
+      },
       "RightsIn": {
         "properties": {
           "allowed_uses": {
@@ -5118,6 +5240,21 @@
           "value"
         ],
         "title": "SuppressIn",
+        "type": "object"
+      },
+      "SuspendIn": {
+        "properties": {
+          "reason": {
+            "maxLength": 300,
+            "minLength": 3,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "SuspendIn",
         "type": "object"
       },
       "SynthIn": {
@@ -6265,6 +6402,44 @@
           "consent"
         ],
         "title": "WebIn",
+        "type": "object"
+      },
+      "WebchatPhoneCodeIn": {
+        "properties": {
+          "phone": {
+            "maxLength": 40,
+            "minLength": 6,
+            "pattern": "^[0-9+ ()-]{6,40}$",
+            "title": "Phone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "phone"
+        ],
+        "title": "WebchatPhoneCodeIn",
+        "type": "object"
+      },
+      "WebchatPhoneVerifyIn": {
+        "properties": {
+          "code": {
+            "maxLength": 12,
+            "minLength": 1,
+            "title": "Code",
+            "type": "string"
+          },
+          "verification_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Verification Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "verification_id",
+          "code"
+        ],
+        "title": "WebchatPhoneVerifyIn",
         "type": "object"
       },
       "WishIn": {
@@ -10491,6 +10666,331 @@
           }
         },
         "summary": "Operations",
+        "tags": [
+          "admin-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/admin/operations/bookings/{booking_id}/calendar-retry": {
+      "post": {
+        "description": "Write a booking to its calendar once more: update when the event exists, create when it was not created,\nrefuse (409 calendar_outcome_unknown) when the last attempt timed out and the operator has not confirmed.",
+        "operationId": "retry_calendar_api_v1_operator_admin_operations_bookings__booking_id__calendar_retry_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "booking_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Booking Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/CalendarRetryIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Retry Calendar",
+        "tags": [
+          "admin-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/admin/operations/jobs/{job_id}/retry": {
+      "post": {
+        "description": "Give one failed job exactly one more attempt. Idempotent: an already queued job is left alone.",
+        "operationId": "retry_job_api_v1_operator_admin_operations_jobs__job_id__retry_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/RetryIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Retry Job",
+        "tags": [
+          "admin-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/admin/operations/workspaces/{workspace_id}/resume": {
+      "post": {
+        "description": "Lift the pause: the waiting jobs and campaigns continue where they stopped.",
+        "operationId": "resume_api_v1_operator_admin_operations_workspaces__workspace_id__resume_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ResumeIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Resume",
+        "tags": [
+          "admin-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/admin/operations/workspaces/{workspace_id}/suspend": {
+      "post": {
+        "description": "Pause one tenant's outbound work. Suspending a suspended tenant changes nothing (and writes no audit row).",
+        "operationId": "suspend_api_v1_operator_admin_operations_workspaces__workspace_id__suspend_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuspendIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Suspend",
         "tags": [
           "admin-operator"
         ]
@@ -26887,6 +27387,280 @@
         ]
       }
     },
+    "/api/v1/public/booking/manage/{token}": {
+      "get": {
+        "description": "The appointment, whether it can still be changed (`policy`) and whether a code is needed first.",
+        "operationId": "booking_api_v1_public_booking_manage__token__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Booking",
+        "tags": [
+          "customer-public"
+        ]
+      }
+    },
+    "/api/v1/public/booking/manage/{token}/cancel": {
+      "post": {
+        "operationId": "cancel_api_v1_public_booking_manage__token__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerCancelIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cancel",
+        "tags": [
+          "customer-public"
+        ]
+      }
+    },
+    "/api/v1/public/booking/manage/{token}/code": {
+      "post": {
+        "description": "A code by SMS to the number the booking was made with (shown masked). Same limits as the chat's code.",
+        "operationId": "booking_code_api_v1_public_booking_manage__token__code_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Booking Code",
+        "tags": [
+          "customer-public"
+        ]
+      }
+    },
+    "/api/v1/public/booking/manage/{token}/move": {
+      "post": {
+        "description": "Move to a free time of the same type. When the business's calendar cannot be written, the new time is noted and\na staff member confirms it (`confirmation: pending`) – the customer is not told the calendar has it (DB-007).",
+        "operationId": "move_api_v1_public_booking_manage__token__move_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerMoveIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Move",
+        "tags": [
+          "customer-public"
+        ]
+      }
+    },
+    "/api/v1/public/booking/manage/{token}/slots": {
+      "get": {
+        "operationId": "booking_slots_api_v1_public_booking_manage__token__slots_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Booking Slots",
+        "tags": [
+          "customer-public"
+        ]
+      }
+    },
+    "/api/v1/public/booking/manage/{token}/verify": {
+      "post": {
+        "description": "The code → a session for this link (30 minutes) that `move` and `cancel` need.",
+        "operationId": "booking_verify_api_v1_public_booking_manage__token__verify_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerVerifyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Booking Verify",
+        "tags": [
+          "customer-public"
+        ]
+      }
+    },
     "/api/v1/public/calendar/{token}.ics": {
       "get": {
         "description": "Secret, read-only iCal feed of the workspace's bookings for the owner's own calendar app.",
@@ -26925,6 +27699,138 @@
         "summary": "Calendar Feed",
         "tags": [
           "public"
+        ]
+      }
+    },
+    "/api/v1/public/customer/callback/{token}": {
+      "get": {
+        "description": "The customer's call back and communication preference. No internal notes, tasks or staff.",
+        "operationId": "callback_api_v1_public_customer_callback__token__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Callback",
+        "tags": [
+          "customer-public"
+        ]
+      }
+    },
+    "/api/v1/public/customer/callback/{token}/cancel": {
+      "post": {
+        "description": "The customer cancels the call back: the lead is marked, its open tasks are closed. Idempotent.",
+        "operationId": "cancel_callback_api_v1_public_customer_callback__token__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cancel Callback",
+        "tags": [
+          "customer-public"
+        ]
+      }
+    },
+    "/api/v1/public/customer/callback/{token}/preferences": {
+      "put": {
+        "operationId": "preferences_api_v1_public_customer_callback__token__preferences_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerPreferencesIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Preferences",
+        "tags": [
+          "customer-public"
         ]
       }
     },
@@ -27394,7 +28300,7 @@
     },
     "/api/v1/public/webchat/{key}/conversations/{conversation_id}/contact": {
       "post": {
-        "description": "\"Bliv kontaktet\": the visitor leaves contact details; creates the conversation's lead and a follow-up task.",
+        "description": "\"Bliv kontaktet\": the visitor leaves contact details; creates the conversation's lead and a follow-up task.\nA phone number is only accepted after the visitor proved it with the SMS code in this conversation (W04; 422\n`verification_required`). Returns `manage_url`: the customer's secure link to cancel the call back and set their\npreferences (W09).",
         "operationId": "contact_api_v1_public_webchat__key__conversations__conversation_id__contact_post",
         "parameters": [
           {
@@ -27480,6 +28386,192 @@
           }
         },
         "summary": "Contact",
+        "tags": [
+          "webchat-public"
+        ]
+      }
+    },
+    "/api/v1/public/webchat/{key}/conversations/{conversation_id}/contact/code": {
+      "post": {
+        "description": "W04 step 1: a 6-digit code by SMS (the business's own text and sender) to the number the visitor typed in «Bliv\nkontaktet». 10 minutes, 5 attempts, resend after 30 s (409 `too_soon` + `retry_after`); 429 `sms_rate_limited`\nper number (all public doors), per client IP and per business.",
+        "operationId": "phone_code_api_v1_public_webchat__key__conversations__conversation_id__contact_code_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "conversation_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Conversation Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "origin",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Origin"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-visitor-token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Visitor-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebchatPhoneCodeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Phone Code",
+        "tags": [
+          "webchat-public"
+        ]
+      }
+    },
+    "/api/v1/public/webchat/{key}/conversations/{conversation_id}/contact/verify": {
+      "post": {
+        "description": "W04 step 2: the code. 422 `code_invalid` + `attempts_left`; 409 `too_many_attempts` after 5; 409 `code_expired`\n(also for a code of another conversation or purpose).",
+        "operationId": "phone_verify_api_v1_public_webchat__key__conversations__conversation_id__contact_verify_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "conversation_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Conversation Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "origin",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Origin"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-visitor-token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Visitor-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebchatPhoneVerifyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Phone Verify",
         "tags": [
           "webchat-public"
         ]
@@ -30390,6 +31482,98 @@
           }
         },
         "summary": "Sync Calendar",
+        "tags": [
+          "bookings"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/bookings/messages": {
+      "get": {
+        "description": "E07: every booking message (customer SMS + e-mail, owner e-mail) rendered for preview. Read-only: nothing is\nqueued or sent. With `booking_id` the workspace's own booking fills the texts; otherwise sample data does.\nThe default language is the one the business serves its callers in.",
+        "operationId": "booking_messages_api_v1_workspaces__workspace_id__bookings_messages_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 5,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lang"
+            }
+          },
+          {
+            "in": "query",
+            "name": "booking_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Booking Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Booking Messages",
         "tags": [
           "bookings"
         ]

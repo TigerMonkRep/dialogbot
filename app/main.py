@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from app.config import get_settings
 from app.core.errors import install_error_handlers
 from app.core.logging import RequestIdMiddleware, configure_logging
+from app.modules.admin.operations import router as admin_operations_router
 from app.modules.admin.router import router as admin_operator_router
 from app.modules.ai.router import router as ai_router
 from app.modules.ambassadors.router import operator_router as ambassadors_operator_router
@@ -21,6 +22,7 @@ from app.modules.bookings.router import router as bookings_router
 from app.modules.browser.router import router as browser_router
 from app.modules.business.router import router as business_router
 from app.modules.campaigns.router import router as campaigns_router
+from app.modules.customer.router import router as customer_public_router
 from app.modules.funnel.router import router as funnel_router
 from app.modules.health.router import router as health_router
 from app.modules.identity.router import router as identity_router
@@ -103,12 +105,12 @@ def create_app() -> FastAPI:
         return app
     for r in (identity_router, workspaces_router, business_router, knowledge_router, setup_router, integrations_router,
               webhooks_router, ai_router, waitlist_router, pages_public_router, pages_operator_router, analytics_router,
-              webchat_router, webchat_public_router, leads_router,
+              webchat_router, webchat_public_router, customer_public_router, leads_router,
               reports_router, telephony_router, vapi_webhook_router, billing_router, reception_router, overview_router,
               bookings_router, bookings_public_router, campaigns_router, voices_router, voice_operator_router, own_voice_router, telephony_setup_router,
               telephony_operator_router, stt_operator_router, sales_public_router, sales_operator_router, connections_router,
               integrations_oauth_router, ambassadors_public_router, ambassadors_router, ambassadors_workspace_router,
-              ambassadors_operator_router, admin_operator_router, assistant_changes_router, assistant_operator_router,
+              ambassadors_operator_router, admin_operator_router, admin_operations_router, assistant_changes_router, assistant_operator_router,
               voice_tts_router, social_operator_router, social_public_router, sales_channel_router,
               sales_offers_public_router, privat_router, privat_public_router, privat_operator_router,
               browser_router, privat_leads_router, funnel_router, privat_calendar_router,

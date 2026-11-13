@@ -26,6 +26,8 @@ from app.models.domain import (  # noqa: F401
     CommissionEntry,
     Conversation,
     ConversationMessage,
+    CustomerLink,
+    CustomerVerification,
     DailyReport,
     DemoCall,
     DemoCallVerification,

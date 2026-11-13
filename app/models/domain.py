@@ -550,6 +550,10 @@ class Lead(Base):
     # Callback window the customer asked for (W03–W06), in UTC; NULL = no preference.
     callback_from: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     callback_to: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # W04: the visitor proved the phone number with an SMS code before the lead was created/updated.
+    phone_verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # W09: the customer cancelled the requested call back from their secure link (the open call task is closed).
+    callback_cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     qualification_status: Mapped[str] = mapped_column(String(16), nullable=False, default="unqualified")
     qualification_reason: Mapped[str | None] = mapped_column(String(500))
     pipeline_status: Mapped[str] = mapped_column(String(16), nullable=False, default="new")
@@ -1131,6 +1135,67 @@ class DemoCallVerification(Base):
     consumed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     call_ip_hash: Mapped[str | None] = mapped_column(String(64))
     demo_call_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("demo_calls.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = ts_now()
+
+
+class CustomerLink(Base):
+    """A secure link a business's customer uses without a login (W09, W13, DB-016): `callback` = cancel the requested
+    call back and set communication preferences for one lead; `booking` = see, move or cancel one booking. Only an
+    HMAC of the token is stored; a token only opens its own purpose and object, and stops working at `expires_at` or
+    when a newer link for the same object replaces it (`revoked_at`)."""
+
+    __tablename__ = "customer_links"
+    __table_args__ = (
+        CheckConstraint("purpose in ('callback','booking')", name="ck_customer_links_purpose"),
+        CheckConstraint("(purpose = 'callback' and lead_id is not null) or (purpose = 'booking' and booking_id is not null)",
+                        name="ck_customer_links_object"),
+        UniqueConstraint("token_hash", name="uq_customer_links_token"),
+        Index("ix_customer_links_lead", "lead_id"),
+        Index("ix_customer_links_booking", "booking_id"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    purpose: Mapped[str] = mapped_column(String(16), nullable=False)
+    token_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    lead_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("leads.id", ondelete="CASCADE"))
+    booking_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("bookings.id", ondelete="CASCADE"))
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = ts_now()
+
+
+class CustomerVerification(Base):
+    """An SMS code that proves a business's customer holds a number (W04, W13; same rules as the demo-call code, F-AUD26-02):
+    6 digits, 10 minutes, 5 attempts, resend after 30 s; only HMACs of the code, of the manage session and of the
+    caller's IP are stored. `webchat_phone` = the number in the chat's «Bliv kontaktet» (bound to the conversation);
+    `booking_manage` = the booking's own number before it is moved or cancelled from its link (bound to the link).
+    Rows are deleted by the worker after two days."""
+
+    __tablename__ = "customer_verifications"
+    __table_args__ = (
+        CheckConstraint("purpose in ('webchat_phone','booking_manage')", name="ck_customer_verifications_purpose"),
+        Index("ix_customer_verifications_phone_sent", "phone", "sent_at"),
+        Index("ix_customer_verifications_ip_sent", "ip_hash", "sent_at"),
+        Index("ix_customer_verifications_conversation", "conversation_id"),
+        Index("ix_customer_verifications_link", "link_id"),
+        Index("ix_customer_verifications_session", "session_hash"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    purpose: Mapped[str] = mapped_column(String(24), nullable=False)
+    conversation_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("conversations.id", ondelete="CASCADE"))
+    link_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("customer_links.id", ondelete="CASCADE"))
+    phone: Mapped[str] = mapped_column(String(20), nullable=False)
+    code_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    ip_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    sent_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    session_hash: Mapped[str | None] = mapped_column(String(64))
+    session_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = ts_now()
 
 

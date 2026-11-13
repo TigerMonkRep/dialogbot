@@ -6,7 +6,8 @@ export type ApiError = { status: number; code: string; message: string; field_er
 export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
   const headers = new Headers(init.headers);
   headers.set("x-requested-with", "dialogbot");
-  if (init.body && !headers.has("content-type")) headers.set("content-type", "application/json");
+  // FormData (file uploads) sets its own multipart content-type with the boundary.
+  if (init.body && !(init.body instanceof FormData) && !headers.has("content-type")) headers.set("content-type", "application/json");
   const r = await fetch(`/api/backend${path}`, { ...init, headers, credentials: "same-origin" });
   if (r.status === 204) return undefined as T;
   const body = await r.json().catch(() => ({ code: "http_error", message: r.statusText }));

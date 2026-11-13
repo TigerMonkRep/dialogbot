@@ -1091,5 +1091,68 @@
       "suggestAgain": "Proponi di nuovo",
       "save": "Salva copione"
     }
+  },
+  "support": {
+    "title": "Assistenza",
+    "intro": "Scriva all’assistenza Dialogbot quando qualcosa non funziona o ha una domanda. Può allegare uno screenshot. Riceverà un’e-mail quando avremo risposto.",
+    "card": {
+      "title": "Non trova la risposta?",
+      "body": "Apra una richiesta di assistenza e l’assistenza Dialogbot le risponderà qui nell’app.",
+      "link": "Vai all’assistenza",
+      "open": "{n|1 richiesta aperta|# richieste aperte}"
+    },
+    "list": {
+      "title": "Le vostre richieste",
+      "empty": "Ancora nessuna richiesta.",
+      "updated": "Aggiornata il {date}"
+    },
+    "noAccess": "Le richieste di assistenza possono essere viste e aperte da collaboratori, amministratori e titolari. Si rivolga a un amministratore della sua azienda.",
+    "new": {
+      "title": "Apri una nuova richiesta",
+      "subject": "Oggetto",
+      "category": "Categoria",
+      "body": "Descrizione",
+      "bodyHint": "Che cosa è successo, quando e che cosa si aspettava?",
+      "files": "Allega file (facoltativo)",
+      "filesHint": "PNG, JPG, PDF o file di log · al massimo {n} file da 4 MB ciascuno",
+      "submit": "Apri richiesta",
+      "tooMany": "Scelga al massimo {n} file",
+      "tooBig": "{name} supera i 4 MB",
+      "note": "Rispondiamo il prima possibile. Non c’è un tempo di risposta garantito."
+    },
+    "category": {
+      "reception": "Telefono, chat e reception",
+      "campaigns": "Campagne e richieste",
+      "calendar": "Calendario e prenotazioni",
+      "billing": "Fatturazione e consumi",
+      "other": "Altro"
+    },
+    "status": {
+      "open": "Presso Dialogbot",
+      "in_progress": "In lavorazione",
+      "waiting_customer": "In attesa della sua risposta",
+      "resolved": "Risolta"
+    },
+    "statusHelp": {
+      "open": "La richiesta è presso l’assistenza Dialogbot. Riceverà un’e-mail quando avremo risposto.",
+      "in_progress": "L’assistenza Dialogbot sta lavorando alla richiesta.",
+      "waiting_customer": "Abbiamo risposto. Ci riscriva oppure segni la richiesta come risolta.",
+      "resolved": "La richiesta è risolta. Scriva di nuovo se il problema si ripresenta: verrà riaperta."
+    },
+    "ticket": {
+      "number": "Richiesta n. {n}",
+      "meta": "Aperta il {date} da {name}",
+      "metaNoName": "Aperta il {date}",
+      "thread": "Conversazione",
+      "support": "Assistenza Dialogbot",
+      "supportNamed": "{name} · Assistenza Dialogbot",
+      "reply": "Scrivi una risposta",
+      "replyHint": "Aggiunga dettagli o risponda alla domanda.",
+      "send": "Invia risposta",
+      "resolve": "Segna come risolta",
+      "reopen": "Riapri richiesta",
+      "back": "Tutte le richieste",
+      "attachments": "Allegati"
+    }
   }
 }

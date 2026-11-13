@@ -1091,5 +1091,68 @@
       "suggestAgain": "Suggest again",
       "save": "Save script"
     }
+  },
+  "support": {
+    "title": "Support",
+    "intro": "Write to Dialogbot support when something isn't working or you have a question. Feel free to attach a screenshot. You'll get an e-mail when we have replied.",
+    "card": {
+      "title": "Can't find the answer?",
+      "body": "Open a support request and Dialogbot support will reply to you here in the app.",
+      "link": "Go to support",
+      "open": "{n|1 open request|# open requests}"
+    },
+    "list": {
+      "title": "Your requests",
+      "empty": "No requests yet.",
+      "updated": "Updated {date}"
+    },
+    "noAccess": "Support requests can be seen and opened by staff, administrators and owners. Ask an administrator in your company.",
+    "new": {
+      "title": "Open a new request",
+      "subject": "Subject",
+      "category": "Category",
+      "body": "Description",
+      "bodyHint": "What happened, when, and what did you expect?",
+      "files": "Attach files (optional)",
+      "filesHint": "PNG, JPG, PDF or log file · up to {n} files of 4 MB each",
+      "submit": "Open request",
+      "tooMany": "Choose at most {n} files",
+      "tooBig": "{name} is larger than 4 MB",
+      "note": "We reply as quickly as we can. There is no guaranteed response time."
+    },
+    "category": {
+      "reception": "Phone, chat and reception",
+      "campaigns": "Campaigns and enquiries",
+      "calendar": "Calendar and bookings",
+      "billing": "Billing and usage",
+      "other": "Other"
+    },
+    "status": {
+      "open": "With Dialogbot",
+      "in_progress": "In progress",
+      "waiting_customer": "Waiting for your reply",
+      "resolved": "Resolved"
+    },
+    "statusHelp": {
+      "open": "The request is with Dialogbot support. You'll get an e-mail when we have replied.",
+      "in_progress": "Dialogbot support is working on the request.",
+      "waiting_customer": "We have replied. Write back, or mark the request as resolved.",
+      "resolved": "The request is resolved. Write again if the problem comes back – it will be reopened."
+    },
+    "ticket": {
+      "number": "Request #{n}",
+      "meta": "Opened {date} by {name}",
+      "metaNoName": "Opened {date}",
+      "thread": "Conversation",
+      "support": "Dialogbot support",
+      "supportNamed": "{name} · Dialogbot support",
+      "reply": "Write a reply",
+      "replyHint": "Add more details or answer the question.",
+      "send": "Send reply",
+      "resolve": "Mark as resolved",
+      "reopen": "Reopen request",
+      "back": "All requests",
+      "attachments": "Attached"
+    }
   }
 }

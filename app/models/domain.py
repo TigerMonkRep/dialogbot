@@ -1886,6 +1886,9 @@ class SocialPost(Base):
     # platform offers) — see app/modules/social/insights.py.
     metrics: Mapped[dict | None] = mapped_column(JSONB)
     metrics_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # The post's trail ("forløb"): idea → hook candidates with scores → copy → checks → approval/edits → publish. One
+    # {step, status, at, detail} entry each; the operator dashboard draws it (see app/modules/social/craft.py).
+    pipeline: Mapped[list] = mapped_column(JSONB, nullable=False, default=list, server_default=text("'[]'::jsonb"))
     created_at: Mapped[datetime] = ts_now()
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()

@@ -25,8 +25,8 @@ from sqlalchemy.orm import Session as OrmSession
 from app.config import get_settings
 from app.core.audit import record_audit
 from app.core.errors import Conflict, NotFound, ValidationFailed
-from app.models import SocialAccountSnapshot, SocialMedia, SocialPost, SocialProspect
-from app.modules.social import content, publishers, render
+from app.models import SocialAccountSnapshot, SocialMedia, SocialPost, SocialProspect, User
+from app.modules.social import content, craft, publishers, render
 from app.modules.social.publishers import PublishError
 from app.modules.social.topics import TOPICS, TOPICS_BY_KEY, Topic
 
@@ -84,6 +84,16 @@ def _store_media(db: OrmSession, post: SocialPost) -> None:
                            sha256=hashlib.sha256(data).hexdigest()))
 
 
+def _trail(post: SocialPost, kind: str, status: str = "ok", **detail) -> None:
+    """Add a step to the post's trail (a new list, so the JSONB column is seen as changed)."""
+    post.pipeline = craft.append(post.pipeline, kind, status, **detail)
+
+
+def _who(db: OrmSession, user_id: uuid.UUID | None) -> str | None:
+    u = db.get(User, user_id) if user_id else None
+    return getattr(u, "email", None) if u else None
+
+
 def create_post(db: OrmSession, day: date, topic: Topic, draft: content.Draft, *, extra: bool = False,
                 scheduled_for: datetime | None = None, status: str | None = None) -> SocialPost:
     s = get_settings()
@@ -92,7 +102,8 @@ def create_post(db: OrmSession, day: date, topic: Topic, draft: content.Draft, *
                       extra=extra, design_version=DESIGN_VERSION,
                       group_key=f"{day.isoformat()}:{topic.key}{':extra' if extra else ''}",
                       caption=draft.caption, hashtags=draft.hashtags,
-                      slides=draft.slides, link=draft.link, generator=draft.generator, generator_model=draft.model)
+                      slides=draft.slides, link=draft.link, generator=draft.generator, generator_model=draft.model,
+                      pipeline=list(draft.trace))
     db.add(post)
     db.flush()
     _store_media(db, post)
@@ -225,6 +236,7 @@ def publish_one(db: OrmSession, post: SocialPost, now: datetime | None = None) -
         post = db.get(SocialPost, post.id)
         retry = e.retryable and post.attempts < MAX_ATTEMPTS
         post.last_error = str(e)
+        _trail(post, "publish", "fail", error=str(e)[:300], attempt=post.attempts, will_retry=retry)
         if retry:
             post.status, post.next_attempt_at = "scheduled", now + RETRY_AFTER[min(post.attempts, len(RETRY_AFTER)) - 1]
         else:
@@ -236,12 +248,14 @@ def publish_one(db: OrmSession, post: SocialPost, now: datetime | None = None) -
         db.rollback()
         post = db.get(SocialPost, post.id)
         post.status, post.last_error = "failed", f"Uventet fejl ({type(e).__name__}) – tjek profilen, før der postes igen"
+        _trail(post, "publish", "fail", error=f"uventet fejl ({type(e).__name__})", attempt=post.attempts, will_retry=False)
         log.error("social.publish_crashed", platform=post.platform, post_id=str(post.id), error=type(e).__name__)
         db.commit()
         return post
     post = db.get(SocialPost, post.id)
     post.status, post.external_id, post.external_url = "published", res.external_id, res.url
     post.published_at, post.last_error, post.next_attempt_at = _now(), res.note, None
+    _trail(post, "publish", "ok", external_id=res.external_id, url=res.url, note=res.note, attempt=post.attempts)
     db.commit()
     log.info("social.published", platform=post.platform, post_id=str(post.id), external_id=res.external_id)
     return post
@@ -292,6 +306,7 @@ def refresh_stale_drafts(db: OrmSession, now: datetime | None = None, *, force: 
                   "design_version": post.design_version, "scheduled_for": post.scheduled_for.isoformat()}
         post.caption, post.hashtags, post.slides, post.link = draft.caption, draft.hashtags, draft.slides, draft.link
         post.generator, post.generator_model, post.design_version = draft.generator, draft.model, DESIGN_VERSION
+        post.pipeline = [craft.step("refresh", "ok", from_version=info["from_version"], to_version=DESIGN_VERSION), *draft.trace]
         db.query(SocialMedia).filter(SocialMedia.post_id == post.id).delete(synchronize_session=False)
         db.flush()
         _store_media(db, post)
@@ -452,6 +467,7 @@ def approve(db: OrmSession, post: SocialPost, user_id: uuid.UUID, request_id: st
         raise Conflict("Kladden bruger det gamle design og bliver bygget om i det nye. Prøv igen om et øjeblik.",
                        code="social_stale_design")
     post.status, post.approved_by_user_id = "scheduled", user_id
+    _trail(post, "approval", "ok", by=_who(db, user_id), via="godkend", scheduled_for=post.scheduled_for.isoformat())
     record_audit(db, workspace_id=None, actor_user_id=user_id, action="social.approve", object_type="social_post",
                  object_id=post.id, request_id=request_id)
     db.commit()
@@ -475,7 +491,9 @@ def edit_caption(db: OrmSession, post: SocialPost, caption: str, user_id: uuid.U
     caption = caption.strip()
     if not caption or len(caption) > limit:
         raise ValidationFailed(f"Teksten skal være 1-{limit} tegn")
+    before = len(post.caption)
     post.caption = caption
+    _trail(post, "edit", "ok", by=_who(db, user_id), chars_before=before, chars_after=len(caption))
     record_audit(db, workspace_id=None, actor_user_id=user_id, action="social.edit", object_type="social_post",
                  object_id=post.id, request_id=request_id)
     db.commit()
@@ -491,6 +509,7 @@ def publish_now(db: OrmSession, post: SocialPost, user_id: uuid.UUID, request_id
                        code="social_stale_design")
     if post.status == "draft":
         post.approved_by_user_id = user_id
+        _trail(post, "approval", "ok", by=_who(db, user_id), via="post nu")
     post.status, post.attempts = "scheduled", 0
     record_audit(db, workspace_id=None, actor_user_id=user_id, action="social.publish_now", object_type="social_post",
                  object_id=post.id, request_id=request_id)
@@ -513,6 +532,41 @@ def status_overview(db: OrmSession) -> dict:
         "counts": [{"platform": p, "status": st, "count": n} for p, st, n in counts],
         "topics": [t.key for t in TOPICS],
     }
+
+
+# --- the trail across posts -------------------------------------------------------------------------------------------
+
+def pipeline_summary(db: OrmSession, *, since: datetime) -> dict:
+    """How the posts made in the period moved through the trail, per platform and in total: made, approved, published,
+    how many were written by the AI vs. the hand-written fallback, and what the hook score and the lint said."""
+    rows = db.execute(select(SocialPost.platform, SocialPost.status, SocialPost.generator, SocialPost.approved_by_user_id,
+                             SocialPost.pipeline).where(SocialPost.created_at >= since)).all()
+    per: dict[str, dict] = {}
+    for platform, status, generator, approved_by, trail in rows:
+        t = per.setdefault(platform, {"created": 0, "ai": 0, "template": 0, "approved": 0, "published": 0, "failed": 0,
+                                      "cancelled": 0, "weak_hooks": 0, "lint_warnings": 0, "_hooks": []})
+        t["created"] += 1
+        t["ai" if generator == "ai" else "template"] += 1
+        if approved_by is not None or status in ("scheduled", "publishing", "published"):
+            t["approved"] += 1
+        for k in ("published", "failed", "cancelled"):
+            if status == k:
+                t[k] += 1
+        for st in trail or []:
+            d = st.get("detail") or {}
+            if st.get("step") == "hooks":
+                chosen = next((c for c in d.get("candidates", []) if c.get("chosen")), None)
+                if chosen:
+                    t["_hooks"].append(chosen["score"])
+                    t["weak_hooks"] += 1 if chosen.get("verdict") == "svag" else 0
+            elif st.get("step") == "checks":
+                t["lint_warnings"] += sum(1 for f in d.get("lint", []) if f.get("level") == "warn")
+    for t in per.values():
+        h = t.pop("_hooks")
+        t["avg_hook_score"] = round(sum(h) / len(h)) if h else None
+    total = {k: sum(t[k] for t in per.values()) for k in ("created", "ai", "template", "approved", "published", "failed",
+                                                          "cancelled", "weak_hooks", "lint_warnings")}
+    return {"platforms": per, "total": total}
 
 
 # --- operator dashboard ---------------------------------------------------------------------------------------------------
@@ -585,6 +639,7 @@ def dashboard(db: OrmSession, *, days: int = 30, now: datetime | None = None) ->
     prospect_counts = dict(db.execute(select(SocialProspect.status, func.count()).group_by(SocialProspect.status)).all())
     return {"overview": overview, "platforms": platforms, "pending": pending, "scheduled": scheduled,
             "recent": recent, "failed": failed, "engagement_totals": totals, "days": days,
+            "pipeline": pipeline_summary(db, since=now - timedelta(days=days)),
             "prospects": [_prospects.to_dict(p) for p in open_prospects],
             "prospects_enabled": _prospects.configured(),
             "prospect_counts": {k: prospect_counts.get(k, 0) for k in ("new", "done", "skipped")},

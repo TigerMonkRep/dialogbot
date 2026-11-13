@@ -153,3 +153,11 @@ from app.models.sales import (  # noqa: F401
     SalesSimulation,
     SalesSourceFact,
 )
+from app.models.support import (  # noqa: F401, E402
+    SUPPORT_CATEGORIES,
+    SUPPORT_PRIORITIES,
+    SUPPORT_STATUSES,
+    SupportAttachment,
+    SupportMessage,
+    SupportTicket,
+)

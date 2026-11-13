@@ -1,10 +1,10 @@
 {
  "counts": {
-  "anonymous": 57,
+  "anonymous": 59,
   "public_api": 25,
   "user": 28,
-  "workspace": 169,
-  "operator": 141,
+  "workspace": 176,
+  "operator": 146,
   "privat": 114,
   "excluded": 1
  },
@@ -1003,6 +1003,14 @@
   },
   {
    "route": "GET /api/v1/demo-call",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/demo-call/code",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/demo-call/verify",
    "class": "anonymous"
   },
   {
@@ -2127,6 +2135,54 @@
   },
   {
    "route": "POST /api/v1/operator/outreach/suppressions",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/support/tickets",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/support/tickets",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/support/tickets/{number}",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/support/tickets/{number}/messages",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/support/tickets/{number}/resolve",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/support/tickets/{number}/reopen",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/support/tickets/{number}/attachments/{attachment_id}",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/operator/support/tickets",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/support/tickets/{ticket_id}",
+   "class": "operator"
+  },
+  {
+   "route": "PATCH /api/v1/operator/support/tickets/{ticket_id}",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/support/tickets/{ticket_id}/messages",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/support/tickets/{ticket_id}/attachments/{attachment_id}",
    "class": "operator"
   },
   {

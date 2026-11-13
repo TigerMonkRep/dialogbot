@@ -78,6 +78,8 @@ PERMISSIONS: dict[str, str] = {
     "reports.manage": "admin",
     "api_keys.manage": "admin",  # public API keys (app/modules/public_api): issue, list, revoke
     "agreements.edit": "owner",  # reserved for the billing stage
+    "support.read": "staff",  # H01: the workspace's support tickets (readers see the help page only)
+    "support.write": "staff",  # open a ticket, reply, resolve/reopen
 }
 
 

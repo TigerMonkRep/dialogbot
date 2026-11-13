@@ -33,6 +33,7 @@ def _ready(api, t, monkeypatch, pn="pn_qa_e2c"):
     api.submit(tok, ws, it["open_draft"]["id"])
     api.approve(tok, ws, it["open_draft"]["id"])
     api.map_number(ws, "+4570123456", pn, outbound=True)
+    api.post(tok, f"/workspaces/{ws}/agreement", {"model": "A"})  # C09: a campaign starts only with a paid subscription
 
 
 def _campaign(api, t, name="QA-E2C", **extra):

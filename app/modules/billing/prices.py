@@ -36,6 +36,9 @@ TAX_BASIS_POINTS = 2500                   # 25 % Danish VAT
 # First month billed with the shared package (inbound + outbound). Earlier months keep
 # the model they were billed under: inbound-only package, campaign calls at 4 kr. + 2 kr./min snapshotted per call.
 SHARED_POOL_FROM = date(2026, 11, 1)
+# The version of this price list: the day Fürster decided it (shown with the list prices in the operator's billing
+# view, M04). Change it together with a price above.
+PRICE_LIST_VERSION = date(2026, 11, 10)
 
 
 def kr(minor: int) -> str:

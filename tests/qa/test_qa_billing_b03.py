@@ -10,8 +10,6 @@ import uuid
 from datetime import UTC, datetime
 from pathlib import Path
 
-import pytest
-
 from app.models import Lead, ReceptionAgreement
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -90,14 +88,16 @@ def test_b03_db002_unbilled_dispute_rule_numbers():
             rj.next_invoice_addition_net_minor, rj.credit_note_created) == (15, 223_500, 14_900, 14_900, False)
 
 
-@pytest.mark.xfail(strict=True, reason="B03 billable-lead register and dispute entry: needs-decision (not built)")
 def test_b03_register_route_and_dispute_api_exist(app):
-    """B03 requirement: a billable-lead register (/app/billing/leads) with dispute entry. Not built today, so this is
-    xfail(strict): it turns red the day it is built and the marker must go. Routes are walked with all_routes – a plain
-    app.routes no longer sees the routes inside include_router() (FastAPI >= 0.140)."""
+    """B03 in the one-plan model (rewritten 2026-11-12, fix-engineer #26): there is no fee per lead any more, so the
+    old «billable-lead register» (/app/billing/leads) is NOT APPLICABLE. The register is the usage per call
+    (GET /billing/usage, Konto «Forbrug pr. opkald») with a complaint per call (POST /billing/disputes). Numbers:
+    tests/qa/test_qa_launch_billing.py::test_b03_usage_register_per_call_in_the_shared_package."""
     from qa_sec_helpers import all_routes
 
-    paths = {p for _m, p, _r in all_routes(app)}
-    assert [p for p in paths if "/billing/leads" in p], "no billable-lead register route"
-    assert [p for p in paths if "dispute" in p], "no dispute API"
-    assert (ROOT / "web/src/app/app/(admin)/billing").exists(), "no /app/billing page"
+    paths = {(m, p) for m, p, _r in all_routes(app)}
+    assert ("GET", "/api/v1/workspaces/{workspace_id}/billing/usage") in paths
+    assert ("POST", "/api/v1/workspaces/{workspace_id}/billing/disputes") in paths
+    assert not [p for _m, p in paths if "/billing/leads" in p]  # no per-lead fee → no lead register
+    konto = (ROOT / "web/src/app/app/(admin)/konto/page.tsx").read_text()
+    assert "UsagePerCall" in konto and 'id="forbrug"' in konto

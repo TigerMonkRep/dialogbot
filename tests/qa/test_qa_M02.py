@@ -9,7 +9,6 @@ from __future__ import annotations
 import uuid
 from datetime import UTC, datetime, timedelta
 
-import pytest
 from sqlalchemy import select
 
 from app.models import Session, User
@@ -85,10 +84,43 @@ def test_view_as_expires_after_its_window(api, two_workspaces, db):
     assert r.status_code == 401 and r.json()["code"] == "session_invalid"
 
 
-@pytest.mark.xfail(strict=True, reason="M02 entitlements/readiness on workspace detail: not-implemented")
 def test_entitlements_and_readiness_in_detail(api, two_workspaces, db):
     """M02 asks for entitlements and goal-specific setup/channel/booking readiness on the workspace detail."""
     op = api.operator()
     d = api.get(op, f"/operator/admin/customers/{two_workspaces['ws_a']}").json()
     missing = [k for k in ("entitlements", "readiness") if k not in d]
     assert not missing, f"not implemented: {missing}; keys = {sorted(d)}"
+
+
+def test_readiness_follows_goals_and_payment_without_changing_the_customer(api, two_workspaces, db):
+    """M02 (13/11): the steps follow the customer's goals (same rules as the guide), «Betaling» and the live gates
+    follow the paid subscription, and looking does not create rows (no webchat settings appear by opening the page)."""
+    from app.models import WebchatSettings
+
+    t = two_workspaces
+    op = api.operator()
+    ws = t["ws_a"]
+    had_chat = db.get(WebchatSettings, uuid.UUID(ws)) is not None
+    d = api.get(op, f"/operator/admin/customers/{ws}").json()
+    ent, ready = d["entitlements"], d["readiness"]
+    assert ent["subscription"]["state"] == "never_paid" and ent["subscription"]["paid"] is False
+    assert ent["reception_may_go_live"] is False and ent["campaigns_may_start"] is False
+    keys = [s["key"] for s in ready["steps"]]
+    assert keys[0] == "virksomhed" and keys[-1] == "betaling" and "viden" in keys
+    assert ("telefon" in keys) == ready["goals"]["inbound_phone"]
+    assert ("chat" in keys) == ready["goals"]["webchat"]
+    assert ("kalender" in keys) == ready["goals"]["booking"]
+    assert next(s for s in ready["steps"] if s["key"] == "betaling")["ok"] is False
+    assert ready["live"] is False
+    db.expire_all()
+    assert (db.get(WebchatSettings, uuid.UUID(ws)) is not None) == had_chat
+
+    # Confirmed agreement (model A; Stripe is not configured in tests, so the agreement alone is «paid»).
+    assert api.post(t["tok_a"], f"/workspaces/{ws}/agreement", {"model": "A"}).status_code == 201
+    d = api.get(op, f"/operator/admin/customers/{ws}").json()
+    sub = d["entitlements"]["subscription"]
+    assert sub["state"] == "paid" and sub["agreement"]["confirmed"] is True
+    assert next(s for s in d["readiness"]["steps"] if s["key"] == "betaling")["ok"] is True
+    intent = d["entitlements"]["product_intent"]
+    assert d["entitlements"]["reception_may_go_live"] is (intent in ("reception", "both"))
+    assert d["entitlements"]["campaigns_may_start"] is (intent in ("campaigns", "both"))

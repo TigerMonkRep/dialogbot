@@ -23,6 +23,13 @@ test("M02 · kunde nægtes; operatør søger, åbner kunden og ser medlemmer ude
   await page.getByRole("link", { name }).click();
   await expect(page.getByRole("heading", { level: 1, name })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Medlemmer/ })).toBeVisible();
+  // Entitlements and goal-specific readiness (13/11): a fresh customer has not paid and nothing may go live.
+  const ent = page.getByRole("region", { name: "Rettigheder" });
+  await expect(ent.getByText("ikke betalt")).toBeVisible();
+  await expect(ent.getByText("Telefon/chat må gå live")).toBeVisible();
+  const ready = page.getByRole("region", { name: /^Opsætning/ });
+  await expect(ready.getByText("Virksomhed", { exact: true })).toBeVisible();
+  await expect(ready.getByText("Betaling", { exact: true })).toBeVisible();
   expect(await page.locator("body").innerText()).not.toMatch(/argon2|token_hash|password_hash/);
   await page.screenshot({ path: `${EVID}/${info.project.name}-kunde.png`, fullPage: true });
   // empty search

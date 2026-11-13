@@ -151,3 +151,13 @@ class OutreachCallQueue(Base):
     status: Mapped[str] = mapped_column(String(14), nullable=False, default="open")
     notes: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = ts_now()
+
+
+class OutreachTodoMark(Base):
+    """A go-live point an operator ticked by hand in the admin («juristen har godkendt», «DNS er sat op» …)."""
+
+    __tablename__ = "outreach_todo_marks"
+
+    key: Mapped[str] = mapped_column(String(40), primary_key=True)
+    done_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    done_at: Mapped[datetime] = ts_now()

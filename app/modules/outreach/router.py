@@ -23,7 +23,7 @@ from app.core.auth import Principal
 from app.core.errors import Unauthenticated, ValidationFailed
 from app.db import get_db
 from app.models import OutreachCallQueue
-from app.modules.outreach import suppression
+from app.modules.outreach import finder, readiness, suppression
 from app.modules.outreach.agents.dispatcher import DispatcherAndWebhookHandler, normalize_resend
 from app.modules.outreach.agents.sourcing import RawLead, read_csv
 from app.modules.outreach.pipelines import batch as pipeline
@@ -113,6 +113,8 @@ class BatchIn(BaseModel):
     leads: list[LeadIn] = Field(default_factory=list, max_length=50)
     csv: str | None = Field(default=None, max_length=500_000, description="Alternative to `leads`: CSV text with a header row")
     countries: list[str] | None = Field(default=None, max_length=20)
+    research: bool = Field(default=True, description="False: only check and qualify the leads now; research, copy and "
+                                                     "audit are then run with POST …/batches/{name}/process")
 
 
 @operator_router.post("/batches", status_code=201)
@@ -122,7 +124,53 @@ def run_batch(body: BatchIn, _: Principal = Depends(operator), db: OrmSession = 
     if not raws or len(raws) > 50:
         raise ValidationFailed("A batch holds 1–50 leads")
     name = body.name or f"batch-{uuid.uuid4().hex[:8]}"
-    return pipeline.run_batch(db, raws, batch=name, countries={c.upper() for c in body.countries} if body.countries else None)
+    countries = {c.upper() for c in body.countries} if body.countries else None
+    if body.research:
+        return pipeline.run_batch(db, raws, batch=name, countries=countries)
+    pipeline.ingest_batch(db, raws, batch=name, countries=countries)
+    return pipeline.report(db, name)
+
+
+@operator_router.post("/batches/{name}/process")
+def process_batch(name: str, limit: int = Query(default=1, ge=1, le=10), _: Principal = Depends(operator),
+                  db: OrmSession = Depends(get_db)):
+    """Research, write and audit the next `limit` qualified leads of a batch. Call until `remaining` is 0."""
+    return pipeline.process(db, name, limit=limit)
+
+
+@operator_router.get("/overview")
+def overview(_: Principal = Depends(operator), db: OrmSession = Depends(get_db)):
+    """The admin tab's data: mode, the go-live to-do list, markets, categories, key figures and the batches. Answers
+    also while outreach is switched off – the to-do list is what tells the operator how to switch it on."""
+    return readiness.overview(db)
+
+
+class TodoIn(BaseModel):
+    done: bool
+
+
+@operator_router.put("/todos/{key}")
+def tick_todo(key: str, body: TodoIn, p: Principal = Depends(operator), db: OrmSession = Depends(get_db)):
+    """Tick (or untick) one of the manual go-live points."""
+    readiness.set_mark(db, key, body.done, p.user.id)
+    db.commit()
+    return {"key": key, "done": body.done}
+
+
+class SearchIn(BaseModel):
+    country: str = Field(min_length=2, max_length=2)
+    city: str = Field(min_length=2, max_length=80)
+    niche: str = Field(max_length=20)
+    limit: int = Field(default=10, ge=1, le=20)
+
+
+@operator_router.post("/search")
+def search(body: SearchIn, _: Principal = Depends(operator)):
+    """Find businesses in a city and category (Google Places) with the e-mail address each publishes on its own
+    website. Stores nothing; the chosen candidates are posted to /batches."""
+    pipeline.require_on()
+    found = finder.search(country=body.country, city=body.city.strip(), niche=body.niche, limit=body.limit)
+    return {"candidates": [finder.as_dict(c) for c in found]}
 
 
 @operator_router.get("/batches/{name}")

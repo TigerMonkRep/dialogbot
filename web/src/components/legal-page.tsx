@@ -9,7 +9,7 @@ export const COMPANY = {
   name: "Dialogbot",
   cvr: "25632710",
   address: "Abildgade 18, 8200 Aarhus, Danmark",
-  email: "info@dialogbot.dk",
+  email: "info@dialogbot.app",
 };
 
 /* ── Rich text from JSON (namespaces "articles" and "legal") ──────────────────────────────────────────────────────

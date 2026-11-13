@@ -78,7 +78,7 @@
       }
     ],
     "faq": [
-      ["Kan jeg få en databehandleravtale?", "Ja. Den inngår i vilkårene. Skriv til info@dialogbot.dk hvis dere vil ha en signert kopi."],
+      ["Kan jeg få en databehandleravtale?", "Ja. Den inngår i vilkårene. Skriv til info@dialogbot.app hvis dere vil ha en signert kopi."],
       ["Ligger dataene i EU?", "Databasen ligger i EU (Irland) og serveren i EU (Frankfurt). Noen underleverandører for telefoni, tale og AI kan behandle data i USA på grunnlag av EU-U.S. Data Privacy Framework eller standardkontrakter."],
       ["Hva skjer med dataene når jeg sier opp?", "Dere kan innen 30 dager be om en kopi. Deretter sletter vi dataene, med mindre loven krever at vi oppbevarer dem."]
     ]

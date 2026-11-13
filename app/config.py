@@ -380,12 +380,20 @@ class Settings(BaseSettings):
     # Local number the demo rings from, per market. Unset = the copy may not mention a local number.
     outreach_callback_number_us: str | None = Field(default=None, alias="OUTREACH_CALLBACK_NUMBER_US")
     outreach_callback_number_uk: str | None = Field(default=None, alias="OUTREACH_CALLBACK_NUMBER_UK")
+    # A demo LINE: a local number in that market that Dialogbot's own assistant answers, in the caller's language.
+    # Where one is set the e-mail invites the reader to ring it (they ring us: no consent question, no SMS code),
+    # and the market counts as having a working demo. E.164, e.g. +16283773337.
+    outreach_demo_line_us: str | None = Field(default=None, alias="OUTREACH_DEMO_LINE_US")
+    outreach_demo_line_uk: str | None = Field(default=None, alias="OUTREACH_DEMO_LINE_UK")
     # Display prices in the e-mail. GBP is not a billing currency (a UK company is billed in EUR), so the UK text is
     # set here; every other market, the US included, reads its list price from billing/markets.py.
     outreach_price_us: str | None = Field(default=None, alias="OUTREACH_PRICE_US")  # unset = the USD list price
     outreach_price_uk: str = Field(default="£275/mo", alias="OUTREACH_PRICE_UK")
     # Shared secret for POST /webhooks/events from providers that do not sign with Svix (header X-Outreach-Secret).
     outreach_webhook_secret: str | None = Field(default=None, alias="OUTREACH_WEBHOOK_SECRET")
+    # A person reads replies: a copy of every reply to an outreach inbox is sent here (Resend receives for the
+    # inbox domain; see outreach/replies.py). Unset = replies stop the sequence but are only visible in Resend.
+    outreach_reply_forward_to: str | None = Field(default=None, alias="OUTREACH_REPLY_FORWARD_TO")
 
     @property
     def outreach_inboxes(self) -> list[str]:
@@ -404,8 +412,14 @@ class Settings(BaseSettings):
         return self._codes(self.outreach_call_queue_countries)
 
     @property
+    def outreach_demo_lines(self) -> dict[str, str]:
+        lines = {"US": self.outreach_demo_line_us, "UK": self.outreach_demo_line_uk}
+        return {c: n.strip() for c, n in lines.items() if n and n.strip()}
+
+    @property
     def outreach_demo_countries(self) -> set[str]:
-        return self._codes(self.outreach_demo_callback_countries)
+        """Markets where the e-mail's call to action works: the callback demo rings them, or they have a demo line."""
+        return self._codes(self.outreach_demo_callback_countries) | set(self.outreach_demo_lines)
 
     @model_validator(mode="after")
     def _fail_closed(self) -> Settings:

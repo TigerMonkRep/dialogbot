@@ -186,6 +186,66 @@ def map_number(ws_id: uuid.UUID, body: MapIn, request: Request, principal: Princ
     return _row(db, ws)
 
 
+class AdoptIn(BaseModel):
+    e164: str = Field(max_length=24)
+    label: str = Field(default="", max_length=100)
+    note: str = Field(min_length=10, max_length=1000)
+
+
+@router.post("/workspaces/{ws_id}/numbers/adopt", status_code=201)
+def adopt_number(ws_id: uuid.UUID, body: AdoptIn, request: Request, principal: Principal = Depends(operator),
+                 db: OrmSession = Depends(get_db)):
+    """Give a workspace a number Dialogbot already owns on its Twilio account (bought by hand, e.g. the US demo
+    line): import it into Vapi unless it is there already, point its incoming calls at our assistant and add it as
+    one more number of the workspace. The workspace's main number and its set-up state are left as they are, and
+    the new number may not place calls until an operator allows it. Platform credentials only."""
+    from app.config import get_settings
+    from app.core.errors import NotImplementedYet
+    from app.modules.telephony.vapi import E164, normalize_e164
+
+    ws = _ws(db, ws_id)
+    e164 = normalize_e164(body.e164)
+    if not E164.match(e164):
+        raise ValidationFailed("Ugyldigt nummer", field_errors=[{"field": "e164"}])
+    if db.scalar(select(PhoneNumber.id).where(PhoneNumber.e164 == e164)) is not None:
+        raise Conflict("Nummeret er allerede tilknyttet et arbejdsrum", code="number_taken")
+    pair = providers.providers()
+    if pair is None:
+        raise NotImplementedYet("Platformtelefoni er ikke sat op (Twilio/Vapi-nøgler mangler)", code="telephony_not_configured")
+    twilio, vapi_client = pair
+    s = get_settings()
+    found = twilio.find_by_e164(e164)
+    if found is None:
+        raise NotFound(f"{e164} findes ikke på Dialogbots Twilio-konto", code="number_not_on_twilio")
+    account_sid, number_sid = found
+    server_url = f"{s.public_base_url.rstrip('/')}/api/v1/webhooks/vapi"
+    vapi_id = vapi_client.find_number(e164)
+    if vapi_id is None:
+        main = account_sid == getattr(twilio, "account_sid", None)
+        token = s.twilio_auth_token if main else twilio.subaccount_token(account_sid)
+        if not token:
+            raise NotImplementedYet("Nummeret kan ikke importeres i Vapi uden TWILIO_AUTH_TOKEN (en API-nøgle er ikke nok)",
+                                    code="telephony_not_configured")
+        vapi_id = vapi_client.import_twilio(e164=e164, account_sid=account_sid, auth_token=token,
+                                            name=(body.label.strip() or f"{ws.name} {e164}"), server_url=server_url,
+                                            server_secret=s.vapi_server_secret)
+    else:
+        vapi_client.set_server(vapi_id, server_url, s.vapi_server_secret)
+    twilio.set_voice_url(account_sid, number_sid, VAPI_INBOUND_URL)
+    n = PhoneNumber(workspace_id=ws.id, e164=e164, provider="vapi", provider_number_id=vapi_id, provider_sid=number_sid,
+                    source="platform", status="active", label=body.label.strip() or "Dialogbot-nummer")
+    db.add(n)
+    try:
+        db.flush()
+    except IntegrityError as e:
+        db.rollback()
+        raise Conflict("Nummeret eller id'et er allerede tilknyttet et arbejdsrum", code="number_taken") from e
+    _audit(db, request, principal, ws.id, "telephony.number_adopted",
+           {"e164": e164, "twilio_number_sid": number_sid, "server_url": server_url, "note": body.note})
+    db.commit()
+    return _row(db, ws)
+
+
 class NumberPatch(BaseModel):
     outbound_allowed: bool | None = None
     status: str | None = Field(default=None, pattern="^(active|suspended)$")

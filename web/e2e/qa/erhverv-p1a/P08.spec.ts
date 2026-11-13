@@ -10,7 +10,7 @@ evid(ID);
 test("P08 · /kontakt: telefon, e-mail og adresse er korrekte links; ingen døde links", async ({ page }, info) => {
   expect((await page.goto("/da/kontakt"))?.status()).toBe(200);
   await expect(page.locator("main a[href='tel:+4593703433']").first()).toBeVisible();
-  await expect(page.locator("main a[href='mailto:info@dialogbot.dk']").first()).toBeVisible();
+  await expect(page.locator("main a[href='mailto:info@dialogbot.app']").first()).toBeVisible();
   await expect(page.locator("main")).toContainText("CVR-nr. 25632710");
   expect(await internalLinksOk(page)).toEqual([]);
   await snap(page, info, ID, "kontakt");

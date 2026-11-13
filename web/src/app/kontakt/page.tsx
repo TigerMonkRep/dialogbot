@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "@/i18n/link";
 import { getLocale, getT } from "@/i18n/server";
 import { COMPANY } from "@/components/legal-page";
-import { PHONE_DISPLAY, PHONE_INTL, PHONE_TEL, SiteChrome } from "@/components/site-chrome";
+import { SiteChrome } from "@/components/site-chrome";
+import { phoneFor } from "@/lib/contact";
 import { PhoneIcon, SmsIcon } from "@/components/site-icons";
 import { alternatesFor } from "@/lib/site";
 
@@ -17,10 +18,11 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ContactPage() {
   const [t, tc] = await Promise.all([getT("landing.contact"), getT("common")]);
   const hours = tc("chrome.hours");
+  const ph = phoneFor(await getLocale());
   const s = (key: string) => t(`sections.${key}`);
   const sections: [string, React.ReactNode][] = [
     [s("email.title"), <p key="e">{s("email.a")}<a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>{s("email.b")}</p>],
-    [s("phone.title"), <p key="t">{s("phone.a")}<a href={PHONE_TEL}>{PHONE_INTL}</a>{s("phone.b")}{hours.toLowerCase()}.</p>],
+    [s("phone.title"), <p key="t">{s("phone.a")}<a href={ph.tel}>{ph.intl}</a>{s("phone.b")}{hours.toLowerCase()}.</p>],
     [s("post.title"), <p key="p">{COMPANY.name}, {t("cvrNo")} {COMPANY.cvr}, {COMPANY.address}.</p>],
     [s("billing.title"), <p key="b">{s("billing.p")}</p>],
     [s("loggedIn.title"), <p key="h">{s("loggedIn.p")}</p>],
@@ -38,9 +40,9 @@ export default async function ContactPage() {
             <p className="m-0 text-sm text-muted">{t("updated")}</p>
           </div>
           <div className="flex-[1_1_300px] max-w-[460px] flex flex-col gap-3">
-            <a href={PHONE_TEL} className="flex items-center gap-3.5 p-5 rounded-[20px] bg-white border-2 border-ink shadow-block text-ink no-underline">
+            <a href={ph.tel} className="flex items-center gap-3.5 p-5 rounded-[20px] bg-white border-2 border-ink shadow-block text-ink no-underline">
               <span className="inline-flex w-12 h-12 rounded-xl bg-accent items-center justify-center shrink-0"><PhoneIcon size={24} stroke="#FFFFFF" /></span>
-              <span className="flex flex-col"><span className="eyebrow">{t("call")} · {hours}</span><span className="font-display font-extrabold text-2xl tracking-[-0.5px]">{PHONE_DISPLAY}</span></span>
+              <span className="flex flex-col"><span className="eyebrow">{t("call")} · {hours}</span><span className="font-display font-extrabold text-2xl tracking-[-0.5px]">{ph.local ? ph.display : ph.intl}</span></span>
             </a>
             <a href={`mailto:${COMPANY.email}`} className="flex items-center gap-3.5 p-5 rounded-[20px] bg-white border-2 border-ink text-ink no-underline hover:bg-panel">
               <span className="inline-flex w-12 h-12 rounded-xl bg-ink items-center justify-center shrink-0"><SmsIcon size={24} stroke="#FFFFFF" /></span>

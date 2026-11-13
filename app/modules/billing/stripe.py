@@ -41,7 +41,7 @@ API = "https://api.stripe.com/v1"
 SIGNATURE_TOLERANCE_SECONDS = 300
 _tax_rate_ids: dict[tuple[str, int, bool], str] = {}  # (country, basis points, inclusive) → Stripe tax rate id
 # Seller identity printed on every invoice (bogføringsloven/momsloven: name, CVR, address).
-INVOICE_FOOTER = "Dialogbot · CVR-nr. 25632710 · Abildgade 18, 8200 Aarhus, Danmark · info@dialogbot.dk"
+INVOICE_FOOTER = "Dialogbot · CVR-nr. 25632710 · Abildgade 18, 8200 Aarhus, Danmark · info@dialogbot.app"
 
 
 class PaymentNotConfigured(NotImplementedYet):

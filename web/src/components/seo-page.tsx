@@ -1,7 +1,8 @@
 import Link from "@/i18n/link";
 import { HTML_LANG } from "@/i18n/config";
 import { getLocale, getT } from "@/i18n/server";
-import { SiteChrome, EMAIL, PHONE_DISPLAY, PHONE_TEL } from "./site-chrome";
+import { SiteChrome, EMAIL } from "./site-chrome";
+import { phoneFor } from "@/lib/contact";
 import { ArrowIcon, CheckIcon, ChevronIcon, PhoneIcon, PlayIcon } from "./site-icons";
 import { SITE_URL, localeUrl } from "@/lib/site";
 import { SIGNUP_ERHVERV } from "@/lib/contact";
@@ -107,7 +108,7 @@ export async function SeoPage({ path, kicker, title, lead, points, sections, faq
           <div className="flex flex-wrap gap-3">
             <Link href={SIGNUP_ERHVERV} className="inline-flex items-center gap-2.5 min-h-14 px-6 rounded-[14px] bg-highlight hover:bg-highlight-deep text-ink no-underline font-display font-bold text-lg">{t("signupCta")}<ArrowIcon size={20} /></Link>
             <Link href="/proev" className="inline-flex items-center gap-2.5 min-h-14 px-6 rounded-[14px] border-2 border-white text-white no-underline font-semibold text-[17px] hover:bg-white/10"><PhoneIcon size={20} width={2.4} />{t("callMe")}</Link>
-            <a href={PHONE_TEL} className="inline-flex items-center gap-2.5 min-h-14 px-6 rounded-[14px] border-2 border-white text-white no-underline font-semibold text-[17px] hover:bg-white/10">{PHONE_DISPLAY}</a>
+            <a href={phoneFor(locale).tel} className="inline-flex items-center gap-2.5 min-h-14 px-6 rounded-[14px] border-2 border-white text-white no-underline font-semibold text-[17px] hover:bg-white/10">{phoneFor(locale).local ? phoneFor(locale).display : phoneFor(locale).intl}</a>
           </div>
           <p className="basis-full m-0 text-sm text-line">{t("orWrite")}<a href={`mailto:${EMAIL}`} className="text-white underline underline-offset-4">{EMAIL}</a>{t("priceLine")}</p>
         </div>

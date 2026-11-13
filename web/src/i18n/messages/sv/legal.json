@@ -78,7 +78,7 @@
       }
     ],
     "faq": [
-      ["Kan jag få ett personuppgiftsbiträdesavtal?", "Ja. Det ingår i villkoren. Skriv till info@dialogbot.dk om ni vill ha ett undertecknat exemplar."],
+      ["Kan jag få ett personuppgiftsbiträdesavtal?", "Ja. Det ingår i villkoren. Skriv till info@dialogbot.app om ni vill ha ett undertecknat exemplar."],
       ["Lagras data inom EU?", "Databasen finns inom EU (Irland) och servern inom EU (Frankfurt). Vissa underleverantörer för telefoni, tal och AI kan behandla data i USA med stöd av EU-U.S. Data Privacy Framework eller standardavtalsklausuler."],
       ["Vad händer med data när jag säger upp?", "Ni kan inom 30 dagar begära en kopia. Därefter raderar vi data, om inte lagen kräver att vi sparar dem."]
     ]

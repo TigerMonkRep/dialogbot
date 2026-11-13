@@ -22,8 +22,7 @@ supports; if you cite a review, quote only words that are in the brief. Never op
 finds you well", "My name is", "I wanted to reach out").
 Line 2 – what Dialogbot does, using only these facts:
 {facts}
-Line 3 – invite them to try the live 90-second callback demo at {demo}: they enter their phone number and Dialogbot
-calls them right away, no signup and no credit card. Do NOT ask for a meeting or a call with sales.
+Line 3 – {invite} Do NOT ask for a meeting or a call with sales.
 
 Market: {country}. Spelling: {spelling}. If you mention the price, write exactly "{price}". {number}
 The reader is a business. Never mention consumers, private users or anyone's name at Dialogbot. No promises, no
@@ -43,11 +42,20 @@ class OutreachCopywriterAgent:
     def run(self, lead: OutreachLead, brief: LeadBrief, clearance: Clearance) -> OutreachMessage:
         loc = localization.locale_for(lead.country)
         spelling = {"US": "US English", "UK": "British English", "INTL": "concise international English"}[loc.spelling]
-        number = (f'The demo rings from the local number {loc.callback_number}; you may mention it.' if loc.callback_number
-                  else "Do not mention any phone number or a local number.")
-        system = SYSTEM.format(demo=localization.demo_url(lead.country), facts="\n".join("- " + f for f in localization.PRODUCT_FACTS),
-                               country=lead.country, spelling=spelling, price=loc.price, number=number)
-        user = (f"<business>{json.dumps({'company': lead.company_name, 'niche': lead.niche, 'city': lead.city})}</business>\n"
+        demo = localization.demo_url(lead.country)
+        if loc.demo_line:   # the reader rings Dialogbot's own demo line and hears the assistant answer
+            invite = (f"invite them to call Dialogbot's demo line on {loc.demo_line} and hear the AI receptionist "
+                      f"answer: about 90 seconds, at any hour, no signup and no credit card. Write the number exactly "
+                      f"as \"{loc.demo_line}\" and add {demo} for the details.")
+            number = "Mention no other phone number."
+        else:
+            invite = (f"invite them to try the live 90-second callback demo at {demo}: they enter their phone number "
+                      "and Dialogbot calls them right away, no signup and no credit card.")
+            number = (f'The demo rings from the local number {loc.callback_number}; you may mention it.'
+                      if loc.callback_number else "Do not mention any phone number or a local number.")
+        system = SYSTEM.format(demo=demo, facts="\n".join("- " + f for f in localization.product_facts(lead.country)),
+                               invite=invite, country=lead.country, spelling=spelling, price=loc.price, number=number)
+        user = (f"<business>{json.dumps({'company': lead.company_name, 'niche': lead.niche, 'city': lead.city, 'country': lead.country})}</business>\n"
                 f"<brief>{brief.model_dump_json()}</brief>")
         call = llm.structured(self.db, clearance=clearance, purpose="copy", model=self.s.claude_writer_model, system=system,
                               user=user, output=EmailDraft, tool_name="submit_email",

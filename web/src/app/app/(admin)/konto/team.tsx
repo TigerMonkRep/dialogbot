@@ -8,7 +8,9 @@ import { HTML_LANG } from "@/i18n/config";
 import type { T } from "@/i18n/translate";
 
 const RANK: Record<string, number> = { reader: 1, staff: 2, admin: 3, owner: 4 };
-/** Customer-facing roles: Ejer = owner, Kan ændre = admin and staff, Kan se = reader. The backend roles are unchanged. */
+/** Customer-facing roles: Ejer = owner, Kan ændre = admin and staff, Kan se = reader. The backend roles are unchanged.
+ * Choosing «Kan ændre» always gives staff – the same as the invitation (F-EA-04, safer default 13/11: the least
+ * privilege; an existing admin is shown as «Kan ændre» and keeps admin until someone changes the role). */
 const ROLE_KEY: Record<string, string> = { reader: "reader", staff: "editor", admin: "editor", owner: "owner" };
 export const roleLabel = (t: T, role: string) => (ROLE_KEY[role] ? t(`account.role.${ROLE_KEY[role]}`) : role);
 const BTN = "inline-flex items-center justify-center min-h-[44px] px-3.5 rounded-lg border-[1.5px] border-ink bg-paper text-[13px] font-semibold text-ink hover:bg-panel disabled:opacity-50";
@@ -24,7 +26,7 @@ export function MemberRow({ wsId, m, myRole, isMe }: { wsId: string; m: Member; 
     if (!window.confirm(isMe ? t("account.team.confirmLeave") : t("account.team.confirmRemove", { name: m.display_name }))) return;
     await api(`/workspaces/${wsId}/members/${m.id}`, { method: "DELETE" }); router.refresh();
   });
-  const shown = m.role === "staff" ? "admin" : m.role;
+  const shown = m.role === "admin" ? "staff" : m.role;
   return (
     <tr className="border-t-[1.5px] border-line align-middle">
       <td className="py-3 pr-3 text-[15px] font-semibold text-ink">{m.display_name}{isMe && <span className="ml-1.5 text-[13px] font-normal text-muted">{t("account.team.you")}</span>}</td>
@@ -33,7 +35,7 @@ export function MemberRow({ wsId, m, myRole, isMe }: { wsId: string; m: Member; 
         {canManage ? (
           <select aria-label={t("account.team.roleFor", { name: m.display_name })} className={`${inputCls} sm:min-w-[130px] max-sm:w-auto`} value={shown} onChange={(e) => change.run(e.target.value)}>
             {m.role === "owner" && <option value="owner">{t("account.role.owner")}</option>}
-            {RANK[myRole] >= 3 && <option value="admin">{t("account.role.editor")}</option>}
+            {RANK[myRole] >= 3 && <option value="staff">{t("account.role.editor")}</option>}
             <option value="reader">{t("account.role.reader")}</option>
           </select>
         ) : <span className="inline-flex px-3 py-1.5 rounded-full border-[1.5px] border-ink text-[13px] font-semibold text-ink">{roleLabel(t, m.role)}</span>}

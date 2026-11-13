@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "@/i18n/link";
 import { InstallStep } from "@/components/install-step";
 import { useLocale, useRaw, useT } from "@/i18n/client";
+import { apiLanguage } from "@/i18n/config";
 import { api, type ApiError } from "@/lib/client";
 import { EMAIL, PHONE_DISPLAY, PHONE_TEL, SIGNUP_ERHVERV } from "@/lib/contact";
 import { ArrowIcon, CloseIcon, PhoneIcon } from "@/components/site-icons";
@@ -140,7 +141,7 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
   const sendCode = async (phone: string, again: boolean): Promise<boolean> => {
     if (info === null || info === "error") return false;
     const r = await api<{ verification_id: string; phone_display: string | null; resend_after: number }>("/demo-call/code", {
-      method: "POST", body: JSON.stringify({ phone, consent: true, consent_version: info.consent_version, website: "", language: locale }) });
+      method: "POST", body: JSON.stringify({ phone, consent: true, consent_version: info.consent_version, website: "", language: apiLanguage(locale) }) });
     setVerif({ id: r.verification_id, phone, display: r.phone_display || phone, sentAt: Date.now(), resendAfter: r.resend_after || 30 });
     setNow(Date.now()); setCodeError(null); setTlf(r.phone_display || phone);
     push({ from: "bot", text: again ? c("codeResent", { number: r.phone_display || phone }) : c("codeSent", { number: r.phone_display || phone }) });
@@ -345,7 +346,10 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
                   <p id="code-hint" role={codeError ? "alert" : undefined} className={`m-0 ${codeError ? "text-danger font-semibold" : "text-ink-soft"}`}>
                     {codeError ?? c("codeHelp")}
                   </p>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    {/* The SMS goes out from the worker a moment after the answer; a failed delivery is only in the log
+                        (Fürster 13/11), so the way out is always shown once the wait is over. */}
+                    {waitLeft === 0 && <span data-code-missing className="text-ink-soft">{c("codeMissing")}</span>}
                     <button type="button" data-resend onClick={resend} disabled={pending || waitLeft > 0} className={`${chip} disabled:opacity-60 disabled:cursor-not-allowed`}>
                       {waitLeft > 0 ? c("resendIn", { s: waitLeft }) : c("resend")}
                     </button>

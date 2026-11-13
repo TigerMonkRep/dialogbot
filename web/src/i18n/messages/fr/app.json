@@ -35,6 +35,11 @@
     "knowledgeShort": "Savoir"
   },
   "shell": {
+    "suspended": {
+      "title": "Dialogbot a mis cet espace de travail en pause temporairement.",
+      "body": "Les appels de campagne et les actions dans vos systèmes connectés (calendrier, SMS, webhooks) attendent la levée de la pause. Les appels entrants et le chat sont traités normalement.",
+      "support": "Contacter le support"
+    },
     "verify": {
       "before": "Votre adresse e-mail n’est pas confirmée.",
       "link": "Confirmer maintenant",

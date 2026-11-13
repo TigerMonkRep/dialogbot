@@ -18,7 +18,7 @@ from app.modules.billing import stripe as stripe_api
 
 
 def test_every_currency_has_every_price_and_yearly_is_twelve_months():
-    assert markets.CURRENCIES == ("DKK", "SEK", "NOK", "EUR")
+    assert markets.CURRENCIES == ("DKK", "SEK", "NOK", "EUR", "USD")
     for cur in markets.CURRENCIES:
         # no per-call price (2026-11-10): the package (same everywhere) and the minute above it per direction
         assert set(markets.ERHVERV[cur]) == {"monthly", "extra_minute", "outbound_extra_minute", "call_answered",

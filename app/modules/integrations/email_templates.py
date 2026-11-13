@@ -316,6 +316,19 @@ def support_reply(workspace: str, number: int, subject: str, link: str, lang: st
         footer_reason=t(lang, "support_reply_footer"), lang=lang)
 
 
+def support_new_ticket(workspace: str, number: int, subject: str, link: str) -> Email:
+    """H01 → M06: a customer opened a ticket. To Dialogbot's own support inbox, in Danish; on purpose nothing but the
+    number, the subject and the workspace (no name, e-mail, description or files – those stay in the app)."""
+    return Email(
+        subject=f"Ny supportsag #{number} fra {workspace}",
+        preheader=subject[:90],
+        heading=f"Ny supportsag #{number}",
+        rows=[("Arbejdsrum", workspace), ("Sag", f"#{number}"), ("Emne", subject)],
+        paragraphs=["Beskrivelse, afsender og vedhæftninger står kun i supportkøen."],
+        button_label="Åbn sagen i supportkøen", button_url=link,
+        footer_reason="Du får denne e-mail, fordi adressen er Dialogbots supportindbakke.")
+
+
 def intro_mail(business: str) -> Email:
     """The one fixed mail a business gets after it said yes to «send en mail» in a Privat call (docs/sales/privat-opkald-leads.md).
     Fixed text on purpose: verified facts only, no prices, no comparisons; it says why they get it and how to stop it."""
@@ -482,6 +495,8 @@ def samples() -> dict[str, Email]:
         "social_drafts_waiting": social_drafts_waiting(
             [("Facebook · i dag kl. 15.30", "Booking"), ("Instagram · i dag kl. 16.15", "Booking"),
              ("TikTok · i dag kl. 19.00", "Booking")], "https://www.dialogbot.dk/app/operator/social"),
+        "support_new_ticket": support_new_ticket("Hansen VVS", 3, "Kalenderen viser ikke mine aftaler",
+                                                 "https://www.dialogbot.dk/app/operator/admin/support/00000000-0000-0000-0000-000000000000"),
         "support_reply": support_reply("Hansen VVS", 3, "Kalenderen viser ikke mine aftaler",
                                        "https://www.dialogbot.dk/app/support/3"),
         "intro_mail": intro_mail("Salon Test"),

@@ -35,6 +35,11 @@
     "knowledgeShort": "Saber"
   },
   "shell": {
+    "suspended": {
+      "title": "Dialogbot ha pausado temporalmente este espacio de trabajo.",
+      "body": "Las llamadas de campañas y las acciones en sus sistemas conectados (calendario, SMS, webhooks) esperan hasta que se levante la pausa. Las llamadas entrantes y el chat se atienden con normalidad.",
+      "support": "Escribir a soporte"
+    },
     "verify": {
       "before": "Su correo electrónico no está confirmado.",
       "link": "Confirmar ahora",

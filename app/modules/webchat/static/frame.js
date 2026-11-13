@@ -6,38 +6,56 @@
   var store = "dialogbot:" + cfg.key;
   var state = null; // { id, token }
   try { state = JSON.parse(sessionStorage.getItem(store) || "null"); } catch (e) { state = null; }
+  // Texts in the widget's language (app/modules/webchat/texts.py, chosen by the frame endpoint); Danish is the source.
+  var lang = cfg.lang || "da", TX = cfg.t || {};
+  function T(key, vars) {
+    var s = TX[key] || key;
+    if (vars) Object.keys(vars).forEach(function (k) { s = s.split("{" + k + "}").join(String(vars[k])); });
+    return s;
+  }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function E(key) { return esc(T(key)); }
+  /** A server message in Danish is shown as is; in another language the code's own text (or a general one). */
+  function msg(x, fallbackKey) {
+    var byCode = { too_soon: "tooSoon", sms_rate_limited: "smsRateLimited", phone_invalid: "errPhone",
+      code_expired: "codeExpired", too_many_attempts: "tooMany", slot_taken: "slotTaken", rate_limited: "busy",
+      conversation_limit: "conversationLimit", daily_limit: "dailyLimit", webchat_unavailable: "unavailable" };
+    if (lang === "da" && x && x.message) return x.message;
+    return T((x && byCode[x.code]) || fallbackKey);
+  }
 
   app.innerHTML =
-    '<header><div><strong>Digital assistent</strong><span>AI · svarer ud fra virksomhedens godkendte oplysninger</span></div>' +
-    '<button type="button" class="close" aria-label="Luk chat">×</button></header>' +
-    '<ol class="log" aria-live="polite" aria-label="Samtale"></ol>' +
-    '<p class="notice">Du skriver med en AI-assistent. Svar kan være ufuldstændige – del ikke følsomme oplysninger.</p>' +
-    '<div class="contact-bar"><button type="button" class="contact-open">Bliv kontaktet af en medarbejder</button>' +
-    '<button type="button" class="book-open" hidden>Book en tid</button></div>' +
-    '<form class="book" hidden novalidate><strong>Book en tid</strong>' +
-    '<label>Hvad drejer det sig om?<select name="type"></select></label>' +
-    '<label>Tidspunkt<select name="start" required></select></label>' +
-    '<label>Navn<input name="name" autocomplete="name" maxlength="200" required></label>' +
-    '<label>Telefon<input name="phone" type="tel" autocomplete="tel" maxlength="40"></label>' +
-    '<label>E-mail<input name="email" type="email" autocomplete="email" maxlength="320"></label>' +
-    '<label class="check"><input name="consent" type="checkbox" required> Virksomheden må kontakte mig om aftalen.</label>' +
+    '<header><div><strong>' + E("title") + '</strong><span>' + E("subtitle") + '</span></div>' +
+    '<button type="button" class="close" aria-label="' + E("closeAria") + '">×</button></header>' +
+    '<ol class="log" aria-live="polite" aria-label="' + E("logAria") + '"></ol>' +
+    '<p class="notice">' + E("notice") + '</p>' +
+    '<div class="contact-bar"><button type="button" class="contact-open">' + E("contactOpen") + '</button>' +
+    '<button type="button" class="book-open" hidden>' + E("bookOpen") + '</button></div>' +
+    '<form class="book" hidden novalidate><strong>' + E("bookTitle") + '</strong>' +
+    '<label>' + E("bookType") + '<select name="type"></select></label>' +
+    '<label>' + E("bookTime") + '<select name="start" required></select></label>' +
+    '<label>' + E("name") + '<input name="name" autocomplete="name" maxlength="200" required></label>' +
+    '<label>' + E("phone") + '<input name="phone" type="tel" autocomplete="tel" maxlength="40"></label>' +
+    '<label>' + E("email") + '<input name="email" type="email" autocomplete="email" maxlength="320"></label>' +
+    '<label class="check"><input name="consent" type="checkbox" required> ' + E("bookConsent") + '</label>' +
     '<p class="err" role="alert" hidden></p>' +
-    '<div class="row"><button type="button" class="book-cancel">Annullér</button><button type="submit">Book</button></div></form>' +
-    '<form class="contact" hidden novalidate><strong>Bliv kontaktet</strong>' +
-    '<label>Navn<input name="name" autocomplete="name" maxlength="200" required></label>' +
-    '<label>E-mail<input name="email" type="email" autocomplete="email" maxlength="320"></label>' +
-    '<label>Telefon<input name="phone" type="tel" autocomplete="tel" maxlength="40"></label>' +
-    '<label>Hvornår må vi ringe?<select name="window"><option value="">Ingen præference</option></select></label>' +
-    '<label class="check"><input name="consent" type="checkbox" required> Virksomheden må kontakte mig om min henvendelse.</label>' +
+    '<div class="row"><button type="button" class="book-cancel">' + E("cancel") + '</button><button type="submit">' + E("bookSubmit") + '</button></div></form>' +
+    '<form class="contact" hidden novalidate><strong>' + E("contactTitle") + '</strong>' +
+    '<label>' + E("name") + '<input name="name" autocomplete="name" maxlength="200" required></label>' +
+    '<label>' + E("email") + '<input name="email" type="email" autocomplete="email" maxlength="320"></label>' +
+    '<label>' + E("phone") + '<input name="phone" type="tel" autocomplete="tel" maxlength="40"></label>' +
+    '<label>' + E("contactWhen") + '<select name="window"><option value="">' + E("noPreference") + '</option></select></label>' +
+    '<label class="check"><input name="consent" type="checkbox" required> ' + E("contactConsent") + '</label>' +
     '<p class="err" role="alert" hidden></p>' +
-    '<div class="row"><button type="button" class="contact-cancel">Annullér</button><button type="submit">Send</button></div></form>' +
-    '<div class="code-step" role="group" aria-label="Bekræft dit nummer" hidden><strong>Bekræft dit nummer</strong><p class="hint"></p>' +
-    '<label>Kode fra SMS<input name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}"></label>' +
+    '<div class="row"><button type="button" class="contact-cancel">' + E("cancel") + '</button><button type="submit">' + E("send") + '</button></div></form>' +
+    '<div class="code-step" role="group" aria-label="' + E("codeTitle") + '" hidden><strong>' + E("codeTitle") + '</strong><p class="hint"></p>' +
+    '<label>' + E("codeLabel") + '<input name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}"></label>' +
     '<p class="err" role="alert" hidden></p><p class="ok" role="status" hidden></p>' +
-    '<div class="row"><button type="button" class="code-back">Ret nummer</button><button type="button" class="code-resend"></button>' +
-    '<button type="button" class="code-submit">Bekræft</button></div></div>' +
-    '<form><label for="msg" class="sr">Din besked</label><textarea id="msg" rows="2" maxlength="' + cfg.maxChars +
-    '" placeholder="Skriv din besked…"></textarea><button type="submit">Send</button></form>';
+    '<p class="missing" hidden>' + E("codeMissing") + '</p>' +
+    '<div class="row"><button type="button" class="code-back">' + E("codeBack") + '</button><button type="button" class="code-resend"></button>' +
+    '<button type="button" class="code-submit">' + E("codeSubmit") + '</button></div></div>' +
+    '<form><label for="msg" class="sr">' + E("msgLabel") + '</label><textarea id="msg" rows="2" maxlength="' + cfg.maxChars +
+    '" placeholder="' + E("placeholder") + '"></textarea><button type="submit">' + E("send") + '</button></form>';
   var log = app.querySelector(".log");
   var form = app.querySelector("form:not(.contact):not(.book)");
   var codeForm = app.querySelector(".code-step"); // not a <form>: the chat's own message form stays the only other one
@@ -54,7 +72,7 @@
   var seen = {}; // ids of assistant/staff messages already on screen (visitor lines are drawn locally)
   var waitingNoted = false;
   var polling = null, pollUntil = 0;
-  function label(role) { return role === "staff" ? "Medarbejder" : ""; }
+  function label(role) { return role === "staff" ? T("staff") : ""; }
   function show(m) {
     if (m.role === "visitor" || seen[m.id]) return;
     seen[m.id] = true;
@@ -86,7 +104,7 @@
     }).then(function (r) {
       return r.json().catch(function () { return {}; }).then(function (j) {
         if (!r.ok) {
-          var err = new Error(j.message || "Fejl"); err.status = r.status; err.code = j.code;
+          var err = new Error(j.message || T("errGeneric")); err.status = r.status; err.code = j.code;
           err.retryAfter = j.retry_after; err.attemptsLeft = j.attempts_left; throw err;
         }
         return j;
@@ -97,7 +115,7 @@
   function loadWindows() {
     if (windowsLoaded) return;
     windowsLoaded = true;
-    api("GET", "/callback-windows").then(function (j) {
+    api("GET", "/callback-windows?lang=" + encodeURIComponent(lang)).then(function (j) {
       var sel = contactForm.elements.window;
       j.options.forEach(function (o) { var op = document.createElement("option"); op.value = o.key; op.textContent = o.label; sel.appendChild(op); });
     }).catch(function () { windowsLoaded = false; });
@@ -114,9 +132,9 @@
     var f = contactForm.elements, err = contactForm.querySelector(".err");
     var body = { name: f.name.value.trim(), email: f.email.value.trim() || null, phone: f.phone.value.trim() || null,
                  note: "", consent: f.consent.checked, window: f.window.value || null };
-    var problem = !body.name ? "Skriv dit navn." : (!body.email && !body.phone) ? "Skriv e-mail eller telefonnummer."
-      : (body.window && !body.phone) ? "Skriv dit telefonnummer, så vi kan ringe dig op."
-      : !body.consent ? "Sæt flueben, så virksomheden må kontakte dig." : "";
+    var problem = !body.name ? T("errName") : (!body.email && !body.phone) ? T("errEmailOrPhone")
+      : (body.window && !body.phone) ? T("errWindowPhone")
+      : !body.consent ? T("errConsent") : "";
     if (problem) { err.textContent = problem; err.hidden = false; return; }
     err.hidden = true;
     // A phone number the visitor has not proven in this conversation is answered with `verification_required` → code step
@@ -128,13 +146,13 @@
       .then(function (s) { return api("POST", "/conversations/" + s.id + "/contact", body); })
       .then(function (j) {
         contactForm.hidden = true; codeForm.hidden = true;
-        var li = bubble("system-ok", "Tak, " + body.name + "! Virksomheden kontakter dig hurtigst muligt.");
-        manageLink(li, j.manage_url, "Aflys opringningen eller ret dine valg");
+        var li = bubble("system-ok", T("contactThanks", { name: body.name }));
+        manageLink(li, j.manage_url, T("contactManage"));
       })
       .catch(function (x) {
         if (x.code === "verification_required") { pendingContact = body; askCode(body.phone); return; }
         codeForm.hidden = true; contactForm.hidden = false;
-        err.textContent = x.status === 422 ? "Tjek e-mail og telefonnummer." : (x.message || "Det lykkedes ikke. Prøv igen."); err.hidden = false;
+        err.textContent = x.status === 422 ? T("errCheckContact") : msg(x, "errGeneric"); err.hidden = false;
       });
   }
 
@@ -142,16 +160,20 @@
   var pendingContact = null, verification = null, resendTimer = null, checking = false;
   var codeErr = codeForm.querySelector(".err"), codeOk = codeForm.querySelector(".ok"), codeHint = codeForm.querySelector(".hint");
   var resend = codeForm.querySelector(".code-resend"), codeInput = codeForm.querySelector("input[name=code]");
+  var missing = codeForm.querySelector(".missing"); // «Fik du ikke koden?» once a new code may be asked for
   function codeError(text) { codeErr.textContent = text; codeErr.hidden = false; codeOk.hidden = true; }
   function cooldown(seconds) {
     clearInterval(resendTimer);
     var left = seconds;
     function tick() {
-      if (left <= 0) { clearInterval(resendTimer); resend.disabled = false; resend.textContent = "Send ny kode"; return; }
-      resend.disabled = true; resend.textContent = "Send ny kode (" + left + " s)"; left -= 1;
+      if (left <= 0) { clearInterval(resendTimer); resendReady(); return; }
+      resend.disabled = true; missing.hidden = true; resend.textContent = T("resendIn", { s: left }); left -= 1;
     }
     tick(); resendTimer = setInterval(tick, 1000);
   }
+  // The SMS goes out from Dialogbot's worker a moment after the answer; a failed delivery is only logged (Fürster
+  // 13/11), so once a new code may be asked for the visitor is told how to get one.
+  function resendReady() { resend.disabled = false; resend.textContent = T("resend"); missing.hidden = false; }
   function askCode(phone) {
     var err = contactForm.querySelector(".err");
     ensureConversation()
@@ -159,19 +181,19 @@
       .then(function (j) {
         verification = j.verification_id;
         contactForm.hidden = true; codeForm.hidden = false; codeErr.hidden = true; codeOk.hidden = true;
-        codeHint.textContent = "Vi har sendt en kode på 6 cifre til " + j.phone_display + ". Den gælder i 10 minutter.";
+        codeHint.textContent = T("codeSent", { phone: j.phone_display });
         codeInput.value = ""; codeInput.disabled = false; codeInput.focus();
         cooldown(j.resend_after || 30);
       })
       .catch(function (x) {
         if (!codeForm.hidden) {
-          if (x.code === "too_soon") { cooldown(x.retryAfter || 30); codeError("Vent et øjeblik, før du beder om en ny kode."); }
-          else codeError(x.message || "Koden kunne ikke sendes. Prøv igen.");
+          if (x.code === "too_soon") { cooldown(x.retryAfter || 30); codeError(T("tooSoon")); }
+          else codeError(msg(x, "codeSendFailed"));
           return;
         }
-        err.textContent = x.code === "phone_invalid" ? "Tjek telefonnummeret." : x.status === 422 ? "Tjek e-mail og telefonnummer."
-          : x.code === "too_soon" ? "Vent et øjeblik, før du beder om en ny kode."
-          : (x.message || "Koden kunne ikke sendes. Prøv igen.");
+        err.textContent = x.code === "phone_invalid" ? T("errPhone") : x.status === 422 ? T("errCheckContact")
+          : x.code === "too_soon" ? T("tooSoon")
+          : msg(x, "codeSendFailed");
         err.hidden = false;
       });
   }
@@ -183,26 +205,25 @@
   codeForm.querySelector(".code-submit").addEventListener("click", checkCode);
   function checkCode() {
     var code = codeInput.value.replace(/\s/g, "");
-    if (!/^[0-9]{6}$/.test(code)) { codeError("Skriv de 6 cifre fra SMS'en."); return; }
+    if (!/^[0-9]{6}$/.test(code)) { codeError(T("codeFormat")); return; }
     if (checking) return; // a double click checks the code once
     checking = true; codeErr.hidden = true;
     api("POST", "/conversations/" + state.id + "/contact/verify", { verification_id: verification, code: code })
       .finally(function () { checking = false; })
       .then(function () {
         clearInterval(resendTimer);
-        codeOk.textContent = "Nummeret er bekræftet."; codeOk.hidden = false; codeInput.disabled = true;
+        codeOk.textContent = T("codeVerified"); codeOk.hidden = false; codeInput.disabled = true; missing.hidden = true;
         sendContact(pendingContact);
       })
       .catch(function (x) {
         if (x.code === "code_invalid") {
-          codeError(x.attemptsLeft > 0 ? "Koden passer ikke. Du har " + x.attemptsLeft + (x.attemptsLeft === 1 ? " forsøg" : " forsøg") + " tilbage."
-            : "Koden passer ikke. Bed om en ny kode.");
-          if (!(x.attemptsLeft > 0)) { resend.disabled = false; resend.textContent = "Send ny kode"; clearInterval(resendTimer); }
+          codeError(x.attemptsLeft > 0 ? T("codeWrong", { n: x.attemptsLeft }) : T("codeWrongLast"));
+          if (!(x.attemptsLeft > 0)) { clearInterval(resendTimer); resendReady(); }
         } else if (x.code === "too_many_attempts") {
-          codeError("For mange forsøg. Bed om en ny kode."); clearInterval(resendTimer); resend.disabled = false; resend.textContent = "Send ny kode";
+          codeError(T("tooMany")); clearInterval(resendTimer); resendReady();
         } else if (x.code === "code_expired") {
-          codeError("Koden er udløbet. Bed om en ny kode."); clearInterval(resendTimer); resend.disabled = false; resend.textContent = "Send ny kode";
-        } else codeError(x.message || "Det lykkedes ikke. Prøv igen.");
+          codeError(T("codeExpired")); clearInterval(resendTimer); resendReady();
+        } else codeError(msg(x, "errGeneric"));
       });
   }
 
@@ -214,13 +235,21 @@
     li.appendChild(document.createElement("br")); li.appendChild(a);
   }
 
-  // Online booking: shown only when the business has it switched on.
+  // Online booking: shown only when the business has it switched on. Danish uses the server's label; another language
+  // formats the time itself, in the business's time zone.
+  function when(iso, label, tz) {
+    if (lang === "da" || !iso || !window.Intl) return label;
+    try {
+      return new Intl.DateTimeFormat(lang === "no" ? "nb" : lang, { weekday: "long", day: "numeric", month: "long",
+        hour: "2-digit", minute: "2-digit", timeZone: tz || undefined }).format(new Date(iso));
+    } catch (e) { return label; }
+  }
   function fillSlots(j) {
     var types = bookForm.elements.type, starts = bookForm.elements.start;
     if (!types.options.length) j.types.forEach(function (t) { var o = document.createElement("option"); o.value = t.id; o.textContent = t.name; types.appendChild(o); });
     types.value = j.type_id; starts.innerHTML = "";
-    if (!j.slots.length) { var o = document.createElement("option"); o.value = ""; o.textContent = "Ingen ledige tider lige nu"; starts.appendChild(o); }
-    j.slots.forEach(function (x) { var o = document.createElement("option"); o.value = x.start; o.textContent = x.label; starts.appendChild(o); });
+    if (!j.slots.length) { var o = document.createElement("option"); o.value = ""; o.textContent = T("noSlots"); starts.appendChild(o); }
+    j.slots.forEach(function (x) { var o = document.createElement("option"); o.value = x.start; o.textContent = when(x.start, x.label, j.timezone); starts.appendChild(o); });
   }
   api("GET", "/booking").then(function (j) { if (j.enabled) { bookOpen.hidden = false; fillSlots(j); } }).catch(function () {});
   bookOpen.addEventListener("click", function () {
@@ -235,8 +264,8 @@
     var f = bookForm.elements, err = bookForm.querySelector(".err");
     var body = { type_id: f.type.value, start: f.start.value, name: f.name.value.trim(), email: f.email.value.trim() || null,
                  phone: f.phone.value.trim() || null, note: "", consent: f.consent.checked };
-    var problem = !body.start ? "Vælg et tidspunkt." : !body.name ? "Skriv dit navn." : (!body.email && !body.phone) ? "Skriv telefon eller e-mail."
-      : !body.consent ? "Sæt flueben, så virksomheden må kontakte dig om aftalen." : "";
+    var problem = !body.start ? T("chooseTime") : !body.name ? T("errName") : (!body.email && !body.phone) ? T("errPhoneOrEmail")
+      : !body.consent ? T("errBookConsent") : "";
     if (problem) { err.textContent = problem; err.hidden = false; return; }
     err.hidden = true;
     ensureConversation()
@@ -244,13 +273,13 @@
       .then(function (j) {
         bookForm.hidden = true;
         // "pending": the business's calendar could not be read – the time is noted, a staff member confirms it
+        var at = when(j.starts_at, j.label, j.timezone);
         var li = bubble("system-ok", j.confirmation === "pending"
-          ? "Tak, " + body.name + "! Din tid " + j.label + " er noteret. En medarbejder bekræfter tiden."
-          : "Tak, " + body.name + "! Du er booket " + j.label + ".");
-        manageLink(li, j.manage_url, "Se, flyt eller aflys din tid");
+          ? T("bookedPending", { name: body.name, when: at }) : T("booked", { name: body.name, when: at }));
+        manageLink(li, j.manage_url, T("bookingManage"));
       })
       .catch(function (x) {
-        err.textContent = x.code === "slot_taken" ? "Tiden blev lige taget – vælg en anden." : x.status === 422 ? "Tjek telefon og e-mail." : (x.message || "Det lykkedes ikke. Prøv igen.");
+        err.textContent = x.code === "slot_taken" ? T("slotTaken") : x.status === 422 ? T("errCheckBooking") : msg(x, "errGeneric");
         err.hidden = false;
         if (x.code === "slot_taken") bookForm.elements.type.dispatchEvent(new Event("change"));
       });
@@ -287,7 +316,7 @@
     if (!text) return;
     input.value = "";
     bubble("visitor", text);
-    var typing = bubble("assistant", "Skriver…", "typing");
+    var typing = bubble("assistant", T("typing"), "typing");
     send.disabled = true;
     ensureConversation()
       .then(function (s) { return api("POST", "/conversations/" + s.id + "/messages", { text: text }); })
@@ -295,12 +324,12 @@
         typing.remove();
         keepPolling();
         if (j.reply) { seen[j.reply.id] = true; bubble("assistant", j.reply.text); }
-        else if (j.waiting_for_staff && !waitingNoted) { waitingNoted = true; bubble("system-ok", "En medarbejder svarer dig her i chatten."); }
+        else if (j.waiting_for_staff && !waitingNoted) { waitingNoted = true; bubble("system-ok", T("staffWillReply")); }
       })
       .catch(function (err) {
         typing.remove();
         if (err.status === 401) { state = null; sessionStorage.removeItem(store); }
-        bubble("system", err.message || "Beskeden kunne ikke sendes. Prøv igen.");
+        bubble("system", msg(err, "sendFailed"));
         if (err.code === "conversation_limit" || err.code === "daily_limit" || err.code === "webchat_unavailable") disable();
       })
       .then(function () { if (!input.disabled) { send.disabled = false; input.focus(); } });

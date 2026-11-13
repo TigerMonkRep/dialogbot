@@ -1,14 +1,14 @@
 """E07 automatic booking messages: the SMS opt-in on booking settings, the message log and the customers' opt-outs
 
 Revision ID: d6f2a8c4e1b7
-Revises: e9a1c3b5d7f2
+Revises: d1a7c3e5f9b2
 Create Date: 2026-11-13 14:00:00
 """
 from alembic import op
 import sqlalchemy as sa
 
 revision = 'd6f2a8c4e1b7'
-down_revision = 'e9a1c3b5d7f2'
+down_revision = 'd1a7c3e5f9b2'
 branch_labels = None
 depends_on = None
 

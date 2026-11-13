@@ -32,6 +32,8 @@ class Settings(BaseSettings):
     secret_key: str | None = Field(default=None, alias="SECRET_KEY")
     public_base_url: str = Field(default="http://localhost:8000", alias="PUBLIC_BASE_URL")
     frontend_base_url: str = Field(default="http://localhost:5173", alias="FRONTEND_BASE_URL")
+    # H01/M06: a new support ticket is announced here (number, subject and workspace only – Fürster 13/11)
+    support_inbox_email: str = Field(default="info@dialogbot.dk", alias="SUPPORT_INBOX_EMAIL")
 
     # Auth. "local" = maintained password hashing (argon2 via pwdlib) + opaque
     # server-side sessions. "external" is reserved for an OIDC provider and is
@@ -380,9 +382,9 @@ class Settings(BaseSettings):
     # Local number the demo rings from, per market. Unset = the copy may not mention a local number.
     outreach_callback_number_us: str | None = Field(default=None, alias="OUTREACH_CALLBACK_NUMBER_US")
     outreach_callback_number_uk: str | None = Field(default=None, alias="OUTREACH_CALLBACK_NUMBER_UK")
-    # Display prices in the e-mail. USD and GBP are not billing currencies yet (billing/markets.py bills these
-    # markets in EUR), so they are set here; the other markets read the list price from markets.py.
-    outreach_price_us: str = Field(default="$349/mo", alias="OUTREACH_PRICE_US")
+    # Display prices in the e-mail. GBP is not a billing currency (a UK company is billed in EUR), so the UK text is
+    # set here; every other market, the US included, reads its list price from billing/markets.py.
+    outreach_price_us: str | None = Field(default=None, alias="OUTREACH_PRICE_US")  # unset = the USD list price
     outreach_price_uk: str = Field(default="£275/mo", alias="OUTREACH_PRICE_UK")
     # Shared secret for POST /webhooks/events from providers that do not sign with Svix (header X-Outreach-Secret).
     outreach_webhook_secret: str | None = Field(default=None, alias="OUTREACH_WEBHOOK_SECRET")

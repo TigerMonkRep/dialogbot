@@ -18,6 +18,7 @@ from app.models import DemoCall, DemoCallVerification
 from app.modules.integrations.connectors.fakes import WORLD
 from app.modules.privat.lookup_limits import client_ip_sig
 from app.modules.sales import verification
+from app.worker import runner
 from tests.test_sales_demo_calls import _unproven, _web, last_code, sales  # noqa: F401 – the fixture
 
 GSM7 = set("@£$¥èéùìòÇ\nØø\rÅåΔ_ΦΓΛΩΠΨΣΘΞÆæßÉ !\"#¤%&'()*+,-./0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ§"
@@ -25,7 +26,9 @@ GSM7 = set("@£$¥èéùìòÇ\nØø\rÅåΔ_ΦΓΛΩΠΨΣΘΞÆæßÉ !\"#¤%&
 
 
 def _code(client, phone="20 30 40 50", **kw):
-    return client.post("/api/v1/demo-call/code", json={"phone": phone, "consent": True} | kw)
+    r = client.post("/api/v1/demo-call/code", json={"phone": phone, "consent": True} | kw)
+    runner.drain()  # the worker sends the queued SMS (sms_codes) a moment after the answer
+    return r
 
 
 def _verify(client, vid, code):
@@ -119,6 +122,7 @@ def test_per_number_limit_whatever_the_ip(client, sales, monkeypatch):  # noqa: 
                                     json={"phone": "20 30 40 50", "consent": True}).status_code)
         _later(sales, seconds=31)
     assert statuses == [202] * verification.SMS_PER_NUMBER_HOUR + [429]
+    runner.drain()
     assert len(WORLD.sms) == verification.SMS_PER_NUMBER_HOUR
 
 
@@ -172,11 +176,29 @@ def test_consent_honeypot_and_number_checks_come_before_any_sms(client, sales): 
     assert WORLD.sms == []
 
 
-def test_sms_failure_is_reported(client, sales, db):  # noqa: F811
+def test_a_failed_sms_is_retried_by_the_worker_not_a_502(client, sales, db):  # noqa: F811
+    """Fürster 13/11 («A»): Twilio failing no longer turns into 502 `sms_failed` – the answer is 202 like any other,
+    the worker retries the SMS, and the page offers «Fik du ikke koden? Send igen»."""
+    from app.models import OutboxEvent
+
+    runner.drain()  # the fixture's own mails first
     WORLD.fail_next.add("sms")
-    r = _code(client)
-    assert r.status_code == 502 and r.json()["code"] == "sms_failed"
-    assert db.query(DemoCallVerification).count() == 0  # rolled back: it does not count against the visitor
+    r = client.post("/api/v1/demo-call/code", json={"phone": "20 30 40 50", "consent": True})
+    assert r.status_code == 202 and r.json()["status"] == "code_sent"
+    assert db.query(DemoCallVerification).count() == 1
+    runner.drain()  # first attempt fails (fake SMS told to fail once); the retry waits for its backoff
+    assert WORLD.sms == []
+    ev = db.query(OutboxEvent).filter_by(event_type="sms.code").one()
+    assert ev.status == "queued" and ev.attempts == 1 and ev.last_error
+    db.execute(text("update outbox_events set next_attempt_at = now()"))
+    db.commit()
+    runner.drain()
+    assert [m["to"] for m in WORLD.sms] == ["+4520304050"]
+    db.expire_all()
+    ev = db.query(OutboxEvent).filter_by(event_type="sms.code").one()
+    assert ev.status == "done" and "code" not in ev.payload  # the encrypted code leaves the queue after sending
+    v = _verify(client, r.json()["verification_id"], last_code("+4520304050"))
+    assert v.status_code == 200
 
 
 def _shape(r):
@@ -207,6 +229,7 @@ def test_a_do_not_call_number_gets_the_same_answers_as_any_number_over_many_code
         return out
 
     plain, blocked = run("20 30 40 50", 100), run("20 30 40 51", 101)
+    runner.drain()
     assert plain == blocked
     assert [s for s, _, _ in plain] == [202, 409] * verification.SMS_PER_NUMBER_HOUR + [429, 429]
     assert {m["to"] for m in WORLD.sms} == {"+4520304050"}  # never an SMS to the do-not-call number

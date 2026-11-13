@@ -4,7 +4,7 @@ import { PREVIEW_COOKIE, cookieValid, gateEnabled } from "@/lib/preview-gate";
 import { safeNext } from "@/lib/safe-next";
 import { privatKind, privatNext } from "@/lib/privat-next";
 import {
-  DEFAULT_LOCALE, LOCALE_COOKIE, LOCALE_HEADER, LOCALES, fromAcceptLanguage, isLocale, isPublicPage, type Locale,
+  COUNTRY_HEADER, DEFAULT_LOCALE, LOCALE_COOKIE, LOCALE_HEADER, LOCALES, fromAcceptLanguage, fromCountry, isLocale, isPublicPage, type Locale,
 } from "@/i18n/config";
 
 // Public pages hidden behind the temporary preview page while PREVIEW_GATE=on.
@@ -31,7 +31,7 @@ function splitLocale(pathname: string): { locale: Locale | null; rest: string } 
 function preferred(req: NextRequest): Locale {
   const c = req.cookies.get(LOCALE_COOKIE)?.value;
   if (isLocale(c)) return c;
-  return fromAcceptLanguage(req.headers.get("accept-language")) ?? DEFAULT_LOCALE;
+  return fromCountry(req.headers.get(COUNTRY_HEADER)) ?? fromAcceptLanguage(req.headers.get("accept-language")) ?? DEFAULT_LOCALE;
 }
 
 function remember(res: NextResponse, locale: Locale): NextResponse {
@@ -65,7 +65,7 @@ function audienceDoor(req: NextRequest, locale: Locale): NextResponse | null {
   // The ambassador welcome (/a/{slug} → /?anbefalet=…) and campaign parameters travel with the visitor.
   req.nextUrl.searchParams.forEach((v, k) => url.searchParams.set(k, v));
   const res = NextResponse.redirect(url, 307);
-  res.headers.set("vary", "cookie, accept-language");
+  res.headers.set("vary", "cookie, accept-language, x-vercel-ip-country");
   res.headers.set("cache-control", "private, no-store");
   return res;
 }
@@ -73,7 +73,7 @@ function audienceDoor(req: NextRequest, locale: Locale): NextResponse | null {
 /** The response for "/" when the entry page is shown: never shared-cached (it depends on the cookie) and, after
  *  `?aud=reset`, the memory is cleared. */
 function entryResponse(req: NextRequest, res: NextResponse): NextResponse {
-  res.headers.set("vary", "cookie, accept-language");
+  res.headers.set("vary", "cookie, accept-language, x-vercel-ip-country");
   res.headers.set("cache-control", "private, no-store");
   if (req.nextUrl.searchParams.get("aud") === AUDIENCE_RESET) res.cookies.set(AUDIENCE_COOKIE, "", { path: "/", maxAge: 0 });
   return res;
@@ -122,7 +122,7 @@ export async function proxy(req: NextRequest) {
       if (door) return door;
     }
     const res = NextResponse.redirect(new URL(`/${l}${pathname === "/" ? "" : pathname}${search}`, req.url), 307);
-    res.headers.set("vary", "cookie, accept-language");
+    res.headers.set("vary", "cookie, accept-language, x-vercel-ip-country");
     return res;
   }
 

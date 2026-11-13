@@ -111,7 +111,7 @@ calls only happen when a prospect enters their own number on dialogbot.app (the 
 |---|---|---|---|
 | 1 | **The callback demo only rings Danish numbers today** (`DK_NUMBER` in `sales/service.py`), in Danish, with a script aimed at 3–4 minutes (`MAX_SECONDS = 420`) | The e-mail promises a 90-second demo call in the reader's market; for a US or UK reader the form rejects the number. Live sending to a country waits until it is listed in `OUTREACH_DEMO_CALLBACK_COUNTRIES` | demo flow + Twilio numbers |
 | 2 | Full postal address | CAN-SPAM and CASL ask for a valid physical postal address; «Aarhus, Denmark» is not one. Live mode refuses to start without `OUTREACH_POSTAL_ADDRESS` | env |
-| 3 | USD and GBP prices | Billing only knows DKK/SEK/NOK/EUR (`billing/markets.py`); a US customer is billed €329 today. `$349/mo` and `£275/mo` are display values (`OUTREACH_PRICE_US/UK`) – add the currencies or change the copy before quoting them | billing |
+| 3 | GBP price | USD is a billing currency since 13 November 2026 (`billing/markets.py`: $349/mo; US leads are sent to `dialogbot.app/us`). GBP is not: a UK company is billed in EUR, so `£275/mo` (`OUTREACH_PRICE_UK`) is a display value – add the currency or change the copy before quoting it | billing |
 | 4 | Local callback numbers | The copy may only mention a `+1`/`+44` number when `OUTREACH_CALLBACK_NUMBER_US/UK` is set | Twilio |
 | 5 | Sending domain | Use a separate, warmed-up domain with SPF, DKIM and DMARC; list its inboxes in `OUTREACH_SENDER_INBOXES` | DNS |
 | 6 | Webhooks | Point the provider's events at `POST /api/v1/webhooks/events` (Resend: `RESEND_WEBHOOK_SECRET`; others: `OUTREACH_WEBHOOK_SECRET` in `X-Outreach-Secret`) | provider |

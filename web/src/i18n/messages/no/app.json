@@ -35,6 +35,11 @@
     "knowledgeShort": "Kunnskap"
   },
   "shell": {
+    "suspended": {
+      "title": "Dialogbot har midlertidig satt dette arbeidsområdet på pause.",
+      "body": "Kampanjeanrop og handlinger i de tilkoblede systemene deres (kalender, SMS, webhooks) venter til pausen er opphevet. Innkommende anrop og chatten besvares som vanlig.",
+      "support": "Skriv til support"
+    },
     "verify": {
       "before": "E-posten din er ikke bekreftet.",
       "link": "Bekreft nå",

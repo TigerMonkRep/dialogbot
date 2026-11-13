@@ -1,5 +1,5 @@
-import { readFileSync, mkdirSync } from "node:fs";
-import { resolve } from "node:path";
+import { existsSync, readFileSync, mkdirSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 import { expect, type Page, type TestInfo } from "@playwright/test";
 import { PREVIEW_CODE } from "../../helpers";
 
@@ -10,6 +10,13 @@ export const WEB = new URL(process.env.BASE_URL ?? "http://localhost:3000").orig
 /** The API's log, where the fake SMS adapter writes its codes. CI: e2e.yml sets P1_API_LOG (the stack writes api.log
  *  in the repository root, which is also the default here); the local QA stack sets its own path. */
 export const API_LOG = process.env.P1_API_LOG ?? resolve(__dirname, "../../../../api.log");
+/** The outbox worker's log: code SMS are sent by the worker since 13/11 (app/modules/integrations/sms_codes.py). CI
+ *  writes worker.log next to api.log; P1_WORKER_LOG overrides. */
+export const WORKER_LOG = process.env.P1_WORKER_LOG ?? resolve(dirname(API_LOG), "worker.log");
+/** Both logs, where a simulated SMS («sms.simulated») may be written. A missing file reads as empty. */
+export function smsLog(): string {
+  return [API_LOG, WORKER_LOG].map((f) => (existsSync(f) ? readFileSync(f, "utf8") : "")).join("\n");
+}
 
 /** Evidence folder qa/evidence/<id>/ (relative to web/). */
 export function evid(id: string) {
@@ -43,8 +50,7 @@ export function uniqueMobile() {
 export async function smsCodeFor(e164: string): Promise<string> {
   let code: string | undefined;
   await expect.poll(() => {
-    const log = readFileSync(API_LOG, "utf8");
-    const lines = log.split("\n").filter((l) => l.includes("sms.simulated") && l.includes(e164));
+    const lines = smsLog().split("\n").filter((l) => l.includes("sms.simulated") && l.includes(e164));
     const m = lines.at(-1)?.match(/er (\d{6})\./);
     code = m?.[1];
     return code;

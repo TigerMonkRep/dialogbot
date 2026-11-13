@@ -18,9 +18,10 @@ from __future__ import annotations
 from app.config import get_settings
 from app.modules.billing import markets
 
-LOCALES = ("da", "en", "de", "es", "fr", "it", "no", "sv")
-LOCALE_PATTERN = "^(da|en|de|es|fr|it|no|sv)$"
-STRIPE_LOCALE = {"no": "nb"}
+# «us» is the website's US edition: English at Stripe, dollars, no VAT (outside the EU).
+LOCALES = ("da", "en", "de", "es", "fr", "it", "no", "sv", "us")
+LOCALE_PATTERN = "^(da|en|de|es|fr|it|no|sv|us)$"
+STRIPE_LOCALE = {"no": "nb", "us": "en"}
 
 
 def norm_locale(locale: str | None) -> str:

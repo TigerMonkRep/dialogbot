@@ -461,6 +461,7 @@
       "confirmCode": "Bekræft",
       "resend": "Send igen",
       "resendIn": "Send igen om {s} s",
+      "codeMissing": "Fik du ikke koden?",
       "changeNumber": "Skift nummer",
       "errCodeFormat": "Koden er 6 cifre.",
       "errCodeWrong": "Koden passer ikke. Du har {left} forsøg tilbage.",

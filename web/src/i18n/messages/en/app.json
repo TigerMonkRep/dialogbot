@@ -35,6 +35,11 @@
     "knowledgeShort": "Knowledge"
   },
   "shell": {
+    "suspended": {
+      "title": "Dialogbot has temporarily paused this workspace.",
+      "body": "Campaign calls and actions in your connected systems (calendar, SMS, webhooks) wait until the pause is lifted. Inbound calls and the chat are answered as usual.",
+      "support": "Contact support"
+    },
     "verify": {
       "before": "Your email isn't verified.",
       "link": "Verify now",

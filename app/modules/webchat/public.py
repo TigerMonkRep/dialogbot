@@ -27,7 +27,7 @@ from sqlalchemy.orm import Session as OrmSession
 
 from app.core.errors import Forbidden, NotFound, ValidationFailed
 from app.db import get_db
-from app.modules.webchat import service
+from app.modules.webchat import service, texts
 
 router = APIRouter(prefix="/public/webchat", tags=["webchat-public"])
 STATIC = Path(__file__).parent / "static"
@@ -80,6 +80,15 @@ def _csp(ancestors: list[str]) -> str:
             f"frame-ancestors {fa}; base-uri 'none'; form-action 'none'")
 
 
+def _lang(db: OrmSession, s, request: Request) -> str:
+    """The widget's language (app/modules/webchat/texts.py `pick`): the loader's `lang` (the script tag's
+    data-language or the host page's <html lang>), the visitor's browser, the business's language, Danish."""
+    from app.modules.integrations.email_texts import workspace_language
+
+    return texts.pick(request.query_params.get("lang"), request.headers.get("accept-language"),
+                      workspace_language(db, s.workspace_id, "default_conversation_language"))
+
+
 @router.get("/{key}/frame", response_class=HTMLResponse)
 def frame(key: str, request: Request, db: OrmSession = Depends(get_db)):
     s = service.by_key(db, key)
@@ -92,11 +101,12 @@ def frame(key: str, request: Request, db: OrmSession = Depends(get_db)):
     if request.headers.get("sec-fetch-dest") == "iframe" and service.origin_allowed(s, host_origin):
         service.record_seen(db, s, host_origin)  # type: ignore[arg-type]
     available = not service.unavailable_reasons(db, s)
-    cfg = {"key": s.widget_key, "base": "/api/v1/public/webchat", "available": available,
-           "greeting": service.greeting_text(db, s), "unavailable": service.UNAVAILABLE_TEXT,
+    lang = _lang(db, s, request)
+    cfg = {"key": s.widget_key, "base": "/api/v1/public/webchat", "available": available, "lang": lang,
+           "t": texts.t(lang), "greeting": service.greeting_text(db, s, lang), "unavailable": texts.t(lang)["unavailable"],
            "maxChars": service.MAX_MESSAGE_CHARS, "hostOrigin": host_origin if service.origin_allowed(s, host_origin) else None}
     page = f"""<!doctype html>
-<html lang="da"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="{lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex"><title>Chat</title>
 <link rel="stylesheet" href="/api/v1/public/webchat/assets/frame.css"></head>
 <body><div id="app" data-config="{html.escape(json.dumps(cfg), quote=True)}"></div>
@@ -158,7 +168,8 @@ def phone_code(key: str, conversation_id: uuid.UUID, body: WebchatPhoneCodeIn, r
                db: OrmSession = Depends(get_db)):
     """W04 step 1: a 6-digit code by SMS (the business's own text and sender) to the number the visitor typed in «Bliv
     kontaktet». 10 minutes, 5 attempts, resend after 30 s (409 `too_soon` + `retry_after`); 429 `sms_rate_limited`
-    per number (all public doors), per client IP and per business."""
+    per number (all public doors), per client IP and per business. The SMS is sent by the worker after this answer
+    (no 502 here) and counted as the business's SMS usage."""
     from app.models import Workspace
     from app.modules.customer import service as customer
     from app.modules.privat.lookup_limits import client_ip
@@ -247,10 +258,20 @@ def contact(key: str, conversation_id: uuid.UUID, body: ContactIn, origin: str |
 
 
 @router.get("/{key}/callback-windows")
-def callback_windows(key: str, db: OrmSession = Depends(get_db)):
-    """Time windows the visitor can choose for a call back, in the business's local time."""
+def callback_windows(key: str, lang: str | None = None, db: OrmSession = Depends(get_db)):
+    """Time windows the visitor can choose for a call back, in the business's local time; labels in `lang` (one of
+    the eight, Danish by default). The lead keeps the Danish label for staff."""
+    from datetime import date
+
     from app.modules.leads import callback
     from app.modules.reports.service import tz_of
 
     s = service.by_key(db, key)
-    return {"timezone": tz_of(db, s.workspace_id), "options": callback.options(tz_of(db, s.workspace_id))}
+    opts = callback.options(tz_of(db, s.workspace_id))
+    lang = texts.supported(lang) or "da"
+    if lang != "da":
+        for o in opts:
+            wd = None if o["key"] == "asap" or o["key"].startswith("today") or o.get("tomorrow") else \
+                date.fromisoformat(o["date"]).weekday()
+            o["label"] = texts.window_label(o["key"], lang, wd)
+    return {"timezone": tz_of(db, s.workspace_id), "options": opts}

@@ -1,0 +1,258 @@
+{
+  "meta": {
+    "title": "Dialogbot – one assistant that answers the phone: for your business and for you",
+    "description": "Dialogbot answers in English, around the clock, books appointments in your calendar and makes calls for you when you ask. You approve everything before it takes effect. For businesses from {pMonthly}/month – for you at home from {pPrivatFrom}/month.",
+    "ogTitle": "One assistant that answers the phone – for your business and for you"
+  },
+  "nav": {
+    "pages": "Pages",
+    "how": "How it works",
+    "business": "Business",
+    "private": "Personal",
+    "pricing": "Pricing",
+    "login": "Log in",
+    "try": "Try it",
+    "menu": "Menu",
+    "close": "Close menu",
+    "signup": "Sign up"
+  },
+  "hero": {
+    "step": "Hear it first",
+    "title": {
+      "before": "One assistant that ",
+      "mark": "answers the phone",
+      "after": " – for your business and for you."
+    },
+    "lead": "Dialogbot answers in English, around the clock, books appointments in your calendar and makes calls for you when you ask. You approve everything before it takes effect.",
+    "cta": "Try it – it calls you",
+    "watch": "See how",
+    "note": "2 minutes. No sign-up, no card.",
+    "listen": "This is how it sounds",
+    "signupCta": "Sign up your business"
+  },
+  "phone": {
+    "alt": "Example of a call Dialogbot takes for a carpenter: the customer calls, Dialogbot answers, finds a slot on Tuesday at 9 and books it.",
+    "time": "09:41",
+    "live": "Live",
+    "caller": "Mette Larsen",
+    "callerSub": "Incoming · Hansen Carpentry",
+    "decline": "Decline",
+    "answer": "Dialogbot answers",
+    "timer": "00:12",
+    "lines": [
+      "Hansen Carpentry, you're speaking with Dialogbot. How can I help?",
+      "Hi. I need a window replaced – can you come and take a look?",
+      "Yes. I have Tuesday at 9 or Wednesday at 1. Which suits you best?",
+      "Tuesday at 9.",
+      "That's booked. You'll get a text right away."
+    ],
+    "chip": "Appointment booked · Tuesday at 9"
+  },
+  "proof": {
+    "label": "What you get",
+    "facts": [
+      {
+        "title": "In English",
+        "text": "With a voice you choose yourself"
+      },
+      {
+        "title": "Around the clock",
+        "text": "Even Sunday at 10 pm"
+      },
+      {
+        "title": "You approve everything",
+        "text": "Before → after, then «Approve?»"
+      },
+      {
+        "title": "No lock-in",
+        "text": "Cancel month to month"
+      }
+    ]
+  },
+  "choose": {
+    "step": "Step 2",
+    "title": {
+      "before": "Who should it ",
+      "mark": "help",
+      "after": "?"
+    },
+    "lead": "The same assistant, two worlds. Pick the one that looks like your everyday life.",
+    "business": {
+      "kick": "Business",
+      "kickText": "Tradespeople, clinics and salons",
+      "title": "Answers the phone when you can't.",
+      "text": "Answers from the services and opening hours you have approved yourself. Books in your calendar and sends you a message about every call. You keep your number.",
+      "uiLabel": "Example of today's overview",
+      "today": "Today · Thursday",
+      "company": "Hansen Carpentry",
+      "kpis": [
+        {
+          "n": "14",
+          "label": "calls"
+        },
+        {
+          "n": "3",
+          "label": "appointments booked"
+        },
+        {
+          "n": "1",
+          "label": "message for you"
+        }
+      ],
+      "rows": [
+        {
+          "time": "09:41",
+          "name": "Mette Larsen",
+          "status": "Booked",
+          "tone": "ok"
+        },
+        {
+          "time": "11:08",
+          "name": "Unknown no.",
+          "status": "Window quote",
+          "tone": "plain"
+        },
+        {
+          "time": "13:25",
+          "name": "Jonas Friis",
+          "status": "Message for you",
+          "tone": "yellow"
+        }
+      ],
+      "cta": "For businesses",
+      "price": "From {pMonthly}/month"
+    },
+    "private": {
+      "kick": "Personal",
+      "kickText": "Your own assistant – Peter",
+      "title": "Makes the calls, so you don't have to.",
+      "text": "Type or dictate a task. Peter makes lists, reminds you of what matters and calls the hairdresser, the garage or the doctor for you. Never before you have said yes.",
+      "uiLabel": "Example of a conversation with Peter",
+      "who": "Peter",
+      "ask": "Shall I call Cykelkælderen and book Thursday at 3.30 pm?",
+      "yes": "Yes, call",
+      "done": "Done – Thursday 3.30 pm. Added to your calendar.",
+      "cta": "For you at home",
+      "trial": "{days} days free"
+    }
+  },
+  "how": {
+    "title": {
+      "before": "The customer calls. Dialogbot answers. ",
+      "mark": "You get the message",
+      "after": "."
+    },
+    "lead": "Three bricks and it runs. No menus to learn – the heavy lifting sits behind the assistant.",
+    "bricks": [
+      "Call",
+      "Calendar",
+      "Message"
+    ],
+    "steps": [
+      {
+        "title": "The customer calls – as always",
+        "text": "On your own number. If you are busy or closed, Dialogbot picks up within two seconds and introduces itself as your receptionist."
+      },
+      {
+        "title": "It answers and books",
+        "text": "From the services, prices and opening hours you have approved yourself. It never guesses. If the customer needs an appointment, it finds a free slot in the calendar and sends a text."
+      },
+      {
+        "title": "You get a message",
+        "text": "Name, number and what it was about – as a text or e-mail right away, and a summary report every day."
+      }
+    ]
+  },
+  "can": {
+    "title": {
+      "before": "What it ",
+      "mark": "can do",
+      "after": ""
+    },
+    "lead": "Six things, one assistant. Everything builds on knowledge you have approved yourself.",
+    "tiles": [
+      {
+        "title": "Answers the phone",
+        "text": "Around the clock, in English. Says honestly that it is a digital assistant if the customer asks."
+      },
+      {
+        "title": "Books appointments",
+        "text": "Finds free slots in Google Calendar or Microsoft 365, books, moves and cancels."
+      },
+      {
+        "title": "Answers on your website",
+        "text": "The same knowledge as web chat. One line of code and it's on – in the evening too."
+      },
+      {
+        "title": "Sends texts and e-mails",
+        "text": "Confirmation to the customer, a message to you. Short, no exclamation marks, from your name."
+      },
+      {
+        "title": "Calls customers back",
+        "text": "Follows up on quotes or reminds about service – only customers who have said yes."
+      },
+      {
+        "title": "Peter – for you at home",
+        "text": "Lists, reminders and calls to the dentist or the garage. You say yes first."
+      }
+    ]
+  },
+  "pricing": {
+    "title": "One subscription. No charge per inquiry.",
+    "lead": "No lock-in. Do-it-yourself setup is included in the price.",
+    "from": "from",
+    "business": {
+      "name": "Business",
+      "unit": "/month before tax",
+      "points": [
+        "Phone, booking and web chat – all included",
+        "{pIncluded} minutes a month for incoming and outgoing calls",
+        "Cancel month to month"
+      ],
+      "cta": "Hear it first"
+    },
+    "private": {
+      "name": "Personal",
+      "unit": "/month · {days} days free",
+      "amount": "{pPrivatFrom}",
+      "points": [
+        "Lists and reminders – unlimited",
+        "Peter calls for you within your limits",
+        "Cancel any time"
+      ],
+      "cta": "Start {days} days free"
+    },
+    "all": "All prices"
+  },
+  "faq": {
+    "title": "What people ask",
+    "items": [
+      {
+        "q": "Who answers when the customer calls?",
+        "a": "Dialogbot – with your company name and a voice you have chosen yourself. If the customer asks, it says honestly that it is a digital assistant."
+      },
+      {
+        "q": "What if we answer the phone ourselves?",
+        "a": "Then you do. Dialogbot only takes the calls you miss – or every call outside opening hours. You set the rule."
+      },
+      {
+        "q": "Can it book in our calendar?",
+        "a": "Yes. Google Calendar and Microsoft 365 are included. It finds a free slot, books and sends the customer a text confirmation."
+      },
+      {
+        "q": "What does setup cost?",
+        "a": "Nothing if you do it yourself – it takes about 30 minutes with Peter in the chat. If you want our specialists to connect your calendar, CRM or booking system, it costs {pSetup} once."
+      },
+      {
+        "q": "Can I cancel?",
+        "a": "Yes, month to month. No lock-in, no fee. Personal can be canceled any time in the app."
+      }
+    ]
+  },
+  "band": {
+    "title": "Ready to hear it?",
+    "text": "Peter calls you back in under a minute – free and without signing up. If you would rather build it yourself, it takes 30 minutes.",
+    "primary": "Hear it first",
+    "secondary": "Build it yourself"
+  }
+}

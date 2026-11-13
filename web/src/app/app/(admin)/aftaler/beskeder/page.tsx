@@ -3,18 +3,21 @@ import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
 import { getT } from "@/i18n/server";
 import { LOCALE_NAMES, type Locale } from "@/i18n/config";
+import { SmsToggle } from "./sms-toggle";
 
 type Item = {
   variant: string; audience: "customer" | "owner"; label: string;
   sms: { text: string; chars: number; encoding: string; segments: number } | null;
   email: { subject: string; preheader: string | null; html: string; text: string; from_name: string };
 };
-type Messages = { lang: string; default_lang: string; languages: string[]; source: "sample" | "booking"; business: string; sends_nothing: boolean; items: Item[] };
+type Messages = { lang: string; default_lang: string; languages: string[]; source: "sample" | "booking"; business: string; sends_nothing: boolean; items: Item[];
+  sending: { email: boolean; sms_enabled: boolean; reminder_hours: number; version: number } };
 
 const chip = (on: boolean) => `inline-flex items-center min-h-[44px] px-4 rounded-full border-[1.5px] border-ink text-[14px] font-semibold ${on ? "bg-ink text-paper" : "bg-paper text-ink hover:bg-panel"}`;
 
 /** E07 – «Beskeder om aftaler»: every booking message (customer SMS + e-mail in the business's name, the owner's
- *  e-mails) in the eight languages, rendered by the API from the real templates. Read-only: nothing is sent. */
+ *  e-mails) in the eight languages, rendered by the API from the real templates. The preview sends nothing; the card
+ *  «Sådan sendes beskederne» says what goes out automatically and holds the SMS opt-in (off by default). */
 export default async function BookingMessagesPage({ searchParams }: { searchParams: Promise<{ sprog?: string; besked?: string; aftale?: string }> }) {
   const ws = await requireWorkspace();
   const t = await getT("app");
@@ -42,6 +45,16 @@ export default async function BookingMessagesPage({ searchParams }: { searchPara
       </div>
       <p role="note" className="rounded-xl bg-highlight px-4 py-3 text-[14px] font-semibold text-ink max-w-[680px]">{t("bookings.messages.noSend")}
         <span className="block font-normal mt-1">{t("bookings.messages.status")}</span></p>
+
+      <section aria-labelledby="sending-title" className="flex flex-col gap-3 rounded-2xl border-2 border-ink bg-paper p-5 max-w-[680px]">
+        <h2 id="sending-title" className="font-display font-extrabold text-[20px] text-ink">{t("bookings.messages.sending.title")}</h2>
+        <ul className="flex flex-col gap-2 text-[14px] leading-relaxed text-ink-soft list-disc pl-5">
+          <li>{t("bookings.messages.sending.email")}</li>
+          <li>{t("bookings.messages.sending.reminder")}</li>
+          <li>{t("bookings.messages.sending.owner")}</li>
+        </ul>
+        <SmsToggle wsId={ws.id} enabled={m.sending.sms_enabled} canManage={ws.role === "owner" || ws.role === "admin"} />
+      </section>
 
       <nav aria-label={t("bookings.messages.language")} className="flex flex-col gap-2">
         <span className="eyebrow">{t("bookings.messages.language")}</span>

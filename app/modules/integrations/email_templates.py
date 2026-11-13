@@ -102,6 +102,9 @@ class Email:
     # replaces Dialogbot in the header and the signature, and `footer_line` replaces Dialogbot's company line.
     sender: str | None = None
     footer_line: str | None = None
+    # E07: the customer's own opt-out from the business's booking e-mails (a link in the small print).
+    unsubscribe_label: str | None = None
+    unsubscribe_url: str | None = None
 
     def text(self) -> str:
         lang = self.lang
@@ -115,6 +118,8 @@ class Email:
             parts += [self.note, ""]
         parts += [t(lang, "regards"), self.sender or "Dialogbot", "", "—", self.footer_reason,
                   self.footer_line or f"{t(lang, 'company_line')} · dialogbot.dk"]
+        if self.unsubscribe_url:
+            parts += [f"{self.unsubscribe_label or 'Unsubscribe'}: {self.unsubscribe_url}"]
         return "\n".join(parts).strip() + "\n"
 
     def html(self) -> str:
@@ -157,6 +162,8 @@ class Email:
                 if self.note else "")
         pre = (f'<div style="display:none;max-height:0;overflow:hidden;opacity:0;">{e(self.preheader)}</div>'
                if self.preheader else "")
+        unsub = (f'<br><a class="lk" href="{e(self.unsubscribe_url, quote=True)}" style="color:{MUTED};">'
+                 f'{e(self.unsubscribe_label or "Unsubscribe")}</a>' if self.unsubscribe_url else "")
         step = ""
         if self.step:  # the yellow step square from the building guide (stays yellow with ink text in dark mode)
             step = (f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 18px;">'
@@ -175,7 +182,7 @@ class Email:
 <tr><td style="padding:0 4px 20px;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
 {logo_td}
-<td class="wm" style="vertical-align:middle;padding-left:{0 if self.sender else 10}px;font:800 22px/1 {HEAD_FONT};color:{INK};letter-spacing:-0.3px;">{brand}</td>
+<td class="wm" style="vertical-align:middle;padding-left:{0 if self.sender else 10}px;font:800 22px/1 {HEAD_FONT};color:{INK};letter-spacing:-0.3px;">{e(brand)}</td>
 </tr></table></td></tr>
 <tr><td class="card" style="background:{PAPER};border:2px solid {INK};border-radius:20px;">
 <div class="pad" style="padding:32px 32px 16px;">
@@ -184,7 +191,7 @@ class Email:
 <p class="tx" style="margin:8px 0 16px;font:16px/1.6 {FONT};color:{INK_SOFT};">{e(t(lang, "regards"))}<br><strong class="hd" style="color:{INK};">{e(self.sender or "Dialogbot")}</strong></p>
 </div></td></tr>
 <tr><td class="mt" style="padding:20px 8px 0;font:12px/1.6 {FONT};color:{MUTED};text-align:center;">
-{e(self.footer_reason)}<br>{company}
+{e(self.footer_reason)}<br>{company}{unsub}
 </td></tr>
 </table></td></tr></table></body></html>"""
 
@@ -430,7 +437,8 @@ def to_payload(mail: Email) -> dict:
             "button_label": mail.button_label, "button_url": mail.button_url, "note": mail.note,
             "footer_reason": mail.footer_reason, "preheader": mail.preheader, "step": mail.step,
             "rows": [list(r) for r in mail.rows], "lang": mail.lang, "audience": mail.audience,
-            "sender": mail.sender, "footer_line": mail.footer_line}
+            "sender": mail.sender, "footer_line": mail.footer_line, "unsubscribe_label": mail.unsubscribe_label,
+            "unsubscribe_url": mail.unsubscribe_url}
 
 
 def from_payload(p: dict) -> Email:

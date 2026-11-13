@@ -169,7 +169,15 @@ def book(db: OrmSession, ws: Workspace, *, type_id: uuid.UUID, start: str, name:
     if b.confirmation == "pending":
         _ask_staff_to_confirm(db, b, tz)
     _emit(db, ws.id, "booking.created", b, tz)
+    _notify(db, b, "created")
     return b
+
+
+def _notify(db: OrmSession, b: Booking, event: str, *, previous_start: datetime | None = None) -> None:
+    """E07: the customer's and the business's messages about this event, through the outbox (bookings/notify.py)."""
+    from app.modules.bookings import notify
+
+    notify.queue(db, b, event, previous_start=previous_start)
 
 
 # --------------------------------------------------------------------------- «afventer bekræftelse»
@@ -242,6 +250,7 @@ def confirm(db: OrmSession, b: Booking, *, actor: uuid.UUID | None, override_con
                        extra={"conflicts": [{"start": b0.isoformat(), "end": b1.isoformat()} for b0, b1 in hits]})
     b.confirmation = "confirmed"
     _close_confirm_task(db, b, actor)
+    _notify(db, b, "confirmed")
     return b
 
 
@@ -272,11 +281,13 @@ def move(db: OrmSession, ws: Workspace, b: Booking, *, start: str, tz: str) -> B
         db.flush()
     if not free:
         raise Conflict("Den nye tid er ikke ledig – vælg en anden", code="slot_taken")
+    previous = b.starts_at
     b.starts_at, b.ends_at = st, en
     if not readable:  # the new time was not checked against the connected calendar
         b.confirmation = "pending"
         _ask_staff_to_confirm(db, b, tz)
     db.flush()
+    _notify(db, b, "moved", previous_start=previous)
     return b
 
 
@@ -286,6 +297,7 @@ def cancel(db: OrmSession, b: Booking) -> Booking:
         _close_confirm_task(db, b, None)
         _mirror_cancel(db, b)
         _emit(db, b.workspace_id, "booking.cancelled", b, "Europe/Copenhagen")
+        _notify(db, b, "cancelled")
     return b
 
 

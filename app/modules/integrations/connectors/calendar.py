@@ -403,8 +403,14 @@ def _failed(db: OrmSession, workspace_id: uuid.UUID, b: Booking, key: str, e: Ac
         credentials.mark_error(conn, f"Kalenderen kunne ikke opdateres: {e.message}")
 
 
-def _synced(b: Booking, key: str) -> None:
+def _synced(b: Booking, key: str, db: OrmSession | None = None) -> None:
+    recovered = b.calendar_sync == "failed"
     b.calendar_connector, b.calendar_sync, b.calendar_sync_error = key, "synced", None
+    if recovered and db is not None and b.status == "confirmed" and b.confirmation != "pending":
+        # E07: the customer was told «request received» while the calendar could not be written; now it is final.
+        from app.modules.bookings import notify
+
+        notify.queue(db, b, "confirmed")
 
 
 def mirror_create(db: OrmSession, workspace_id: uuid.UUID, b: Booking, *,
@@ -426,7 +432,7 @@ def mirror_create(db: OrmSession, workspace_id: uuid.UUID, b: Booking, *,
         _failed(db, workspace_id, b, key, e)
         return False
     b.calendar_event_id = eid or None
-    _synced(b, key)
+    _synced(b, key, db)
     return True
 
 
@@ -447,7 +453,7 @@ def mirror_update(db: OrmSession, workspace_id: uuid.UUID, b: Booking, *,
     except ActionError as e:
         _failed(db, workspace_id, b, key, e)
         return False
-    _synced(b, key)
+    _synced(b, key, db)
     return True
 
 

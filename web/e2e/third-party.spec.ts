@@ -178,7 +178,9 @@ test.describe("Travelpayouts-verifikation kun på /privat (NEXT_PUBLIC_TRAVELPAY
     await page.setContent(`<html><body><p style="font-size:40px">tekst</p><script src="https://emrldtp.cc/NTk2Mjc3.js?t=596277"></script></body></html>`);
     await page.locator("p").click({ noWaitAfter: true });
     await expect.poll(() => popups.length, { message: "klik åbnede en ny fane" }).toBeGreaterThan(0);
-    await expect.poll(() => evil.some((u) => u.includes("/top-")), { message: "siden blev sendt videre" }).toBe(true);
+    // Either redirect proves it: the click's top.location or the timed one (2.5 s after load). On a slow runner the
+    // timed redirect lands first and the browser drops the click's – asserting only «/top-» made this control flaky.
+    await expect.poll(() => evil.some((u) => /\/(top-|delayed)/.test(u)), { message: "siden blev sendt videre" }).toBe(true);
   });
 
   test("/privat: scriptet kun i den sandboxede iframe; 10 klik giver nul nye sider og ingen navigation", async ({ page, context }) => {

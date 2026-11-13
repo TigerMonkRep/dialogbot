@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { CUSTOMER_SITE, DEMO_PASSWORD, PREVIEW_CODE, SEEDED, serve, freshOwner, latestMailLink, login, shot, uniqueEmail } from "./helpers";
-import { smsCodeFor, uniqueIp, uniqueMobile } from "./qa/erhverv-p1a/p1a-helpers";
+import { smsCodeFor, uniqueMobile } from "./qa/erhverv-p1a/p1a-helpers";
+import { ownClientIp } from "./qa/erhverv-d/d-helpers";
 
 /* The eight core journeys of milestone A. Blueprint §9.1 is not in the repository; these cover the flows that
  * exist today (A01–A06, O01–O04, K03–K05, G01/G05, S02/S08/S09) and assert the honesty rules along the way. */
@@ -371,8 +372,8 @@ test("12 · Henvendelse: kunde beder om kontakt i webchat, ejer kvalificerer, be
   const w = await (await page.request.put(`/api/backend/workspaces/${wsId}/webchat`, { headers: CSRF, data: { expected_version: s.version, enabled: true, allowed_origins: [CUSTOMER_SITE], greeting: "" } })).json();
   servers.push(await serve(4000, `<!doctype html><html lang="da"><head><title>Kundeside</title></head><body><h1>Fjord Gulv</h1>${w.embed_code}</body></html>`));
 
-  // own client address: the SMS-code door counts codes per IP (the E2E stack reads the first X-Forwarded-For entry)
-  const ctx = await browser.newContext({ viewport: page.viewportSize() ?? undefined, extraHTTPHeaders: { "x-forwarded-for": uniqueIp() } });
+  const ctx = await browser.newContext({ viewport: page.viewportSize() ?? undefined });
+  await ownClientIp(ctx); // the SMS-code door counts codes per client IP
   const site = await ctx.newPage();
   await site.goto(`${CUSTOMER_SITE}/`);
   await site.getByRole("button", { name: "Åbn chat" }).click();

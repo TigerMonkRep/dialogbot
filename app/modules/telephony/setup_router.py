@@ -17,6 +17,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session as OrmSession
 
 from app.core.auth import WorkspaceContext, require_capability
+from app.core.body import raw_body
 from app.core.errors import ValidationFailed
 from app.db import get_db
 from app.models import BusinessProfile, KnowledgeItem, ReceptionScript, TelephonyTest, WorkspaceVoiceSettings
@@ -177,11 +178,10 @@ def put_company(body: CompanyIn, request: Request, ctx: WorkspaceContext = Depen
 
 
 @router.put("/documents")
-async def put_documents(request: Request, ctx: WorkspaceContext = Depends(require_capability("telephony.manage")),
-                        db: OrmSession = Depends(get_db)):
+def put_documents(request: Request, ctx: WorkspaceContext = Depends(require_capability("telephony.manage")),
+                  db: OrmSession = Depends(get_db), data: bytes = Depends(raw_body)):
     from app.modules.voices import storage
 
-    data = await request.body()
     if not data or len(data) > MAX_DOC:
         raise ValidationFailed("Upload en PDF, PNG eller JPG på højst 10 MB", field_errors=[{"field": "document"}])
     kind = next((v for k, v in DOC_TYPES.items() if data.startswith(k)), None)

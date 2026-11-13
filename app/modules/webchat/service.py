@@ -238,7 +238,7 @@ def preview_reply(db: OrmSession, ws: Workspace, user_id: uuid.UUID, turns: list
     if n >= PREVIEW_DAILY_LIMIT:
         raise RateLimited("Forhåndsvisningen har nået dagens grænse. Prøv igen i morgen.", code="daily_limit")
     c, usage = complete_logged(db, ws, user_id=user_id, purpose="webchat_preview", messages=_alternate(turns),
-                               channel="webchat")
+                               channel="webchat", release_db=True)
     return {"reply": visible_reply(c), "refused": usage.outcome == "refused"}
 
 
@@ -255,8 +255,11 @@ def _reply_with_actions(db: OrmSession, ws: Workspace, conv: Conversation, turns
 
     tools = actions.tools_for(db, ws, "webchat")
     extra = actions.prompt_section(tools) if tools else None
+    # release_db: the reads above are done and nothing is pending (the visitor's message was committed before), so the
+    # pooled connection goes back while the model answers and a fresh one stores the reply (loadtest-2026-11-13).
     c, usage = complete_logged(db, ws, user_id=None, purpose="webchat", messages=turns, channel="webchat",
-                               tools=actions.to_anthropic(tools) if tools else None, extra_instructions=extra)
+                               tools=actions.to_anthropic(tools) if tools else None, extra_instructions=extra,
+                               release_db=True)
     rounds = 0
     while c.tool_calls and rounds < MAX_TOOL_ROUNDS:
         rounds += 1
@@ -268,7 +271,7 @@ def _reply_with_actions(db: OrmSession, ws: Workspace, conv: Conversation, turns
         db.commit()
         turns = turns + [{"role": "assistant", "content": c.assistant_content}, tool_result_message(results)]
         c, usage = complete_logged(db, ws, user_id=None, purpose="webchat", messages=turns, channel="webchat",
-                                   tools=actions.to_anthropic(tools), extra_instructions=extra)
+                                   tools=actions.to_anthropic(tools), extra_instructions=extra, release_db=True)
     return c, usage
 
 

@@ -52,14 +52,15 @@ def safe_name(name: str | None, ext: str) -> str:
     return base or f"fil.{ext}"
 
 
-async def read_files(files: list[UploadFile] | None) -> list[tuple[str, bytes, str, str]]:
-    """Validate the uploads before anything is written. Returns (name, data, content_type, ext) per file."""
+def read_files(files: list[UploadFile] | None) -> list[tuple[str, bytes, str, str]]:
+    """Validate the uploads before anything is written. Returns (name, data, content_type, ext) per file.
+    Synchronous (the spooled file object): called from `def` endpoints, which run in the threadpool."""
     files = [f for f in (files or []) if f is not None and (f.filename or f.size)]
     if len(files) > MAX_FILES:
         raise ValidationFailed(f"Højst {MAX_FILES} filer pr. besked", field_errors=[{"field": "files"}])
     out = []
     for f in files:
-        data = await f.read(MAX_BYTES + 1)
+        data = f.file.read(MAX_BYTES + 1)
         if not data:
             raise ValidationFailed("Filen er tom", field_errors=[{"field": "files"}])
         if len(data) > MAX_BYTES:

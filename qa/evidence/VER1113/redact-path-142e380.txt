@@ -1,0 +1,6 @@
+/api/v1/public/customer/callback/TOKEN123 -> /api/v1/public/customer/callback/TOKEN123
+/api/v1/public/customer/callback/TOKEN123/cancel -> /api/v1/public/customer/callback/TOKEN123/cancel
+/api/v1/public/booking/manage/TOKEN123 -> /api/v1/public/booking/manage/TOKEN123
+/api/v1/public/booking/manage/TOKEN123/verify -> /api/v1/public/booking/manage/TOKEN123/verify
+/api/v1/public/calendar/TOKEN123 -> /api/v1/public/calendar/***
+{"status": 404, "event": "request", "path": "/api/v1/public/customer/callback/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "request_id": "39636a92e4a8405e847e9

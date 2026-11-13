@@ -147,36 +147,60 @@ async def execute_batch(todo: dict[str, list[uuid.UUID]]) -> None:
     await asyncio.gather(*(one(ids) for ids in _chains(todo)))
 
 
-async def execute(run_id: uuid.UUID) -> None:
-    """Background body: replay in real time, store the result. Never raises – a failure is a recorded `fejl`.
-    No database session is held while the audio plays (minutes in a batch): the pool is small and the page polls it."""
+def _prepare(run_id: uuid.UUID) -> tuple[dict, dict | None] | None:
+    """The run's job and audio (None: nothing to do). Synchronous DB work – called through the threadpool."""
     from app.db import get_session_factory
 
-    factory = get_session_factory()
+    with get_session_factory()() as db:
+        run = db.get(SttTestRun, run_id)
+        if run is None or run.status != "kører":
+            return None
+        p = profiles.BY_ID[run.profile_id]
+        job = {"profile": p, "source": run.source, "case_id": run.case_id, "reference": run.reference,
+               "mode": run.mode, "expected": run.config.get("expected", []),
+               "alts": run.config.get("reference_alts") or None}
+        try:
+            ws = db.get(Workspace, run.workspace_id) if run.workspace_id else None
+            job["vocab"] = _vocabulary(db, ws)
+            if job["source"] == "upload":
+                job["pcm"], job["rate"] = _UPLOADS.pop(run.id)
+            else:
+                job["pcm"], job["rate"] = manifest.read_wav(manifest.audio_path(manifest.get(job["case_id"])))
+            return job, None
+        except Exception as e:  # noqa: BLE001
+            return job, {"status": "fejl", "error": f"{type(e).__name__}: {str(e)[:200]}"}
+
+
+def _store(run_id: uuid.UUID, result: dict) -> None:
+    """Write the result. Synchronous DB work – called through the threadpool."""
+    from app.db import get_session_factory
+
+    with get_session_factory()() as db:
+        run = db.get(SttTestRun, run_id)
+        run.result = result
+        run.transcript_raw = result.get("transcript_raw", "")
+        run.status = result["status"] if result["status"] in ("ok", "fejl", "mangler_adgang") else "fejl"
+        run.finished_at = datetime.now(UTC)
+        db.commit()
+
+
+async def execute(run_id: uuid.UUID) -> None:
+    """Background body: replay in real time, store the result. Never raises – a failure is a recorded `fejl`.
+    No database session is held while the audio plays (minutes in a batch): the pool is small and the page polls it.
+    The task runs on the event loop, so its synchronous DB reads/writes go through the threadpool (loadtest-2026-11-13)."""
+    from fastapi.concurrency import run_in_threadpool
+
     try:
-        with factory() as db:
-            run = db.get(SttTestRun, run_id)
-            if run is None or run.status != "kører":
-                return
-            p = profiles.BY_ID[run.profile_id]
-            job = {"source": run.source, "case_id": run.case_id, "reference": run.reference, "mode": run.mode,
-                   "expected": run.config.get("expected", []), "alts": run.config.get("reference_alts") or None}
-            try:
-                ws = db.get(Workspace, run.workspace_id) if run.workspace_id else None
-                vocab = _vocabulary(db, ws)
-                if job["source"] == "upload":
-                    pcm, rate = _UPLOADS.pop(run.id)
-                else:
-                    pcm, rate = manifest.read_wav(manifest.audio_path(manifest.get(job["case_id"])))
-                prepared = None
-            except Exception as e:  # noqa: BLE001
-                prepared = {"status": "fejl", "error": f"{type(e).__name__}: {str(e)[:200]}"}
+        prepared = await run_in_threadpool(_prepare, run_id)
         if prepared is None:
+            return
+        job, result = prepared
+        if result is None:
             try:
                 for attempt in range(len(QUOTA_RETRY_DELAYS) + 1):
-                    result = await replay.run_audio(p, pcm, rate, reference=job["reference"], expected=job["expected"],
-                                                    vocabulary=vocab, mode=job["mode"], factory=FACTORY,
-                                                    reference_alts=job["alts"])
+                    result = await replay.run_audio(job["profile"], job["pcm"], job["rate"], reference=job["reference"],
+                                                    expected=job["expected"], vocabulary=job["vocab"], mode=job["mode"],
+                                                    factory=FACTORY, reference_alts=job["alts"])
                     if not _is_quota(result) or attempt == len(QUOTA_RETRY_DELAYS):
                         break
                     await asyncio.sleep(QUOTA_RETRY_DELAYS[attempt])
@@ -184,15 +208,7 @@ async def execute(run_id: uuid.UUID) -> None:
                     result["quota_retries"] = attempt
             except Exception as e:  # noqa: BLE001
                 result = {"status": "fejl", "error": f"{type(e).__name__}: {str(e)[:200]}"}
-        else:
-            result = prepared
-        with factory() as db:
-            run = db.get(SttTestRun, run_id)
-            run.result = result
-            run.transcript_raw = result.get("transcript_raw", "")
-            run.status = result["status"] if result["status"] in ("ok", "fejl", "mangler_adgang") else "fejl"
-            run.finished_at = datetime.now(UTC)
-            db.commit()
+        await run_in_threadpool(_store, run_id, result)
     finally:
         _LIVE.discard(run_id)
 

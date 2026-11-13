@@ -4,13 +4,34 @@
 
 ## Backend (Render `dialogbot-api-*` og `dialogbot-worker-*`, lokal `.env`)
 
+### Forbindelsesbudget (`DB_POOL_SIZE` / `DB_MAX_OVERFLOW`)
+
+Belastningstesten 13/11-2026 (`docs/qa/2026-11-13-load-and-restore.md` §1.4–1.5, branch `qa/load-restore-2026-11-13`):
+hver uvicorn-proces må højst åbne `DB_POOL_SIZE + DB_MAX_OVERFLOW` forbindelser; venter et request mere end 30 s på
+en ledig, fejler det. Summen over alle processer skal holdes under databasens grænse (Supabase Micro: 60, Small: 90;
+Supabase bruger selv ~8):
+
+`API-workers × (pool + overflow) + public-api-workers × (pool + overflow) + worker × (pool + overflow) + ~8 < grænsen`
+
+* **Anbefaling:** `DB_POOL_SIZE=8`, `DB_MAX_OVERFLOW=4` pr. API-proces **sammen med** Supavisor **transaction mode**
+  (port 6543) – eller compute Small (90) ved session mode. 8/4 på session mode (port 5432) på Micro sprænger budgettet
+  (2 × 12 + 2 × 12 + worker + 8 ≈ 60).
+* Før transaction mode tages i brug skal to ting afprøves på staging (ikke verificeret endnu): (1) at
+  `DB_SCHEMA` → `options=-csearch_path` virker gennem transaction-pooleren (kendt begrænsning, jf.
+  `docs/services-setup.md`), og (2) at psycopgs automatiske prepared statements ikke giver fejl gennem pooleren.
+* Standarden i koden er **ikke** ændret (5/5), og produktionens variabler er ikke rørt – ændringen er en
+  driftsbeslutning, der sættes i Render.
+* Siden rettelsen (`fix/async-blocking-db`) venter et request på en forbindelse i threadpoolen, ikke på event-loopet:
+  en fuld pulje gør enkelte requests langsomme i stedet for at fryse hele processen. Webchattens svar holder ingen
+  forbindelse, mens modellen svarer.
+
 | Variabel | Påkrævet | Modtager | Hentes fra | Bemærkning |
 |---|---|---|---|---|
 | `APP_ENV` | ja | API, worker | — | `dev` / `test` / `staging` / `prod`. staging+prod: kræver `SECRET_KEY`, forbyder dev-værktøjer. prod forbyder desuden `EMAIL_ADAPTER=simulated`. |
 | `DATABASE_URL` | ja | API, worker, CI (test-DB) | Supabase → Connect → session pooler/direct, rolle `dialogbot_app` | `postgresql+psycopg://…`. Begrænset runtime-rolle. |
 | `MIGRATION_DATABASE_URL` | staging/prod | Render pre-deploy (API) | Supabase → Connect → direct, rolle `dialogbot_migrate` | Kun til `alembic upgrade head`. Aldrig i worker. |
 | `DB_SCHEMA` | Supabase | API, worker, migration | — | `dialogbot`. Lokalt/CI: udelad (= `public`). |
-| `DB_POOL_SIZE` / `DB_MAX_OVERFLOW` | nej | API, worker | — | Standard 5/5. Worker kan sættes til 2/2. |
+| `DB_POOL_SIZE` / `DB_MAX_OVERFLOW` | nej | API, worker | — | Pr. proces (uvicorn-worker). Standard 5/5 (uændret). Worker kan sættes til 2/2. Se «Forbindelsesbudget» nedenfor. |
 | `SECRET_KEY` | staging/prod | API, worker | Render `generateValue` (API) → kopiér samme værdi til worker | ≥ 32 tegn. |
 | `ENABLE_DEV_TOOLS` | nej | API | — | `true` kun i dev/test. Åbner `/api/v1/dev/*` (simuleret postkasse). |
 | `AUTH_PROVIDER` | nej | API | — | `local`. `external` er reserveret og fejler lukket. |

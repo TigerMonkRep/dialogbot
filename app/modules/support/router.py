@@ -65,18 +65,18 @@ def list_tickets(ctx: WorkspaceContext = Depends(require_capability("support.rea
 
 
 @router.post("", status_code=201)
-async def create_ticket(request: Request, subject: str = Form(...), category: str = Form("other"),
-                        body: str = Form(...), context: str | None = Form(None),
-                        files_: list[UploadFile] | None = File(default=None, alias="files"),
-                        ctx: WorkspaceContext = Depends(require_capability("support.write")),
-                        db: OrmSession = Depends(get_db)):
+def create_ticket(request: Request, subject: str = Form(...), category: str = Form("other"),
+                  body: str = Form(...), context: str | None = Form(None),
+                  files_: list[UploadFile] | None = File(default=None, alias="files"),
+                  ctx: WorkspaceContext = Depends(require_capability("support.write")),
+                  db: OrmSession = Depends(get_db)):
     subject = _text(subject, "subject", lo=3, hi=160, label="Emnet")
     body = _text(body, "body", lo=1, hi=5000, label="Beskrivelsen")
     if category not in SUPPORT_CATEGORIES:
         raise ValidationFailed("Ukendt kategori", field_errors=[{"field": "category"}])
     if category == "billing":
         ctx.require("support.billing")  # 403: a staff member could not see the ticket afterwards
-    uploads = await files.read_files(files_)
+    uploads = files.read_files(files_)
     svc.check_new_ticket_rate(db, ctx.workspace.id)
     t = SupportTicket(workspace_id=ctx.workspace.id, number=svc.next_number(db, ctx.workspace.id), subject=subject,
                       category=category, status="open", priority="normal", context_path=_context(context),
@@ -97,11 +97,11 @@ def get_ticket(number: int, ctx: WorkspaceContext = Depends(require_capability("
 
 
 @router.post("/{number}/messages", status_code=201)
-async def reply(number: int, request: Request, body: str = Form(...),
-                files_: list[UploadFile] | None = File(default=None, alias="files"),
-                ctx: WorkspaceContext = Depends(require_capability("support.write")), db: OrmSession = Depends(get_db)):
+def reply(number: int, request: Request, body: str = Form(...),
+          files_: list[UploadFile] | None = File(default=None, alias="files"),
+          ctx: WorkspaceContext = Depends(require_capability("support.write")), db: OrmSession = Depends(get_db)):
     body = _text(body, "body", lo=1, hi=5000, label="Beskeden")
-    uploads = await files.read_files(files_)
+    uploads = files.read_files(files_)
     t = _ticket(db, ctx, number, lock=True)
     svc.check_message_rate(db, t.id)
     svc.add_message(db, t, author=ctx.user_id, kind="customer", visibility="public", body=body, uploads=uploads)

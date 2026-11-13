@@ -1,0 +1,10 @@
+DELETE calls: ['fake-ev-2', 'fake-ev-2'] calendar_sync: failed error: Kalenderen afviste kaldet (410)
+DELETE calls: ['fake-ev-5', 'fake-ev-5'] calendar_sync: failed error: Kalenderen afviste kaldet (410)
+old ends_at 2026-11-13T13:00:00+00:00 new starts_at 2026-11-15T12:00:00+00:00 link expires_at 2026-11-13T13:00:00+00:00
+GET after original end: 410 {"code":"link_expired","message":"Linket er udløbet.","field_errors":[],"request_id":"32ac4c7872894c5988e9719336dc8475"}
+IP limit: [(202, 'code_sent'), (202, 'code_sent'), (202, 'code_sent'), (202, 'code_sent'), (202, 'code_sent'), (429, 'sms_rate_limited'), (429, 'sms_rate_limited')]
+workspace limit: first 429 at request 61 codes: [202, 429]
+        print("DELETE calls:", calls, "calendar_sync:", b.calendar_sync, "error:", b.calendar_sync_error)
+        print("DELETE calls:", calls, "calendar_sync:", b.calendar_sync, "error:", b.calendar_sync_error)
+        print("old ends_at", before["ends_at"], "new starts_at", moved["starts_at"], "link expires_at", moved["expires_at"])
+        print("GET after original end:", r.status_code, r.text[:160])

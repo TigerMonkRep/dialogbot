@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "@/i18n/link";
 import { InstallStep } from "@/components/install-step";
 import { useLocale, useRaw, useT } from "@/i18n/client";
+import { apiLanguage } from "@/i18n/config";
 import { api, type ApiError } from "@/lib/client";
 import { EMAIL, PHONE_DISPLAY, PHONE_TEL, SIGNUP_ERHVERV } from "@/lib/contact";
 import { ArrowIcon, CloseIcon, PhoneIcon } from "@/components/site-icons";
@@ -140,7 +141,7 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
   const sendCode = async (phone: string, again: boolean): Promise<boolean> => {
     if (info === null || info === "error") return false;
     const r = await api<{ verification_id: string; phone_display: string | null; resend_after: number }>("/demo-call/code", {
-      method: "POST", body: JSON.stringify({ phone, consent: true, consent_version: info.consent_version, website: "", language: locale }) });
+      method: "POST", body: JSON.stringify({ phone, consent: true, consent_version: info.consent_version, website: "", language: apiLanguage(locale) }) });
     setVerif({ id: r.verification_id, phone, display: r.phone_display || phone, sentAt: Date.now(), resendAfter: r.resend_after || 30 });
     setNow(Date.now()); setCodeError(null); setTlf(r.phone_display || phone);
     push({ from: "bot", text: again ? c("codeResent", { number: r.phone_display || phone }) : c("codeSent", { number: r.phone_display || phone }) });

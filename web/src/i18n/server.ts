@@ -1,6 +1,6 @@
 import "server-only";
 import { cookies, headers } from "next/headers";
-import { DEFAULT_LOCALE, LOCALE_COOKIE, LOCALE_HEADER, fromAcceptLanguage, isLocale, type Locale } from "./config";
+import { COUNTRY_HEADER, DEFAULT_LOCALE, LOCALE_COOKIE, LOCALE_HEADER, fromAcceptLanguage, fromCountry, isLocale, type Locale } from "./config";
 import { MESSAGES } from "./messages";
 import { makeRaw, makeT, type Messages, type T } from "./translate";
 
@@ -12,7 +12,7 @@ export async function getLocale(): Promise<Locale> {
   if (isLocale(fromPath)) return fromPath;
   const c = (await cookies()).get(LOCALE_COOKIE)?.value;
   if (isLocale(c)) return c;
-  return fromAcceptLanguage(h.get("accept-language")) ?? DEFAULT_LOCALE;
+  return fromCountry(h.get(COUNTRY_HEADER)) ?? fromAcceptLanguage(h.get("accept-language")) ?? DEFAULT_LOCALE;
 }
 
 export function messagesFor(locale: Locale): Messages {

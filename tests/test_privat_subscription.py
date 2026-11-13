@@ -441,7 +441,7 @@ def test_plans_and_subscription_per_currency(api, pv):
     assert api.get(tok, "/privat/subscription").json()["currency"] == "DKK"
     sub = api.get(tok, "/privat/subscription?currency=eur").json()
     assert sub["currency"] == "EUR" and sub["plans"][0]["monthly_minor"] == 649
-    assert api.get(tok, "/privat/subscription?currency=USD").status_code == 422
+    assert api.get(tok, "/privat/subscription?currency=GBP").status_code == 422
 
 
 def test_topup_checkout_and_webhook_per_currency(api, client, pv, db, monkeypatch):

@@ -1,6 +1,7 @@
 "use client";
 import Link from "@/i18n/link";
 import { useLocale, useT } from "@/i18n/client";
+import { apiLanguage } from "@/i18n/config";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { api, fieldError } from "@/lib/client";
@@ -31,7 +32,7 @@ function SignupForm() {
     const next = params.get("next");
     // The page's language goes with the account, so every account mail is in it (F-JE-07).
     const body = privat ? { ...form, signup_intent: "privat", next: privatNext(next) } : invited ? { ...form, signup_intent: null } : form;
-    await api("/auth/register", { method: "POST", body: JSON.stringify({ ...body, interface_language: locale }) });
+    await api("/auth/register", { method: "POST", body: JSON.stringify({ ...body, interface_language: apiLanguage(locale) }) });
     const r = await fetch("/api/auth/login", { method: "POST", headers: { "content-type": "application/json", "x-requested-with": "dialogbot" }, body: JSON.stringify({ email: form.email, password: form.password }) });
     if (!r.ok) throw await r.json();
     if (next?.startsWith("/ambassador") || invited) { try { localStorage.setItem("db_after_verify", next!); } catch { /* optional */ } }

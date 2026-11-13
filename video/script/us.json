@@ -1,0 +1,185 @@
+{
+  "voice": [
+    [
+      "When your hands are full, who answers the phone?",
+      "Dialogbot takes care of your customers",
+      "while you get back to work."
+    ],
+    [
+      "Your AI assistant answers questions about your business, your prices and your hours.",
+      "You keep your phone number."
+    ],
+    [
+      "A customer wants a quote?",
+      "Dialogbot finds a free slot in your calendar,",
+      "books the appointment and sends a text confirmation."
+    ],
+    [
+      "The same assistant helps out on your website.",
+      "And with customer consent, you can run call campaigns.",
+      "You approve the list, the script and the price first."
+    ],
+    [
+      "You decide what it can say and do.",
+      "Just type: We're closed on Friday.",
+      "Review the change, and approve.",
+      "If it's unsure, it takes a message."
+    ],
+    [
+      "See calls, appointments and messages on your phone.",
+      "Get a daily summary by email.",
+      "Less busywork. More time for your customers."
+    ],
+    [
+      "Get started in three steps:",
+      "Your business. Your calendar. Test and switch on.",
+      "Want a hand? We'll help you set it up."
+    ],
+    [
+      "Try Dialogbot for yourself.",
+      "Hear how it greets your customers.",
+      "Choose your plan and get started at dialogbot.app."
+    ]
+  ],
+  "screen": {
+    "topRight": "Your AI assistant",
+    "illustrated": "Illustrated example",
+    "s0": {
+      "eyebrow": "Your next customer is calling.",
+      "title": "Hands full?",
+      "highlight": "We'll take the call.",
+      "text1": "You do the work.",
+      "text2": "Dialogbot handles the customers.",
+      "incoming": "Incoming call",
+      "caller": "A new customer",
+      "callerSub": "Your existing number",
+      "takes": "Dialogbot's got it"
+    },
+    "s1": {
+      "eyebrow": "01 / Phone",
+      "title": "An assistant that knows your business.",
+      "items": [
+        [
+          "Services",
+          "What you help customers with"
+        ],
+        [
+          "Prices",
+          "The prices you've approved"
+        ],
+        [
+          "Business hours",
+          "Even when things change"
+        ]
+      ],
+      "cardTitle": "Dialogbot answers",
+      "cardSub": "Your business · your way",
+      "question": "How can I help?",
+      "keepNumber": "You keep your number"
+    },
+    "s2": {
+      "eyebrow": "02 / Booking",
+      "title": "From call to appointment.",
+      "sub": "A good inquiry becomes a concrete next step.",
+      "customer": "Customer",
+      "quote": "“Can you come and take a look?”",
+      "calendar": "Your calendar",
+      "day": "Tuesday",
+      "time": "9:00 AM",
+      "booked": "Visit booked",
+      "smsTitle": "Text sent",
+      "smsText": "Your appointment is booked. See you Tuesday at 9am."
+    },
+    "s3": {
+      "eyebrow": "03 / More ways to help",
+      "title": "One assistant. More options.",
+      "webTitle": "Webchat on your website",
+      "webQ": "How much is a visit?",
+      "webA": "I can help with prices and find a free slot.",
+      "campTitle": "Call campaigns",
+      "consent": "For customers who've opted in",
+      "approveFirst": "You approve first:",
+      "checks": [
+        "List",
+        "Script",
+        "Price"
+      ],
+      "approveStart": "Approve and start"
+    },
+    "s4": {
+      "eyebrow": "04 / You're in control",
+      "title": "You decide.",
+      "lines": [
+        "Your knowledge.",
+        "Your rules.",
+        "Your approval."
+      ],
+      "doubt": "If unsure: a message for you",
+      "quote": "“We're closed on Friday.”",
+      "hoursLabel": "Business hours",
+      "before": "Before",
+      "beforeVal": "Mon–Fri 8am–5pm",
+      "after": "After",
+      "afterVal": "Mon–Thu 8am–5pm · Fri closed",
+      "approve": "Approve change",
+      "approved": "Change approved",
+      "seeFirst": "You see the change first"
+    },
+    "s5": {
+      "eyebrow": "05 / Overview",
+      "title": "Your overview. In your pocket.",
+      "text1": "Less admin.",
+      "text2": "More time for customers.",
+      "today": "Today",
+      "on": "Dialogbot is on",
+      "stats": [
+        [
+          "7",
+          "calls"
+        ],
+        [
+          "3",
+          "appointments"
+        ],
+        [
+          "2",
+          "for you"
+        ]
+      ],
+      "forYou": "For you",
+      "task": "Customer wants a quote",
+      "taskSub": "Message · call back",
+      "button": "See calls and appointments",
+      "mailTitle": "Daily summary",
+      "mailText": "Calls and appointments. In one email."
+    },
+    "s6": {
+      "eyebrow": "06 / Get started",
+      "title": "Three steps. And you're live.",
+      "steps": [
+        [
+          "Your business",
+          "Import from your website. Approve what it should know."
+        ],
+        [
+          "Your calendar",
+          "Connect your calendar. Choose when it can book."
+        ],
+        [
+          "Test and switch on",
+          "Pick a voice. Test a call. Switch on when you're ready."
+        ]
+      ],
+      "help": "We're happy to help with setup."
+    },
+    "s7": {
+      "topRight": "Try Dialogbot yourself",
+      "eyebrow": "More headspace to run your business",
+      "title": "Give every inquiry a great start.",
+      "text": "Hear how Dialogbot greets your customers.",
+      "cta": "Try Dialogbot yourself →",
+      "domain": "dialogbot.app",
+      "domainSub": "Choose your plan · get started"
+    }
+  }
+}

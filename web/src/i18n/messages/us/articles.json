@@ -1,0 +1,691 @@
+{
+  "ai-telefonsvarer-eller-telefonpasning": {
+    "meta": {
+      "title": "AI answering machine or call answering service – which suits you?",
+      "description": "Answering machine, call answering service or AI answering machine? See the differences in price, availability and quality so you can choose the right solution.",
+      "ogTitle": "AI answering machine or call answering service? | Dialogbot"
+    },
+    "kicker": "AI answering machine or call answering service",
+    "title": "AI answering machine or call answering service – which suits you?",
+    "lead": "When you can't take the call yourself, there are three options: an ordinary answering machine, a call answering service staffed by people, or an AI answering machine. Here are the differences.",
+    "points": [
+      "Answering machine: cheap, but callers often hang up",
+      "Call answering service: a person answers, but usually only during business hours",
+      "AI answering machine: answers around the clock and can book appointments",
+      "Choose based on call volume, opening hours and needs"
+    ],
+    "sections": [
+      {
+        "title": "1. The ordinary answering machine",
+        "body": [
+          {
+            "type": "p",
+            "text": "Cheap and simple, but many callers hang up instead of leaving a message – and call a competitor. You have to listen through the messages yourself and call back without knowing what the matter is about."
+          }
+        ]
+      },
+      {
+        "title": "2. Call answering service",
+        "body": [
+          {
+            "type": "p",
+            "text": "A person answers the phone in your name and takes a message. It feels personal, but it is usually billed per call or per month, and many services are only open during normal working hours. The receptionist rarely knows your services and prices in detail."
+          }
+        ]
+      },
+      {
+        "title": "3. AI answering machine",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              "An AI answering machine like ",
+              {
+                "link": "/ai-telefonsvarer",
+                "text": "Dialogbot"
+              },
+              " talks to the caller in your customers' language around the clock, answers from your own approved knowledge and can book appointments and send SMS confirmations. You get a written summary of every conversation instead of a voice message."
+            ]
+          },
+          {
+            "type": "p",
+            "text": "On the other hand, it isn't a person – it says so honestly and passes on matters it can't answer to you."
+          }
+        ]
+      },
+      {
+        "title": "Compared",
+        "body": [
+          {
+            "type": "table",
+            "other": "Call answering service",
+            "rows": [
+              [
+                "Who answers",
+                "AI in your customers' language, only from knowledge you have approved",
+                "A person who doesn't always know your services"
+              ],
+              [
+                "Opening hours",
+                "Around the clock",
+                "Usually normal working hours"
+              ],
+              [
+                "Booking",
+                "Directly in your calendar, with SMS confirmation",
+                "Usually a message you follow up on yourselves"
+              ],
+              [
+                "Price",
+                "{pMonthly}/month before tax, no price per inquiry",
+                "Usually per call or per month"
+              ],
+              [
+                "Message to you",
+                "Written summary of every conversation and a daily report",
+                "One message per call"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "How to choose",
+        "body": [
+          {
+            "type": "ul",
+            "items": [
+              [
+                {
+                  "b": "Few calls, and only during the day?"
+                },
+                " An answering machine may be enough."
+              ],
+              [
+                {
+                  "b": "Important to have a person on the line?"
+                },
+                " A call answering service – but check the opening hours."
+              ],
+              [
+                {
+                  "b": "Lots of calls, also in the evening, and you want bookings?"
+                },
+                " An AI answering machine gives you the most for your money."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Hear the difference",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              {
+                "link": "/proev",
+                "text": "Get a call from Dialogbot"
+              },
+              " and hear what an AI answering machine sounds like. See also ",
+              {
+                "link": "/priser",
+                "text": "the prices"
+              },
+              "."
+            ]
+          }
+        ]
+      }
+    ],
+    "faq": [
+      [
+        "Can an AI answering machine replace a call answering service?",
+        "For most routine inquiries, yes: it answers, clarifies the need and books. Complex matters are passed on to you."
+      ],
+      [
+        "Is an AI answering machine available at night?",
+        "Yes, Dialogbot answers the phone around the clock."
+      ],
+      [
+        "Which is cheaper: a call answering service or Dialogbot?",
+        "A call answering service is usually billed per call or per month. Dialogbot is one subscription at {pMonthly} per month before tax, with 300 minutes for inbound and outbound calls and no price per inquiry. See also /viden/dialogbot-vs-vocalis."
+      ],
+      [
+        "Can I keep my number?",
+        "Yes. You forward your number to Dialogbot when you are busy or closed."
+      ]
+    ]
+  },
+  "dialogbot-vs-almindelig-chatbot": {
+    "meta": {
+      "title": "Dialogbot or an ordinary chatbot – what's the difference?",
+      "description": "An ordinary chatbot answers on a website. Dialogbot also answers the phone, books appointments and only answers from knowledge you have approved yourselves. See the differences.",
+      "ogTitle": "Dialogbot or an ordinary chatbot? | Dialogbot"
+    },
+    "kicker": "Dialogbot or an ordinary chatbot",
+    "title": "Dialogbot or an ordinary chatbot – what's the difference?",
+    "lead": "An ordinary chatbot answers on the website. Dialogbot also answers the phone, books the appointments and lets you approve everything it is allowed to say.",
+    "points": [
+      "Chatbot: writes on the website",
+      "Dialogbot: phone, chat and booking with the same knowledge",
+      "Dialogbot never guesses – approved knowledge only",
+      "One subscription: {pMonthly}/month"
+    ],
+    "sections": [
+      {
+        "title": "Overview",
+        "body": [
+          {
+            "type": "table",
+            "other": "Ordinary chatbot",
+            "rows": [
+              [
+                "Channels",
+                "Phone and web chat with the same knowledge",
+                "Usually only chat on the website"
+              ],
+              [
+                "Booking",
+                "Finds free slots in your calendar and sends an SMS confirmation",
+                "Rarely – often just a link or a message"
+              ],
+              [
+                "What it answers from",
+                "Only knowledge you have approved yourselves – and you see every change first",
+                "Varies: some answer freely from an AI model"
+              ],
+              [
+                "When it can't answer",
+                "It says so and takes a message for you",
+                "Varies"
+              ],
+              [
+                "Message to you",
+                "Name, number and what it was about – and a report every day",
+                "Varies"
+              ],
+              [
+                "Price",
+                "{pMonthly}/month – no price per inquiry",
+                "From a few dozen euros a month and up"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "When is an ordinary chatbot enough?",
+        "body": [
+          {
+            "type": "p",
+            "text": "If your customers almost only write, and you don't need appointments booked or the phone answered, a simple chatbot may be enough – and cheaper."
+          }
+        ]
+      },
+      {
+        "title": "When does Dialogbot give you more?",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              "When the phone rings while you're up a ladder or have a customer in the chair, and a missed call is a lost customer. Dialogbot picks up within two seconds, books an appointment and lets you know. Read more about ",
+              {
+                "link": "/ai-receptionist",
+                "text": "the AI receptionist"
+              },
+              " and ",
+              {
+                "link": "/chatbot",
+                "text": "the website chatbot"
+              },
+              ", which is part of the subscription."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Hear it yourself",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              {
+                "link": "/proev",
+                "text": "Let Dialogbot call you"
+              },
+              " – two minutes, no sign-up."
+            ]
+          }
+        ]
+      }
+    ],
+    "faq": [
+      [
+        "Can Dialogbot also just be a chatbot?",
+        "Yes. The web chat is included in the subscription and uses the same approved knowledge as the phone. It's one line of code on your website."
+      ],
+      [
+        "Does Dialogbot guess if it doesn't know the answer?",
+        "No. It only answers from approved knowledge and takes a message for you if it can't answer."
+      ],
+      [
+        "What does it cost?",
+        "{pMonthly} per month before tax with 300 minutes for inbound and outbound calls. No commitment."
+      ]
+    ]
+  },
+  "dialogbot-vs-vocalis": {
+    "meta": {
+      "title": "Dialogbot or Vocalis – fixed price or minute packages?",
+      "description": "Compare Dialogbot and Vocalis: fixed monthly price or minute packages, approved knowledge, booking and how you get started. Prices before tax.",
+      "ogTitle": "Dialogbot or Vocalis? | Dialogbot"
+    },
+    "kicker": "Dialogbot or Vocalis",
+    "title": "Dialogbot or Vocalis – fixed price or minute packages?",
+    "lead": "Both build AI employees for Danish businesses. The main differences are how you pay and how you get started.",
+    "points": [
+      "Dialogbot: {pMonthly}/month, 300 minutes included, then {pExtraMinute}/min.",
+      "Vocalis: from DKK 899/month for 100 minutes, then minute packages",
+      "Dialogbot: approved knowledge only – and you approve every change",
+      "Dialogbot: hear it first, no sign-up"
+    ],
+    "sections": [
+      {
+        "title": "Overview",
+        "body": [
+          {
+            "type": "table",
+            "other": "Vocalis",
+            "rows": [
+              [
+                "Price per month (before tax)",
+                "{pMonthly} – one subscription",
+                "From DKK 899 for 100 minutes (Basis)"
+              ],
+              [
+                "When the minutes are used up",
+                "{pExtraMinute} per started minute after the 300 included",
+                "Automatic minute packages up to DKK 3.995/month"
+              ],
+              [
+                "Answers from",
+                "Knowledge you have approved yourselves – and you see every change first (before → after, «Approve?»)",
+                "See Vocalis' own description"
+              ],
+              [
+                "Booking",
+                "Google Calendar or Microsoft 365, with SMS confirmation",
+                "See Vocalis' own description"
+              ],
+              [
+                "How you get started",
+                "Hear it first: it calls you, no sign-up. Set it up yourself in about half an hour",
+                "Free consultation and callback"
+              ],
+              [
+                "Commitment",
+                "None – cancel month to month",
+                "See Vocalis' own description"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Price: fixed or metered",
+        "body": [
+          {
+            "type": "p",
+            "text": "Vocalis starts lower, but the price follows usage: if you go over the 100 minutes, packages are added automatically. Dialogbot costs more to begin with, but 300 minutes are included, and minutes beyond that cost {pExtraMinute}. The bill is predictable, and you can always see your usage."
+          },
+          {
+            "type": "p",
+            "parts": [
+              "If you only get a few calls a month, a lower starting price may suit you better. If the phone rings all day, a fixed price is the safe choice. See ",
+              {
+                "link": "/priser",
+                "text": "all prices"
+              },
+              "."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "The big difference: approved knowledge",
+        "body": [
+          {
+            "type": "p",
+            "text": "Dialogbot only answers from the services, prices and opening hours you have approved yourselves, and says so if it doesn't know the answer. Every change is first shown as before → after with «Approve?». That mechanism is what keeps it from guessing."
+          }
+        ]
+      },
+      {
+        "title": "Hear the difference yourself",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              {
+                "link": "/proev",
+                "text": "Let Dialogbot call you"
+              },
+              " – it takes two minutes and requires no sign-up."
+            ]
+          }
+        ]
+      }
+    ],
+    "faq": [
+      [
+        "Is Dialogbot more expensive than Vocalis?",
+        "To begin with, yes: {pMonthly} per month versus from DKK 899 for 100 minutes. On the other hand, 300 minutes are included, and the price doesn't jump if you get more calls."
+      ],
+      [
+        "Can I switch from Vocalis to Dialogbot?",
+        "Yes. You keep your current phone number and forward it to Dialogbot, and there is no commitment."
+      ],
+      [
+        "Where can I see Vocalis' current prices?",
+        "At Vocalis itself. The prices here are the published list prices at the time this page was written, and they may have changed."
+      ]
+    ]
+  },
+  "hvad-er-en-ai-receptionist": {
+    "meta": {
+      "title": "What is an AI receptionist – and how does it work?",
+      "description": "An AI receptionist answers the phone and the chat for your business, answers from your own knowledge and books appointments. Here's how it works and what to look for.",
+      "ogTitle": "What is an AI receptionist? | Dialogbot"
+    },
+    "kicker": "What is an AI receptionist?",
+    "title": "What is an AI receptionist – and how does it work?",
+    "lead": "An AI receptionist is a digital assistant that answers the phone and the chat for your business. Here's what it can do, how it works, and what to look for before you choose one.",
+    "points": [
+      "Answers the phone and the chat around the clock",
+      "Answers from the business's own knowledge",
+      "Clarifies the need and collects contact details",
+      "Can book appointments and send SMS",
+      "Must never guess or promise anything you haven't approved"
+    ],
+    "sections": [
+      {
+        "title": "In short",
+        "body": [
+          {
+            "type": "p",
+            "text": "An AI receptionist answers when you can't: when you're busy, with a customer or closed. Instead of an answering machine asking the caller to leave a message, it talks to the caller, finds out what they need, and collects name, number and need, so you can call back a warm lead."
+          },
+          {
+            "type": "p",
+            "parts": [
+              "It is built on three parts: ",
+              {
+                "b": "speech recognition"
+              },
+              " that understands what the caller says, a ",
+              {
+                "b": "language model"
+              },
+              " that finds the right answer in the business's knowledge, and a ",
+              {
+                "b": "voice"
+              },
+              " that answers naturally in your customers' language."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "What can an AI receptionist do?",
+        "body": [
+          {
+            "type": "ul",
+            "items": [
+              "Answer the routine questions: opening hours, prices, services, address and parking.",
+              "Clarify the need with the questions the business has decided on.",
+              "Find free slots and book, move or cancel appointments.",
+              "Send the customer a confirmation by SMS.",
+              "Give the business a short, written summary of every conversation."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "What shouldn't it do?",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              "A good AI receptionist ",
+              {
+                "b": "never guesses"
+              },
+              ". It should only answer from knowledge the business has approved, and honestly say when something isn't covered. It must not promise discounts, give professional advice or pretend to be a person."
+            ]
+          },
+          {
+            "type": "p",
+            "text": "At Dialogbot, all knowledge starts as a draft and is only used once an owner or administrator has approved it."
+          }
+        ]
+      },
+      {
+        "title": "What to look for",
+        "body": [
+          {
+            "type": "ul",
+            "items": [
+              [
+                {
+                  "b": "Speech"
+                },
+                " – does it sound natural in your customers' language, and does it understand names and trade terms?"
+              ],
+              [
+                {
+                  "b": "Control"
+                },
+                " – can you approve what it is allowed to say?"
+              ],
+              [
+                {
+                  "b": "Actions"
+                },
+                " – can it book and send SMS, or does it only take messages?"
+              ],
+              [
+                {
+                  "b": "Setup"
+                },
+                " – do you get help, or do you have to figure it out yourself?"
+              ],
+              [
+                {
+                  "b": "Price"
+                },
+                " – fixed price or per inquiry, and is there a commitment?"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Try it yourself",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              "The best test is to hear it. ",
+              {
+                "link": "/proev",
+                "text": "Get a call from Dialogbot"
+              },
+              ", choose your industry, and hear how it would answer the phone for you. Read more about ",
+              {
+                "link": "/ai-receptionist",
+                "text": "Dialogbot's AI receptionist"
+              },
+              " or see ",
+              {
+                "link": "/priser",
+                "text": "the prices"
+              },
+              "."
+            ]
+          }
+        ]
+      }
+    ],
+    "faq": [
+      [
+        "Is an AI receptionist the same as a chatbot?",
+        "Not quite. A chatbot writes; an AI receptionist talks on the phone. Dialogbot does both with the same knowledge."
+      ],
+      [
+        "Does an AI receptionist sound like a robot?",
+        "Modern voices sound natural. Dialogbot speaks 8 languages, including English, and always says honestly that it is a digital assistant if the caller asks."
+      ],
+      [
+        "What does an AI receptionist cost?",
+        "At Dialogbot there is one subscription at {pMonthly} per month, before tax. There is no price per inquiry."
+      ]
+    ]
+  },
+  "viderestil-telefonen": {
+    "meta": {
+      "title": "How to forward your phone when you're busy",
+      "description": "Forward your mobile when busy, on no answer or always with the standard codes **67*, **61* and **21* – and turn it off again with ##002#. A guide for Danish businesses.",
+      "ogTitle": "How to forward your phone | Dialogbot"
+    },
+    "kicker": "Forward your phone",
+    "title": "How to forward your phone when you're busy",
+    "lead": "With call forwarding, calls go on to another number – e.g. your AI receptionist – when you can't take them yourself. Here are the standard codes you dial on your mobile.",
+    "points": [
+      "When busy: **67*number#",
+      "On no answer: **61*number#",
+      "When the phone is off: **62*number#",
+      "Always: **21*number#",
+      "Turn off all forwarding: ##002#"
+    ],
+    "sections": [
+      {
+        "title": "The codes",
+        "body": [
+          {
+            "type": "p",
+            "text": "The codes are standard on the mobile network and work with most Danish carriers. Enter the number with +45 in front, and press call after the code."
+          },
+          {
+            "type": "ul",
+            "items": [
+              [
+                {
+                  "b": "When you're busy:"
+                },
+                " ",
+                {
+                  "code": "**67*+4512345678#"
+                }
+              ],
+              [
+                {
+                  "b": "When you don't answer:"
+                },
+                " ",
+                {
+                  "code": "**61*+4512345678#"
+                },
+                " – some carriers let you set the number of seconds: ",
+                {
+                  "code": "**61*+4512345678**20#"
+                }
+              ],
+              [
+                {
+                  "b": "When the phone is off or has no coverage:"
+                },
+                " ",
+                {
+                  "code": "**62*+4512345678#"
+                }
+              ],
+              [
+                {
+                  "b": "All calls, always:"
+                },
+                " ",
+                {
+                  "code": "**21*+4512345678#"
+                }
+              ],
+              [
+                {
+                  "b": "Turn off all forwarding:"
+                },
+                " ",
+                {
+                  "code": "##002#"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "p",
+            "text": "If a code doesn't work, or you have a landline or IP phone system, turn on forwarding in your carrier's app or self-service portal, or ask your carrier."
+          }
+        ]
+      },
+      {
+        "title": "The smart setup",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              "Most businesses use ",
+              {
+                "b": "busy + no answer + off"
+              },
+              ". That way you answer the phone yourself when you can, and all other calls go to your AI receptionist instead of the answering machine."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Forward to Dialogbot",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              "When you sign up with Dialogbot, you get a Dialogbot number to forward to – and we help you with it during setup. Read more about ",
+              {
+                "link": "/ai-telefonsvarer",
+                "text": "the AI answering machine"
+              },
+              " or ",
+              {
+                "link": "/proev",
+                "text": "hear it yourself"
+              },
+              "."
+            ]
+          }
+        ]
+      }
+    ],
+    "faq": [
+      [
+        "Does call forwarding cost anything?",
+        "It depends on your subscription with your carrier. Check the price of forwarded calls with your carrier."
+      ],
+      [
+        "How do I check whether forwarding is on?",
+        "Dial e.g. *#67# or *#61# and press call – the phone then shows the status."
+      ],
+      [
+        "Can I keep my own number?",
+        "Yes. Customers still call your number; calls are only forwarded when you don't answer yourself."
+      ]
+    ]
+  }
+}

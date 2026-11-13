@@ -18,4 +18,6 @@ def normalize(code: str | None) -> str:
     c = (code or "").strip().lower().replace("_", "-").split("-")[0]
     if c in ("nb", "nn"):
         c = "no"
+    if c == "us":   # the website's US edition (/us) is English with dollar prices – a market, not a language
+        c = "en"
     return c if c in LANGUAGES else DEFAULT

@@ -13,11 +13,11 @@ import uuid
 from datetime import UTC, date, datetime, time, timedelta
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session as OrmSession
 
 from app.core.errors import ApiError, Conflict, NotFound, ValidationFailed
-from app.models import Booking, BookingSettings, BookingType, Conversation, Workspace
+from app.models import Booking, BookingSettings, BookingType, Conversation, CustomerLink, Workspace
 from app.modules.knowledge.service import active_knowledge
 
 DAYS = ("mon", "tue", "wed", "thu", "fri", "sat", "sun")
@@ -273,6 +273,9 @@ def move(db: OrmSession, ws: Workspace, b: Booking, *, start: str, tz: str) -> B
     if not free:
         raise Conflict("Den nye tid er ikke ledig – vælg en anden", code="slot_taken")
     b.starts_at, b.ends_at = st, en
+    # The customer's manage link lives until the appointment is over – the current one, not the original (F-VER1113-02).
+    db.execute(update(CustomerLink).where(CustomerLink.booking_id == b.id, CustomerLink.purpose == "booking",
+                                          CustomerLink.revoked_at.is_(None)).values(expires_at=en))
     if not readable:  # the new time was not checked against the connected calendar
         b.confirmation = "pending"
         _ask_staff_to_confirm(db, b, tz)

@@ -387,6 +387,29 @@ def test_calendar_delete_of_an_event_already_gone_is_success(monkeypatch, status
         cls("tok").delete_event("ev-1")  # no ActionError
 
 
+def test_w13_link_follows_a_moved_booking(api, client, two_workspaces, fake, db, monkeypatch):  # noqa: F811
+    """F-VER1113-02: after the customer moves the appointment to a later day, the link opens it until the new end."""
+    t = two_workspaces
+    token, _ = _book(api, client, t)
+    before = client.get(f"{PUB}/booking/manage/{token}").json()
+    old_end = datetime.fromisoformat(before["ends_at"])
+    slots = client.get(f"{PUB}/booking/manage/{token}/slots").json()["slots"]
+    later = [s for s in slots if datetime.fromisoformat(s["start"]) > old_end + timedelta(hours=2)]
+    assert later, "need a later slot"
+    r = client.post(f"{PUB}/booking/manage/{token}/move", json={"start": later[-1]["start"],
+                                                                "session": _session(client, token)})
+    assert r.status_code == 200, r.text
+    moved = r.json()
+    assert moved["expires_at"] == moved["ends_at"]
+    real_now = datetime.now(old_end.tzinfo)
+    _clock(monkeypatch, old_end + timedelta(hours=1) - real_now)  # after the original end, before the new one
+    r = client.get(f"{PUB}/booking/manage/{token}")
+    assert r.status_code == 200, r.text
+    _clock(monkeypatch, datetime.fromisoformat(moved["ends_at"]) + timedelta(minutes=1) - real_now)
+    r = client.get(f"{PUB}/booking/manage/{token}")
+    assert r.status_code == 410 and r.json()["code"] == "link_expired"
+
+
 @pytest.mark.parametrize("path", ["/customer/callback/{t}", "/booking/manage/{t}"])
 def test_db016_token_length_and_unknown_tokens_are_the_same_404(client, path):
     for tok in ("a", "a" * 43, "a" * 101):

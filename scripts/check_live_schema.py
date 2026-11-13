@@ -22,8 +22,9 @@ def code_head() -> str:
         text = f.read_text()
         if m := re.search(r"^revision(?::\s*str)?\s*=\s*['\"]([0-9a-f]+)['\"]", text, re.M):
             revs.add(m.group(1))
-        if m := re.search(r"^down_revision(?::[^=]*)?\s*=\s*['\"]([0-9a-f]+)['\"]", text, re.M):
-            downs.add(m.group(1))
+        # A merge revision has a tuple: down_revision = ("a", "b") – every parent in it is no longer a head.
+        if m := re.search(r"^down_revision(?::[^=]*)?\s*=\s*(\([^)]*\)|['\"][0-9a-f]+['\"])", text, re.M):
+            downs.update(re.findall(r"['\"]([0-9a-f]+)['\"]", m.group(1)))
     heads = revs - downs
     if len(heads) != 1:
         sys.exit(f"expected exactly one Alembic head in the code, found: {sorted(heads)}")

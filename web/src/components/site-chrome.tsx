@@ -16,7 +16,7 @@ export type { Audience } from "./audience-switch";
  *  2 px ink rules, the logo mark, the two-door "path switch" (Prøv den | Byggevejledning) and the phone number.
  *  Server component; the floating chat is the only client part. */
 export { EMAIL, HOURS, PHONE_DISPLAY, PHONE_INTL, PHONE_TEL } from "@/lib/contact";
-import { EMAIL, PHONE_INTL, PHONE_TEL, PHONE_DISPLAY, SIGNUP_ERHVERV } from "@/lib/contact";
+import { EMAIL, SIGNUP_ERHVERV, phoneFor } from "@/lib/contact";
 
 export type Path = "proev" | "byggevejledning";
 
@@ -89,7 +89,7 @@ export async function SiteHeader({ current, nav, phone = true, badge, navAlways 
           <PathSwitch current={current} />
           <Link href="/priser" className="inline-flex items-center min-h-11 text-sm font-semibold text-ink no-underline hover:text-accent">{t("chrome.pricing")}</Link>
           <LanguageSwitcher compact />
-          {phone && <a href={PHONE_TEL} className="hidden sm:inline-flex items-center min-h-11 text-sm font-semibold text-ink no-underline">{locale === "da" ? PHONE_DISPLAY : PHONE_INTL}</a>}
+          {phone && <a href={phoneFor(locale).tel} className="hidden sm:inline-flex items-center min-h-11 text-sm font-semibold text-ink no-underline">{phoneFor(locale).local ? phoneFor(locale).display : phoneFor(locale).intl}</a>}
           {/* Self-service sign-up, open day and night – no call needed first (S0 «Erhverv døgnåbent»). */}
           <Link href={SIGNUP_ERHVERV} data-header-signup className="inline-flex items-center min-h-11 px-4 rounded-xl bg-accent hover:bg-accent-deep text-white text-sm font-semibold no-underline">{t("chrome.signupCta")}</Link>
         </div>
@@ -102,6 +102,7 @@ export async function SiteHeader({ current, nav, phone = true, badge, navAlways 
 export async function SiteFooter({ compact = false, audience = "erhverv" }: { compact?: boolean; audience?: Audience | null }) {
   const t = await getT("common");
   const tl = await getT("landing");
+  const ph = phoneFor(await getLocale());
   const link = "text-ink no-underline hover:text-accent inline-flex items-center min-h-10 sm:min-h-8 text-[14px]";
   const quiet = "text-muted no-underline hover:text-ink inline-flex items-center min-h-10 sm:min-h-7 text-[14px]";
   const head = "font-display font-bold text-[13px] uppercase tracking-[0.12em] text-ink mb-2";
@@ -114,7 +115,7 @@ export async function SiteFooter({ compact = false, audience = "erhverv" }: { co
           <p className="m-0 text-[15px] leading-normal text-ink-soft">{t("chrome.tagline")}</p>
           <address className="not-italic flex flex-col gap-1 text-[14px] text-ink-soft">
             <span>{t("chrome.location")} · {t("chrome.hours")}</span>
-            <a href={PHONE_TEL} className={link}>{PHONE_INTL}</a>
+            <a href={ph.tel} className={link}>{ph.intl}</a>
             <a href={`mailto:${EMAIL}`} className={link}>{EMAIL}</a>
           </address>
           <div><AudienceSwitch current={audience ?? undefined} size="sm" /></div>

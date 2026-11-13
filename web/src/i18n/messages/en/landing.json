@@ -308,14 +308,14 @@
       }
     },
     "faq": [
-      ["Can I talk to a human?", "Yes. Call us on 93 70 34 33 during opening hours, or email info@dialogbot.dk."],
+      ["Can I talk to a human?", "Yes. Call us on 93 70 34 33 during opening hours, or email info@dialogbot.app."],
       ["Who looks after my customers' data?", "It's explained in plain language on our GDPR and data page."]
     ]
   },
   "contact": {
     "meta": {
       "title": "Contact and support | Dialogbot",
-      "description": "How to contact Dialogbot about your account, payment or your data. Call 93 70 34 33 or email info@dialogbot.dk."
+      "description": "How to contact Dialogbot about your account, payment or your data. Call 93 70 34 33 or email info@dialogbot.app."
     },
     "eyebrow": "Contact",
     "title": "Contact and support",

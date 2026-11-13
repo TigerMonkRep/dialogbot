@@ -78,7 +78,7 @@
       }
     ],
     "faq": [
-      ["Can I get a data processing agreement?", "Yes. It is part of the terms. Write to info@dialogbot.dk if you would like a signed copy."],
+      ["Can I get a data processing agreement?", "Yes. It is part of the terms. Write to info@dialogbot.app if you would like a signed copy."],
       ["Is the data kept in the EU?", "The database is located in the EU (Ireland) and the server in the EU (Frankfurt). Some subcontractors for telephony, speech and AI may process data in the USA on the basis of the EU-U.S. Data Privacy Framework or standard contractual clauses."],
       ["What happens to the data when I cancel?", "Within 30 days you can ask for a copy. After that we delete the data, unless the law requires us to keep it."]
     ]

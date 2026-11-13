@@ -308,14 +308,14 @@
       }
     },
     "faq": [
-      ["Kan jeg snakke med et menneske?", "Ja. Ring oss på 93 70 34 33 i åpningstiden, eller skriv til info@dialogbot.dk."],
+      ["Kan jeg snakke med et menneske?", "Ja. Ring oss på 93 70 34 33 i åpningstiden, eller skriv til info@dialogbot.app."],
       ["Hvem passer på kundenes opplysninger?", "Det står på et klart språk på siden om GDPR og data."]
     ]
   },
   "contact": {
     "meta": {
       "title": "Kontakt og support | Dialogbot",
-      "description": "Slik kontakter du Dialogbot om kontoen, betaling eller dataene dine. Ring 93 70 34 33 eller skriv til info@dialogbot.dk."
+      "description": "Slik kontakter du Dialogbot om kontoen, betaling eller dataene dine. Ring 93 70 34 33 eller skriv til info@dialogbot.app."
     },
     "eyebrow": "Kontakt",
     "title": "Kontakt og support",

@@ -308,14 +308,14 @@
       }
     },
     "faq": [
-      ["¿Puedo hablar con una persona?", "Sí. Llámenos al 93 70 34 33 en horario de oficina o escriba a info@dialogbot.dk."],
+      ["¿Puedo hablar con una persona?", "Sí. Llámenos al 93 70 34 33 en horario de oficina o escriba a info@dialogbot.app."],
       ["¿Quién protege los datos de mis clientes?", "Lo explicamos en lenguaje claro en la página sobre RGPD y datos."]
     ]
   },
   "contact": {
     "meta": {
       "title": "Contacto y soporte | Dialogbot",
-      "description": "Cómo contactar con Dialogbot sobre su cuenta, pagos o sus datos. Llame al 93 70 34 33 o escriba a info@dialogbot.dk."
+      "description": "Cómo contactar con Dialogbot sobre su cuenta, pagos o sus datos. Llame al 93 70 34 33 o escriba a info@dialogbot.app."
     },
     "eyebrow": "Contacto",
     "title": "Contacto y soporte",

@@ -129,6 +129,8 @@
       "address": "Adresse",
       "postalCode": "Postleitzahl",
       "city": "Ort",
+      "country": "Land",
+      "timezone": "Zeitzone",
       "cvrLooked": "Nachgeschlagen: {note}",
       "categories": "Branchen (eine oder mehrere)",
       "categoryAdd": "Branche hinzufügen",

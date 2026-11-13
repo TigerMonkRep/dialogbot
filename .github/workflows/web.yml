@@ -20,6 +20,8 @@ jobs:
           cache: npm
           cache-dependency-path: web/package-lock.json
       - run: npm ci
+      - name: Texts – same keys in every language, US edition up to date
+        run: npm run i18n:check
       - name: Typecheck
         run: npx tsc --noEmit
       - name: Build

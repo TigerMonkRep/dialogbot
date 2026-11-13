@@ -324,7 +324,7 @@ class CreditLedger(Base):
     __table_args__ = (
         CheckConstraint("kind in ('grant','purchase','reserve','capture','release','spend','sponsor','referral',"
                         "'convert')", name="ck_credit_ledger_kind"),
-        CheckConstraint("currency in ('DKK','SEK','NOK','EUR')", name="ck_credit_ledger_currency"),
+        CheckConstraint("currency in ('DKK','SEK','NOK','EUR','USD')", name="ck_credit_ledger_currency"),
         Index("ix_credit_ledger_ws_created", "workspace_id", "created_at"),
     )
 

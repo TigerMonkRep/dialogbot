@@ -4,7 +4,8 @@
     "DKK",
     "SEK",
     "NOK",
-    "EUR"
+    "EUR",
+    "USD"
   ],
   "localeCurrency": {
     "da": "DKK",
@@ -14,7 +15,8 @@
     "de": "EUR",
     "es": "EUR",
     "fr": "EUR",
-    "it": "EUR"
+    "it": "EUR",
+    "us": "USD"
   },
   "includedMinutes": 300,
   "privatTrialDays": 14,
@@ -54,6 +56,15 @@
       "call_voicemail": 14,
       "call_no_answer": 3,
       "setup": 66900
+    },
+    "USD": {
+      "monthly": 34900,
+      "extra_minute": 21,
+      "outbound_extra_minute": 29,
+      "call_answered": 58,
+      "call_voicemail": 15,
+      "call_no_answer": 3,
+      "setup": 70900
     }
   },
   "privat": {
@@ -124,6 +135,23 @@
         "yearly_monthly": 1799,
         "yearly_total": 21588
       }
+    },
+    "USD": {
+      "basis": {
+        "monthly": 699,
+        "yearly_monthly": 559,
+        "yearly_total": 6708
+      },
+      "plus": {
+        "monthly": 1449,
+        "yearly_monthly": 1159,
+        "yearly_total": 13908
+      },
+      "familie": {
+        "monthly": 2399,
+        "yearly_monthly": 1919,
+        "yearly_total": 23028
+      }
     }
   },
   "privatExtraCall": {
@@ -154,6 +182,13 @@
       "no_answer": 4,
       "minute": 34,
       "max": 239
+    },
+    "USD": {
+      "answered": 73,
+      "voicemail": 19,
+      "no_answer": 4,
+      "minute": 36,
+      "max": 254
     }
   },
   "privatTopups": {
@@ -176,6 +211,11 @@
       700,
       1500,
       3000
+    ],
+    "USD": [
+      800,
+      1500,
+      3000
     ]
   },
   "privatBalance": {
@@ -195,6 +235,11 @@
       "extra_task": 300
     },
     "EUR": {
+      "welcome": 150,
+      "referral": 150,
+      "extra_task": 30
+    },
+    "USD": {
       "welcome": 150,
       "referral": 150,
       "extra_task": 30

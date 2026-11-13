@@ -145,7 +145,7 @@ def test_the_website_price_table_is_the_markets_table():
     assert table["privatTopups"]["DKK"] == list(prices.PRIVAT_TOPUPS_GROSS_MINOR) and "privatCreditPack" not in table
     assert table["privatBalance"]["DKK"] == {"welcome": 1000, "referral": 1000, "extra_task": 300}
     assert table["includedMinutes"] == prices.INCLUDED_MINUTES and table["privatTrialDays"] == prices.PRIVAT_TRIAL_DAYS
-    assert table["localeCurrency"] == {"da": "DKK", "sv": "SEK", "no": "NOK", "en": "EUR", "de": "EUR", "es": "EUR", "fr": "EUR", "it": "EUR"}
+    assert table["localeCurrency"] == {"da": "DKK", "sv": "SEK", "no": "NOK", "en": "EUR", "de": "EUR", "es": "EUR", "fr": "EUR", "it": "EUR", "us": "USD"}
 
 
 def test_eur_languages_state_no_amount_in_kroner():

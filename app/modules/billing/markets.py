@@ -1,14 +1,16 @@
 """Markets: the list prices per currency and the VAT rule per country. The one place a foreign price is written.
 
-Dialogbot sells in four currencies. The Danish prices in `prices.py` stay the source; the other currencies are rounded
+Dialogbot sells in five currencies (USD since 13 November 2026: the US site, /us). The Danish prices in `prices.py` stay the source; the other currencies are rounded
 list prices set from them (not live conversions – a price does not move with the exchange rate):
 
     1 EUR ≈ 7,46 DKK (pegged) · 1 DKK ≈ 1,47 SEK · 1 DKK ≈ 1,58 NOK  (rates of early November 2026)
 
 Which currency a customer pays in:
-- Erhverv: the company's country (BusinessProfile.country) – DK → DKK, SE → SEK, NO → NOK, everything else → EUR.
+- Erhverv: the company's country (BusinessProfile.country) – DK → DKK, SE → SEK, NO → NOK, US → USD, everything
+  else → EUR.
   The agreement snapshots it, so a customer keeps the currency (and price) it signed at.
-- Privat: the visitor's language when they start the checkout (da → DKK, sv → SEK, no → NOK, others → EUR).
+- Privat: the visitor's language when they start the checkout (da → DKK, sv → SEK, no → NOK, us → USD, others → EUR).
+  «us» is the website's US edition: English texts, dollar prices.
 - The website shows the prices of the language's market (`LOCALE_CURRENCY`).
 
 VAT (confirm with the accountant before the first foreign sale – these are the rules the code follows):
@@ -32,8 +34,8 @@ from typing import Literal
 
 from app.modules.billing import prices
 
-Currency = Literal["DKK", "SEK", "NOK", "EUR"]
-CURRENCIES: tuple[Currency, ...] = ("DKK", "SEK", "NOK", "EUR")
+Currency = Literal["DKK", "SEK", "NOK", "EUR", "USD"]
+CURRENCIES: tuple[Currency, ...] = ("DKK", "SEK", "NOK", "EUR", "USD")
 
 # Standard VAT rates in the EU (basis points), 2026. Only the rate matters here, not reduced rates.
 EU_VAT_BP: dict[str, int] = {
@@ -44,12 +46,12 @@ EU_VAT_BP: dict[str, int] = {
 NO_VAT_BP = 2500
 DK_VAT_BP = prices.TAX_BASIS_POINTS
 
-COUNTRY_CURRENCY: dict[str, Currency] = {"DK": "DKK", "SE": "SEK", "NO": "NOK"}
+COUNTRY_CURRENCY: dict[str, Currency] = {"DK": "DKK", "SE": "SEK", "NO": "NOK", "US": "USD"}
 LOCALE_CURRENCY: dict[str, Currency] = {"da": "DKK", "sv": "SEK", "no": "NOK", "en": "EUR", "de": "EUR", "es": "EUR",
-                                        "fr": "EUR", "it": "EUR"}
+                                        "fr": "EUR", "it": "EUR", "us": "USD"}
 # The country a language most likely means (used for Privat's VAT before Stripe knows the billing address).
 LOCALE_COUNTRY: dict[str, str | None] = {"da": "DK", "sv": "SE", "no": "NO", "de": "DE", "es": "ES", "fr": "FR",
-                                         "it": "IT", "en": None}
+                                         "it": "IT", "en": None, "us": "US"}
 
 # --------------------------------------------------------------------------- Erhverv (excl. VAT, minor units)
 # monthly · inbound minute · outbound minute (both above the package) · outbound call by outcome after the package · setup
@@ -69,6 +71,10 @@ ERHVERV: dict[Currency, dict[str, int]] = {
             "call_voicemail": 160, "call_no_answer": 40, "setup": 789_500},
     "EUR": {"monthly": 32_900, "extra_minute": 20, "outbound_extra_minute": 27, "call_answered": 55,
             "call_voicemail": 14, "call_no_answer": 3, "setup": 66_900},
+    # USD (the US site, /us, decision Fürster 2026-11-13): $349 a month; everything else is the EUR price × 349/329,
+    # rounded to a whole cent (setup to a whole dollar).
+    "USD": {"monthly": 34_900, "extra_minute": 21, "outbound_extra_minute": 29, "call_answered": 58,
+            "call_voicemail": 15, "call_no_answer": 3, "setup": 70_900},
 }
 INBOUND_INCLUDED_MINUTES = prices.INBOUND_INCLUDED_MINUTES
 INCLUDED_MINUTES = prices.INCLUDED_MINUTES
@@ -88,6 +94,9 @@ PRIVAT: dict[Currency, dict[str, dict[str, int]]] = {
     "EUR": {"basis": {"monthly": 649, "yearly_monthly": 519, "yearly_total": 6228},
             "plus": {"monthly": 1349, "yearly_monthly": 1079, "yearly_total": 12948},
             "familie": {"monthly": 2249, "yearly_monthly": 1799, "yearly_total": 21588}},
+    "USD": {"basis": {"monthly": 699, "yearly_monthly": 559, "yearly_total": 6708},
+            "plus": {"monthly": 1449, "yearly_monthly": 1159, "yearly_total": 13908},
+            "familie": {"monthly": 2399, "yearly_monthly": 1919, "yearly_total": 23028}},
 }
 # Dialogbot Privat's extra calls (beyond the plan's calls a month), Fürster's decision 2026-11-11: Erhverv's net price
 # by outcome (decided 2026-11-10) + 25 % moms – the Privat rule in every currency (the same gross price in every
@@ -132,6 +141,7 @@ PRIVAT_BALANCE: dict[Currency, dict] = {
     "SEK": {"topups": (7_500, 15_000, 30_000), "welcome": 1_500, "referral": 1_500, "extra_task": 300},
     "NOK": {"topups": (7_500, 15_000, 30_000), "welcome": 1_500, "referral": 1_500, "extra_task": 300},
     "EUR": {"topups": (700, 1_500, 3_000), "welcome": 150, "referral": 150, "extra_task": 30},
+    "USD": {"topups": (800, 1_500, 3_000), "welcome": 150, "referral": 150, "extra_task": 30},
 }
 BALANCE_AMOUNTS = ("welcome", "referral", "extra_task")
 
@@ -248,7 +258,7 @@ def privat_checkout_rates(*, eu_mode: str = "danish", voec_registered: bool = Fa
 
 # --------------------------------------------------------------------------- display
 
-_SYMBOL = {"DKK": "kr.", "SEK": "kr", "NOK": "kr", "EUR": "€"}
+_SYMBOL = {"DKK": "kr.", "SEK": "kr", "NOK": "kr", "EUR": "€", "USD": "$"}
 
 
 def fmt(minor: int, currency: str) -> str:
@@ -257,9 +267,9 @@ def fmt(minor: int, currency: str) -> str:
     c = _cur(currency)
     whole, cents = divmod(abs(minor), 100)
     sign = "-" if minor < 0 else ""
-    if c == "EUR":
+    if c in ("EUR", "USD"):
         w = f"{whole:,}"
-        return f"{sign}€{w}" + (f".{cents:02d}" if cents else "")
+        return f"{sign}{'€' if c == 'EUR' else '$'}{w}" + (f".{cents:02d}" if cents else "")
     sep = "." if c == "DKK" else " "
     w = f"{whole:,}".replace(",", sep)
     dec = f",{cents:02d}" if cents else ""

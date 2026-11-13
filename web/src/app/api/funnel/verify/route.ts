@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { getLocale, getT } from "@/i18n/server";
+import { apiLanguage } from "@/i18n/config";
 import { API_BASE_URL, COOKIE_OPTS, CSRF_HEADER, CSRF_VALUE, KNOWN_ACCOUNT_COOKIE, KNOWN_ACCOUNT_MAX_AGE, SESSION_COOKIE, WORKSPACE_COOKIE } from "@/lib/config";
 import { safeNext } from "@/lib/safe-next";
 import { visitorIpHeaders } from "@/lib/visitor-ip";
@@ -19,7 +20,7 @@ export async function POST(req: NextRequest) {
   const headers: Record<string, string> = { "content-type": "application/json", "user-agent": req.headers.get("user-agent") ?? "", ...visitorIpHeaders(req.headers) };
   const r = await fetch(`${API_BASE_URL}/api/v1/funnel/drafts/${encodeURIComponent(draft_id)}/verify`, {
     // the language the visitor saw the funnel in: the new account and its welcome mail follow it (F-JE-08)
-    method: "POST", headers, body: JSON.stringify({ code, interface_language: await getLocale() }), cache: "no-store",
+    method: "POST", headers, body: JSON.stringify({ code, interface_language: apiLanguage(await getLocale()) }), cache: "no-store",
   });
   const body = await r.json().catch(() => ({ code: "http_error", message: r.statusText }));
   if (!r.ok) return NextResponse.json(body, { status: r.status });

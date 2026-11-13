@@ -121,6 +121,10 @@ def execute(db: OrmSession, ws: Workspace, name: str, args: dict, ctx: RunContex
     spec = tool.spec
     run.label = spec.label
     try:
+        if ws.ops_suspended_at is not None:  # M03: an operator paused this workspace's outbound work
+            from app.core.suspension import SUSPENDED_MESSAGE
+
+            raise ActionRefused(SUSPENDED_MESSAGE, code="workspace_suspended")
         data = _validate(spec, tool, args or {})
         run.input = data
         adapter = connectors.adapter_for(db, ws.id, tool.connector)

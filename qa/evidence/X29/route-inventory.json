@@ -1,10 +1,10 @@
 {
  "counts": {
-  "anonymous": 59,
+  "anonymous": 70,
   "public_api": 25,
   "user": 28,
-  "workspace": 176,
-  "operator": 146,
+  "workspace": 177,
+  "operator": 150,
   "privat": 114,
   "excluded": 1
  },
@@ -478,11 +478,55 @@
    "class": "anonymous"
   },
   {
+   "route": "POST /api/v1/public/webchat/{key}/conversations/{conversation_id}/contact/code",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/public/webchat/{key}/conversations/{conversation_id}/contact/verify",
+   "class": "anonymous"
+  },
+  {
    "route": "POST /api/v1/public/webchat/{key}/conversations/{conversation_id}/contact",
    "class": "anonymous"
   },
   {
    "route": "GET /api/v1/public/webchat/{key}/callback-windows",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/public/customer/callback/{token}",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/public/customer/callback/{token}/cancel",
+   "class": "anonymous"
+  },
+  {
+   "route": "PUT /api/v1/public/customer/callback/{token}/preferences",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/public/booking/manage/{token}",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/public/booking/manage/{token}/code",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/public/booking/manage/{token}/verify",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/public/booking/manage/{token}/slots",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/public/booking/manage/{token}/move",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/public/booking/manage/{token}/cancel",
    "class": "anonymous"
   },
   {
@@ -691,6 +735,10 @@
   },
   {
    "route": "GET /api/v1/workspaces/{workspace_id}/bookings/slots",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/bookings/messages",
    "class": "workspace"
   },
   {
@@ -1231,6 +1279,22 @@
   },
   {
    "route": "POST /api/v1/operator/admin/rabatkoder/{code_id}/deaktiver",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/admin/operations/jobs/{job_id}/retry",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/admin/operations/bookings/{booking_id}/calendar-retry",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/admin/operations/workspaces/{workspace_id}/suspend",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/admin/operations/workspaces/{workspace_id}/resume",
    "class": "operator"
   },
   {

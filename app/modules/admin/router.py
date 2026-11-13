@@ -271,9 +271,10 @@ def operations(db: OrmSession = Depends(get_db), principal: Principal = Depends(
     mails = db.scalars(select(EmailDelivery).order_by(desc(EmailDelivery.created_at)).limit(25)).all()
     audit = db.scalars(select(AuditLog).order_by(desc(AuditLog.created_at)).limit(40)).all()
     from app.migrations_head import schema_status
-    return {"schema": schema_status(db), "outbox_7d": by_status,
-            "failed_jobs": [{"id": str(e.id), "type": e.event_type, "status": e.status, "attempts": e.attempts, "error": (e.last_error or "")[:300],
-                             "at": _iso(e.created_at), "workspace_id": str(e.workspace_id) if e.workspace_id else None} for e in failed],
+    from app.modules.admin import operations as m03
+
+    # M03: failed jobs (with tenant and retryability), calls, calendar sync, dependency incidents, suspended tenants
+    return {"schema": schema_status(db), "outbox_7d": by_status, **m03.status(db, failed),
             "emails": [{"at": _iso(m.created_at), "to": m.to_email, "subject": m.subject, "status": m.status,
                         "provider_status": m.provider_status, "adapter": m.adapter} for m in mails],
             "audit": [{"at": _iso(a.created_at), "action": a.action, "workspace_id": str(a.workspace_id) if a.workspace_id else None,

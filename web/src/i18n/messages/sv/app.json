@@ -383,6 +383,48 @@
       "noTypes": "Inga",
       "ask": "Säg det till assistenten – den visar regeln innan den gäller. Alla regler:",
       "allSettings": "Alla inställningar → Bokning"
+    },
+    "messages": {
+      "link": "Meddelanden till kunden",
+      "eyebrow": "Bokningar · meddelanden",
+      "title": "Meddelanden om bokningar",
+      "intro": "Så här ser meddelandena om en bokning ut – till kunden som sms och e-post i ert namn, och till er när en bokning behöver en person. Välj meddelande och språk.",
+      "noSend": "Endast förhandsvisning: inget skickas härifrån.",
+      "status": "I dag skickar Dialogbot bara bekräftelse-sms:et när assistenten eller ni ber om det. De andra meddelandena är klara som mallar.",
+      "language": "Språk",
+      "variantsAria": "Välj meddelande",
+      "toCustomer": "Till kunden",
+      "toYou": "Till er",
+      "sms": "Sms",
+      "email": "E-post",
+      "smsMeta": "{chars} tecken · {segments|1 sms|# sms} · {encoding}",
+      "fromLabel": "Från",
+      "subject": "Ämne",
+      "sample": "Ifyllt med exempeldata.",
+      "booking": "Ifyllt med en av era bokningar.",
+      "frame": "Förhandsvisning av e-posten",
+      "noSms": "Skickas bara som e-post till er.",
+      "back": "Tillbaka till bokningar",
+      "desc": {
+        "request_receipt": "När en kund ber om en tid som först måste bekräftas.",
+        "confirmed": "När tiden är bekräftad.",
+        "reminder": "Före bokningen.",
+        "proposed_change": "När ni föreslår en annan tid.",
+        "rescheduled": "När bokningen har flyttats.",
+        "cancelled": "När bokningen har avbokats.",
+        "owner_attention": "När kalendern inte kunde uppdateras eller en bokning måste bekräftas av en medarbetare.",
+        "delivery_failure": "När ett meddelande till kunden inte kunde levereras."
+      },
+      "label": {
+        "request_receipt": "Förfrågan mottagen",
+        "confirmed": "Tid bekräftad",
+        "reminder": "Påminnelse",
+        "proposed_change": "Förslag på ny tid",
+        "rescheduled": "Tid flyttad",
+        "cancelled": "Tid avbokad",
+        "owner_attention": "Kräver din uppmärksamhet",
+        "delivery_failure": "Leverans misslyckades"
+      }
     }
   },
   "leads": {
@@ -451,7 +493,9 @@
     "noName": "(utan namn)",
     "created": "skapat {at}",
     "wantsCall": "Vill bli uppringd {window}",
-    "seeConversation": "Se samtalet"
+    "seeConversation": "Se samtalet",
+    "phoneVerified": "Numret bekräftat med sms-kod",
+    "callbackCancelled": "Kunden har avbokat uppringningen"
   },
   "campaigns": {
     "status": {

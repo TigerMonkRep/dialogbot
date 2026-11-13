@@ -7,6 +7,9 @@
     POST /public/webchat/{key}/conversations             from the frame only (Origin = API origin)
     GET  /public/webchat/{key}/conversations/{id}/messages   X-Visitor-Token
     POST /public/webchat/{key}/conversations/{id}/messages   X-Visitor-Token
+    POST /public/webchat/{key}/conversations/{id}/contact/code      X-Visitor-Token  (W04: SMS code to the number)
+    POST /public/webchat/{key}/conversations/{id}/contact/verify    X-Visitor-Token
+    POST /public/webchat/{key}/conversations/{id}/contact             X-Visitor-Token  (a phone needs a verified code)
 """
 from __future__ import annotations
 
@@ -145,10 +148,64 @@ class ContactIn(BaseModel):
     consent: bool
 
 
+class WebchatPhoneCodeIn(BaseModel):
+    phone: str = Field(min_length=6, max_length=40, pattern=r"^[0-9+ ()-]{6,40}$")
+
+
+@router.post("/{key}/conversations/{conversation_id}/contact/code", status_code=202)
+def phone_code(key: str, conversation_id: uuid.UUID, body: WebchatPhoneCodeIn, request: Request,
+               origin: str | None = Header(default=None), x_visitor_token: str | None = Header(default=None),
+               db: OrmSession = Depends(get_db)):
+    """W04 step 1: a 6-digit code by SMS (the business's own text and sender) to the number the visitor typed in «Bliv
+    kontaktet». 10 minutes, 5 attempts, resend after 30 s (409 `too_soon` + `retry_after`); 429 `sms_rate_limited`
+    per number (all public doors), per client IP and per business."""
+    from app.models import Workspace
+    from app.modules.customer import service as customer
+    from app.modules.privat.lookup_limits import client_ip
+
+    _require_frame_origin(origin)
+    s = service.by_key(db, key)
+    conv = service.visitor_conversation(db, s, conversation_id, x_visitor_token)
+    service._require_available(db, s)
+    phone = customer.normalize(body.phone)
+    out = customer.send_code(db, db.get(Workspace, s.workspace_id), purpose="webchat_phone", phone=phone,
+                             ip=client_ip(request), conversation=conv)
+    db.commit()
+    return out
+
+
+class WebchatPhoneVerifyIn(BaseModel):
+    verification_id: str = Field(min_length=1, max_length=64)
+    code: str = Field(min_length=1, max_length=12)
+
+
+@router.post("/{key}/conversations/{conversation_id}/contact/verify")
+def phone_verify(key: str, conversation_id: uuid.UUID, body: WebchatPhoneVerifyIn, origin: str | None = Header(default=None),
+                 x_visitor_token: str | None = Header(default=None), db: OrmSession = Depends(get_db)):
+    """W04 step 2: the code. 422 `code_invalid` + `attempts_left`; 409 `too_many_attempts` after 5; 409 `code_expired`
+    (also for a code of another conversation or purpose)."""
+    from app.modules.customer import service as customer
+
+    _require_frame_origin(origin)
+    s = service.by_key(db, key)
+    conv = service.visitor_conversation(db, s, conversation_id, x_visitor_token)
+    try:
+        v = customer.check_code(db, purpose="webchat_phone", verification_id=body.verification_id, code=body.code,
+                                conversation=conv)
+    except ValidationFailed:
+        db.commit()  # the attempt counts even though the request fails
+        raise
+    db.commit()
+    return {"status": "verified", "phone_display": customer.masked(v.phone)}
+
+
 @router.post("/{key}/conversations/{conversation_id}/contact")
 def contact(key: str, conversation_id: uuid.UUID, body: ContactIn, origin: str | None = Header(default=None),
             x_visitor_token: str | None = Header(default=None), db: OrmSession = Depends(get_db)):
-    """"Bliv kontaktet": the visitor leaves contact details; creates the conversation's lead and a follow-up task."""
+    """"Bliv kontaktet": the visitor leaves contact details; creates the conversation's lead and a follow-up task.
+    A phone number is only accepted after the visitor proved it with the SMS code in this conversation (W04; 422
+    `verification_required`). Returns `manage_url`: the customer's secure link to cancel the call back and set their
+    preferences (W09)."""
     _require_frame_origin(origin)
     s = service.by_key(db, key)
     conv = service.visitor_conversation(db, s, conversation_id, x_visitor_token)
@@ -156,9 +213,17 @@ def contact(key: str, conversation_id: uuid.UUID, body: ContactIn, origin: str |
         raise ValidationFailed("Sæt flueben for at give os lov til at kontakte dig", field_errors=[{"field": "consent"}])
     if not body.email and not body.phone:
         raise ValidationFailed("Angiv e-mail eller telefonnummer", field_errors=[{"field": "email"}, {"field": "phone"}])
+    from app.modules.customer import service as customer
     from app.modules.leads import callback
-    from app.modules.leads.service import visitor_contact
+    from app.modules.leads.service import create_task, visitor_contact
     from app.modules.reports.service import tz_of
+
+    verified_at = None
+    if body.phone:
+        verified_at = customer.verified_phone(db, conv, customer.normalize(body.phone))
+        if verified_at is None:
+            raise ValidationFailed("Bekræft dit telefonnummer med koden fra SMS'en først", code="verification_required",
+                                   field_errors=[{"field": "phone"}])
 
     window = None
     if body.window:
@@ -168,10 +233,17 @@ def contact(key: str, conversation_id: uuid.UUID, body: ContactIn, origin: str |
             window = callback.resolve(body.window, tz_of(db, s.workspace_id))
         except ValueError as e:
             raise ValidationFailed("Tidsrummet er ikke længere muligt – vælg et andet", field_errors=[{"field": "window"}]) from e
-    visitor_contact(db, conv, name=body.name, email=str(body.email) if body.email else None, phone=body.phone,
-                    note=body.note, window=window)
+    lead = visitor_contact(db, conv, name=body.name, email=str(body.email) if body.email else None, phone=body.phone,
+                           note=body.note, window=window)
+    if verified_at is not None:
+        lead.phone_verified_at = verified_at
+    if lead.callback_cancelled_at is not None:  # a new request after the customer cancelled: a new call task
+        lead.callback_cancelled_at = None
+        create_task(db, conv.workspace_id, title=f"Ring {body.name.strip() or 'kunden'} op" + (f" – {window[2]}" if window else ""),
+                    created_by=None, lead=lead, due_at=window[0] if window else None)
+    url = customer.issue_link(db, purpose="callback", ws_id=conv.workspace_id, lead=lead)
     db.commit()
-    return {"received": True}
+    return {"received": True, "manage_url": url}
 
 
 @router.get("/{key}/callback-windows")

@@ -16,6 +16,7 @@ from app.models import Lead, Task
 from app.modules.telephony import vapi as vapi_mod
 from tests.test_telephony import _post, _setup, configured  # noqa: F401
 from tests.test_webchat import PUB, _say, _start, fake, live  # noqa: F401
+from tests.webchat_phone import verify_phone
 
 TZ = ZoneInfo("Europe/Copenhagen")
 
@@ -36,6 +37,8 @@ def test_r03_webchat_callback_window_becomes_the_leads_period_and_the_tasks_due_
     assert client.post(url, json=body | {"phone": None, "email": "m@testmail.dk"}, headers=h).status_code == 422
     assert client.post(url, json=body | {"window": "sunday_night"}, headers=h).status_code == 422
     assert client.post(url, json=body | {"consent": False}, headers=h).status_code == 422
+    assert client.post(url, json=body, headers=h).json()["code"] == "verification_required"  # W04: code first
+    verify_phone(client, key, conv, "20 30 40 50", "+4520304050")
     r = client.post(url, json=body, headers=h)
     assert r.status_code == 200, r.text
     lead = db.scalar(select(Lead).where(Lead.workspace_id == uuid.UUID(live["ws_a"])))

@@ -1,0 +1,5 @@
+2026-11-13 bygget (feat/webchat-w04-w09-w13): /booking/manage/<token> efter booking i widgetten. Aftale med telefonnummer:
+SMS-kode til aftalens nummer før flyt/aflys (session 30 min, kun dette link); kun e-mail: linket alene. Flyt til ledig
+tid af samme type, aflys; ændringer stopper ved virksomhedens «tidligst om X timer» (lead_time_hours). Kalenderskrivning
+der fejler → «noteret, virksomheden bekræfter» (DB-007/DB-011). Ugyldigt/andet formål → 404, efter aftalen → 410.
+Evidens: web/e2e/qa/erhverv-d/W13.spec.ts (1440 + 390 px), tests/qa/test_qa_w04_w09_w13.py.

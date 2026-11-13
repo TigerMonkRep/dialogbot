@@ -206,6 +206,10 @@ def claim_one(db: OrmSession, worker_id: str, *, only_types: tuple[str, ...] | N
                     (OutboxEvent.status == "processing") & (OutboxEvent.lease_expires_at < now))))
     q = q.where(OutboxEvent.event_type.in_(only_types)) if only_types else q.where(
         OutboxEvent.event_type.not_in(_browser_types()))
+    # M03: a suspended workspace's jobs wait in the queue until an operator resumes it (app/core/suspension.py)
+    from app.core.suspension import suspended_ids
+
+    q = q.where(or_(OutboxEvent.workspace_id.is_(None), OutboxEvent.workspace_id.not_in(suspended_ids())))
     ev = db.scalar(q.order_by(OutboxEvent.next_attempt_at).with_for_update(skip_locked=True).limit(1))
     if ev is None:
         return None
@@ -452,6 +456,9 @@ def run_schedules() -> None:
             from app.modules.sales.verification import purge as purge_codes
 
             purge_codes(db)  # SMS-code rows (the visitor's number) after two days
+            from app.modules.customer.service import purge as purge_customer
+
+            purge_customer(db)  # customers' SMS-code rows after two days, links 30 days after they expired
             db.commit()
             n = place_due(db)
             if n:

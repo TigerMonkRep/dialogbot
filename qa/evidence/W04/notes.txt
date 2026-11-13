@@ -1,1 +1,7 @@
 not-implemented: webchat 'Bliv kontaktet' (app/modules/webchat/public.py contact) tager telefonnummer uden kodeverifikation; ingen OTP/resend/forsøgsgrænse. Tilbagekald er en manuel opgave (ingen automatisk opkald), så ikke et sikkerhedshul i dag. Widget påstår ikke verifikation (frame.js).
+
+2026-11-13 bygget (feat/webchat-w04-w09-w13): «Bliv kontaktet» med telefonnummer kræver nu en 6-cifret SMS-kode
+(virksomhedens egen tekst og afsender; 10 min, 5 forsøg, «send ny kode» efter 30 s; grænser pr. nummer (delt med alle
+offentlige døre), pr. klient-IP og pr. virksomhed). POST .../contact/code og .../contact/verify; /contact svarer 422
+verification_required uden bevis. Lead.phone_verified_at vises som «Nummer bekræftet med SMS-kode».
+Evidens: web/e2e/qa/erhverv-d/W04.spec.ts (1440 + 390 px, skærmbilleder her), tests/qa/test_qa_w04_w09_w13.py.

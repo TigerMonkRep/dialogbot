@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { CUSTOMER_SITE, DEMO_PASSWORD, PREVIEW_CODE, SEEDED, serve, freshOwner, latestMailLink, login, shot, uniqueEmail } from "./helpers";
+import { smsCodeFor, uniqueMobile } from "./qa/erhverv-p1a/p1a-helpers";
+import { ownClientIp } from "./qa/erhverv-d/d-helpers";
 
 /* The eight core journeys of milestone A. Blueprint §9.1 is not in the repository; these cover the flows that
  * exist today (A01–A06, O01–O04, K03–K05, G01/G05, S02/S08/S09) and assert the honesty rules along the way. */
@@ -371,6 +373,7 @@ test("12 · Henvendelse: kunde beder om kontakt i webchat, ejer kvalificerer, be
   servers.push(await serve(4000, `<!doctype html><html lang="da"><head><title>Kundeside</title></head><body><h1>Fjord Gulv</h1>${w.embed_code}</body></html>`));
 
   const ctx = await browser.newContext({ viewport: page.viewportSize() ?? undefined });
+  await ownClientIp(ctx); // the SMS-code door counts codes per client IP
   const site = await ctx.newPage();
   await site.goto(`${CUSTOMER_SITE}/`);
   await site.getByRole("button", { name: "Åbn chat" }).click();
@@ -381,14 +384,19 @@ test("12 · Henvendelse: kunde beder om kontakt i webchat, ejer kvalificerer, be
   await chat.getByRole("button", { name: "Bliv kontaktet af en medarbejder" }).click();
   await chat.locator("form.contact").getByLabel("Navn").fill("Henrik Villumsen");
   await chat.locator("form.contact").getByLabel("E-mail").fill("henrik@example.com");
-  await chat.locator("form.contact").getByLabel("Telefon").fill("+45 20 30 40 50");
+  const mobile = uniqueMobile();
+  await chat.locator("form.contact").getByLabel("Telefon").fill(`+45 ${mobile}`);
   const windowLabel = await chat.locator("form.contact").getByLabel("Hvornår må vi ringe?").locator("option").last().textContent();
   await chat.locator("form.contact").getByLabel("Hvornår må vi ringe?").selectOption({ label: windowLabel ?? "" });
   await chat.locator("form.contact").getByRole("button", { name: "Send" }).click();
   await expect(chat.getByText("Sæt flueben, så virksomheden må kontakte dig.")).toBeVisible(); // consent is required
   await chat.locator("form.contact").getByLabel("Virksomheden må kontakte mig", { exact: false }).check();
   await chat.locator("form.contact").getByRole("button", { name: "Send" }).click();
+  // W04: the number is proven with the SMS code (simulated: read from the API log) before the business may call it
+  await chat.locator(".code-step").getByLabel("Kode fra SMS").fill(await smsCodeFor(`+45${mobile}`));
+  await chat.locator(".code-step").getByRole("button", { name: "Bekræft" }).click();
   await expect(chat.getByText("Tak, Henrik Villumsen!", { exact: false })).toBeVisible();
+  await expect(chat.getByRole("link", { name: "Aflys opringningen eller ret dine valg" })).toHaveAttribute("href", /\/kunde\//);
   await shot(site, info, "kontakt-i-webchat");
   await ctx.close();
 

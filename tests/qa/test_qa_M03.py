@@ -7,7 +7,6 @@ after timeout or reconnect."
 """
 from __future__ import annotations
 
-import pytest
 from sqlalchemy import select
 
 from app.core.outbox import enqueue
@@ -47,10 +46,24 @@ def test_outbox_dedupe_key_prevents_duplicate_jobs(api, two_workspaces, db):
     assert len(rows) == 1
 
 
-@pytest.mark.xfail(strict=True, reason="M03 controlled retry: not-implemented")
-def test_controlled_retry_endpoint_exists(api, two_workspaces, db):
-    """M03 requires a controlled retry from the operations screen. There is no operator endpoint for it."""
+def test_controlled_retry_and_suspension_exist(api, two_workspaces, db):
+    """M03 requires a controlled retry and suspension from the operations screen (operator only). The full behaviour
+    (idempotency, audit, no duplicate calendar events, tenant isolation) is in tests/test_ops_m03.py."""
+    t = two_workspaces
+    runner.FAIL_EVENT_TYPES.add("qa.m03.retry")
+    ev = enqueue(db, event_type="qa.m03.retry", dedupe_key="qa-m03-retry", workspace_id=t["ws_a"], payload={})
+    db.commit()
+    runner.drain()
+    db.refresh(ev)
+    ev.status = "failed"
+    db.commit()
     op = api.operator()
-    probes = [api.post(op, f"/operator/admin/operations/jobs/{'0' * 8}-0000-0000-0000-{'0' * 12}/retry"),
-              api.post(op, "/operator/admin/operations/retry", json={})]
-    assert any(r.status_code not in (404, 405) for r in probes), [r.status_code for r in probes]
+    assert api.post(t["tok_a"], f"/operator/admin/operations/jobs/{ev.id}/retry", {}).status_code == 403
+    r = api.post(op, f"/operator/admin/operations/jobs/{ev.id}/retry", {})
+    assert r.status_code == 200 and r.json()["result"] == "queued", r.text
+    assert api.post(op, f"/operator/admin/operations/jobs/{ev.id}/retry", {}).json()["result"] == "already_queued"
+    s = api.post(op, f"/operator/admin/operations/workspaces/{t['ws_b']}/suspend", {"reason": "QA M03"})
+    assert s.status_code == 200 and s.json()["suspended"] is True
+    ops = api.get(op, "/operator/admin/operations").json()
+    assert {"calls", "calendar_sync", "incidents", "suspended"} <= set(ops)
+    assert [x["workspace_id"] for x in ops["suspended"]] == [t["ws_b"]]

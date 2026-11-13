@@ -43,7 +43,8 @@ def _saldo_paragraphs(lang: str) -> tuple[str, str]:
 
 
 def test_all_8_languages_are_here():
-    assert sorted(p.name for p in MSG.iterdir() if p.is_dir()) == sorted(LANGS)
+    # "us" is a market edition generated from "en" (web/scripts/i18n-us.mjs), not a ninth language
+    assert sorted(p.name for p in MSG.iterdir() if p.is_dir() and p.name != "us") == sorted(LANGS)
 
 
 def test_delete_account_warning_keeps_the_14_day_withdrawal_like_the_terms():

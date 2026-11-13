@@ -8,6 +8,12 @@ from app.modules.billing import markets
 from app.modules.outreach.compliance.matrix import MATRIX
 
 DEMO_URL = "https://dialogbot.app"
+# The edition a market's readers are sent to (dollars, American spelling and the US video for the US).
+DEMO_URLS = {"US": "https://dialogbot.app/us"}
+
+
+def demo_url(country: str) -> str:
+    return DEMO_URLS.get(country, DEMO_URL)
 UNSUBSCRIBE_PLACEHOLDER = "{{unsubscribe_link}}"
 
 # Product statements the copy may make (the owner's wording). The auditor rejects product claims beyond these.
@@ -35,8 +41,8 @@ def _list_price(currency: str) -> str:
 def locale_for(country: str) -> Locale:
     s = get_settings()
     j = MATRIX[country]
-    if country == "US":
-        return Locale(country, j.spelling, s.outreach_price_us, s.outreach_callback_number_us)
+    if country == "US":   # dollars are a billing currency (markets.ERHVERV["USD"]); the setting only overrides the text
+        return Locale(country, j.spelling, s.outreach_price_us or _list_price("USD"), s.outreach_callback_number_us)
     if country == "UK":
         return Locale(country, j.spelling, s.outreach_price_uk, s.outreach_callback_number_uk)
     # Everywhere else the copy quotes the real list price of the currency the customer will be billed in.

@@ -95,9 +95,9 @@ def todos(db: OrmSession) -> list[dict]:
          "Peg udbyderens webhook på /api/v1/webhooks/events og sæt RESEND_WEBHOOK_SECRET (Resend) eller "
          "OUTREACH_WEBHOOK_SECRET (andre).", bool(s.resend_webhook_secret or s.outreach_webhook_secret))
     auto("prices", "Priserne i e-mailen kan faktisk købes",
-         f"E-mails til USA og UK nævner {s.outreach_price_us} og {s.outreach_price_uk}, men der faktureres kun i "
-         "DKK, SEK, NOK og EUR. Tilføj USD og GBP i priserne, eller ret OUTREACH_PRICE_US / OUTREACH_PRICE_UK.",
-         "USD" in markets.ERHVERV and "GBP" in markets.ERHVERV)
+         f"E-mails til UK nævner {s.outreach_price_uk}, men der faktureres ikke i pund (en britisk kunde betaler i "
+         "euro). Tilføj GBP i priserne, ret OUTREACH_PRICE_UK til europrisen – eller lad punktet stå, hvis du kun "
+         "skriver til USA (dollarprisen kan købes).", "GBP" in markets.ERHVERV)
     auto("numbers", "Lokale numre, demoen ringer fra (+1 / +44)",
          "Valgfrit: OUTREACH_CALLBACK_NUMBER_US og _UK. Uden dem må e-mailen ikke nævne et lokalt nummer.",
          bool(s.outreach_callback_number_us and s.outreach_callback_number_uk), "optional")

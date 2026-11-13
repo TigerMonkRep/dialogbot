@@ -5,8 +5,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Part } from "@/components/setup-parts";
 import { Icon, inputCls } from "@/components/ui";
 import { api, type ApiError } from "@/lib/client";
-import { useRaw, useT } from "@/i18n/client";
-import { LOCALES, LOCALE_NAMES, isLocale } from "@/i18n/config";
+import { useLocale, useRaw, useT } from "@/i18n/client";
+import { HTML_LANG, LANGUAGES, LOCALE_NAMES, isLocale } from "@/i18n/config";
 import { profileIsDone } from "@/lib/setup-done";
 import { cardsFromGoals, goalsFromCards, hoursText, originOf, parseHours, parseZones, zonesText, type Cards, type DayVocab, type WeeklyRange } from "@/lib/setup";
 import { MobileActionBar } from "@/components/mobile-action-bar";
@@ -33,6 +33,15 @@ type Group = "profile" | "goals" | "langs" | "hours" | "zones";
  *  (what the page loaded + every value sent); the draft is put back only where the server still has one of those. */
 type Draft = { at: number; values: Record<string, string>; seen: Record<string, string[]> };
 const DRAFT_TTL = 24 * 3600 * 1000;
+/** Countries a business can be in → its time zones (the first is the default). The country decides the currency
+ *  (billing/markets.py: DK → DKK, SE → SEK, NO → NOK, US → USD, others → EUR). */
+const ZONES: Record<string, string[]> = {
+  DK: ["Europe/Copenhagen"], SE: ["Europe/Stockholm"], NO: ["Europe/Oslo"], DE: ["Europe/Berlin"], FR: ["Europe/Paris"],
+  ES: ["Europe/Madrid"], IT: ["Europe/Rome"], NL: ["Europe/Amsterdam"], IE: ["Europe/Dublin"], GB: ["Europe/London"],
+  US: ["America/New_York", "America/Chicago", "America/Denver", "America/Phoenix", "America/Los_Angeles", "America/Anchorage", "Pacific/Honolulu"],
+  CA: ["America/Toronto", "America/Winnipeg", "America/Edmonton", "America/Vancouver", "America/Halifax"],
+  AU: ["Australia/Sydney", "Australia/Brisbane", "Australia/Adelaide", "Australia/Perth"],
+};
 const PROFILE_TEXT = ["legal_name", "phone", "description", "website_url", "cvr", "address_line", "postal_code", "city"] as const;
 const draftKey = (wsId: string) => `db_trin1_${wsId}`;
 const readDraft = (wsId: string): Draft | null => {
@@ -45,6 +54,7 @@ const readDraft = (wsId: string): Draft | null => {
 export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, goals, languages, facts, done = false }: { wsId: string; canEdit: boolean; canApprove: boolean; aiReady: boolean; cvrReady: boolean; profile: Profile; goals: Goals; languages: Languages; facts: Fact[]; done?: boolean }) {
   const router = useRouter();
   const t = useT("setup.step1");
+  const locale = useLocale();
   const ts = useT("setup.shell");
   const raw = useRaw();
   const vocab = raw<DayVocab>("setup.hours");
@@ -264,6 +274,32 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Country decides the currency (US → dollars) and, with the time zone, when «open» is. A new business on the US
+  // edition starts as a US business; everyone else starts in Denmark, as before.
+  useEffect(() => {
+    if (locale === "us" && !profile.legal_name && profile.country === "DK") {
+      setP((cur) => ({ ...cur, country: "US", timezone: ZONES.US[1] })); later("profile", 300);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const setCountry = (c: string) => { setP((cur) => ({ ...cur, country: c, timezone: (ZONES[c] ?? [cur.timezone])[0] })); later("profile"); };
+  const regionName = (c: string) => { try { return new Intl.DisplayNames([HTML_LANG[locale]], { type: "region" }).of(c === "UK" ? "GB" : c) ?? c; } catch { return c; } };
+  const countryFields = (
+    <>
+      <label className="flex flex-col gap-1.5"><span className={labelCls}>{t("b.country")}</span>
+        <select className={inputCls} value={p.country} onChange={(e) => setCountry(e.target.value)} disabled={!canEdit} autoComplete="country">
+          {!(p.country in ZONES) && <option value={p.country}>{regionName(p.country)}</option>}
+          {Object.keys(ZONES).map((c) => <option key={c} value={c}>{regionName(c)}</option>)}
+        </select>
+      </label>
+      {(ZONES[p.country]?.length ?? 0) > 1 && (
+        <label className="flex flex-col gap-1.5"><span className={labelCls}>{t("b.timezone")}</span>
+          <select className={inputCls} value={p.timezone} onChange={(e) => { setP((cur) => ({ ...cur, timezone: e.target.value })); later("profile"); }} disabled={!canEdit}>
+            {ZONES[p.country].map((z) => <option key={z} value={z}>{z.split("/")[1].replace(/_/g, " ")}</option>)}
+          </select>
+        </label>
+      )}
+    </>
+  );
   const field = (k: keyof Profile) => (e: React.ChangeEvent<HTMLInputElement>) => { setP((cur) => ({ ...cur, [k]: e.target.value })); later("profile"); };
 
   // --- categories follow "hvad I laver" (no search field): the first time there is a description and no category yet ---
@@ -406,12 +442,13 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
         <label className="flex flex-col gap-1.5"><span className={labelCls}>{t("b.customerLanguage")}</span>
           <select className={inputCls} value={primary} onChange={(e) => choosePrimary(e.target.value)} disabled={!canEdit}>
             {!isLocale(primary) && <option value={primary}>{primary}</option>}
-            {LOCALES.map((l) => <option key={l} value={l}>{LOCALE_NAMES[l]}</option>)}
+            {LANGUAGES.map((l) => <option key={l} value={l}>{LOCALE_NAMES[l]}</option>)}
           </select></label>
         <div className="grid sm:grid-cols-2 gap-4">
           <label className="flex flex-col gap-1.5"><span className={labelCls}>{t("b.hours")}</span><input className={inputCls} value={hours} onChange={(e) => { setHours(e.target.value); later("hours"); }} disabled={!canEdit} placeholder={t("b.hoursPlaceholder")} aria-describedby="hours-hint" /></label>
           <label className="flex flex-col gap-1.5"><span className={labelCls}>{t("b.zones")}</span><input className={inputCls} value={zones} onChange={(e) => { setZones(e.target.value); later("zones"); }} disabled={!canEdit} placeholder={t("b.zonesPlaceholder")} /></label>
         </div>
+        {p.country !== "DK" && <div className="grid sm:grid-cols-2 gap-4">{countryFields}</div>}
         <p id="hours-hint" className={`text-[13px] ${hint ? "text-danger" : "text-muted"}`} role={hint ? "alert" : undefined}>{hint ?? (canApprove ? t("b.factsLive") : t("b.factsDraft"))}</p>
         <details className="rounded-xl border-[1.5px] border-ink px-4 py-2">
           <summary className="cursor-pointer min-h-[36px] flex items-center text-[14px] font-semibold text-ink">{t("b.cvrSummary")}</summary>
@@ -420,6 +457,7 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
             <label className="flex flex-col gap-1.5"><span className={labelCls}>{t("b.address")}</span><input className={inputCls} value={p.address_line ?? ""} onChange={field("address_line")} disabled={!canEdit} autoComplete="street-address" /></label>
             <label className="flex flex-col gap-1.5"><span className={labelCls}>{t("b.postalCode")}</span><input className={inputCls} value={p.postal_code ?? ""} onChange={field("postal_code")} disabled={!canEdit} inputMode="numeric" /></label>
             <label className="flex flex-col gap-1.5"><span className={labelCls}>{t("b.city")}</span><input className={inputCls} value={p.city ?? ""} onChange={field("city")} disabled={!canEdit} /></label>
+            {p.country === "DK" && countryFields}
           </div>
           {cvrNote && <p className="text-[13px] text-muted pb-2">{t("b.cvrLooked", { note: cvrNote })}</p>}
         </details>

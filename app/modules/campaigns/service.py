@@ -169,11 +169,14 @@ def counts(db: OrmSession, c: Campaign) -> dict:
     outcomes = dict(db.execute(select(CampaignContact.outcome, func.count()).where(
         CampaignContact.campaign_id == c.id, CampaignContact.outcome.is_not(None)).group_by(CampaignContact.outcome)).all())
     calls = db.scalar(select(func.count()).where(CampaignCall.campaign_id == c.id)) or 0
+    # C15: dialled calls whose end-of-call report has not arrived – their minutes are not known yet (not «0 min»)
+    awaiting = db.scalar(select(func.count()).where(CampaignCall.campaign_id == c.id,
+                                                     CampaignCall.connected_seconds.is_(None))) or 0
     total = sum(rows.values())
     # "Talt med": every contact who spoke with the assistant – an opt-out is an answered call too
     answered = sum(rows.get(s, 0) for s in ANSWERED_STATUSES)
     return {"total": total, "by_status": rows, "by_outcome": outcomes, "calls": calls, "answered": answered,
-            "open": rows.get("pending", 0) + rows.get("calling", 0)}
+            "open": rows.get("pending", 0) + rows.get("calling", 0), "awaiting_report": awaiting}
 
 
 def started_minutes(seconds: int | float | None) -> int:
@@ -463,6 +466,12 @@ def dispatch(db: OrmSession, now: datetime | None = None, max_calls: int = 20) -
                     outbound.dial(db, c, contact, now)
                     dialled += 1
                     break
+            continue
+        # A customer campaign only dials while the subscription is paid (C09; the same gate as the phone and the
+        # chat, billing.grace): no usage can build up on an account without a usable card.
+        from app.modules.billing import agreements
+
+        if not agreements.subscription_paid(db, c.workspace_id):
             continue
         for contact in db.scalars(callable_.order_by(CampaignContact.next_attempt_at.nulls_first(),
                                                      CampaignContact.created_at).limit(10)):

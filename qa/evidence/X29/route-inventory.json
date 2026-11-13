@@ -3,8 +3,8 @@
   "anonymous": 70,
   "public_api": 25,
   "user": 28,
-  "workspace": 169,
-  "operator": 141,
+  "workspace": 177,
+  "operator": 150,
   "privat": 114,
   "excluded": 1
  },
@@ -738,6 +738,10 @@
    "class": "workspace"
   },
   {
+   "route": "GET /api/v1/workspaces/{workspace_id}/bookings/messages",
+   "class": "workspace"
+  },
+  {
    "route": "GET /api/v1/workspaces/{workspace_id}/bookings",
    "class": "workspace"
   },
@@ -1275,6 +1279,22 @@
   },
   {
    "route": "POST /api/v1/operator/admin/rabatkoder/{code_id}/deaktiver",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/admin/operations/jobs/{job_id}/retry",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/admin/operations/bookings/{booking_id}/calendar-retry",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/admin/operations/workspaces/{workspace_id}/suspend",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/admin/operations/workspaces/{workspace_id}/resume",
    "class": "operator"
   },
   {
@@ -2179,6 +2199,54 @@
   },
   {
    "route": "POST /api/v1/operator/outreach/suppressions",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/support/tickets",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/support/tickets",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/support/tickets/{number}",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/support/tickets/{number}/messages",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/support/tickets/{number}/resolve",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/support/tickets/{number}/reopen",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/support/tickets/{number}/attachments/{attachment_id}",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/operator/support/tickets",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/support/tickets/{ticket_id}",
+   "class": "operator"
+  },
+  {
+   "route": "PATCH /api/v1/operator/support/tickets/{ticket_id}",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/support/tickets/{ticket_id}/messages",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/support/tickets/{ticket_id}/attachments/{attachment_id}",
    "class": "operator"
   },
   {

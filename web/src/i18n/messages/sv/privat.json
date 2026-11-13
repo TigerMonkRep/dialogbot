@@ -1499,7 +1499,8 @@
       "free": "Gratis",
       "allPlans": "Ingår i alla planer",
       "plan": "Plus · Familj",
-      "soon": "Kommer snart"
+      "soon": "Kommer snart",
+      "needsPlan": "Kräver en plan"
     },
     "cat": {
       "alle": "Alla",
@@ -1620,7 +1621,11 @@
     "planTextEndedAll": "{name} ingår i alla planer. Välj en plan för att använda den.",
     "planTextBasis": "Du har Basis. {name} ingår i Plus och Familj.",
     "onInMine": "{n|1 app är på|# appar är på} – se Mina appar",
-    "yourThings": "Dina saker här ({n})"
+    "yourThings": "Dina saker här ({n})",
+    "pausedSection": "Pausad · kräver en plan",
+    "pausedLine": "Kräver en plan – dina data finns kvar.",
+    "pausedTitle": "{name} är pausad",
+    "pausedText": "Provperioden eller planen har tagit slut, så {name} körs inte just nu – inga påminnelser och inget nytt. Dina data finns kvar och kommer tillbaka så fort du har en plan igen."
   },
   "familyHousehold": {
     "title": "Hushåll",

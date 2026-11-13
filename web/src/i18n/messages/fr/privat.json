@@ -1499,7 +1499,8 @@
       "free": "Gratuite",
       "allPlans": "Dans toutes les formules",
       "plan": "Plus · Famille",
-      "soon": "Bientôt"
+      "soon": "Bientôt",
+      "needsPlan": "Forfait requis"
     },
     "cat": {
       "alle": "Toutes",
@@ -1620,7 +1621,11 @@
     "planTextEndedAll": "{name} est inclus dans tous les forfaits. Choisissez un forfait pour l’utiliser.",
     "planTextBasis": "Vous avez Basis. {name} est inclus dans Plus et Famille.",
     "onInMine": "{n|1 app activée|# apps activées} – voir Mes apps",
-    "yourThings": "Vos éléments ici ({n})"
+    "yourThings": "Vos éléments ici ({n})",
+    "pausedSection": "En pause · forfait requis",
+    "pausedLine": "Forfait requis – vos données sont conservées.",
+    "pausedTitle": "{name} est en pause",
+    "pausedText": "L'essai ou le forfait est terminé, donc {name} ne fonctionne pas pour l'instant – pas de rappels ni de nouveautés. Vos données sont conservées et reviennent dès que vous avez un forfait."
   },
   "familyHousehold": {
     "title": "Foyer",

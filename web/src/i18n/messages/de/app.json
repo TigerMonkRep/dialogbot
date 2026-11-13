@@ -560,7 +560,8 @@
       "consent": "Einwilligung",
       "noConsent": "Einwilligung fehlt – wird nicht angerufen",
       "attempts": "{n} Versuche",
-      "priceNote": "Innerhalb des Pakets kein Preis pro Anruf. Danach {answered} (angenommen), {voicemail} (Mailbox) oder {noAnswer} (nicht angenommen) pro Anruf plus {price} pro Minute zzgl. MwSt. Jederzeit stoppbar."
+      "priceNote": "Innerhalb des Pakets kein Preis pro Anruf. Danach {answered} (angenommen), {voicemail} (Mailbox) oder {noAnswer} (nicht angenommen) pro Anruf plus {price} pro Minute zzgl. MwSt. Jederzeit stoppbar.",
+      "awaiting": "{n} Anrufe warten auf den Anrufbericht – die Minuten zählen, sobald er da ist."
     },
     "new": {
       "title": "Neue Kampagne",
@@ -622,7 +623,9 @@
       "confirm": "Regeln für Anrufe bestätigen",
       "starting": "Wird gestartet …",
       "resume": "Fortsetzen",
-      "start": "Kampagne starten"
+      "start": "Kampagne starten",
+      "needsSubscription": "Die Kampagne kann starten, sobald das Abonnement bestätigt ist und eine Zahlungskarte hinterlegt ist.",
+      "toAccount": "Zum Konto"
     },
     "remove": "Entfernen",
     "dnc": {
@@ -918,7 +921,8 @@
       "fromSetupNoCard": "Letzter Schritt: Bestätigen Sie unten das Abo. Dann sind Sie live.",
       "fromSetupCard": "Das Abo ist bestätigt. Letzter Schritt: Fügen Sie unten eine Zahlungskarte hinzu.",
       "fromSetupLive": "Sie sind live. Das Abo ist eingerichtet.",
-      "goToday": "Zu Heute"
+      "goToday": "Zu Heute",
+      "packageLeft": "Noch {n} Minuten im Paket in diesem Monat"
     },
     "usage": {
       "title": "Verbrauch pro Anruf",
@@ -941,7 +945,23 @@
       "dispute": "Anruf beanstanden",
       "reason": "Was war mit dem Anruf nicht in Ordnung?",
       "send": "Beanstandung senden",
-      "cancel": "Abbrechen"
+      "cancel": "Abbrechen",
+      "packageLeft": "Minutenpaket: {used} von {included} Minuten genutzt · {remaining} übrig · {over} Minuten über dem Paket.",
+      "duration": "Dauer {d}",
+      "pending": "Wartet auf den Anrufbericht – die Minuten zählen, sobald er da ist.",
+      "split": "{pkg} Min. im Paket · {extra} Min. über dem Paket",
+      "inPackage": "{n} Min. im Paket",
+      "outcome": {
+        "answered": "angenommen",
+        "voicemail": "Mailbox",
+        "no_answer": "nicht angenommen/besetzt"
+      },
+      "callPrice": "Anrufpreis nach dem Paket {amount}",
+      "total": "gesamt {amount} zzgl. MwSt.",
+      "refunded": "Bei Stripe erstattet: {amount} inkl. MwSt.",
+      "creditOnInvoice": "Beschwerde angenommen: {amount} ({minutes} Min.) wurde auf Rechnung {number} gutgeschrieben.",
+      "creditNext": "Beschwerde angenommen: {amount} ({minutes} Min.) wird auf der nächsten Rechnung gutgeschrieben.",
+      "decisionNote": "Begründung von Dialogbot: {note}"
     },
     "pay": {
       "title": "Zahlung",
@@ -1134,6 +1154,69 @@
       "closingHint": "Kurz und freundlich.",
       "suggestAgain": "Erneut vorschlagen",
       "save": "Gesprächsleitfaden speichern"
+    }
+  },
+  "support": {
+    "title": "Support",
+    "intro": "Schreiben Sie dem Dialogbot-Support, wenn etwas nicht funktioniert oder Sie eine Frage haben. Hängen Sie gern einen Screenshot an. Sie erhalten eine E-Mail, sobald wir geantwortet haben.",
+    "card": {
+      "title": "Keine Antwort gefunden?",
+      "body": "Stellen Sie eine Supportanfrage, dann antwortet Ihnen der Dialogbot-Support hier in der App.",
+      "link": "Zum Support",
+      "open": "{n|1 offene Anfrage|# offene Anfragen}"
+    },
+    "list": {
+      "title": "Ihre Anfragen",
+      "empty": "Noch keine Anfragen.",
+      "updated": "Aktualisiert {date}"
+    },
+    "noAccess": "Supportanfragen können von Mitarbeitenden, Administratoren und Inhabern gesehen und gestellt werden. Fragen Sie einen Administrator in Ihrem Unternehmen.",
+    "new": {
+      "title": "Neue Anfrage stellen",
+      "subject": "Betreff",
+      "category": "Kategorie",
+      "body": "Beschreibung",
+      "bodyHint": "Was ist passiert, wann, und was haben Sie erwartet?",
+      "files": "Dateien anhängen (optional)",
+      "filesHint": "PNG, JPG, PDF oder Logdatei · höchstens {n} Dateien mit je 4 MB",
+      "submit": "Anfrage stellen",
+      "tooMany": "Wählen Sie höchstens {n} Dateien",
+      "tooBig": "{name} ist größer als 4 MB",
+      "note": "Wir antworten so schnell wie möglich. Eine garantierte Antwortzeit gibt es nicht."
+    },
+    "category": {
+      "reception": "Telefon, Chat und Empfang",
+      "campaigns": "Kampagnen und Anfragen",
+      "calendar": "Kalender und Buchungen",
+      "billing": "Abrechnung und Verbrauch",
+      "other": "Sonstiges"
+    },
+    "status": {
+      "open": "Bei Dialogbot",
+      "in_progress": "In Bearbeitung",
+      "waiting_customer": "Wartet auf Ihre Antwort",
+      "resolved": "Gelöst"
+    },
+    "statusHelp": {
+      "open": "Die Anfrage liegt beim Dialogbot-Support. Sie erhalten eine E-Mail, sobald wir geantwortet haben.",
+      "in_progress": "Der Dialogbot-Support bearbeitet die Anfrage.",
+      "waiting_customer": "Wir haben geantwortet. Schreiben Sie zurück, oder markieren Sie die Anfrage als gelöst.",
+      "resolved": "Die Anfrage ist gelöst. Schreiben Sie erneut, wenn das Problem wieder auftritt – dann wird sie wieder geöffnet."
+    },
+    "ticket": {
+      "number": "Anfrage #{n}",
+      "meta": "Gestellt am {date} von {name}",
+      "metaNoName": "Gestellt am {date}",
+      "thread": "Verlauf",
+      "support": "Dialogbot-Support",
+      "supportNamed": "{name} · Dialogbot-Support",
+      "reply": "Antwort schreiben",
+      "replyHint": "Ergänzen Sie Details oder beantworten Sie die Frage.",
+      "send": "Antwort senden",
+      "resolve": "Als gelöst markieren",
+      "reopen": "Anfrage wieder öffnen",
+      "back": "Alle Anfragen",
+      "attachments": "Angehängt"
     }
   }
 }

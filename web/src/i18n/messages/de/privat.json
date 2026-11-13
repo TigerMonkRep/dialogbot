@@ -1499,7 +1499,8 @@
       "free": "Kostenlos",
       "allPlans": "In allen Plänen",
       "plan": "Plus · Familie",
-      "soon": "Bald verfügbar"
+      "soon": "Bald verfügbar",
+      "needsPlan": "Plan nötig"
     },
     "cat": {
       "alle": "Alle",
@@ -1620,7 +1621,11 @@
     "planTextEndedAll": "{name} ist in allen Plänen enthalten. Wähle einen Plan, um sie zu nutzen.",
     "planTextBasis": "Du hast Basis. {name} ist in Plus und Familie enthalten.",
     "onInMine": "{n|1 App ist aktiv|# Apps sind aktiv} – siehe Meine Apps",
-    "yourThings": "Deine Einträge hier ({n})"
+    "yourThings": "Deine Einträge hier ({n})",
+    "pausedSection": "Pausiert · Plan nötig",
+    "pausedLine": "Plan nötig – deine Daten bleiben gespeichert.",
+    "pausedTitle": "{name} ist pausiert",
+    "pausedText": "Die Testphase oder der Plan ist abgelaufen, deshalb läuft {name} gerade nicht – keine Erinnerungen und nichts Neues. Deine Daten bleiben gespeichert und sind wieder da, sobald du einen Plan hast."
   },
   "familyHousehold": {
     "title": "Haushalt",

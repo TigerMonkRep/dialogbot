@@ -47,6 +47,7 @@ export function AppTile({ a, size = 48 }: { a: Addon; size?: number }) {
 export function AppBadge({ a }: { a: Addon }) {
   const t = useT("privat");
   if (a.status === "coming_soon") return <Pill tone="soon">{t("apps.badge.soon")}</Pill>;
+  if (a.enabled && a.needs_plan) return <Pill tone="soon">{t("apps.badge.needsPlan")}</Pill>;
   if (a.enabled) return <Pill tone="ok"><Ico name="check" size={12} stroke={3} className="mr-1" />{t("apps.badge.on")}</Pill>;
   const plans = a.included_in ?? (a.requires_plan ? ["plus", "familie"] : []);
   if (plans.length === 0) return <Pill>{t("apps.badge.free")}</Pill>;
@@ -90,10 +91,10 @@ function LoadError() {
 }
 
 /** One app as a row (phone) / card (desktop): tile, name, the line (tagline or what it holds), badge. */
-function AppRow({ a, line, variant = "shop" }: { a: Addon; line?: string | null; variant?: "shop" | "mine" | "kept" }) {
+function AppRow({ a, line, variant = "shop" }: { a: Addon; line?: string | null; variant?: "shop" | "mine" | "kept" | "paused" }) {
   const t = useT("privat");
   const name = addonText(t, a, "name");
-  const kept = variant === "kept";
+  const kept = variant === "kept" || variant === "paused";
   // In the shop the plan badge only shows when the plan does NOT cover the app – «Plus · Familie» on every row of a
   // Plus trial was noise (ux-audit #9).
   const included = addonIncluded(a, usePlan().entitled);
@@ -106,7 +107,8 @@ function AppRow({ a, line, variant = "shop" }: { a: Addon; line?: string | null;
           <span className="font-semibold text-[16px] leading-tight [overflow-wrap:anywhere]">{name}</span>
           <span className="text-[14px] text-ink-soft leading-snug line-clamp-2 [overflow-wrap:anywhere]">{line ?? addonText(t, a, "tagline")}</span>
           {variant === "shop" && (a.status === "coming_soon" || !included) && <span className="flex gap-1.5 flex-wrap"><AppBadge a={a} /></span>}
-          {kept && <span><Pill tone="soon">{t("apps.keptPill")}</Pill></span>}
+          {variant === "kept" && <span><Pill tone="soon">{t("apps.keptPill")}</Pill></span>}
+          {variant === "paused" && <span><AppBadge a={a} /></span>}
         </span>
         <Ico name="chevron" size={18} className="text-ink-soft" />
       </Link>
@@ -200,7 +202,9 @@ export function MyAppsPage() {
   const t = useT("privat");
   const { addons, mode } = usePrivat();
   const all = addons ?? [];
-  const on = all.filter((a) => a.enabled);
+  // F-PBQ-06: an app whose plan has lapsed is switched on but stopped – listed apart as «Kræver plan», not as running
+  const on = all.filter((a) => a.enabled && !a.needs_plan);
+  const paused = all.filter((a) => a.enabled && a.needs_plan);
   const kept = all.filter((a) => !a.enabled && a.disabled_at);
   const setup = on.find(setupLeft);
   const more = all.filter((a) => !a.enabled && !a.disabled_at && a.status !== "coming_soon").length;
@@ -211,7 +215,7 @@ export function MyAppsPage() {
         <h1 id="mine-h" className="m-0 font-display font-extrabold text-[30px] xl:text-[36px] tracking-[-0.5px]">{t("apps.mine")}</h1>
         {on.length > 0 && <p className="m-0 text-[16px] text-ink-soft max-w-[640px]">{t("apps.mineLead", { n: on.length })}</p>}
       </div>
-      {addons === null && mode !== "loading" ? <LoadError /> : mode === "loading" && all.length === 0 ? <Loading /> : on.length === 0 && kept.length === 0 ? (
+      {addons === null && mode !== "loading" ? <LoadError /> : mode === "loading" && all.length === 0 ? <Loading /> : on.length === 0 && kept.length === 0 && paused.length === 0 ? (
         <div className="rounded-[20px] border-2 border-ink bg-paper p-5 flex flex-col gap-3 items-start" data-testid="mine-empty">
           <StepSquare n={1} size={56} />
           <h2 className="m-0 font-display font-extrabold text-[22px]">{t("apps.emptyTitle")}</h2>
@@ -226,6 +230,14 @@ export function MyAppsPage() {
               <h2 id="mine-on" className="m-0 eyebrow">{t("apps.onSection", { n: on.length })}</h2>
               <ul className="m-0 p-0 list-none grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2.5">
                 {on.map((a) => <AppRow key={a.key} a={a} line={a.summary_line} variant="mine" />)}
+              </ul>
+            </section>
+          )}
+          {paused.length > 0 && (
+            <section className="flex flex-col gap-2.5" aria-labelledby="mine-paused" data-testid="mine-paused">
+              <h2 id="mine-paused" className="m-0 eyebrow">{t("apps.pausedSection")}</h2>
+              <ul className="m-0 p-0 list-none grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2.5">
+                {paused.map((a) => <AppRow key={a.key} a={a} line={t("apps.pausedLine")} variant="paused" />)}
               </ul>
             </section>
           )}
@@ -639,6 +651,22 @@ export function AppPage({ appKey }: { appKey: string }) {
       </div>
     </header>
   );
+  if (a.enabled && a.needs_plan) {
+    // F-PBQ-06: on, but stopped because the plan has lapsed – say so plainly and offer the plan; no panel (its
+    // endpoints answer needs_plan), no reminders. The data is kept and comes back with the plan.
+    return (
+      <div className={PAGE} data-testid="app-needs-plan">
+        {back}{head}
+        <div role="status" className="rounded-[20px] border-2 border-ink bg-highlight p-4 flex flex-col gap-2.5">
+          <p className="m-0 font-display font-bold text-[19px]">{t("apps.pausedTitle", { name })}</p>
+          <p className="m-0 text-[15px]">{t("apps.pausedText", { name })}</p>
+          {mode !== "demo" && <button type="button" className={PRIMARY} onClick={() => setPlan(true)} data-testid="paused-choose-plan">{p.status === "none" ? t("apps.tryFree") : t("apps.choosePlan")}</button>}
+        </div>
+        <AboutApp a={a} compact />
+        {plan && <PlanSheet a={a} onClose={() => setPlan(false)} />}
+      </div>
+    );
+  }
   if (!a.enabled) {
     // Switched off, data kept: read what is there, switch on again (or the plan offer), or delete the data.
     const included = addonIncluded(a, p.entitled);
@@ -750,7 +778,7 @@ export function AppPage({ appKey }: { appKey: string }) {
 export function AppsStrip() {
   const t = useT("privat");
   const { addons } = usePrivat();
-  const on = (addons ?? []).filter((a) => a.enabled);
+  const on = (addons ?? []).filter((a) => a.enabled && !a.needs_plan);  // a stopped app (plan lapsed) holds nothing new
   if (!on.some((a) => !DEFAULT_APPS.has(a.key))) return null;
   const sorted = [...on.filter(setupLeft), ...on.filter((a) => !setupLeft(a))];
   return (

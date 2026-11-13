@@ -25,6 +25,7 @@ def _running(api, t, monkeypatch):
     api.submit(tok, ws, it["open_draft"]["id"])
     api.approve(tok, ws, it["open_draft"]["id"])
     api.map_number(ws, "+4570123456", "pn_qa_c15", outbound=True)
+    api.post(tok, f"/workspaces/{ws}/agreement", {"model": "A"})  # C09: a campaign starts only with a paid subscription
     c = api.post(tok, f"/workspaces/{ws}/campaigns", {"name": "QA-EB afstemning", "purpose": "Tilbud",
                                                        "call_days": list(service.DAYS), "call_from": "00:00", "call_to": "23:59"}).json()
     api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts/import",

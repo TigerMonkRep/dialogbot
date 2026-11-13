@@ -95,6 +95,12 @@ TEXTS: dict[str, dict[str, str]] = {
         "lead_need_missing": "(ikke angivet)",
         "lead_button": "Se henvendelsen",
         "lead_footer": "Du får denne e-mail, fordi du er tilknyttet {workspace} på Dialogbot.",
+        # support (H01/M06): an operator replied to the customer's support ticket
+        "support_reply_subject": "Svar på din supportsag #{number}",
+        "support_reply_heading": "Dialogbot support har svaret",
+        "support_reply_body": "Vi har svaret på din sag «{subject}» for {workspace}. Læs svaret og skriv tilbage, hvis der er mere, vi skal vide.",
+        "support_reply_button": "Se svaret",
+        "support_reply_footer": "Du får denne e-mail, fordi du har oprettet en supportsag hos Dialogbot.",
         # daily report (the mail) and its summary (built in app/modules/reports/service.py)
         "report_preheader": "Gårsdagens henvendelser, samtaler og opgaver.",
         "report_button": "Se hele rapporten",
@@ -236,6 +242,12 @@ TEXTS: dict[str, dict[str, str]] = {
         "lead_need_missing": "(not specified)",
         "lead_button": "View the enquiry",
         "lead_footer": "You are receiving this e-mail because you are a member of {workspace} on Dialogbot.",
+        # support (H01/M06): an operator replied to the customer's support ticket
+        "support_reply_subject": "Reply to your support request #{number}",
+        "support_reply_heading": "Dialogbot support has replied",
+        "support_reply_body": "We have replied to your request “{subject}” for {workspace}. Read the reply and write back if there is anything else we should know.",
+        "support_reply_button": "See the reply",
+        "support_reply_footer": "You are receiving this e-mail because you opened a support request with Dialogbot.",
         "report_preheader": "Yesterday's enquiries, conversations and tasks.",
         "report_button": "View the full report",
         "report_footer": "You are receiving this e-mail because the daily report is switched on for your workspace. You "
@@ -377,6 +389,12 @@ TEXTS: dict[str, dict[str, str]] = {
         "lead_need_missing": "(nicht angegeben)",
         "lead_button": "Anfrage ansehen",
         "lead_footer": "Sie erhalten diese E-Mail, weil Sie {workspace} auf Dialogbot angehören.",
+        # support (H01/M06): an operator replied to the customer's support ticket
+        "support_reply_subject": "Antwort auf Ihre Supportanfrage #{number}",
+        "support_reply_heading": "Der Dialogbot-Support hat geantwortet",
+        "support_reply_body": "Wir haben auf Ihre Anfrage „{subject}“ für {workspace} geantwortet. Lesen Sie die Antwort und schreiben Sie uns, wenn wir noch etwas wissen sollten.",
+        "support_reply_button": "Antwort ansehen",
+        "support_reply_footer": "Sie erhalten diese E-Mail, weil Sie eine Supportanfrage bei Dialogbot gestellt haben.",
         "report_preheader": "Die Anfragen, Gespräche und Aufgaben von gestern.",
         "report_button": "Ganzen Bericht ansehen",
         "report_footer": "Sie erhalten diese E-Mail, weil der Tagesbericht für Ihren Arbeitsbereich aktiviert ist. Sie "
@@ -521,6 +539,12 @@ TEXTS: dict[str, dict[str, str]] = {
         "lead_need_missing": "(no indicada)",
         "lead_button": "Ver la solicitud",
         "lead_footer": "Recibe este correo electrónico porque está vinculado a {workspace} en Dialogbot.",
+        # support (H01/M06): an operator replied to the customer's support ticket
+        "support_reply_subject": "Respuesta a su solicitud de soporte #{number}",
+        "support_reply_heading": "El soporte de Dialogbot ha respondido",
+        "support_reply_body": "Hemos respondido a su solicitud «{subject}» para {workspace}. Lea la respuesta y escríbanos si hay algo más que debamos saber.",
+        "support_reply_button": "Ver la respuesta",
+        "support_reply_footer": "Recibe este correo electrónico porque abrió una solicitud de soporte en Dialogbot.",
         "report_preheader": "Las solicitudes, conversaciones y tareas de ayer.",
         "report_button": "Ver el informe completo",
         "report_footer": "Recibe este correo electrónico porque el informe diario está activado para su espacio de "
@@ -665,6 +689,12 @@ TEXTS: dict[str, dict[str, str]] = {
         "lead_need_missing": "(non précisé)",
         "lead_button": "Voir la demande",
         "lead_footer": "Vous recevez cet e-mail parce que vous êtes rattaché à {workspace} sur Dialogbot.",
+        # support (H01/M06): an operator replied to the customer's support ticket
+        "support_reply_subject": "Réponse à votre demande d’assistance n° {number}",
+        "support_reply_heading": "Le support Dialogbot vous a répondu",
+        "support_reply_body": "Nous avons répondu à votre demande « {subject} » pour {workspace}. Lisez la réponse et écrivez-nous s’il y a autre chose que nous devrions savoir.",
+        "support_reply_button": "Voir la réponse",
+        "support_reply_footer": "Vous recevez cet e-mail parce que vous avez ouvert une demande d’assistance chez Dialogbot.",
         "report_preheader": "Les demandes, conversations et tâches d'hier.",
         "report_button": "Voir le rapport complet",
         "report_footer": "Vous recevez cet e-mail parce que le rapport quotidien est activé pour votre espace de travail. "
@@ -808,6 +838,12 @@ TEXTS: dict[str, dict[str, str]] = {
         "lead_need_missing": "(non indicata)",
         "lead_button": "Vedi la richiesta",
         "lead_footer": "Riceve questa e-mail perché fa parte di {workspace} su Dialogbot.",
+        # support (H01/M06): an operator replied to the customer's support ticket
+        "support_reply_subject": "Risposta alla sua richiesta di assistenza n. {number}",
+        "support_reply_heading": "L’assistenza Dialogbot ha risposto",
+        "support_reply_body": "Abbiamo risposto alla sua richiesta «{subject}» per {workspace}. Legga la risposta e ci scriva se c’è altro che dovremmo sapere.",
+        "support_reply_button": "Vedi la risposta",
+        "support_reply_footer": "Riceve questa e-mail perché ha aperto una richiesta di assistenza presso Dialogbot.",
         "report_preheader": "Le richieste, le conversazioni e le attività di ieri.",
         "report_button": "Vedi il report completo",
         "report_footer": "Riceve questa e-mail perché il report giornaliero è attivo per il Suo spazio di lavoro. Può "
@@ -948,6 +984,12 @@ TEXTS: dict[str, dict[str, str]] = {
         "lead_need_missing": "(ikke oppgitt)",
         "lead_button": "Se henvendelsen",
         "lead_footer": "Du får denne e-posten fordi du er knyttet til {workspace} på Dialogbot.",
+        # support (H01/M06): an operator replied to the customer's support ticket
+        "support_reply_subject": "Svar på supportsaken din #{number}",
+        "support_reply_heading": "Dialogbot support har svart",
+        "support_reply_body": "Vi har svart på saken din «{subject}» for {workspace}. Les svaret og skriv tilbake hvis det er mer vi bør vite.",
+        "support_reply_button": "Se svaret",
+        "support_reply_footer": "Du får denne e-posten fordi du har opprettet en supportsak hos Dialogbot.",
         "report_preheader": "Gårsdagens henvendelser, samtaler og oppgaver.",
         "report_button": "Se hele rapporten",
         "report_footer": "Du får denne e-posten fordi dagsrapporten er slått på for arbeidsområdet deres. Du kan slå den av "
@@ -1086,6 +1128,12 @@ TEXTS: dict[str, dict[str, str]] = {
         "lead_need_missing": "(inte angivet)",
         "lead_button": "Visa förfrågan",
         "lead_footer": "Du får det här mejlet eftersom du är kopplad till {workspace} på Dialogbot.",
+        # support (H01/M06): an operator replied to the customer's support ticket
+        "support_reply_subject": "Svar på ditt supportärende #{number}",
+        "support_reply_heading": "Dialogbots support har svarat",
+        "support_reply_body": "Vi har svarat på ditt ärende ”{subject}” för {workspace}. Läs svaret och skriv tillbaka om det är något mer vi behöver veta.",
+        "support_reply_button": "Se svaret",
+        "support_reply_footer": "Du får det här mejlet eftersom du har skapat ett supportärende hos Dialogbot.",
         "report_preheader": "Gårdagens förfrågningar, samtal och uppgifter.",
         "report_button": "Visa hela rapporten",
         "report_footer": "Du får det här mejlet eftersom dagsrapporten är aktiverad för er arbetsyta. Du kan stänga av den "

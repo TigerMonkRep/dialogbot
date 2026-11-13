@@ -1111,5 +1111,68 @@
       "suggestAgain": "Erneut vorschlagen",
       "save": "Gesprächsleitfaden speichern"
     }
+  },
+  "support": {
+    "title": "Support",
+    "intro": "Schreiben Sie dem Dialogbot-Support, wenn etwas nicht funktioniert oder Sie eine Frage haben. Hängen Sie gern einen Screenshot an. Sie erhalten eine E-Mail, sobald wir geantwortet haben.",
+    "card": {
+      "title": "Keine Antwort gefunden?",
+      "body": "Stellen Sie eine Supportanfrage, dann antwortet Ihnen der Dialogbot-Support hier in der App.",
+      "link": "Zum Support",
+      "open": "{n|1 offene Anfrage|# offene Anfragen}"
+    },
+    "list": {
+      "title": "Ihre Anfragen",
+      "empty": "Noch keine Anfragen.",
+      "updated": "Aktualisiert {date}"
+    },
+    "noAccess": "Supportanfragen können von Mitarbeitenden, Administratoren und Inhabern gesehen und gestellt werden. Fragen Sie einen Administrator in Ihrem Unternehmen.",
+    "new": {
+      "title": "Neue Anfrage stellen",
+      "subject": "Betreff",
+      "category": "Kategorie",
+      "body": "Beschreibung",
+      "bodyHint": "Was ist passiert, wann, und was haben Sie erwartet?",
+      "files": "Dateien anhängen (optional)",
+      "filesHint": "PNG, JPG, PDF oder Logdatei · höchstens {n} Dateien mit je 4 MB",
+      "submit": "Anfrage stellen",
+      "tooMany": "Wählen Sie höchstens {n} Dateien",
+      "tooBig": "{name} ist größer als 4 MB",
+      "note": "Wir antworten so schnell wie möglich. Eine garantierte Antwortzeit gibt es nicht."
+    },
+    "category": {
+      "reception": "Telefon, Chat und Empfang",
+      "campaigns": "Kampagnen und Anfragen",
+      "calendar": "Kalender und Buchungen",
+      "billing": "Abrechnung und Verbrauch",
+      "other": "Sonstiges"
+    },
+    "status": {
+      "open": "Bei Dialogbot",
+      "in_progress": "In Bearbeitung",
+      "waiting_customer": "Wartet auf Ihre Antwort",
+      "resolved": "Gelöst"
+    },
+    "statusHelp": {
+      "open": "Die Anfrage liegt beim Dialogbot-Support. Sie erhalten eine E-Mail, sobald wir geantwortet haben.",
+      "in_progress": "Der Dialogbot-Support bearbeitet die Anfrage.",
+      "waiting_customer": "Wir haben geantwortet. Schreiben Sie zurück, oder markieren Sie die Anfrage als gelöst.",
+      "resolved": "Die Anfrage ist gelöst. Schreiben Sie erneut, wenn das Problem wieder auftritt – dann wird sie wieder geöffnet."
+    },
+    "ticket": {
+      "number": "Anfrage #{n}",
+      "meta": "Gestellt am {date} von {name}",
+      "metaNoName": "Gestellt am {date}",
+      "thread": "Verlauf",
+      "support": "Dialogbot-Support",
+      "supportNamed": "{name} · Dialogbot-Support",
+      "reply": "Antwort schreiben",
+      "replyHint": "Ergänzen Sie Details oder beantworten Sie die Frage.",
+      "send": "Antwort senden",
+      "resolve": "Als gelöst markieren",
+      "reopen": "Anfrage wieder öffnen",
+      "back": "Alle Anfragen",
+      "attachments": "Angehängt"
+    }
   }
 }

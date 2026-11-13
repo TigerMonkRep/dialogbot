@@ -4,10 +4,11 @@ import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
 
 /** Shared frame for the operator admin: the tabs, one heading. Everything here is read-only, except «Ønsker», where
- *  operators set a status and a note on the customers' wishes, and «Fakturering», where they decide complaints about calls. */
+ *  operators set a status and a note on the customers' wishes, «Support» (M06), where they work the support queue, and
+ *  «Fakturering», where they decide complaints about calls. */
 const TABS: [string, string][] = [
   ["/app/operator/admin", "Overblik"], ["/app/operator/admin/kunder", "Kunder"], ["/app/operator/admin/brugere", "Brugere"],
-  ["/app/operator/oensker", "Ønsker"], ["/app/operator/admin/drift", "Drift"], ["/app/operator/admin/hjemmeside", "Hjemmeside"],
+  ["/app/operator/oensker", "Ønsker"], ["/app/operator/admin/support", "Support"], ["/app/operator/admin/drift", "Drift"], ["/app/operator/admin/hjemmeside", "Hjemmeside"],
   ["/app/operator/admin/rabatkoder", "Rabatkoder"], ["/app/operator/admin/fakturering", "Fakturering"], ["/app/operator/admin/vaerktoejer", "Værktøjer"], ["/app/operator/privat", "Privat"],
 ];
 

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 import { getT } from "@/i18n/server";
+import { backend } from "@/lib/api.server";
+import { requireWorkspace } from "@/lib/workspace.server";
 
 /** Help sections: icon, key and the items (key, link); texts are `app.help.<section>.title` and `app.help.<section>.<item>.q|a`. */
 const SECTIONS: { icon: string; id: string; items: [string, string?][] }[] = [
@@ -14,11 +16,21 @@ const SECTIONS: { icon: string; id: string; items: [string, string?][] }[] = [
 /** Help: short answers to the common questions, each linking to where it is done. */
 export default async function HelpPage() {
   const t = await getT("app");
+  const ws = await requireWorkspace();
+  // H01: open tickets for the support card; a reader (no access to tickets) just gets the link.
+  const open = await backend<{ open: number }>(`/workspaces/${ws.id}/support/tickets`).then((r) => r.open).catch(() => null);
   return (
     <section className="flex flex-col gap-4 max-w-4xl">
       <div>
         <span className="eyebrow">{t("shell.help")}</span>
         <h1 className="font-display font-extrabold text-[26px] sm:text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("help.title")}</h1>
+      </div>
+      <div className="bg-highlight rounded-2xl p-3 md:p-4 border-2 border-ink flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+        <div className="flex-1 min-w-0">
+          <h2 className="font-display text-headline-sm text-ink flex items-center gap-1"><Icon name="contact_support" size={22} />{t("support.card.title")}</h2>
+          <p className="text-body-sm text-ink mt-0.5">{t("support.card.body")}{open ? ` · ${t("support.card.open", { n: open })}` : ""}</p>
+        </div>
+        <Link href="/app/support?fra=/app/hjaelp" className="inline-flex items-center justify-center gap-2 rounded-xl min-h-[44px] px-4 bg-ink text-paper font-semibold whitespace-nowrap">{t("support.card.link")}</Link>
       </div>
       {SECTIONS.map((s) => (
         <div key={s.id} className="bg-paper rounded-2xl p-3 md:p-4 border-2 border-ink flex flex-col gap-2">

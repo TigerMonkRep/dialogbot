@@ -1111,5 +1111,68 @@
       "suggestAgain": "Foreslå igen",
       "save": "Gem manuskript"
     }
+  },
+  "support": {
+    "title": "Support",
+    "intro": "Skriv til Dialogbot support, når noget ikke virker, eller I har et spørgsmål. Vedhæft gerne et skærmbillede. Du får en e-mail, når vi har svaret.",
+    "card": {
+      "title": "Kan du ikke finde svaret?",
+      "body": "Opret en supportsag, så svarer Dialogbot support dig her i appen.",
+      "link": "Gå til support",
+      "open": "{n|1 åben sag|# åbne sager}"
+    },
+    "list": {
+      "title": "Jeres sager",
+      "empty": "Ingen sager endnu.",
+      "updated": "Opdateret {date}"
+    },
+    "noAccess": "Supportsager kan ses og oprettes af medarbejdere, administratorer og ejere. Spørg en administrator i jeres virksomhed.",
+    "new": {
+      "title": "Opret ny sag",
+      "subject": "Emne",
+      "category": "Kategori",
+      "body": "Beskrivelse",
+      "bodyHint": "Hvad skete der, hvornår, og hvad forventede du?",
+      "files": "Vedhæft filer (valgfrit)",
+      "filesHint": "PNG, JPG, PDF eller logfil · højst {n} filer på 4 MB hver",
+      "submit": "Opret sag",
+      "tooMany": "Vælg højst {n} filer",
+      "tooBig": "{name} fylder mere end 4 MB",
+      "note": "Vi svarer så hurtigt, vi kan. Der er ingen garanteret svartid."
+    },
+    "category": {
+      "reception": "Telefon, chat og reception",
+      "campaigns": "Kampagner og henvendelser",
+      "calendar": "Kalender og bookinger",
+      "billing": "Fakturering og forbrug",
+      "other": "Andet"
+    },
+    "status": {
+      "open": "Hos Dialogbot",
+      "in_progress": "Under behandling",
+      "waiting_customer": "Afventer dit svar",
+      "resolved": "Løst"
+    },
+    "statusHelp": {
+      "open": "Sagen ligger hos Dialogbot support. Du får en e-mail, når vi har svaret.",
+      "in_progress": "Dialogbot support arbejder på sagen.",
+      "waiting_customer": "Vi har svaret. Skriv tilbage, eller markér sagen som løst.",
+      "resolved": "Sagen er løst. Skriv igen, hvis problemet vender tilbage – så åbnes den igen."
+    },
+    "ticket": {
+      "number": "Sag #{n}",
+      "meta": "Oprettet {date} af {name}",
+      "metaNoName": "Oprettet {date}",
+      "thread": "Samtale",
+      "support": "Dialogbot support",
+      "supportNamed": "{name} · Dialogbot support",
+      "reply": "Skriv et svar",
+      "replyHint": "Tilføj flere oplysninger eller svar på spørgsmålet.",
+      "send": "Send svar",
+      "resolve": "Markér som løst",
+      "reopen": "Genåbn sag",
+      "back": "Alle sager",
+      "attachments": "Vedhæftet"
+    }
   }
 }

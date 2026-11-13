@@ -686,6 +686,12 @@
               }
             ],
             "title": "Name"
+          },
+          "research": {
+            "default": true,
+            "description": "False: only check and qualify the leads now; research, copy and audit are then run with POST …/batches/{name}/process",
+            "title": "Research",
+            "type": "boolean"
           }
         },
         "title": "BatchIn",
@@ -4884,67 +4890,6 @@
         "title": "ScopeOut",
         "type": "object"
       },
-      "SearchIn": {
-        "properties": {
-          "exclude_existing_customers": {
-            "default": true,
-            "title": "Exclude Existing Customers",
-            "type": "boolean"
-          },
-          "geo": {
-            "additionalProperties": true,
-            "description": "{\"text\": \"Aarhus C\"} | {\"postal_codes\": [\"8000\"]} | {\"lat\", \"lng\", \"km\" ≤ 50}",
-            "title": "Geo",
-            "type": "object"
-          },
-          "geo_kind": {
-            "enum": [
-              "place",
-              "postal_codes",
-              "radius"
-            ],
-            "title": "Geo Kind",
-            "type": "string"
-          },
-          "google_types": {
-            "items": {
-              "type": "string"
-            },
-            "maxItems": 10,
-            "title": "Google Types",
-            "type": "array"
-          },
-          "industry_keys": {
-            "items": {
-              "type": "string"
-            },
-            "maxItems": 10,
-            "title": "Industry Keys",
-            "type": "array"
-          },
-          "keywords": {
-            "items": {
-              "type": "string"
-            },
-            "maxItems": 10,
-            "title": "Keywords",
-            "type": "array"
-          },
-          "max_results": {
-            "default": 50,
-            "maximum": 1000.0,
-            "minimum": 1.0,
-            "title": "Max Results",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "geo_kind",
-          "geo"
-        ],
-        "title": "SearchIn",
-        "type": "object"
-      },
       "SellerIn": {
         "properties": {
           "company": {
@@ -5618,6 +5563,19 @@
           }
         },
         "title": "TicketPatch",
+        "type": "object"
+      },
+      "TodoIn": {
+        "properties": {
+          "done": {
+            "title": "Done",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "done"
+        ],
+        "title": "TodoIn",
         "type": "object"
       },
       "TokenIn": {
@@ -7584,6 +7542,41 @@
         "title": "LeadIn",
         "type": "object"
       },
+      "app__modules__outreach__router__SearchIn": {
+        "properties": {
+          "city": {
+            "maxLength": 80,
+            "minLength": 2,
+            "title": "City",
+            "type": "string"
+          },
+          "country": {
+            "maxLength": 2,
+            "minLength": 2,
+            "title": "Country",
+            "type": "string"
+          },
+          "limit": {
+            "default": 10,
+            "maximum": 20.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "niche": {
+            "maxLength": 20,
+            "title": "Niche",
+            "type": "string"
+          }
+        },
+        "required": [
+          "country",
+          "city",
+          "niche"
+        ],
+        "title": "SearchIn",
+        "type": "object"
+      },
       "app__modules__privat__router__MessageIn": {
         "properties": {
           "about_task_id": {
@@ -7841,6 +7834,67 @@
           }
         },
         "title": "ScriptIn",
+        "type": "object"
+      },
+      "app__modules__sales__channel_router__SearchIn": {
+        "properties": {
+          "exclude_existing_customers": {
+            "default": true,
+            "title": "Exclude Existing Customers",
+            "type": "boolean"
+          },
+          "geo": {
+            "additionalProperties": true,
+            "description": "{\"text\": \"Aarhus C\"} | {\"postal_codes\": [\"8000\"]} | {\"lat\", \"lng\", \"km\" ≤ 50}",
+            "title": "Geo",
+            "type": "object"
+          },
+          "geo_kind": {
+            "enum": [
+              "place",
+              "postal_codes",
+              "radius"
+            ],
+            "title": "Geo Kind",
+            "type": "string"
+          },
+          "google_types": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Google Types",
+            "type": "array"
+          },
+          "industry_keys": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Industry Keys",
+            "type": "array"
+          },
+          "keywords": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Keywords",
+            "type": "array"
+          },
+          "max_results": {
+            "default": 50,
+            "maximum": 1000.0,
+            "minimum": 1.0,
+            "title": "Max Results",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "geo_kind",
+          "geo"
+        ],
+        "title": "SearchIn",
         "type": "object"
       },
       "app__modules__sales__channel_router__StartIn": {
@@ -12707,6 +12761,75 @@
         ]
       }
     },
+    "/api/v1/operator/outreach/batches/{name}/process": {
+      "post": {
+        "description": "Research, write and audit the next `limit` qualified leads of a batch. Call until `remaining` is 0.",
+        "operationId": "process_batch_api_v1_operator_outreach_batches__name__process_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "title": "Name",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "maximum": 10,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Process Batch",
+        "tags": [
+          "outreach-operator"
+        ]
+      }
+    },
     "/api/v1/operator/outreach/call-queue.csv": {
       "get": {
         "description": "The manual call list (Denmark). By default only companies the CVR register cleared.",
@@ -12827,6 +12950,112 @@
         ]
       }
     },
+    "/api/v1/operator/outreach/overview": {
+      "get": {
+        "description": "The admin tab's data: mode, the go-live to-do list, markets, categories, key figures and the batches. Answers\nalso while outreach is switched off – the to-do list is what tells the operator how to switch it on.",
+        "operationId": "overview_api_v1_operator_outreach_overview_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Overview",
+        "tags": [
+          "outreach-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/outreach/search": {
+      "post": {
+        "description": "Find businesses in a city and category (Google Places) with the e-mail address each publishes on its own\nwebsite. Stores nothing; the chosen candidates are posted to /batches.",
+        "operationId": "search_api_v1_operator_outreach_search_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__outreach__router__SearchIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Search",
+        "tags": [
+          "outreach-operator"
+        ]
+      }
+    },
     "/api/v1/operator/outreach/suppressions": {
       "post": {
         "operationId": "suppress_api_v1_operator_outreach_suppressions_post",
@@ -12879,6 +13108,73 @@
           }
         },
         "summary": "Suppress",
+        "tags": [
+          "outreach-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/outreach/todos/{key}": {
+      "put": {
+        "description": "Tick (or untick) one of the manual go-live points.",
+        "operationId": "tick_todo_api_v1_operator_outreach_todos__key__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TodoIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Tick Todo",
         "tags": [
           "outreach-operator"
         ]
@@ -16073,7 +16369,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SearchIn"
+                "$ref": "#/components/schemas/app__modules__sales__channel_router__SearchIn"
               }
             }
           },

@@ -157,13 +157,14 @@ def start(db: OrmSession, *, phone: str, ip: str, language: str | None) -> dict:
     code = f"{secrets.randbelow(1_000_000):06d}"
     out = {"status": "code_sent", "verification_id": str(v.id), "phone_display": rules.phone_display(phone),
            "resend_after": int(RESEND_AFTER.total_seconds()), "expires_in": int(CODE_TTL.total_seconds())}
+    # Spent for do-not-call numbers too, so the 429 comes at the same code either way (F-VER1112-01-P06).
+    number_sms_budget(db, phone, now)
     if service._blocked(db, ws, phone):
         # Do-not-call: no SMS either, but the same answer (the row counts towards the limits; no code can match).
         v.code_hash = _code_hash(v.id, phone, secrets.token_hex(16))
         db.add(v)
         db.flush()
         return out
-    number_sms_budget(db, phone, now)
     v.code_hash = _code_hash(v.id, phone, code)
     db.add(v)
     db.flush()

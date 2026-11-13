@@ -56,6 +56,8 @@ from app.modules.setup.router import router as setup_router
 from app.modules.social.router import public_router as social_public_router
 from app.modules.social.router import router as social_operator_router
 from app.modules.stt.router import router as stt_operator_router
+from app.modules.support.operator_router import router as support_operator_router
+from app.modules.support.router import router as support_router
 from app.modules.telephony.operator_router import router as telephony_operator_router
 from app.modules.telephony.router import router as telephony_router
 from app.modules.telephony.router import webhook_router as vapi_webhook_router
@@ -113,7 +115,7 @@ def create_app() -> FastAPI:
               browser_router, privat_leads_router, funnel_router, privat_calendar_router,
               privat_calendar_public_router, privat_apps_router, privat_wishes_router, privat_household_router,
               api_keys_router, push_router, billing_operator_router, outreach_public_router,
-              outreach_operator_router):
+              outreach_operator_router, support_router, support_operator_router):
         app.include_router(r, prefix=API_PREFIX)
     if settings.dev_tools_enabled:
         from app.modules.devtools.router import router as dev_router

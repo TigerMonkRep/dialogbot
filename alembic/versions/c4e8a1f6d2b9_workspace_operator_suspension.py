@@ -1,14 +1,14 @@
 """workspace operator suspension (M03): pause a tenant's outbound work from the operations screen
 
 Revision ID: c4e8a1f6d2b9
-Revises: a7d3e9c2b5f1
+Revises: b8e4f1a6c3d7
 Create Date: 2026-11-13 10:00:00
 """
 from alembic import op
 import sqlalchemy as sa
 
 revision = 'c4e8a1f6d2b9'
-down_revision = 'a7d3e9c2b5f1'
+down_revision = 'b8e4f1a6c3d7'
 branch_labels = None
 depends_on = None
 

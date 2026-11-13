@@ -39,6 +39,7 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
             <dd className="font-display font-extrabold text-[24px] text-ink">{v}</dd>
           </div>
         ))}</dl>
+        {(c.counts.awaiting_report ?? 0) > 0 && <p className="text-[14px] text-ink-soft" data-testid="awaiting-report">{t("campaigns.detail.awaiting", { n: c.counts.awaiting_report ?? 0 })}</p>}
         <div className="flex flex-col gap-4 rounded-2xl border-2 border-ink bg-paper px-5 py-5">
           <h2 className="flex items-center gap-3 font-display font-extrabold text-[20px] text-ink"><Num n={1} />{t("campaigns.detail.who")}</h2>
           <p className="text-[14px] text-ink-soft">{t("campaigns.detail.contacts", { n: hasCount })}</p>

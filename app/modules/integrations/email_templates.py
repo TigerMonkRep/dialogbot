@@ -297,6 +297,18 @@ def new_lead(workspace: str, contact_name: str, need: str, link: str, lang: str 
         footer_reason=t(lang, "lead_footer", workspace=workspace), lang=lang)
 
 
+def support_reply(workspace: str, number: int, subject: str, link: str, lang: str = "da") -> Email:
+    """H01/M06: Dialogbot support wrote a reply the customer can see. The reply itself stays in the app (one button)."""
+    lang = normalize(lang)
+    return Email(
+        subject=t(lang, "support_reply_subject", number=number),
+        preheader=subject[:90],
+        heading=t(lang, "support_reply_heading"),
+        paragraphs=[t(lang, "support_reply_body", subject=subject, workspace=workspace)],
+        button_label=t(lang, "support_reply_button"), button_url=link,
+        footer_reason=t(lang, "support_reply_footer"), lang=lang)
+
+
 def intro_mail(business: str) -> Email:
     """The one fixed mail a business gets after it said yes to «send en mail» in a Privat call (docs/sales/privat-opkald-leads.md).
     Fixed text on purpose: verified facts only, no prices, no comparisons; it says why they get it and how to stop it."""
@@ -462,6 +474,8 @@ def samples() -> dict[str, Email]:
         "social_drafts_waiting": social_drafts_waiting(
             [("Facebook · i dag kl. 15.30", "Booking"), ("Instagram · i dag kl. 16.15", "Booking"),
              ("TikTok · i dag kl. 19.00", "Booking")], "https://www.dialogbot.dk/app/operator/social"),
+        "support_reply": support_reply("Hansen VVS", 3, "Kalenderen viser ikke mine aftaler",
+                                       "https://www.dialogbot.dk/app/support/3"),
         "intro_mail": intro_mail("Salon Test"),
         "funnel_welcome": funnel_welcome("Mads", "mads@example.dk", "https://www.dialogbot.dk/password/reset?token=eksempel",
                                          48),

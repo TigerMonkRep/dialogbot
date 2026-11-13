@@ -558,7 +558,8 @@
       "consent": "consenso",
       "noConsent": "Consenso mancante: non verrà chiamato",
       "attempts": "{n} tentativi",
-      "priceNote": "Nessun prezzo per chiamata nel pacchetto. Dopo, {answered} (risposta), {voicemail} (segreteria) o {noAnswer} (senza risposta) a chiamata più {price} al minuto IVA esclusa. Può fermarsi in qualsiasi momento."
+      "priceNote": "Nessun prezzo per chiamata nel pacchetto. Dopo, {answered} (risposta), {voicemail} (segreteria) o {noAnswer} (senza risposta) a chiamata più {price} al minuto IVA esclusa. Può fermarsi in qualsiasi momento.",
+      "awaiting": "{n} chiamate attendono il rapporto: i minuti contano quando arriva."
     },
     "new": {
       "title": "Nuova campagna",
@@ -620,7 +621,9 @@
       "confirm": "Conferma le regole per le chiamate",
       "starting": "Avvio…",
       "resume": "Riprendi",
-      "start": "Avvia campagna"
+      "start": "Avvia campagna",
+      "needsSubscription": "La campagna può partire quando l'abbonamento è confermato e c'è una carta di pagamento sull'account.",
+      "toAccount": "Vai all'account"
     },
     "remove": "Rimuovi",
     "dnc": {
@@ -916,7 +919,8 @@
       "fromSetupNoCard": "Ultimo passo: conferma l’abbonamento qui sotto. Poi siete operativi.",
       "fromSetupCard": "L’abbonamento è confermato. Ultimo passo: aggiungi una carta di pagamento qui sotto.",
       "fromSetupLive": "Siete operativi. L’abbonamento è attivo.",
-      "goToday": "Vai a Oggi"
+      "goToday": "Vai a Oggi",
+      "packageLeft": "Restano {n} minuti nel pacchetto questo mese"
     },
     "usage": {
       "title": "Consumo per chiamata",
@@ -939,7 +943,23 @@
       "dispute": "Contesta la chiamata",
       "reason": "Cosa non andava nella chiamata?",
       "send": "Invia reclamo",
-      "cancel": "Annulla"
+      "cancel": "Annulla",
+      "packageLeft": "Pacchetto minuti: {used} di {included} minuti usati · {remaining} rimasti · {over} minuti oltre il pacchetto.",
+      "duration": "durata {d}",
+      "pending": "In attesa del rapporto della chiamata: i minuti contano quando arriva.",
+      "split": "{pkg} min nel pacchetto · {extra} min oltre il pacchetto",
+      "inPackage": "{n} min nel pacchetto",
+      "outcome": {
+        "answered": "risposta",
+        "voicemail": "segreteria",
+        "no_answer": "nessuna risposta/occupato"
+      },
+      "callPrice": "prezzo della chiamata dopo il pacchetto {amount}",
+      "total": "totale {amount} IVA esclusa",
+      "refunded": "Rimborsato su Stripe: {amount} IVA inclusa.",
+      "creditOnInvoice": "Reclamo accettato: {amount} ({minutes} min) accreditato sulla fattura {number}.",
+      "creditNext": "Reclamo accettato: {amount} ({minutes} min) sarà accreditato sulla prossima fattura.",
+      "decisionNote": "Motivazione di Dialogbot: {note}"
     },
     "pay": {
       "title": "Pagamento",
@@ -1132,6 +1152,69 @@
       "closingHint": "Breve e cordiale.",
       "suggestAgain": "Proponi di nuovo",
       "save": "Salva copione"
+    }
+  },
+  "support": {
+    "title": "Assistenza",
+    "intro": "Scriva all’assistenza Dialogbot quando qualcosa non funziona o ha una domanda. Può allegare uno screenshot. Riceverà un’e-mail quando avremo risposto.",
+    "card": {
+      "title": "Non trova la risposta?",
+      "body": "Apra una richiesta di assistenza e l’assistenza Dialogbot le risponderà qui nell’app.",
+      "link": "Vai all’assistenza",
+      "open": "{n|1 richiesta aperta|# richieste aperte}"
+    },
+    "list": {
+      "title": "Le vostre richieste",
+      "empty": "Ancora nessuna richiesta.",
+      "updated": "Aggiornata il {date}"
+    },
+    "noAccess": "Le richieste di assistenza possono essere viste e aperte da collaboratori, amministratori e titolari. Si rivolga a un amministratore della sua azienda.",
+    "new": {
+      "title": "Apri una nuova richiesta",
+      "subject": "Oggetto",
+      "category": "Categoria",
+      "body": "Descrizione",
+      "bodyHint": "Che cosa è successo, quando e che cosa si aspettava?",
+      "files": "Allega file (facoltativo)",
+      "filesHint": "PNG, JPG, PDF o file di log · al massimo {n} file da 4 MB ciascuno",
+      "submit": "Apri richiesta",
+      "tooMany": "Scelga al massimo {n} file",
+      "tooBig": "{name} supera i 4 MB",
+      "note": "Rispondiamo il prima possibile. Non c’è un tempo di risposta garantito."
+    },
+    "category": {
+      "reception": "Telefono, chat e reception",
+      "campaigns": "Campagne e richieste",
+      "calendar": "Calendario e prenotazioni",
+      "billing": "Fatturazione e consumi",
+      "other": "Altro"
+    },
+    "status": {
+      "open": "Presso Dialogbot",
+      "in_progress": "In lavorazione",
+      "waiting_customer": "In attesa della sua risposta",
+      "resolved": "Risolta"
+    },
+    "statusHelp": {
+      "open": "La richiesta è presso l’assistenza Dialogbot. Riceverà un’e-mail quando avremo risposto.",
+      "in_progress": "L’assistenza Dialogbot sta lavorando alla richiesta.",
+      "waiting_customer": "Abbiamo risposto. Ci riscriva oppure segni la richiesta come risolta.",
+      "resolved": "La richiesta è risolta. Scriva di nuovo se il problema si ripresenta: verrà riaperta."
+    },
+    "ticket": {
+      "number": "Richiesta n. {n}",
+      "meta": "Aperta il {date} da {name}",
+      "metaNoName": "Aperta il {date}",
+      "thread": "Conversazione",
+      "support": "Assistenza Dialogbot",
+      "supportNamed": "{name} · Assistenza Dialogbot",
+      "reply": "Scrivi una risposta",
+      "replyHint": "Aggiunga dettagli o risponda alla domanda.",
+      "send": "Invia risposta",
+      "resolve": "Segna come risolta",
+      "reopen": "Riapri richiesta",
+      "back": "Tutte le richieste",
+      "attachments": "Allegati"
     }
   }
 }

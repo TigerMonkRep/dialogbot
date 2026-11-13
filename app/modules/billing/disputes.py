@@ -170,6 +170,7 @@ def month_usage(db: OrmSession, workspace_id: uuid.UUID, month: date, tz: str) -
         d = disputes.get((e["direction"], e["id"]))
         c = calls.get(e["id"])
         items.append({"kind": e["direction"], "id": e["id"], "at": e["at"].isoformat(), "minutes": e["minutes"],
+                      "seconds": e.get("seconds"), "pending": e.get("pending", False),
                       "package_minutes": e.get("package_minutes"), "extra_minutes": e.get("extra_minutes"),
                       "net_minor": e.get("net_minor"), "call_net_minor": e.get("call_net_minor"),
                       "outcome": e.get("outcome"), "credited": e["credited"],
@@ -178,6 +179,34 @@ def month_usage(db: OrmSession, workspace_id: uuid.UUID, month: date, tz: str) -
                       "dispute": out(d) if d else None, "can_dispute": pooled and d is None})
     return {"month": month.strftime("%Y-%m"), "shared_package": pooled, "package": package,
             "invoiced": inv is not None, "invoice": ({"status": inv.status, "number": inv.number, "lines": inv.lines,
-                                                     "net_minor": inv.net_minor, "gross_minor": inv.gross_minor,
-                                                     "currency": inv.currency} if inv else None),
-            "calls": items}
+                                                     "net_minor": inv.net_minor, "tax_minor": inv.tax_minor,
+                                                     "gross_minor": inv.gross_minor, "currency": inv.currency,
+                                                     "refunds": refunds_out(inv)} if inv else None),
+            "credits": period_credits(db, workspace_id, month), "calls": items}
+
+
+def refunds_out(inv: Invoice) -> dict:
+    """What Stripe has refunded on an invoice (charge refunds, credit notes – kept by the webhooks in invoices.refunds),
+    in whole øre incl. VAT. B05: the period shows its refund / credit-note history."""
+    r = inv.refunds or {}
+    charges = sum(int(v or 0) for v in (r.get("charges") or {}).values())
+    notes = sum(int(v or 0) for v in (r.get("credit_notes") or {}).values())
+    # the same money is reported both as a charge refund and as a credit note: the larger, never the sum (stripe._refund_delta)
+    return {"charges_minor": charges, "credit_notes_minor": notes, "total_minor": min(inv.gross_minor, max(charges, notes))}
+
+
+def period_credits(db: OrmSession, workspace_id: uuid.UUID, month: date) -> list[dict]:
+    """Approved complaints about calls of an invoiced month: the credit and the later invoice that carries it (None =
+    it comes on the next invoice). B04/B05: the customer sees where the money went back."""
+    carried = {}
+    for number, lines in db.execute(select(Invoice.number, Invoice.lines).where(
+            Invoice.workspace_id == workspace_id, Invoice.month > month, Invoice.status != "void")).all():
+        for x in lines or []:
+            if x.get("kind") == statement.CREDIT_KIND:
+                carried[x.get("dispute_id")] = number
+    return [{"dispute_id": str(d.id), "kind": kind_of(d), "minutes": d.minutes, "credit_net_minor": d.credit_net_minor,
+             "decided_at": d.decided_at.isoformat() if d.decided_at else None,
+             "invoice_number": carried.get(str(d.id)), "on_invoice": str(d.id) in carried}
+            for d in db.scalars(select(CallDispute).where(
+                CallDispute.workspace_id == workspace_id, CallDispute.period == month, CallDispute.status == "approved",
+                CallDispute.credit_mode == "invoice").order_by(CallDispute.decided_at))]

@@ -558,7 +558,8 @@
       "consent": "samtycke",
       "noConsent": "Samtycke saknas – rings inte upp",
       "attempts": "{n} försök",
-      "priceNote": "Inget pris per samtal inom paketet. Därefter {answered} (besvarat), {voicemail} (röstbrevlåda) eller {noAnswer} (obesvarat) per samtal plus {price} per minut exkl. moms. Stoppa när som helst."
+      "priceNote": "Inget pris per samtal inom paketet. Därefter {answered} (besvarat), {voicemail} (röstbrevlåda) eller {noAnswer} (obesvarat) per samtal plus {price} per minut exkl. moms. Stoppa när som helst.",
+      "awaiting": "{n} samtal väntar på samtalsrapporten – minuterna räknas när den kommer."
     },
     "new": {
       "title": "Ny kampanj",
@@ -620,7 +621,9 @@
       "confirm": "Bekräfta reglerna för samtal",
       "starting": "Startar…",
       "resume": "Återuppta",
-      "start": "Starta kampanj"
+      "start": "Starta kampanj",
+      "needsSubscription": "Kampanjen kan startas när abonnemanget är bekräftat och det finns ett betalkort på kontot.",
+      "toAccount": "Gå till Konto"
     },
     "remove": "Ta bort",
     "dnc": {
@@ -916,7 +919,8 @@
       "fromSetupNoCard": "Sista steget: bekräfta abonnemanget nedan. Sedan är ni live.",
       "fromSetupCard": "Abonnemanget är bekräftat. Sista steget: lägg till ett betalkort nedan.",
       "fromSetupLive": "Ni är live. Abonnemanget är på plats.",
-      "goToday": "Gå till Idag"
+      "goToday": "Gå till Idag",
+      "packageLeft": "{n} minuter kvar i paketet den här månaden"
     },
     "usage": {
       "title": "Förbrukning per samtal",
@@ -939,7 +943,23 @@
       "dispute": "Klaga på samtalet",
       "reason": "Vad var fel med samtalet?",
       "send": "Skicka klagomål",
-      "cancel": "Avbryt"
+      "cancel": "Avbryt",
+      "packageLeft": "Minutpaket: {used} av {included} minuter använda · {remaining} kvar · {over} minuter utöver paketet.",
+      "duration": "längd {d}",
+      "pending": "Väntar på samtalsrapporten – minuterna räknas när den kommer.",
+      "split": "{pkg} min i paketet · {extra} min utöver paketet",
+      "inPackage": "{n} min i paketet",
+      "outcome": {
+        "answered": "besvarat",
+        "voicemail": "röstbrevlåda",
+        "no_answer": "obesvarat/upptaget"
+      },
+      "callPrice": "samtalspris efter paketet {amount}",
+      "total": "totalt {amount} exkl. moms",
+      "refunded": "Återbetalt hos Stripe: {amount} inkl. moms.",
+      "creditOnInvoice": "Klagomål godkänt: {amount} ({minutes} min) har krediterats på faktura {number}.",
+      "creditNext": "Klagomål godkänt: {amount} ({minutes} min) krediteras på nästa faktura.",
+      "decisionNote": "Dialogbots motivering: {note}"
     },
     "pay": {
       "title": "Betalning",
@@ -1132,6 +1152,69 @@
       "closingHint": "Kort och vänlig.",
       "suggestAgain": "Föreslå igen",
       "save": "Spara manus"
+    }
+  },
+  "support": {
+    "title": "Support",
+    "intro": "Skriv till Dialogbots support när något inte fungerar eller ni har en fråga. Bifoga gärna en skärmbild. Du får ett mejl när vi har svarat.",
+    "card": {
+      "title": "Hittar du inte svaret?",
+      "body": "Skapa ett supportärende, så svarar Dialogbots support dig här i appen.",
+      "link": "Gå till support",
+      "open": "{n|1 öppet ärende|# öppna ärenden}"
+    },
+    "list": {
+      "title": "Era ärenden",
+      "empty": "Inga ärenden ännu.",
+      "updated": "Uppdaterat {date}"
+    },
+    "noAccess": "Supportärenden kan ses och skapas av medarbetare, administratörer och ägare. Fråga en administratör i ert företag.",
+    "new": {
+      "title": "Skapa nytt ärende",
+      "subject": "Ämne",
+      "category": "Kategori",
+      "body": "Beskrivning",
+      "bodyHint": "Vad hände, när, och vad förväntade du dig?",
+      "files": "Bifoga filer (valfritt)",
+      "filesHint": "PNG, JPG, PDF eller loggfil · högst {n} filer på 4 MB vardera",
+      "submit": "Skapa ärende",
+      "tooMany": "Välj högst {n} filer",
+      "tooBig": "{name} är större än 4 MB",
+      "note": "Vi svarar så snabbt vi kan. Det finns ingen garanterad svarstid."
+    },
+    "category": {
+      "reception": "Telefon, chatt och reception",
+      "campaigns": "Kampanjer och förfrågningar",
+      "calendar": "Kalender och bokningar",
+      "billing": "Fakturering och förbrukning",
+      "other": "Annat"
+    },
+    "status": {
+      "open": "Hos Dialogbot",
+      "in_progress": "Under behandling",
+      "waiting_customer": "Väntar på ditt svar",
+      "resolved": "Löst"
+    },
+    "statusHelp": {
+      "open": "Ärendet ligger hos Dialogbots support. Du får ett mejl när vi har svarat.",
+      "in_progress": "Dialogbots support arbetar med ärendet.",
+      "waiting_customer": "Vi har svarat. Skriv tillbaka, eller markera ärendet som löst.",
+      "resolved": "Ärendet är löst. Skriv igen om problemet kommer tillbaka – då öppnas det igen."
+    },
+    "ticket": {
+      "number": "Ärende #{n}",
+      "meta": "Skapat {date} av {name}",
+      "metaNoName": "Skapat {date}",
+      "thread": "Konversation",
+      "support": "Dialogbots support",
+      "supportNamed": "{name} · Dialogbots support",
+      "reply": "Skriv ett svar",
+      "replyHint": "Lägg till fler uppgifter eller svara på frågan.",
+      "send": "Skicka svar",
+      "resolve": "Markera som löst",
+      "reopen": "Öppna ärendet igen",
+      "back": "Alla ärenden",
+      "attachments": "Bifogat"
     }
   }
 }

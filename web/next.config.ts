@@ -43,6 +43,9 @@ const MOVED: [string, string][] = [
   ["/app/voices", "/app/indstillinger?ark=stemmer"],
   ["/app/voices/own", "/app/indstillinger/stemmer/egen"],
   ["/app/help", "/app/hjaelp"],
+  // M06 in the requirement matrix is /admin/support; the operator admin lives under /app/operator/admin.
+  ["/admin/support", "/app/operator/admin/support"],
+  ["/app/operator/support", "/app/operator/admin/support"],
   ["/app/setup/readiness", "/app/setup"],
   ["/app/setup/launch", "/app/setup"],
   ["/onboarding/:path*", "/opsaetning/1"],

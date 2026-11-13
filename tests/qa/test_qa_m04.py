@@ -7,8 +7,6 @@ reception and campaign data apart.
 """
 from __future__ import annotations
 
-import pytest
-
 M04_PATHS = ("/operator/admin/billing", "/operator/admin/prices", "/operator/admin/disputes")
 # Orders and refunds belonged to campaign packages; with the minute package (2026-11-10) a refund is a complaint
 # about a call that is credited (disputes) – there are no orders.
@@ -22,10 +20,12 @@ def test_m04_billing_admin_exists(api):
     assert not missing, f"not built: {missing}"
 
 
-@pytest.mark.xfail(strict=True, reason="M04 orders/refunds: not part of the minute-package model (refund = approved complaint)")
 def test_m04_orders_and_refunds_exist(api):
+    """NOT APPLICABLE in the one-plan model (2026-11-12): no orders; money goes back as an approved complaint (credit
+    on the next invoice) or a refund made at Stripe, shown on the invoice. The operator's view of both:
+    tests/qa/test_qa_launch_billing.py::test_m04_operator_billing_*."""
     op = api.operator()
-    assert not [p for p in M04_NOT_IN_MODEL if api.get(op, p).status_code in (404, 405)]
+    assert all(api.get(op, p).status_code in (404, 405) for p in M04_NOT_IN_MODEL)
 
 
 def test_m04_operator_customer_view_is_operator_only(api, two_workspaces):

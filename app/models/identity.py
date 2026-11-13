@@ -113,6 +113,7 @@ class Workspace(Base):
     __table_args__ = (
         CheckConstraint("status in ('active','closing','closed')", name="ck_workspaces_status"),
         CheckConstraint("kind in ('business','personal')", name="ck_workspaces_kind"),
+        Index("ix_workspaces_ops_suspended", "id", postgresql_where=text("ops_suspended_at IS NOT NULL")),
     )
 
     id: Mapped[uuid.UUID] = uuid_pk()
@@ -126,6 +127,12 @@ class Workspace(Base):
     product_intent: Mapped[str] = mapped_column(String(32), nullable=False, default="reception")
     # Monotonic revision of the workspace's approved knowledge; bumped on approval.
     knowledge_revision: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    # M03: a Dialogbot operator paused this tenant's outbound work (queued jobs, campaign dialling, actions in
+    # connected systems) from the operations screen. NULL = not suspended. Set and cleared only by operators
+    # (app/modules/admin/operations.py); every change is in the audit log.
+    ops_suspended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    ops_suspended_reason: Mapped[str | None] = mapped_column(String(300))
+    ops_suspended_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     created_at: Mapped[datetime] = ts_now()
     updated_at: Mapped[datetime] = mapped_column(

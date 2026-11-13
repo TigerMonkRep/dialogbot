@@ -425,7 +425,11 @@ def dispatch(db: OrmSession, now: datetime | None = None, max_calls: int = 20) -
 
     now = now or _now()
     dialled = 0
-    for c in db.scalars(select(Campaign).where(Campaign.status == "running").with_for_update(skip_locked=True)).all():
+    from app.core.suspension import suspended_ids
+
+    # M03: no calls for a workspace an operator has suspended (its campaigns stay «running» and resume with it)
+    for c in db.scalars(select(Campaign).where(Campaign.status == "running", Campaign.workspace_id.not_in(suspended_ids()))
+                        .with_for_update(skip_locked=True)).all():
         # attempts that never got a report count as failed attempts
         for st in db.scalars(select(CampaignContact).where(CampaignContact.campaign_id == c.id,
                                                            CampaignContact.status == "calling",

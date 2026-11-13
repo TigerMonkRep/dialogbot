@@ -1,14 +1,14 @@
 """customer links and verifications: W04 number code in the chat, W09 callback/preferences link, W13 booking link
 
 Revision ID: c5e1f7a3d9b2
-Revises: a7d3e9c2b5f1
+Revises: c4e8a1f6d2b9
 Create Date: 2026-11-13 09:00:00
 """
 from alembic import op
 import sqlalchemy as sa
 
 revision = 'c5e1f7a3d9b2'
-down_revision = 'a7d3e9c2b5f1'
+down_revision = 'c4e8a1f6d2b9'
 branch_labels = None
 depends_on = None
 

@@ -383,6 +383,48 @@
       "noTypes": "None",
       "ask": "Tell the assistant – it shows the rule before it applies. All rules:",
       "allSettings": "All settings → Booking"
+    },
+    "messages": {
+      "link": "Messages to the customer",
+      "eyebrow": "Bookings · messages",
+      "title": "Booking messages",
+      "intro": "What the messages about a booking look like – to your customer by SMS and email in your name, and to you when a booking needs a person. Choose a message and a language.",
+      "noSend": "Preview only: nothing is sent from here.",
+      "status": "Today Dialogbot only sends the confirmation SMS when the assistant or you ask for it. The other messages are ready as templates.",
+      "language": "Language",
+      "variantsAria": "Choose a message",
+      "toCustomer": "To the customer",
+      "toYou": "To you",
+      "sms": "SMS",
+      "email": "Email",
+      "smsMeta": "{chars} characters · {segments|1 SMS|# SMS} · {encoding}",
+      "fromLabel": "From",
+      "subject": "Subject",
+      "sample": "Filled with sample data.",
+      "booking": "Filled with one of your bookings.",
+      "frame": "Email preview",
+      "noSms": "Sent to you by email only.",
+      "back": "Back to bookings",
+      "desc": {
+        "request_receipt": "When a customer asks for a time that must be confirmed first.",
+        "confirmed": "When the time is confirmed.",
+        "reminder": "Before the appointment.",
+        "proposed_change": "When you propose another time.",
+        "rescheduled": "When the appointment has been moved.",
+        "cancelled": "When the appointment has been cancelled.",
+        "owner_attention": "When the calendar could not be written or a booking must be confirmed by staff.",
+        "delivery_failure": "When a message to the customer could not be delivered."
+      },
+      "label": {
+        "request_receipt": "Request received",
+        "confirmed": "Appointment confirmed",
+        "reminder": "Reminder",
+        "proposed_change": "Proposed new time",
+        "rescheduled": "Appointment moved",
+        "cancelled": "Appointment cancelled",
+        "owner_attention": "Needs your attention",
+        "delivery_failure": "Delivery failed"
+      }
     }
   },
   "leads": {

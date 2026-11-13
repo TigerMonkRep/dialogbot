@@ -115,6 +115,7 @@ export default async function AftalerPage({ searchParams }: { searchParams: Prom
             <dt className="text-muted">{t("bookings.rules.types")}</dt><dd className="text-ink">{activeTypes.map((x) => `${x.name} ${x.duration_minutes} min`).join(" · ") || t("bookings.rules.noTypes")}</dd>
           </dl>
           <p className="text-[13px] text-muted">{t("bookings.rules.ask")} <Link href="/app/indstillinger?ark=booking" className="font-semibold text-accent hover:underline">{t("bookings.rules.allSettings")}</Link>.</p>
+          <Link href="/app/aftaler/beskeder" className="text-[14px] font-semibold text-accent hover:underline">{t("bookings.messages.link")} →</Link>
         </div>
       </aside>
     </div>

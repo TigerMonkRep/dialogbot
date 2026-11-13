@@ -383,6 +383,48 @@
       "noTypes": "Ninguno",
       "ask": "Dígaselo al asistente: le muestra la regla antes de que se aplique. Todas las reglas:",
       "allSettings": "Todos los ajustes → Reservas"
+    },
+    "messages": {
+      "link": "Mensajes al cliente",
+      "eyebrow": "Citas · mensajes",
+      "title": "Mensajes sobre citas",
+      "intro": "Así son los mensajes sobre una cita: al cliente por SMS y correo en su nombre, y a usted cuando una cita necesita a una persona. Elija mensaje e idioma.",
+      "noSend": "Solo vista previa: desde aquí no se envía nada.",
+      "status": "Hoy Dialogbot solo envía el SMS de confirmación cuando el asistente o usted lo piden. Los demás mensajes están listos como plantillas.",
+      "language": "Idioma",
+      "variantsAria": "Elegir mensaje",
+      "toCustomer": "Al cliente",
+      "toYou": "A usted",
+      "sms": "SMS",
+      "email": "Correo",
+      "smsMeta": "{chars} caracteres · {segments|1 SMS|# SMS} · {encoding}",
+      "fromLabel": "De",
+      "subject": "Asunto",
+      "sample": "Con datos de ejemplo.",
+      "booking": "Con una de sus citas.",
+      "frame": "Vista previa del correo",
+      "noSms": "Solo se le envía por correo.",
+      "back": "Volver a citas",
+      "desc": {
+        "request_receipt": "Cuando un cliente pide una hora que debe confirmarse.",
+        "confirmed": "Cuando la hora está confirmada.",
+        "reminder": "Antes de la cita.",
+        "proposed_change": "Cuando propone otra hora.",
+        "rescheduled": "Cuando la cita se ha cambiado.",
+        "cancelled": "Cuando la cita se ha cancelado.",
+        "owner_attention": "Cuando no se pudo escribir en el calendario o un empleado debe confirmar la cita.",
+        "delivery_failure": "Cuando un mensaje al cliente no se pudo entregar."
+      },
+      "label": {
+        "request_receipt": "Solicitud recibida",
+        "confirmed": "Cita confirmada",
+        "reminder": "Recordatorio",
+        "proposed_change": "Propuesta de nueva hora",
+        "rescheduled": "Cita cambiada",
+        "cancelled": "Cita cancelada",
+        "owner_attention": "Requiere su atención",
+        "delivery_failure": "Entrega fallida"
+      }
     }
   },
   "leads": {

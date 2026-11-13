@@ -150,6 +150,40 @@ def list_slots(type_id: uuid.UUID, ctx: WorkspaceContext = Depends(require_capab
     return {"items": service.slots(db, ctx.workspace, t, _tz(db, ctx.workspace.id))}
 
 
+@router.get("/messages")
+def booking_messages(lang: str | None = Query(default=None, max_length=5), booking_id: uuid.UUID | None = None,
+                     ctx: WorkspaceContext = Depends(require_capability("bookings.read")), db: OrmSession = Depends(get_db)):
+    """E07: every booking message (customer SMS + e-mail, owner e-mail) rendered for preview. Read-only: nothing is
+    queued or sent. With `booking_id` the workspace's own booking fills the texts; otherwise sample data does.
+    The default language is the one the business serves its callers in."""
+    from app.core.languages import LANGUAGES, normalize
+    from app.modules.bookings import messages
+    from app.modules.integrations.connectors.sms import caller_language
+
+    ws = ctx.workspace
+    default_lang = caller_language(db, ws)
+    language = normalize(lang) if lang else default_lang
+    tz = _tz(db, ws.id)
+    ctx_ = messages.sample_context(language, business=ws.name, tz=tz)
+    source = "sample"
+    if booking_id is not None:
+        b = db.scalar(select(Booking).where(Booking.id == booking_id, Booking.workspace_id == ws.id))
+        if b is None:
+            raise NotFound("Aftalen findes ikke")
+        ctx_.customer, ctx_.what, ctx_.when = b.contact_name or "", b.title.split(":")[0], b.starts_at
+        ctx_.new_when = b.starts_at + timedelta(days=1)
+        source = "booking"
+    items = []
+    for v in messages.VARIANTS:
+        r = messages.render(v, language, ctx_)
+        mail = r["email"]
+        items.append({"variant": v, "audience": r["audience"], "label": r["label"], "sms": r["sms"],
+                      "email": {"subject": mail.subject, "preheader": mail.preheader, "html": mail.html(), "text": mail.text(),
+                                "from_name": ws.name if r["audience"] == "customer" else "Dialogbot"}})
+    return {"lang": language, "default_lang": default_lang, "languages": list(LANGUAGES), "source": source,
+            "business": ws.name, "sends_nothing": True, "items": items}
+
+
 @router.get("")
 def list_bookings(days: int = Query(default=30, ge=1, le=120), include_cancelled: bool = False,
                   start: date | None = None, end: date | None = None,

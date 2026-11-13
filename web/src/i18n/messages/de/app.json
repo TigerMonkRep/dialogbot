@@ -383,6 +383,48 @@
       "noTypes": "Keine",
       "ask": "Sagen Sie es dem Assistenten – er zeigt Ihnen die Regel, bevor sie gilt. Alle Regeln:",
       "allSettings": "Alle Einstellungen → Buchung"
+    },
+    "messages": {
+      "link": "Nachrichten an Kunden",
+      "eyebrow": "Termine · Nachrichten",
+      "title": "Nachrichten zu Terminen",
+      "intro": "So sehen die Nachrichten zu einem Termin aus – an Ihre Kunden per SMS und E-Mail in Ihrem Namen und an Sie, wenn ein Termin eine Person braucht. Wählen Sie Nachricht und Sprache.",
+      "noSend": "Nur Vorschau: Von hier wird nichts gesendet.",
+      "status": "Derzeit sendet Dialogbot nur die Bestätigungs-SMS, wenn der Assistent oder Sie darum bitten. Die anderen Nachrichten liegen als Vorlagen bereit.",
+      "language": "Sprache",
+      "variantsAria": "Nachricht wählen",
+      "toCustomer": "An Kunden",
+      "toYou": "An Sie",
+      "sms": "SMS",
+      "email": "E-Mail",
+      "smsMeta": "{chars} Zeichen · {segments|1 SMS|# SMS} · {encoding}",
+      "fromLabel": "Von",
+      "subject": "Betreff",
+      "sample": "Mit Beispieldaten ausgefüllt.",
+      "booking": "Mit einem Ihrer Termine ausgefüllt.",
+      "frame": "Vorschau der E-Mail",
+      "noSms": "Wird nur per E-Mail an Sie gesendet.",
+      "back": "Zurück zu Terminen",
+      "desc": {
+        "request_receipt": "Wenn ein Kunde einen Termin anfragt, der erst bestätigt werden muss.",
+        "confirmed": "Wenn der Termin bestätigt ist.",
+        "reminder": "Vor dem Termin.",
+        "proposed_change": "Wenn Sie einen anderen Termin vorschlagen.",
+        "rescheduled": "Wenn der Termin verschoben wurde.",
+        "cancelled": "Wenn der Termin abgesagt wurde.",
+        "owner_attention": "Wenn der Kalender nicht beschrieben werden konnte oder ein Termin bestätigt werden muss.",
+        "delivery_failure": "Wenn eine Nachricht an den Kunden nicht zugestellt werden konnte."
+      },
+      "label": {
+        "request_receipt": "Anfrage erhalten",
+        "confirmed": "Termin bestätigt",
+        "reminder": "Erinnerung",
+        "proposed_change": "Neuer Terminvorschlag",
+        "rescheduled": "Termin verschoben",
+        "cancelled": "Termin abgesagt",
+        "owner_attention": "Ihre Aufmerksamkeit nötig",
+        "delivery_failure": "Zustellung fehlgeschlagen"
+      }
     }
   },
   "leads": {

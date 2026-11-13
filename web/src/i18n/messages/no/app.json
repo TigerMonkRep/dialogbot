@@ -383,6 +383,48 @@
       "noTypes": "Ingen",
       "ask": "Si det til assistenten – den viser regelen før den gjelder. Alle regler:",
       "allSettings": "Alle innstillinger → Booking"
+    },
+    "messages": {
+      "link": "Meldinger til kunden",
+      "eyebrow": "Avtaler · meldinger",
+      "title": "Meldinger om avtaler",
+      "intro": "Slik ser meldingene om en avtale ut – til kunden som SMS og e-post i deres navn, og til dere når en avtale trenger en person. Velg melding og språk.",
+      "noSend": "Kun forhåndsvisning: ingenting sendes herfra.",
+      "status": "I dag sender Dialogbot bare bekreftelses-SMS-en når assistenten eller dere ber om det. De andre meldingene er klare som maler.",
+      "language": "Språk",
+      "variantsAria": "Velg melding",
+      "toCustomer": "Til kunden",
+      "toYou": "Til dere",
+      "sms": "SMS",
+      "email": "E-post",
+      "smsMeta": "{chars} tegn · {segments|1 SMS|# SMS-er} · {encoding}",
+      "fromLabel": "Fra",
+      "subject": "Emne",
+      "sample": "Fylt ut med eksempeldata.",
+      "booking": "Fylt ut med en av avtalene deres.",
+      "frame": "Forhåndsvisning av e-posten",
+      "noSms": "Sendes bare som e-post til dere.",
+      "back": "Tilbake til avtaler",
+      "desc": {
+        "request_receipt": "Når en kunde ber om en time som først må bekreftes.",
+        "confirmed": "Når timen er bekreftet.",
+        "reminder": "Før avtalen.",
+        "proposed_change": "Når dere foreslår en annen tid.",
+        "rescheduled": "Når avtalen er flyttet.",
+        "cancelled": "Når avtalen er avlyst.",
+        "owner_attention": "Når kalenderen ikke kunne oppdateres, eller en avtale må bekreftes av en medarbeider.",
+        "delivery_failure": "Når en melding til kunden ikke kunne leveres."
+      },
+      "label": {
+        "request_receipt": "Forespørsel mottatt",
+        "confirmed": "Time bekreftet",
+        "reminder": "Påminnelse",
+        "proposed_change": "Forslag til ny time",
+        "rescheduled": "Time flyttet",
+        "cancelled": "Time avlyst",
+        "owner_attention": "Krever din oppmerksomhet",
+        "delivery_failure": "Levering mislyktes"
+      }
     }
   },
   "leads": {

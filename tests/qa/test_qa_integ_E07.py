@@ -159,11 +159,22 @@ E07_VARIANTS = ("request_receipt", "confirmed", "reminder", "proposed_change", "
                 "owner_attention", "delivery_failure")
 
 
-@pytest.mark.xfail(strict=True, reason="E07: not-implemented – only the on-demand SMS 'booking' template exists")
 def test_e07_requirement_all_booking_message_variants_exist():
-    from app.modules.integrations import email_templates, sms_templates
+    """Since E07 was built (app/modules/bookings/messages.py): all eight variants in all eight languages, the six
+    customer ones as SMS + e-mail in the business's name, the two owner ones as e-mail; each is also in the e-mail
+    preview registry. The tests above document what is SENT today (only the on-demand SMS); automatic sending of the
+    new variants is a separate decision (qa/ledger.md, E07)."""
+    from app.core.languages import LANGUAGES
+    from app.modules.bookings import messages
+    from app.modules.integrations import email_templates
 
-    sms_keys = set(sms_templates.__dict__.get("TEXTS", {}).get("da", {})) if hasattr(sms_templates, "TEXTS") else set()
+    assert set(messages.VARIANTS) == set(E07_VARIANTS)
     mail_keys = set(email_templates.samples())
-    have = {v for v in E07_VARIANTS if any(v in k for k in sms_keys | mail_keys)}
-    assert have == set(E07_VARIANTS), f"missing: {sorted(set(E07_VARIANTS) - have)}"
+    assert {f"booking_{v}" for v in E07_VARIANTS} <= mail_keys
+    for lang in LANGUAGES:
+        got = messages.samples(lang)
+        assert set(got) == set(E07_VARIANTS), lang
+        for v in messages.CUSTOMER_VARIANTS:
+            assert got[v]["sms"]["text"] and got[v]["email"].sender == "Hansen VVS", (lang, v)
+        for v in messages.OWNER_VARIANTS:
+            assert got[v]["sms"] is None and got[v]["email"].button_url, (lang, v)

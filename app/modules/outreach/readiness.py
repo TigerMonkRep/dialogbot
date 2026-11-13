@@ -78,9 +78,11 @@ def todos(db: OrmSession) -> list[dict]:
          "GOOGLE_PLACES_API_KEY på Render. Uden den kan du stadig uploade en CSV.", bool(s.google_places_api_key), "optional")
     auto("demo", "Demo-opkaldet kan ringe til de lande, du skriver til",
          ("Mangler for: " + ", ".join(no_demo) + ". " if no_demo else "") +
-         "Demoen på dialogbot.app tager i dag kun danske numre og taler dansk. E-mailens eneste opfordring er at prøve "
-         "demoen, så den skal virke på engelsk med lokale numre. Når den gør, tilføjes landet i "
-         "OUTREACH_DEMO_CALLBACK_COUNTRIES. Indtil da holder systemet e-mails til det land tilbage.", not no_demo)
+         "Opkaldsdemoen på dialogbot.app ringer i dag kun til danske numre. E-mailens eneste opfordring er at prøve "
+         "demoen, så den skal virke for læseren. To veje: en demo-linje, læseren selv ringer til "
+         "(OUTREACH_DEMO_LINE_US / _UK – Dialogbots egen assistent svarer på engelsk), eller at opkaldsdemoen kan "
+         "ringe til landet (OUTREACH_DEMO_CALLBACK_COUNTRIES). Indtil da holder systemet e-mails til det land "
+         "tilbage.", not no_demo)
     auto("postal", "Fuld postadresse i bundteksten",
          "Sæt OUTREACH_POSTAL_ADDRESS (vej, postnummer, by, land). «Aarhus, Denmark» er ikke nok til CAN-SPAM og CASL.",
          bool(s.outreach_postal_address))

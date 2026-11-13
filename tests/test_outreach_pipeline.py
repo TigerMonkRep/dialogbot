@@ -201,3 +201,32 @@ def test_niche_and_mx_gate_the_lead_before_any_tokens(db, outreach):
               mx_check=lambda d: d != "nomx.example")
     assert [x["status"] for x in rep["leads"]] == ["disqualified", "disqualified"] and outreach.calls == []
     assert PAIN  # (fixture text used above)
+
+
+def test_with_a_demo_line_the_email_invites_the_reader_to_ring_it(db, outreach, monkeypatch):
+    """The US: nobody is rung. The copy names the demo line and the US site, and the auditor holds it to that."""
+    from sqlalchemy import select
+
+    from app.config import get_settings
+    from app.models import OutreachLead, OutreachMessage
+    from app.modules.outreach import localization
+    from app.modules.outreach.agents.auditor import deterministic_issues
+    from tests.outreach_fixtures import env, raw, run
+
+    env(monkeypatch, OUTREACH_DEMO_LINE_US="+16283773337")
+    assert "US" in get_settings().outreach_demo_countries and "UK" not in get_settings().outreach_demo_countries
+    assert localization.locale_for("US").demo_line == "+1 628 377 3337"
+    assert "demo line on +1 628 377 3337" in localization.product_facts("US")[-1]
+    assert localization.product_facts("UK") == localization.PRODUCT_FACTS          # the callback fact elsewhere
+    rep = run(db, [raw("US")])
+    assert rep["leads"][0]["status"] == "queued", rep
+    msg = db.scalars(select(OutreachMessage)).one()
+    lead = db.scalars(select(OutreachLead)).one()
+    assert "+1 628 377 3337" in msg.body and "https://dialogbot.app/us" in msg.body and "enter your number" not in msg.body
+    system = outreach.by_tool("submit_email")[-1]["system"]
+    system = str(system)
+    assert "call Dialogbot's demo line on +1 628 377 3337" in system and "callback demo" not in system
+    # another number, or the line left out, fails the audit
+    msg.body = msg.body.replace("+1 628 377 3337", "+1 415 555 0100")
+    issues = deterministic_issues(db, lead, msg)
+    assert any(i.startswith("phone:") for i in issues) and any("demo line" in i for i in issues)

@@ -5,11 +5,17 @@ import { api } from "@/lib/client";
 import { Alert, Badge, Button, ErrorBox, Field, Icon, Select, Textarea, useSubmit } from "@/components/ui";
 
 export type Platform = "facebook" | "instagram" | "tiktok";
+export type PipelineStep = { step: string; status: "ok" | "warn" | "fail" | "skipped"; at: string; detail: Record<string, unknown> };
+export type PipelineStats = {
+  created: number; ai: number; template: number; approved: number; published: number; failed: number; cancelled: number;
+  weak_hooks: number; lint_warnings: number; avg_hook_score?: number | null;
+};
 export type Post = {
   id: string; platform: Platform; status: string; topic: string; extra?: boolean; slot_date: string; scheduled_for: string; caption: string;
   hashtags: string[]; slides: { role: string; kicker: string; title: string; body: string; bullets?: string[] }[]; link: string | null;
   generator: string; external_id: string | null; external_url: string | null; attempts: number; last_error: string | null;
   published_at: string | null; metrics: Record<string, number | string> | null; metrics_at: string | null; images: string[];
+  pipeline?: PipelineStep[];
 };
 export type PlatformStats = {
   platform: Platform; enabled: boolean; connected: boolean; configured: boolean | null;
@@ -26,6 +32,7 @@ export type Dashboard = {
   platforms: PlatformStats[]; pending: Post[]; scheduled: Post[]; recent: Post[]; failed: Post[];
   engagement_totals: Record<string, { posts: number; likes: number; comments: number; shares: number; views: number }>;
   prospects: Prospect[]; prospects_enabled: boolean; prospect_counts: { new: number; done: number; skipped: number };
+  pipeline?: { platforms: Record<string, PipelineStats>; total: PipelineStats };
   days: number; generated_at: string;
 };
 
@@ -69,6 +76,8 @@ export function SocialDashboard({ data }: { data: Dashboard }) {
       <div className="grid gap-space-md md:grid-cols-3">
         {data.platforms.map((p) => <PlatformCard key={p.platform} p={p} totals={data.engagement_totals[p.platform]} days={data.days} />)}
       </div>
+
+      {data.pipeline && <PipelineSummary pipeline={data.pipeline} days={data.days} />}
 
       <Section title={`Venter på godkendelse (${data.pending.length})`} hint={data.pending.length ? "Læs teksten igennem, ret den om nødvendigt, og godkend – så går opslaget ud på det planlagte tidspunkt." : "Ingen kladder lige nu. Nye kladder laves automatisk, så der altid er opslag klar til de næste dage."}>
         {data.pending.map((p) => <PostCard key={p.id} p={p} editable />)}
@@ -219,6 +228,7 @@ function PostCard({ p, editable = false, compact = false }: { p: Post; editable?
       )}
       {p.status === "published" && <p className="font-label-sm text-label-sm flex items-center gap-1"><Icon name="bar_chart" size={14} /><Metrics m={p.metrics} /></p>}
       {p.last_error && <p className="font-label-sm text-label-sm text-error">{p.last_error}</p>}
+      <Pipeline steps={p.pipeline ?? []} />
       <ErrorBox error={save.error ?? approve.error ?? cancel.error ?? publish.error} />
       {note && <Alert kind="info">{note}</Alert>}
       {canAct && (
@@ -232,6 +242,142 @@ function PostCard({ p, editable = false, compact = false }: { p: Post; editable?
         </div>
       )}
     </article>
+  );
+}
+
+// --- the trail ("forløb"): how a post came about, step by step ---------------------------------------------------------------
+
+type HookCandidate = { text: string; score: number; formula: string; verdict: string; flags: string[]; source: string; chosen: boolean };
+type LintFinding = { level: string; code: string; message: string };
+const SKILLSET: Record<Platform, string> = { instagram: "ig-skills", facebook: "social-media-skills", tiktok: "social-media-skills" };
+const STEP: Record<string, { label: string; icon: string }> = {
+  idea: { label: "Idé", icon: "lightbulb" }, hooks: { label: "Hook", icon: "bolt" }, copy: { label: "Tekst", icon: "edit_note" },
+  checks: { label: "Tjek", icon: "fact_check" }, refresh: { label: "Bygget om", icon: "autorenew" }, edit: { label: "Rettet", icon: "edit" },
+  approval: { label: "Godkendt", icon: "check_circle" }, publish: { label: "Udsendt", icon: "send" },
+};
+const TONE: Record<PipelineStep["status"], string> = { ok: "text-secondary", warn: "text-accent-deep", fail: "text-error", skipped: "text-on-surface-variant" };
+const FALLBACK: Record<string, string> = {
+  ai_off: "AI er slået fra – håndskrevet tekst", ai_unavailable: "AI svarede ikke brugbart – håndskrevet tekst",
+  ai_invalid: "AI-svaret havde den forkerte form – håndskrevet tekst", ai_rejected: "AI-teksten faldt på faktakontrollen – håndskrevet tekst",
+};
+const str = (v: unknown) => (typeof v === "string" ? v : v == null ? "" : String(v));
+
+function StepDetail({ s }: { s: PipelineStep }) {
+  const d = s.detail;
+  if (s.step === "idea") return <>Emne <b>{topicLabel(str(d.topic))}</b> · regelsæt: <b>{str(d.skillset)}</b>{d.angle ? <span className="block text-on-surface-variant">{str(d.angle)}</span> : null}</>;
+  if (s.step === "hooks") {
+    const cands = (d.candidates as HookCandidate[] | undefined) ?? [];
+    return (
+      <ul className="space-y-0.5">
+        {cands.map((c, i) => (
+          <li key={i} className={c.chosen ? "font-semibold" : "text-on-surface-variant"}>
+            {c.chosen ? "✓ " : "– "}{c.text} <span className="tabular-nums">· {c.score}/100 ({c.verdict}) · {c.formula}{c.source === "skabelon" ? " · håndskrevet" : ""}</span>
+            {c.chosen && c.flags.length > 0 && <span className="text-accent-deep"> · {c.flags.join(", ")}</span>}
+          </li>
+        ))}
+      </ul>
+    );
+  }
+  if (s.step === "copy") {
+    const fb = d.fallback as { code?: string; message?: string; errors?: string[] } | null;
+    return d.generator === "ai"
+      ? <>Skrevet af AI ({str(d.model)}) · prompt {str(d.prompt_version)}</>
+      : <>{FALLBACK[fb?.code ?? "ai_off"] ?? "Håndskrevet tekst"}{fb?.errors?.length ? <span className="block text-accent-deep">{fb.errors.join(", ")}</span> : fb?.message ? <span className="block text-on-surface-variant">{fb.message}</span> : null}</>;
+  }
+  if (s.step === "checks") {
+    const facts = d.facts as { passed: boolean; errors: string[] };
+    const lint = ((d.lint as LintFinding[] | undefined) ?? []).filter((f) => f.level === "warn");
+    const clean = (d.humanize as { kind: string; count: number }[] | undefined) ?? [];
+    return (
+      <ul className="space-y-0.5">
+        <li>{facts.passed ? "Faktakontrol: bestået (kun godkendte priser og løfter)" : <span className="text-error">Faktakontrol faldt: {facts.errors.join(", ")}</span>}</li>
+        {lint.map((f, i) => <li key={i} className="text-accent-deep">{f.message}</li>)}
+        {lint.length === 0 && <li>Regler for platformen: ingen bemærkninger</li>}
+        {clean.map((c, i) => <li key={i} className="text-on-surface-variant">Rettet automatisk: {c.kind} ({c.count})</li>)}
+      </ul>
+    );
+  }
+  if (s.step === "approval") return <>Godkendt af <b>{str(d.by) || "operatør"}</b> ({str(d.via)})</>;
+  if (s.step === "edit") return <>Tekst rettet af <b>{str(d.by) || "operatør"}</b> ({str(d.chars_before)} → {str(d.chars_after)} tegn)</>;
+  if (s.step === "refresh") return <>Bygget om i nyt design (version {str(d.from_version)} → {str(d.to_version)})</>;
+  if (s.step === "publish") {
+    return s.status === "ok"
+      ? <>Gik ud{d.external_id ? <> · id <span className="tabular-nums">{str(d.external_id)}</span></> : null}{d.note ? <span className="block text-on-surface-variant">{str(d.note)}</span> : null}</>
+      : <span className="text-error">Fejlede (forsøg {str(d.attempt)}): {str(d.error)} · {d.will_retry ? "prøver igen automatisk" : "prøver ikke igen"}</span>;
+  }
+  return null;
+}
+
+function Pipeline({ steps }: { steps: PipelineStep[] }) {
+  if (steps.length === 0) return <p className="font-label-sm text-label-sm text-on-surface-variant">Intet forløb gemt – opslaget er lavet, før forløbet blev registreret.</p>;
+  return (
+    <details className="rounded-md border border-outline-variant bg-surface-container-lowest">
+      <summary className="cursor-pointer select-none px-space-sm py-space-xs font-label-md text-label-md font-semibold flex flex-wrap items-center gap-space-xs">
+        <Icon name="timeline" size={16} />Forløb
+        <span className="flex items-center gap-1 font-normal">
+          {steps.map((s, i) => <span key={i} title={`${STEP[s.step]?.label ?? s.step}: ${s.status}`} className={`inline-flex items-center gap-0.5 ${TONE[s.status]}`}><Icon name={STEP[s.step]?.icon ?? "circle"} size={14} /></span>)}
+        </span>
+      </summary>
+      <ol className="px-space-sm pb-space-sm space-y-space-xs font-label-sm text-label-sm">
+        {steps.map((s, i) => (
+          <li key={i} className="flex gap-space-xs">
+            <span className={`mt-0.5 ${TONE[s.status]}`}><Icon name={s.status === "fail" ? "error" : s.status === "warn" ? "warning" : STEP[s.step]?.icon ?? "circle"} size={16} /></span>
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-baseline gap-x-space-xs"><span className="font-semibold">{STEP[s.step]?.label ?? s.step}</span><span className="text-on-surface-variant">{when(s.at)}</span></div>
+              <StepDetail s={s} />
+            </div>
+          </li>
+        ))}
+      </ol>
+    </details>
+  );
+}
+
+function PipelineSummary({ pipeline, days }: { pipeline: NonNullable<Dashboard["pipeline"]>; days: number }) {
+  const t = pipeline.total;
+  const pct = (n: number) => (t.created ? Math.round((n / t.created) * 100) : 0);
+  const tiles: [string, number, string][] = [["Lavet", t.created, "opslag"], ["Godkendt", t.approved, `${pct(t.approved)} %`], ["Udsendt", t.published, `${pct(t.published)} %`]];
+  const rows = (Object.keys(PLATFORM) as Platform[]).map((pl) => ({ pl, s: pipeline.platforms[pl] }));
+  return (
+    <Section title="Proces og fremgang" hint={`Hvordan opslagene lavet de seneste ${days} dage er løbet fra idé til udsendelse. Hook-scoren er et hjælpemiddel, der fanger svage hooks – den forudsiger ikke rækkevidde. Åbn "Forløb" på et opslag for at se hver enkelt hook, kontrol og godkendelse.`}>
+      <div className="grid grid-cols-3 gap-space-sm">
+        {tiles.map(([label, n, sub]) => (
+          <div key={label} className="rounded-lg bg-surface-container-low p-space-sm">
+            <p className="font-label-sm text-label-sm text-on-surface-variant">{label}</p>
+            <p className="font-headline-sm text-headline-sm font-bold text-primary tabular-nums">{num(n)}</p>
+            <p className="font-label-sm text-label-sm text-on-surface-variant">{sub}</p>
+          </div>
+        ))}
+      </div>
+      <p className="font-label-sm text-label-sm text-on-surface-variant">
+        {t.ai} skrevet af AI · {t.template} håndskrevne{t.failed > 0 ? ` · ${t.failed} fejlet` : ""}{t.cancelled > 0 ? ` · ${t.cancelled} annulleret` : ""} · {t.weak_hooks} svage hooks · {t.lint_warnings} bemærkninger fra platformreglerne
+      </p>
+      <div className="overflow-x-auto">
+        <table className="w-full font-label-md text-label-md">
+          <thead><tr className="text-left text-on-surface-variant font-label-sm text-label-sm">
+            <th className="py-1 pr-space-sm">Platform</th><th className="pr-space-sm">Regelsæt</th><th className="pr-space-sm text-right">Lavet</th><th className="pr-space-sm text-right">AI / hånd</th>
+            <th className="pr-space-sm text-right">Godkendt</th><th className="pr-space-sm text-right">Udsendt</th><th className="pr-space-sm text-right">Ø hook</th><th className="text-right">Svage</th>
+          </tr></thead>
+          <tbody>
+            {rows.map(({ pl, s }) => (
+              <tr key={pl} className="border-t border-outline-variant">
+                <td className="py-1 pr-space-sm font-semibold text-primary">{PLATFORM[pl].label}</td>
+                <td className="pr-space-sm text-on-surface-variant">{SKILLSET[pl]}</td>
+                <td className="pr-space-sm text-right tabular-nums">{s ? num(s.created) : "–"}</td>
+                <td className="pr-space-sm text-right tabular-nums">{s ? `${s.ai} / ${s.template}` : "–"}</td>
+                <td className="pr-space-sm text-right tabular-nums">{s ? num(s.approved) : "–"}</td>
+                <td className="pr-space-sm text-right tabular-nums">{s ? num(s.published) : "–"}</td>
+                <td className="pr-space-sm text-right tabular-nums">{s?.avg_hook_score != null ? `${s.avg_hook_score}/100` : "–"}</td>
+                <td className="text-right tabular-nums">{s ? num(s.weak_hooks) : "–"}</td>
+              </tr>
+            ))}
+            <tr className="border-t border-outline-variant text-on-surface-variant">
+              <td className="py-1 pr-space-sm">X</td><td className="pr-space-sm">social-media-skills</td><td colSpan={6}>Reglerne er klar, men X er ikke koblet på endnu – der postes ikke dér.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </Section>
   );
 }
 

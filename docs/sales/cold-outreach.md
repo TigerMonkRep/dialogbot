@@ -51,6 +51,24 @@ email_source, email_source_url, context`. `context` is free text for the researc
 snippets). `email_source=published_website` plus `email_source_url` is required for CA and AU. Rows exported from
 Outscraper/Apify can be mapped with `agents/sourcing.from_scraper_rows()`.
 
+## 1b. The admin tab: Admin → «Kold e-mail» (`/app/operator/outreach`)
+
+Operator-only, Danish. Everything above without a terminal:
+
+- **Start en kampagne** – pick a country (only e-mail markets can be chosen), a city and a category; «Find virksomheder»
+  searches Google Places (`GOOGLE_PLACES_API_KEY`) and reads the e-mail address each business publishes on its own
+  website (`finder.py`, through `app/core/safe_fetch`). Tick the ones to use, name the campaign, and the leads are
+  checked (one request, no AI) and then researched, written and audited one lead per request. A pasted CSV works too.
+- **Kampagner** – every lead's status, block reasons, confidence, the e-mail and the audit's objections. In dry run
+  «Gør e-mails færdige» renders them with the real unsubscribe link; in live «Send køen nu» asks once more, then sends.
+- **Inden du går live** – the to-do list (`readiness.py`). Automatic points follow the configuration (mode, Claude,
+  demo countries, postal address, inboxes, provider, webhooks, billable prices); three manual points (lawyer, sending
+  domain DNS, dry run read) are ticked by hand and stored in `outreach_todo_marks`.
+- **Ringeliste (Danmark)** and **Landeregler** – the call-list download and the matrix in plain words.
+
+API behind it: `GET …/overview` (answers also while off), `POST …/search`, `POST …/batches` with `research: false`,
+`POST …/batches/{name}/process?limit=1`, `PUT …/todos/{key}`.
+
 ## 2. Market matrix (`compliance/matrix.py`)
 
 | Market | Decision | Extra rules enforced in code |

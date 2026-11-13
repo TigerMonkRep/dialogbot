@@ -516,7 +516,8 @@
       "consent": "Einwilligung",
       "noConsent": "Einwilligung fehlt – wird nicht angerufen",
       "attempts": "{n} Versuche",
-      "priceNote": "Innerhalb des Pakets kein Preis pro Anruf. Danach {answered} (angenommen), {voicemail} (Mailbox) oder {noAnswer} (nicht angenommen) pro Anruf plus {price} pro Minute zzgl. MwSt. Jederzeit stoppbar."
+      "priceNote": "Innerhalb des Pakets kein Preis pro Anruf. Danach {answered} (angenommen), {voicemail} (Mailbox) oder {noAnswer} (nicht angenommen) pro Anruf plus {price} pro Minute zzgl. MwSt. Jederzeit stoppbar.",
+      "awaiting": "{n} Anrufe warten auf den Anrufbericht – die Minuten zählen, sobald er da ist."
     },
     "new": {
       "title": "Neue Kampagne",
@@ -578,7 +579,9 @@
       "confirm": "Regeln für Anrufe bestätigen",
       "starting": "Wird gestartet …",
       "resume": "Fortsetzen",
-      "start": "Kampagne starten"
+      "start": "Kampagne starten",
+      "needsSubscription": "Die Kampagne kann starten, sobald das Abonnement bestätigt ist und eine Zahlungskarte hinterlegt ist.",
+      "toAccount": "Zum Konto"
     },
     "remove": "Entfernen",
     "dnc": {
@@ -874,7 +877,8 @@
       "fromSetupNoCard": "Letzter Schritt: Bestätigen Sie unten das Abo. Dann sind Sie live.",
       "fromSetupCard": "Das Abo ist bestätigt. Letzter Schritt: Fügen Sie unten eine Zahlungskarte hinzu.",
       "fromSetupLive": "Sie sind live. Das Abo ist eingerichtet.",
-      "goToday": "Zu Heute"
+      "goToday": "Zu Heute",
+      "packageLeft": "Noch {n} Minuten im Paket in diesem Monat"
     },
     "usage": {
       "title": "Verbrauch pro Anruf",
@@ -897,7 +901,23 @@
       "dispute": "Anruf beanstanden",
       "reason": "Was war mit dem Anruf nicht in Ordnung?",
       "send": "Beanstandung senden",
-      "cancel": "Abbrechen"
+      "cancel": "Abbrechen",
+      "packageLeft": "Minutenpaket: {used} von {included} Minuten genutzt · {remaining} übrig · {over} Minuten über dem Paket.",
+      "duration": "Dauer {d}",
+      "pending": "Wartet auf den Anrufbericht – die Minuten zählen, sobald er da ist.",
+      "split": "{pkg} Min. im Paket · {extra} Min. über dem Paket",
+      "inPackage": "{n} Min. im Paket",
+      "outcome": {
+        "answered": "angenommen",
+        "voicemail": "Mailbox",
+        "no_answer": "nicht angenommen/besetzt"
+      },
+      "callPrice": "Anrufpreis nach dem Paket {amount}",
+      "total": "gesamt {amount} zzgl. MwSt.",
+      "refunded": "Bei Stripe erstattet: {amount} inkl. MwSt.",
+      "creditOnInvoice": "Beschwerde angenommen: {amount} ({minutes} Min.) wurde auf Rechnung {number} gutgeschrieben.",
+      "creditNext": "Beschwerde angenommen: {amount} ({minutes} Min.) wird auf der nächsten Rechnung gutgeschrieben.",
+      "decisionNote": "Begründung von Dialogbot: {note}"
     },
     "pay": {
       "title": "Zahlung",

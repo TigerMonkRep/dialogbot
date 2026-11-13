@@ -1499,7 +1499,8 @@
       "free": "Free",
       "allPlans": "In every plan",
       "plan": "Plus · Family",
-      "soon": "Coming soon"
+      "soon": "Coming soon",
+      "needsPlan": "Needs a plan"
     },
     "cat": {
       "alle": "All",
@@ -1620,7 +1621,11 @@
     "planTextEndedAll": "{name} is included in every plan. Choose a plan to use it.",
     "planTextBasis": "You have Basis. {name} is included in Plus and Family.",
     "onInMine": "{n|1 app is on|# apps are on} – see My apps",
-    "yourThings": "Your things here ({n})"
+    "yourThings": "Your things here ({n})",
+    "pausedSection": "Paused · needs a plan",
+    "pausedLine": "Needs a plan – your data is kept.",
+    "pausedTitle": "{name} is paused",
+    "pausedText": "The trial or plan has ended, so {name} is not running right now – no reminders and nothing new. Your data is kept and comes back as soon as you have a plan again."
   },
   "familyHousehold": {
     "title": "Household",

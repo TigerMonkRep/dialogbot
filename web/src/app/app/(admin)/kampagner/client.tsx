@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { api, fieldError } from "@/lib/client";
@@ -175,6 +176,7 @@ export function StartCampaign({ wsId, c, checklist }: { wsId: string; c: Campaig
       <span className="eyebrow !text-ink">{t("campaigns.start.before")}</span>
       <h2 className="font-display font-extrabold text-[20px] text-ink">{c.status === "paused" ? t("campaigns.start.resumeTitle") : t("campaigns.start.heading", { n: pending, max: kr(c.max_cost.net_minor, lang, c.pricing.currency) })}</h2>
       {c.outbound_problem && <Alert kind="warn">{c.outbound_problem}</Alert>}
+      {c.billing_ready === false && <Alert kind="warn"><span data-testid="needs-subscription">{t("campaigns.start.needsSubscription")} <Link href="/app/konto#abonnement" className="font-semibold underline">{t("campaigns.start.toAccount")}</Link></span></Alert>}
       <p className="text-body-md">{t("campaigns.start.body", { n: pending, max: kr(c.max_cost.net_minor, lang, c.pricing.currency), gross: kr(c.max_cost.gross_minor, lang, c.pricing.currency), withPackage: kr(c.max_cost_with_package.net_minor, lang, c.pricing.currency), maxMinutes: c.max_minutes,
         answered: kr(c.pricing.call_prices.answered, lang, c.pricing.currency), voicemail: kr(c.pricing.call_prices.voicemail, lang, c.pricing.currency), noAnswer: kr(c.pricing.call_prices.no_answer, lang, c.pricing.currency), contactMax: kr(c.pricing.per_contact_max_net_minor, lang, c.pricing.currency), remaining: c.package.remaining, included: c.package.included, minute: kr(c.pricing.minute_net_minor, lang, c.pricing.currency), attempts: c.pricing.max_attempts, minutes: Math.round(c.pricing.max_connected_seconds / 60) })}</p>
       <fieldset className="flex flex-col gap-1">
@@ -186,7 +188,7 @@ export function StartCampaign({ wsId, c, checklist }: { wsId: string; c: Campaig
         ))}
       </fieldset>
       <ErrorBox error={start.error} />
-      <div><Button type="button" icon="call" onClick={() => start.run()} disabled={start.pending || !checked.every(Boolean) || pending === 0 || !!c.outbound_problem}>{start.pending ? t("campaigns.start.starting") : c.status === "paused" ? t("campaigns.start.resume") : t("campaigns.start.start")}</Button></div>
+      <div><Button type="button" icon="call" onClick={() => start.run()} disabled={start.pending || !checked.every(Boolean) || pending === 0 || !!c.outbound_problem || c.billing_ready === false}>{start.pending ? t("campaigns.start.starting") : c.status === "paused" ? t("campaigns.start.resume") : t("campaigns.start.start")}</Button></div>
     </div>
   );
 }

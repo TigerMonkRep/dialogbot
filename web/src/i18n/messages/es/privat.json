@@ -1499,7 +1499,8 @@
       "free": "Gratis",
       "allPlans": "En todos los planes",
       "plan": "Plus · Familia",
-      "soon": "Próximamente"
+      "soon": "Próximamente",
+      "needsPlan": "Requiere un plan"
     },
     "cat": {
       "alle": "Todas",
@@ -1620,7 +1621,11 @@
     "planTextEndedAll": "{name} está incluida en todos los planes. Elige un plan para usarla.",
     "planTextBasis": "Tienes Basis. {name} está incluida en Plus y Familia.",
     "onInMine": "{n|1 app activada|# apps activadas} – ver Mis apps",
-    "yourThings": "Lo tuyo aquí ({n})"
+    "yourThings": "Lo tuyo aquí ({n})",
+    "pausedSection": "En pausa · requiere un plan",
+    "pausedLine": "Requiere un plan: tus datos se conservan.",
+    "pausedTitle": "{name} está en pausa",
+    "pausedText": "La prueba o el plan ha terminado, así que {name} no funciona ahora: sin recordatorios ni nada nuevo. Tus datos se conservan y vuelven en cuanto tengas un plan."
   },
   "familyHousehold": {
     "title": "Hogar",

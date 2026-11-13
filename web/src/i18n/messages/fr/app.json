@@ -516,7 +516,8 @@
       "consent": "consentement",
       "noConsent": "Consentement manquant – ne sera pas appelé",
       "attempts": "{n} tentatives",
-      "priceNote": "Aucun prix par appel dans le forfait. Ensuite, {answered} (décroché), {voicemail} (messagerie) ou {noAnswer} (sans réponse) par appel plus {price} par minute HT. Arrêtez quand vous voulez."
+      "priceNote": "Aucun prix par appel dans le forfait. Ensuite, {answered} (décroché), {voicemail} (messagerie) ou {noAnswer} (sans réponse) par appel plus {price} par minute HT. Arrêtez quand vous voulez.",
+      "awaiting": "{n} appels attendent leur rapport – les minutes comptent dès qu'il arrive."
     },
     "new": {
       "title": "Nouvelle campagne",
@@ -578,7 +579,9 @@
       "confirm": "Confirmer les règles d’appel",
       "starting": "Lancement…",
       "resume": "Reprendre",
-      "start": "Lancer la campagne"
+      "start": "Lancer la campagne",
+      "needsSubscription": "La campagne peut démarrer une fois l'abonnement confirmé et une carte de paiement enregistrée sur le compte.",
+      "toAccount": "Aller au compte"
     },
     "remove": "Supprimer",
     "dnc": {
@@ -874,7 +877,8 @@
       "fromSetupNoCard": "Dernière étape : confirmez l’abonnement ci-dessous. Vous serez alors en ligne.",
       "fromSetupCard": "L’abonnement est confirmé. Dernière étape : ajoutez une carte de paiement ci-dessous.",
       "fromSetupLive": "Vous êtes en ligne. L’abonnement est en place.",
-      "goToday": "Aller à Aujourd’hui"
+      "goToday": "Aller à Aujourd’hui",
+      "packageLeft": "Il reste {n} minutes dans le forfait ce mois-ci"
     },
     "usage": {
       "title": "Consommation par appel",
@@ -897,7 +901,23 @@
       "dispute": "Contester l’appel",
       "reason": "Qu’est-ce qui n’allait pas avec l’appel ?",
       "send": "Envoyer la réclamation",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "packageLeft": "Forfait de minutes : {used} sur {included} minutes utilisées · {remaining} restantes · {over} minutes au-delà du forfait.",
+      "duration": "durée {d}",
+      "pending": "En attente du rapport d'appel – les minutes comptent dès qu'il arrive.",
+      "split": "{pkg} min dans le forfait · {extra} min au-delà du forfait",
+      "inPackage": "{n} min dans le forfait",
+      "outcome": {
+        "answered": "décroché",
+        "voicemail": "messagerie",
+        "no_answer": "sans réponse/occupé"
+      },
+      "callPrice": "prix de l'appel après le forfait {amount}",
+      "total": "total {amount} HT",
+      "refunded": "Remboursé chez Stripe : {amount} TTC.",
+      "creditOnInvoice": "Réclamation acceptée : {amount} ({minutes} min) crédité sur la facture {number}.",
+      "creditNext": "Réclamation acceptée : {amount} ({minutes} min) sera crédité sur la prochaine facture.",
+      "decisionNote": "Motif de Dialogbot : {note}"
     },
     "pay": {
       "title": "Paiement",

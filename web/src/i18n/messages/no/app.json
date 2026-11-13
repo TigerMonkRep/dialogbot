@@ -516,7 +516,8 @@
       "consent": "samtykke",
       "noConsent": "Mangler samtykke – blir ikke ringt",
       "attempts": "{n} forsøk",
-      "priceNote": "Ingen pris per anrop innenfor pakken. Deretter {answered} (besvart), {voicemail} (telefonsvarer) eller {noAnswer} (ubesvart) per anrop pluss {price} per minutt eks. mva. Stopp når som helst."
+      "priceNote": "Ingen pris per anrop innenfor pakken. Deretter {answered} (besvart), {voicemail} (telefonsvarer) eller {noAnswer} (ubesvart) per anrop pluss {price} per minutt eks. mva. Stopp når som helst.",
+      "awaiting": "{n} samtaler venter på samtalerapporten – minuttene telles når den kommer."
     },
     "new": {
       "title": "Ny kampanje",
@@ -578,7 +579,9 @@
       "confirm": "Bekreft reglene for anrop",
       "starting": "Starter …",
       "resume": "Gjenoppta",
-      "start": "Start kampanje"
+      "start": "Start kampanje",
+      "needsSubscription": "Kampanjen kan startes når abonnementet er bekreftet og det er et betalingskort på kontoen.",
+      "toAccount": "Gå til Konto"
     },
     "remove": "Fjern",
     "dnc": {
@@ -874,7 +877,8 @@
       "fromSetupNoCard": "Siste steg: bekreft abonnementet nedenfor. Da er dere live.",
       "fromSetupCard": "Abonnementet er bekreftet. Siste steg: legg til et betalingskort nedenfor.",
       "fromSetupLive": "Dere er live. Abonnementet er på plass.",
-      "goToday": "Gå til I dag"
+      "goToday": "Gå til I dag",
+      "packageLeft": "{n} minutter igjen i pakken denne måneden"
     },
     "usage": {
       "title": "Forbruk per anrop",
@@ -897,7 +901,23 @@
       "dispute": "Klag på anropet",
       "reason": "Hva var galt med anropet?",
       "send": "Send klage",
-      "cancel": "Avbryt"
+      "cancel": "Avbryt",
+      "packageLeft": "Minuttpakke: {used} av {included} minutter brukt · {remaining} igjen · {over} minutter utover pakken.",
+      "duration": "varighet {d}",
+      "pending": "Venter på samtalerapporten – minuttene telles når den kommer.",
+      "split": "{pkg} min i pakken · {extra} min utover pakken",
+      "inPackage": "{n} min i pakken",
+      "outcome": {
+        "answered": "besvart",
+        "voicemail": "telefonsvarer",
+        "no_answer": "ubesvart/opptatt"
+      },
+      "callPrice": "samtalepris etter pakken {amount}",
+      "total": "totalt {amount} eks. mva.",
+      "refunded": "Refundert hos Stripe: {amount} inkl. mva.",
+      "creditOnInvoice": "Klage godkjent: {amount} ({minutes} min) er kreditert på faktura {number}.",
+      "creditNext": "Klage godkjent: {amount} ({minutes} min) krediteres på neste faktura.",
+      "decisionNote": "Dialogbots begrunnelse: {note}"
     },
     "pay": {
       "title": "Betaling",

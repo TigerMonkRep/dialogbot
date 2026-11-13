@@ -28,6 +28,7 @@ def _ready(api, t, monkeypatch, *, key: bool):
     api.submit(tok, ws, it["open_draft"]["id"])
     api.approve(tok, ws, it["open_draft"]["id"])
     api.map_number(ws, "+4570123456", "pn_qa_out", outbound=True)
+    api.post(tok, f"/workspaces/{ws}/agreement", {"model": "A"})  # C09: a campaign starts only with a paid subscription
 
 
 def _campaign(api, t, csv="Mette Hansen;20304050"):

@@ -516,7 +516,8 @@
       "consent": "consenso",
       "noConsent": "Consenso mancante: non verrà chiamato",
       "attempts": "{n} tentativi",
-      "priceNote": "Nessun prezzo per chiamata nel pacchetto. Dopo, {answered} (risposta), {voicemail} (segreteria) o {noAnswer} (senza risposta) a chiamata più {price} al minuto IVA esclusa. Può fermarsi in qualsiasi momento."
+      "priceNote": "Nessun prezzo per chiamata nel pacchetto. Dopo, {answered} (risposta), {voicemail} (segreteria) o {noAnswer} (senza risposta) a chiamata più {price} al minuto IVA esclusa. Può fermarsi in qualsiasi momento.",
+      "awaiting": "{n} chiamate attendono il rapporto: i minuti contano quando arriva."
     },
     "new": {
       "title": "Nuova campagna",
@@ -578,7 +579,9 @@
       "confirm": "Conferma le regole per le chiamate",
       "starting": "Avvio…",
       "resume": "Riprendi",
-      "start": "Avvia campagna"
+      "start": "Avvia campagna",
+      "needsSubscription": "La campagna può partire quando l'abbonamento è confermato e c'è una carta di pagamento sull'account.",
+      "toAccount": "Vai all'account"
     },
     "remove": "Rimuovi",
     "dnc": {
@@ -874,7 +877,8 @@
       "fromSetupNoCard": "Ultimo passo: conferma l’abbonamento qui sotto. Poi siete operativi.",
       "fromSetupCard": "L’abbonamento è confermato. Ultimo passo: aggiungi una carta di pagamento qui sotto.",
       "fromSetupLive": "Siete operativi. L’abbonamento è attivo.",
-      "goToday": "Vai a Oggi"
+      "goToday": "Vai a Oggi",
+      "packageLeft": "Restano {n} minuti nel pacchetto questo mese"
     },
     "usage": {
       "title": "Consumo per chiamata",
@@ -897,7 +901,23 @@
       "dispute": "Contesta la chiamata",
       "reason": "Cosa non andava nella chiamata?",
       "send": "Invia reclamo",
-      "cancel": "Annulla"
+      "cancel": "Annulla",
+      "packageLeft": "Pacchetto minuti: {used} di {included} minuti usati · {remaining} rimasti · {over} minuti oltre il pacchetto.",
+      "duration": "durata {d}",
+      "pending": "In attesa del rapporto della chiamata: i minuti contano quando arriva.",
+      "split": "{pkg} min nel pacchetto · {extra} min oltre il pacchetto",
+      "inPackage": "{n} min nel pacchetto",
+      "outcome": {
+        "answered": "risposta",
+        "voicemail": "segreteria",
+        "no_answer": "nessuna risposta/occupato"
+      },
+      "callPrice": "prezzo della chiamata dopo il pacchetto {amount}",
+      "total": "totale {amount} IVA esclusa",
+      "refunded": "Rimborsato su Stripe: {amount} IVA inclusa.",
+      "creditOnInvoice": "Reclamo accettato: {amount} ({minutes} min) accreditato sulla fattura {number}.",
+      "creditNext": "Reclamo accettato: {amount} ({minutes} min) sarà accreditato sulla prossima fattura.",
+      "decisionNote": "Motivazione di Dialogbot: {note}"
     },
     "pay": {
       "title": "Pagamento",

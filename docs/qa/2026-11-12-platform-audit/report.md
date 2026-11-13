@@ -1,4 +1,100 @@
-# Platform-audit Dialogbot – 12/11-2026
+# Platform-audit Dialogbot – gen-audit 13/11-2026 (verifier)
+
+**FORELØBIG LANCERINGSBESLUTNING: NO-GO** (uændret fra 12/11, men med færre blokkere, se nedenfor)
+
+- **Gate-kandidat:** `ad35825` (PR #224, base main 4c1ac89 = #217/#218/#219/#221). Træet er identisk med main-merge
+  `5aaa7e2` (`git diff ad35825 5aaa7e2` er tom). Alembic har ét head `f1b3d5a7c9e2`. main 4c1ac89 alene havde to
+  heads og kunne ikke migreres (`Multiple head revisions`). Senere main (9c86382: outreach/billing) er ikke gatet
+  lokalt. Featurekoden for H01/M06/M03/E07/W04/W09/W13 er uændret mellem 142e380 og 9c86382.
+- **Feature-verifikation:** main `142e380` (#213, #214, #215), uafhængigt af bygherrerne (separat verifier-agent).
+- **Miljø:** lokal stak (PostgreSQL 16, API :8336, worker, Next production build :3336) med fake-udbydere og CI-env fra
+  `.github/workflows/e2e.yml`. Ren database pr. kørsel og ren browserprofil pr. test (Playwright-kontekst,
+  `workers: 1`, `retries: 0`). Maskinen (2 CPU) var delt med andre agenters stakke, med load op til 19.
+
+## Resultater på gate-kandidaten (ad35825), begge viewports 1440 + 390
+| Kontrol | Lokalt | CI (push-run 43428208331 / 43428208100) |
+|---|---|---|
+| ruff, alembic upgrade (ren DB) + check + heads, tsc, i18n:check, next build | exit 0, ét head | grøn |
+| pytest (CI-env, ren DB) | 2664: **2586 bestået, 0 fejl**, 39 skip, 39 xfail | 2585 bestået, 0 fejl, 40 skip, 39 xfail |
+| Journeys (deploy-gaten) | 378: 222 bestået, **1 fejl (flaky)**, 155 skip | 225 bestået, 0 fejl, 153 skip |
+| QA-katalog e2e/qa (uden pwa) | 892: 586 bestået (heraf **122 forventede fejl** `test.fail` = kendte defekter/ikke bygget), 0 fejl, 306 skip | 584 bestået, 308 skip (4 shards) |
+| QA-katalog pwa | 10 bestået | 10 bestået |
+| privat-job (fake mode) | ikke kørt lokalt | 92 bestået, 2 skip |
+
+Skip, xfail og `test.fail` tæller ikke som PASS. 306+155 skip er primært privat-deep-specs, der kræver
+qa_privat_stack, og som heller ikke kører i CI (F-AUD26-03).
+
+**Flaky (< 3/3):**
+- `e2e/erhverv/G-trin1-journey.spec.ts:162` «Trin 1 (e) rebotti.dk» [desktop]: timeout på klik på
+  `<summary>` i gate-kørslen. Bagefter 3/3 grøn (30/30 med hele filen ×3, begge viewports).
+- `e2e/qa/i18n/x24-locales.spec.ts:200` axe [mobil-390]: fejlede i 142e380-katalogkørslen (`da /: color-contrast` 3,16:1,
+  `#848d9e` på `#f6f9fd`, `.entry-module__…b1`). Bagefter 6/6 grøn med ×3, og grøn i gate-kørslen. Testen springes
+  over i CI (axe er ikke installeret). Kontrasten bør tjekkes manuelt (mulig animation/overgang).
+- `W13.spec.ts:30` [mobil-390] med `--repeat-each=3`: 1/3, fordi den 2. og 3. gentagelse fik 429 `sms_rate_limited`
+  (to 429 på `/booking/manage/***/code` i API-loggen). Det er grænsen på 5 koder pr. IP pr. time, og alle
+  gentagelser kommer fra 127.0.0.1. Produktet gør det rigtige, men specen kan ikke gentages > 2× i timen fra én IP.
+  Desktop 3/3. I gate-kataloget og CI er den grøn.
+
+## Uafhængig verifikation af H01, M06, M03, E07, W04, W09, W13 (main 142e380)
+Metode: (1) Produktkoden fjernes (`app/` ved PR-base), og testene beholdes. Så fejler alle fire grupper (rc 1/2), og
+med koden består 55/55 (`qa/evidence/VER1113/coarse-revert.txt`). (2) 36 målrettede mutationer af de egenskaber,
+opgaven nævner: 31 dræbt, 5 overlever (`qa/evidence/VER1113/mutations.txt`). (3) Prober for fejlklasser
+(`qa/evidence/VER1113/test_ver1113_probes.py`). (4) E2E-specs ×3 begge viewports: 100/102, se flaky ovenfor.
+
+| Scenarie | Egenskab | Bevis | Dom |
+|---|---|---|---|
+| H01 | tenant-isolation, rolle-matrix (læser ser ikke sager), interne noter og deres vedhæftninger aldrig hos kunden | 5/5 mutationer dræbt | **PASS** |
+| M06 | kun operatører, intern note vs. kundesvar | 1 dræbt, 1 overlever: intern note der mailer kunden fanges ikke (F-VER1113-03, S3 testhul; koden er korrekt) | **PASS** |
+| M03 | genkørsel = præcis ét forsøg, aldrig `done`, idempotent (Idempotency-Key), ingen blind kalenderskrivning efter timeout, suspendering stopper worker/dialler/actions kun for den kunde, kun operatør | 9/9 dræbt | **PASS** |
+| E07 | 8 varianter × 8 sprog, preview sender intet, tenant-afgrænset booking_id, e-mail i `sandbox`-iframe | 2/2 dræbt | **FAIL (pass-delvist)**: automatisk afsendelse mangler (beslutning i åben PR #222) |
+| W04 | kode kræves, 5 forsøg, udløb, bundet til samtale/nummer, cooldown, kun frame-origin; widget uden innerHTML på nye data (kun `textContent`/DOM, `manageLink` kun http(s)) | 6 dræbt; IP-/virksomhedsgrænse overlever, men virker (prober: 429 ved 6. kode/IP og 61. kode/virksomhed) → F-VER1113-05 (S3) | **PASS** |
+| W09 | 404 ukendt/erstattet/andet formål, 410 udløbet, HMAC med formål, ingen noter i visning, kundens fravalg fjerner ikke personalets | dræbt; HMAC→SHA overlever (ikke black-box-observerbar, læst i koden); formål fjernet fra HMAC overlever (3. lag: objekt-opslag giver 404) | **FAIL**: token logges i klartekst (F-VER1113-06, S1) |
+| W13 | kode før ændring, session bundet til linket, frist, kalenderfejl → `pending` | dræbt | **FAIL**: dobbelt kalender-DELETE (F-VER1113-01, S2), linket dør efter flytning (F-VER1113-02, S2), token i log (F-VER1113-06) |
+
+## Nye fund (qa/findings/F-VER1113-*)
+| ID | Alvor | Status | Kort |
+|---|---|---|---|
+| F-VER1113-06-W09 | S1 | new | `/public/customer/callback/<token>` og `/public/booking/manage/<token>` mangler i `_SECRET_PATHS` → bearer-token i API-loggen (samme klasse som F-PS-04, S0) |
+| F-VER1113-01-W13 | S2 | new | Aflysning (kunde via link og personale) sender DELETE til kalenderen 2×. Med Googles 410 bliver aftalen `calendar_sync=failed`, og forbindelsen går i fejl |
+| F-VER1113-02-W13 | S2 | new | Linket udløber ved den oprindelige sluttid efter flytning til senere dag → 410 |
+| F-VER1113-03-M06 | S3 | new | Testhul: intern note → kundemail fanges ikke |
+| F-VER1113-04-W04 | S3 | needs-decision | Webchat-booking gemmer telefonnummer uden SMS-kode (W04 dækker kun «Bliv kontaktet») |
+| F-VER1113-05-W04 | S3 | new | Testhul: IP-/virksomhedsgrænser for SMS-koder |
+
+Rodårsag, trin og evidens står i hver fundfil. Den stale docstring i `tests/qa/test_qa_integ_E07.py` («xfail(strict):
+E07 is not implemented») er kun nævnt her.
+
+## Status i registret efter gen-audit (traceability.csv, genereret)
+| | P0 PASS/FAIL/ikke testet/BLOCKED | P1 PASS/FAIL/ikke testet/BLOCKED |
+|---|---|---|
+| Erhverv (12/11) | 13 / 18 / 6 / 1 | 1 / 4 / 83 / 0 |
+| **Erhverv (13/11)** | **17 / 14 / 6 / 1** | **1 / 4 / 83 / 0** |
+| Privat (uændret) | 53 / 12 / 14 / 0 | 92 / 19 / 46 / 8 |
+
+Ændret af verifier: M03 fix-ready→pass, H01/M06/W04 bekræftet pass, E07 fix-ready→pass-delvist, W09/W13
+pass→fail (bygherren havde sat pass før verifikation). Erhverv P0, der ikke er PASS: A01, A05, A06, X09, W09, W13
+(fail); R03, S02, M02, BK15, E07, X08, X20, X28 (pass-delvist); C09, C15, B03–B05, M04 (todo); X16 (blocked).
+
+## Foreløbig GO/NO-GO: **NO-GO**
+Begrundelse:
+1. Åbne S0/S1-fund i registret, i alt 14: F-VER1113-06 (ny, S1) og 13 ældre. Af dem er 11 `fixed`/`fix-ready` og
+   venter stadig på en verifier-dom (F-AUD26-02, F-HOT16-01, F-JE-02…05, F-FIX18-01, F-FIX20-01, F-FIX26-01,
+   F-PBQ-06, F-VF-01), F-JE-01 er `new`, og F-PS-02 venter på en beslutning. De ligger uden for denne opgave, men
+   blokerer stadig.
+2. Erhverv P0: 14 FAIL og 6 ikke testet (C09/C15/B03–B05/M04 venter på scope-beslutning).
+3. Kendte udestående, som ikke er mit ansvar: belastningstest og backup-restore (PR #220), manuel kalendertest,
+   beslutninger i åbne PR'er (#223: SMS i baggrunden og widget på 8 sprog, hvor `frame.js` stadig har dansk hardkodet;
+   #222: E07 auto-afsendelse), test i udbydernes sandkasser.
+
+Det, der er blevet bedre siden 12/11: H01, M06, M03 og W04 er nu verificeret PASS. Kernegaten (pytest, journeys,
+QA-katalog) er grøn på kandidaten bortset fra én flaky journey.
+
+Genkørsel: `qa/evidence/VER1113/` (mutationsspec, prober, coarse-revert, logs). Lokale logs ligger i
+`/home/claude/ver1113/logs/`.
+
+---
+
+# Historik: platform-audit 12/11-2026
 
 **LAUNCH DECISION: NO-GO**
 

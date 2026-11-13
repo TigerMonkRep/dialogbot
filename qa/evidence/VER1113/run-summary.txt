@@ -1,0 +1,33 @@
+# gate ad35825 (lokal)
+All checks passed!
+89
+f1b3d5a7c9e2 (head)
+No new upgrade operations detected.
+pytest junit: {'tests': '2664', 'failures': '0', 'errors': '0', 'skipped': '78', 'time': '3719.420'}
+journeys:
+  ✘   12 [desktop-1440] › e2e/erhverv/G-trin1-journey.spec.ts:162:5 › Trin 1 (e) · hjemmeside skrevet som «rebotti.dk» (som feltets eksempel): resten af trin 1 gemmes stadig (1.1m)
+  1 failed
+  155 skipped
+  222 passed (16.4m)
+G-trin1 x3:
+  30 passed (4.4m)
+qa-catalog:
+  306 skipped
+  586 passed (46.0m)
+expected failures (test.fail, ✘ with 0 failed): 122
+pwa:
+  10 passed (39.6s)
+
+# feature-run 142e380
+journeys:
+  153 skipped
+  223 passed (19.7m)
+qa-catalog:
+  1 failed
+  306 skipped
+  585 passed (1.1h)
+X24 axe x3:
+  6 passed (2.8m)
+7 specs x3:
+  2 failed
+  100 passed (11.4m)

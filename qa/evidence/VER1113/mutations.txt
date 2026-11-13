@@ -1,0 +1,40 @@
+BASELINE H exit=0 ..............                                                           [100%]
+BASELINE M exit=0 ............                                                             [100%]
+BASELINE E exit=0 ..............                                                           [100%]
+BASELINE W exit=0 ...............                                                          [100%]
+h01_internal_notes_visible KILLED rc=1 FAILED tests/test_support.py::test_operator_queue_assignment_reply_and_internal_note
+h01_internal_attachment_download KILLED rc=1 FAILED tests/test_support.py::test_attachment_on_an_internal_note_never_reaches_the_customer
+h01_no_tenant_filter KILLED rc=1 FAILED tests/test_support.py::test_tenant_isolation
+h01_reader_may_read KILLED rc=1 FAILED tests/test_support.py::test_role_matrix
+h01_reader_may_write KILLED rc=1 FAILED tests/test_support.py::test_role_matrix
+m06_non_operator_allowed KILLED rc=1 FAILED tests/test_support.py::test_role_matrix
+m06_internal_note_mails_customer SURVIVED ..............                                                           [100%]
+m03_rerun_done_job KILLED rc=1 FAILED tests/test_ops_m03.py::test_job_retry_gives_exactly_one_more_attempt_and_is_idempotent
+m03_more_than_one_attempt KILLED rc=1 FAILED tests/test_ops_m03.py::test_job_retry_gives_exactly_one_more_attempt_and_is_idempotent
+m03_no_idempotency_replay KILLED rc=1 FAILED tests/test_ops_m03.py::test_job_retry_gives_exactly_one_more_attempt_and_is_idempotent
+m03_blind_calendar_retry_after_timeout KILLED rc=1 FAILED tests/test_ops_m03.py::test_calendar_retry_after_timeout_needs_confirmation_and_never_duplicates
+m03_retry_while_suspended KILLED rc=1 FAILED tests/test_ops_m03.py::test_suspension_pauses_only_that_tenant_and_resume_continues
+m03_worker_ignores_suspension KILLED rc=1 FAILED tests/test_ops_m03.py::test_suspension_pauses_only_that_tenant_and_resume_continues
+m03_dialler_ignores_suspension KILLED rc=1 FAILED tests/test_ops_m03.py::test_suspension_stops_the_dialler_for_that_tenant_only
+m03_actions_ignore_suspension KILLED rc=1 FAILED tests/test_ops_m03.py::test_suspended_tenant_actions_are_refused_others_unaffected
+m03_non_operator_allowed KILLED rc=1 FAILED tests/test_ops_m03.py::test_only_operators_read_or_act
+e07_preview_cross_tenant_booking KILLED rc=1 FAILED tests/test_booking_messages.py::test_preview_endpoint_sends_nothing_and_is_tenant_scoped
+e07_preview_enqueues_mail KILLED rc=1 FAILED tests/test_booking_messages.py::test_preview_endpoint_sends_nothing_and_is_tenant_scoped
+w04_contact_without_code KILLED rc=1 FAILED tests/qa/test_qa_w04_w09_w13.py::test_w04_phone_needs_the_code_resend_cooldown_wrong_code_then_verified
+w04_unlimited_attempts KILLED rc=1 FAILED tests/qa/test_qa_w04_w09_w13.py::test_w04_exhausted_attempts_and_expired_code
+w04_code_not_bound_to_scope KILLED rc=1 FAILED tests/qa/test_qa_w04_w09_w13.py::test_w04_code_is_bound_to_its_conversation_and_number
+w04_code_never_expires KILLED rc=1 FAILED tests/qa/test_qa_w04_w09_w13.py::test_w04_exhausted_attempts_and_expired_code
+w04_no_resend_cooldown KILLED rc=1 FAILED tests/qa/test_qa_w04_w09_w13.py::test_w04_phone_needs_the_code_resend_cooldown_wrong_code_then_verified
+w04_no_ip_limit SURVIVED ...............                                                          [100%]
+w04_no_workspace_limit SURVIVED ...............                                                          [100%]
+w04_code_endpoint_any_origin KILLED rc=1 FAILED tests/qa/test_qa_w04_w09_w13.py::test_w04_limits_frame_only_and_bad_numbers
+tok_revoked_still_works KILLED rc=1 FAILED tests/qa/test_qa_w04_w09_w13.py::test_w09_invalid_replaced_wrong_purpose_and_expired_links
+tok_purpose_not_in_hmac_nor_checked SURVIVED -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+tok_never_expires KILLED rc=1 FAILED tests/qa/test_qa_w04_w09_w13.py::test_w09_invalid_replaced_wrong_purpose_and_expired_links
+tok_plain_sha_not_hmac SURVIVED ...............                                                          [100%]
+w13_change_without_code KILLED rc=1 FAILED tests/qa/test_qa_w04_w09_w13.py::test_w13_view_needs_code_before_move_then_moves_and_cancels
+w13_session_of_other_link KILLED rc=1 FAILED tests/qa/test_qa_w04_w09_w13.py::test_w13_invalid_wrong_purpose_other_link_and_expired
+w13_no_policy_cutoff KILLED rc=1 FAILED tests/qa/test_qa_w04_w09_w13.py::test_w13_policy_blocks_changes_inside_the_lead_time
+w13_calendar_failure_told_done KILLED rc=1 FAILED tests/qa/test_qa_w04_w09_w13.py::test_w13_move_when_the_calendar_write_fails_is_not_told_as_done
+w09_optin_removes_staff_dnc KILLED rc=1 FAILED tests/qa/test_qa_w04_w09_w13.py::test_w09_opt_out_puts_the_number_on_the_do_not_call_list_and_back
+w09_view_leaks_note KILLED rc=1 FAILED tests/qa/test_qa_w04_w09_w13.py::test_w09_customer_sees_and_cancels_the_call_back

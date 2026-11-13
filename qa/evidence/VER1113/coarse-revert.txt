@@ -1,0 +1,5 @@
+H01-M06 base=5dbcf11 rc=2 !!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+M03 base=d599962 rc=1 FAILED tests/qa/test_qa_M03.py::test_controlled_retry_and_suspension_exist - ...
+E07 base=d599962 rc=2 !!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+W04-W09-W13 base=d599962 rc=2 !!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+with-product-code base=HEAD rc=0 .......................................................                  [100%]

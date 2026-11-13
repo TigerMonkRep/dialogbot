@@ -25,7 +25,7 @@ from app.modules.privat import branding, ledger, market
 KIND = "privat_topup"
 # Credit packs (10 credits) opened at Stripe before 2026-11-11 and paid after: added as what they cost, in øre.
 LEGACY_KIND = "privat_credits"
-LEGACY_PACK = {"DKK": 2900, "SEK": 4500, "NOK": 4500, "EUR": 399}
+LEGACY_PACK = {"DKK": 2900, "SEK": 4500, "NOK": 4500, "EUR": 399, "USD": 429}
 
 
 def _description(amount: int, currency: str, locale: str | None, rate_bp: int | None) -> str:

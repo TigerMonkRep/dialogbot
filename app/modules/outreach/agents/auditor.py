@@ -80,16 +80,18 @@ def deterministic_issues(db: OrmSession, lead: OutreachLead, msg: OutreachMessag
     if any("dialogbot.app" not in u.lower() for u in urls):
         issues.append("links: only dialogbot.app may be linked")
     if "dialogbot.app" not in body.lower():
-        issues.append("cta: the callback demo at https://dialogbot.app is missing")
+        issues.append("cta: the demo at https://dialogbot.app is missing")
+    if loc.demo_line and _digits(loc.demo_line) not in _digits(body):
+        issues.append(f"cta: the demo line {loc.demo_line} is missing")
     want = loc.price.split("/")[0]
     for m in _PRICE.finditer(body):
         got = m.group(1).strip()
         if _digits(got) != _digits(want) or (want[0] in "$£€" and got[0] != want[0]):
             issues.append(f"price: '{m.group(0)}' is not the price for {lead.country} ({loc.price})")
     for m in _PHONE.finditer(body):
-        if not loc.callback_number or _digits(m.group(0)) != _digits(loc.callback_number):
-            issues.append(f"phone: '{m.group(0)}' is not the configured callback number")
-    if not loc.callback_number and _LOCAL_NUMBER.search(body):
+        if _digits(m.group(0)) not in {_digits(n) for n in (loc.callback_number, loc.demo_line) if n}:
+            issues.append(f"phone: '{m.group(0)}' is not the configured callback number or demo line")
+    if not (loc.callback_number or loc.demo_line) and _LOCAL_NUMBER.search(body):
         issues.append("phone: mentions a local number, none is configured for this market")
     if re.match(r"\s*(re|fwd?)\s*:", subject, re.I):
         issues.append("subject: pretends to be a reply or a forward")
@@ -105,7 +107,7 @@ SYSTEM = """You are a hostile compliance reviewer for cold B2B e-mail. Fail the 
   is not in them (deceptive_claim).
 - The subject line misleads about what the e-mail is (deceptive_claim).
 - It addresses a consumer or private person, or names a person at Dialogbot (b2c).
-- It pushes for a meeting or sales call instead of the 90-second callback demo (meeting_push).
+- It pushes for a meeting or sales call instead of the 90-second demo in the product facts (meeting_push).
 - It pressures, flatters dishonestly or invents urgency (tone).
 When in doubt, fail. Quote the offending words. Finish by calling submit_audit."""
 
@@ -126,7 +128,7 @@ class ComplianceAndSafetyAuditorAgent:
                 email_source=lead.email_source, email_source_url=lead.email_source_url)).clearance()
             loc = localization.locale_for(lead.country)
             user = (f"<email>\nSubject: {msg.subject}\n\n{msg.body}\n</email>\n<evidence>{lead.brief}</evidence>\n"
-                    f"<product_facts>{' '.join(localization.PRODUCT_FACTS)} Price in this market: {loc.price}.</product_facts>")
+                    f"<product_facts>{' '.join(localization.product_facts(lead.country))} Price in this market: {loc.price}.</product_facts>")
             call = llm.structured(self.db, clearance=clearance, purpose="audit", model=self.s.claude_auditor_model,
                                   system=SYSTEM, user=user, output=AuditVerdict, tool_name="submit_audit",
                                   tool_description="Return the audit verdict.", max_tokens=600, lead_id=lead.id)

@@ -114,7 +114,9 @@ calls only happen when a prospect enters their own number on dialogbot.app (the 
 | 3 | GBP price | USD is a billing currency since 13 November 2026 (`billing/markets.py`: $349/mo; US leads are sent to `dialogbot.app/us`). GBP is not: a UK company is billed in EUR, so `£275/mo` (`OUTREACH_PRICE_UK`) is a display value – add the currency or change the copy before quoting it | billing |
 | 4 | Local callback numbers | The copy may only mention a `+1`/`+44` number when `OUTREACH_CALLBACK_NUMBER_US/UK` is set | Twilio |
 | 5 | Sending domain | Use a separate, warmed-up domain with SPF, DKIM and DMARC; list its inboxes in `OUTREACH_SENDER_INBOXES` | DNS |
-| 6 | Webhooks | Point the provider's events at `POST /api/v1/webhooks/events` (Resend: `RESEND_WEBHOOK_SECRET`; others: `OUTREACH_WEBHOOK_SECRET` in `X-Outreach-Secret`) | provider |
+| 6 | Webhooks | Resend: the one webhook on `POST /api/v1/webhooks/resend` (`RESEND_WEBHOOK_SECRET`) with `email.received`, `email.bounced` and `email.complained` switched on, and receiving enabled on the inbox domain. Other senders: `POST /api/v1/webhooks/events` with `OUTREACH_WEBHOOK_SECRET` in `X-Outreach-Secret` | provider |
+| 6a | Replies reach a person | `OUTREACH_REPLY_FORWARD_TO`: a copy of every reply to an outreach inbox is sent there (the inbox has no mailbox; `outreach/replies.py`). Needs a Resend key on the API service | Render |
+| 6b | Demo line | `OUTREACH_DEMO_LINE_US/UK`: a local number Dialogbot's own assistant answers. Set = the e-mail invites the reader to ring it (nobody is rung, so no consent question and no SMS code) and the market counts as having a demo. The number is added to the sales workspace with «Tilknyt nummer fra Twilio» (operator → Telefoni), and English must be on in that workspace's languages | Twilio, Render |
 | 7 | Legal review | The matrix, the footers, the privacy notice (GDPR art. 14) and a documented legitimate-interest assessment | lawyer |
 | 8 | Models | Defaults are the brief's `claude-sonnet-4-6` / `claude-haiku-4-5`; change with `CLAUDE_*_MODEL` if you run newer ones | env |
 

@@ -80,6 +80,9 @@ ROLES = {lang: {r: TEXTS[lang][f"role_{r}"] for r in ("owner", "admin", "staff",
 ROLE_DA = ROLES["da"]
 
 
+SITE = "dialogbot.app"  # the one address every market reaches us on; shown in the footer of every mail
+
+
 def _role(role: str, lang: str) -> str:
     return ROLES.get(normalize(lang), ROLE_DA).get(role, role)
 
@@ -117,7 +120,7 @@ class Email:
         if self.note:
             parts += [self.note, ""]
         parts += [t(lang, "regards"), self.sender or "Dialogbot", "", "—", self.footer_reason,
-                  self.footer_line or f"{t(lang, 'company_line')} · dialogbot.dk"]
+                  self.footer_line or f"{t(lang, 'company_line')} · {SITE}"]
         if self.unsubscribe_url:
             parts += [f"{self.unsubscribe_label or 'Unsubscribe'}: {self.unsubscribe_url}"]
         return "\n".join(parts).strip() + "\n"
@@ -133,7 +136,7 @@ class Email:
             f'<td style="vertical-align:middle;"><img src="{e(logo, quote=True)}" width="36" height="36" alt="" '
             f'style="display:block;border:0;border-radius:10px;"></td>')
         company = e(self.footer_line) if self.footer_line else (
-            f'{e(t(lang, "company_line"))} · <a href="{e(base, quote=True)}" style="color:{MUTED};">dialogbot.dk</a>')
+            f'{e(t(lang, "company_line"))} · <a href="{e(base, quote=True)}" style="color:{MUTED};">{SITE}</a>')
         paras = "".join(
             f'<p class="tx" style="margin:0 0 16px;font:16px/1.6 {FONT};color:{INK_SOFT};">'
             f'{e(p).replace(chr(10), "<br>")}</p>' for p in self.paragraphs)
@@ -341,7 +344,7 @@ def intro_mail(business: str) -> Email:
                     "svarer ud fra det, I selv har godkendt, og giver jer besked om det, den som ringede, ville have.",
                     "Vil I høre mere, så svar på denne mail, eller ring til os på 93 70 34 33. Vil I ikke høre fra os igen, så "
                     "svar »nej tak«. Så skriver vi ikke mere."],
-        button_label="Se Dialogbot", button_url="https://www.dialogbot.dk",
+        button_label="Se Dialogbot", button_url="https://dialogbot.app",
         footer_reason="Du får denne e-mail, fordi I sagde ja til den i en telefonsamtale.")
 
 
@@ -472,37 +475,37 @@ def samples() -> dict[str, Email]:
     Used by `python -m scripts.preview_emails` and the dev page. A new builder that returns an `Email` must be added
     here; `tests/test_email_templates.py` checks it."""
     return {
-        "verify": verify("https://www.dialogbot.dk/verify-email?token=eksempel"),
-        "reset": reset("https://www.dialogbot.dk/password/reset?token=eksempel"),
-        "invitation": invitation("Hansen VVS", "Mads Jensen", "staff", "https://www.dialogbot.dk/invite/eksempel"),
+        "verify": verify("https://dialogbot.app/verify-email?token=eksempel"),
+        "reset": reset("https://dialogbot.app/password/reset?token=eksempel"),
+        "invitation": invitation("Hansen VVS", "Mads Jensen", "staff", "https://dialogbot.app/invite/eksempel"),
         "new_lead": new_lead("Hansen VVS", "Mette Nielsen", "Utæt vandhane i køkkenet – haster lidt",
-                             "https://www.dialogbot.dk/app/leads/eksempel"),
+                             "https://dialogbot.app/app/leads/eksempel"),
         "daily_report": daily_report(
             "Dagsrapport 2026-10-27 – Hansen VVS",
             "Dagsrapport for Hansen VVS – 2026-10-27\n\nSamtaler: 14 (kundebeskeder: 52)\nAI-svar: 49 ok, 1 afvist, 0 fejl\n"
             "Nye henvendelser: 5\nGodkendte henvendelser: 3 (447 kr. ekskl. moms)\nOpgaver: 5 oprettet, 4 løst, "
             "0 åbne over frist\n\nNye henvendelser:\n- Mette Nielsen: Utæt vandhane i køkkenet\n"
-            "- Jens Poulsen: Tilbud på nyt badeværelse", "https://www.dialogbot.dk/app/reports?date=2026-10-27"),
+            "- Jens Poulsen: Tilbud på nyt badeværelse", "https://dialogbot.app/app/reports?date=2026-10-27"),
         "ambassador_parent": ambassador_parent("Lone", "Mads Jensen", "mads@example.dk",
-                                               "https://www.dialogbot.dk/ambassador/parent/eksempel",
+                                               "https://dialogbot.app/ambassador/parent/eksempel",
                                                "- Skriv altid, at det er reklame\n- Send kun til folk, du kender",
                                                "500 kr.", "10 %", 12),
-        "ambassador_approved": ambassador_approved("Mads", "https://www.dialogbot.dk/a/mads", "MADS42",
-                                                   "https://www.dialogbot.dk/ambassador"),
+        "ambassador_approved": ambassador_approved("Mads", "https://dialogbot.app/a/mads", "MADS42",
+                                                   "https://dialogbot.app/ambassador"),
         "ambassador_rejected": ambassador_rejected("Mads", ""),
         "ambassador_paid": ambassador_paid("Mads", "724,25 kr.", "5678", 1001, True,
-                                           "https://www.dialogbot.dk/ambassador"),
+                                           "https://dialogbot.app/ambassador"),
         "social_drafts_waiting": social_drafts_waiting(
             [("Facebook · i dag kl. 15.30", "Booking"), ("Instagram · i dag kl. 16.15", "Booking"),
-             ("TikTok · i dag kl. 19.00", "Booking")], "https://www.dialogbot.dk/app/operator/social"),
+             ("TikTok · i dag kl. 19.00", "Booking")], "https://dialogbot.app/app/operator/social"),
         "support_new_ticket": support_new_ticket("Hansen VVS", 3, "Kalenderen viser ikke mine aftaler",
-                                                 "https://www.dialogbot.dk/app/operator/admin/support/00000000-0000-0000-0000-000000000000"),
+                                                 "https://dialogbot.app/app/operator/admin/support/00000000-0000-0000-0000-000000000000"),
         "support_reply": support_reply("Hansen VVS", 3, "Kalenderen viser ikke mine aftaler",
-                                       "https://www.dialogbot.dk/app/support/3"),
+                                       "https://dialogbot.app/app/support/3"),
         "intro_mail": intro_mail("Salon Test"),
-        "funnel_welcome": funnel_welcome("Mads", "mads@example.dk", "https://www.dialogbot.dk/password/reset?token=eksempel",
+        "funnel_welcome": funnel_welcome("Mads", "mads@example.dk", "https://dialogbot.app/password/reset?token=eksempel",
                                          48),
-        "from_plain": from_plain("Gammel besked", "Hej Mads\n\nTekst her.\n\nSe det her: https://www.dialogbot.dk/x\n\n"
+        "from_plain": from_plain("Gammel besked", "Hej Mads\n\nTekst her.\n\nSe det her: https://dialogbot.app/x\n\n"
                                                   "Venlig hilsen\nDialogbot"),
         **_booking_samples(),
     }

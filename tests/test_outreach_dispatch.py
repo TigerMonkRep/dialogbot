@@ -168,3 +168,109 @@ def test_operator_endpoints_run_a_batch_and_are_closed_to_customers(db, outreach
     assert r.json()["totals"] == {"queued": 1, "blocked": 1}
     assert api.get(api.operator(), "/operator/outreach/batches/api-1").json()["leads"][0]["email_draft"]["audit"]["passed"]
     assert api.post(api.operator(), "/operator/outreach/dispatch", {}).json()["sent"] == 1
+
+
+# --------------------------------------------------------------------------- replies through the one Resend webhook
+
+def _resend(client, secret: str, payload: dict, msg_id: str):
+    body = json.dumps(payload).encode()
+    ts = str(int(time.time()))
+    return client.post("/api/v1/webhooks/resend", content=body, headers={
+        "svix-id": msg_id, "svix-timestamp": ts, "svix-signature": resend.sign(secret, msg_id, ts, body),
+        "content-type": "application/json"})
+
+
+class _Http:
+    """Stands in for httpx in outreach/replies.py: records what would be fetched and sent."""
+
+    def __init__(self, fetch_status: int = 200):
+        self.fetch_status, self.sent, self.fetched = fetch_status, [], []
+
+    def get(self, url, **kw):
+        self.fetched.append(url)
+        return _Resp(self.fetch_status, {"subject": "Re: missed calls", "text": "Yes, call me on Tuesday."})
+
+    def post(self, url, **kw):
+        self.sent.append(kw["json"])
+        return _Resp(200, {"id": "re_fwd"})
+
+
+class _Resp:
+    def __init__(self, status: int, data: dict):
+        self.status_code, self._data, self.text = status, data, json.dumps(data)
+
+    def json(self):
+        return self._data
+
+
+def test_a_reply_to_the_outreach_inbox_stops_the_sequence_and_a_person_gets_a_copy(db, outreach, client, monkeypatch):
+    import httpx
+
+    secret = "whsec_" + "dGVzdHNlY3JldHRlc3RzZWNyZXQ="
+    env(monkeypatch, RESEND_WEBHOOK_SECRET=secret, OUTREACH_SENDER_INBOXES="rene@hello.example",
+        OUTREACH_REPLY_FORWARD_TO="info@firm.example", OUTREACH_RESEND_API_KEY="re_test")
+    http = _Http()
+    monkeypatch.setattr(httpx, "get", http.get)
+    monkeypatch.setattr(httpx, "post", http.post)
+    run(db, [raw("US")])
+    event = {"type": "email.received", "data": {"email_id": "in_1", "from": EMAIL, "to": ["rene@hello.example"],
+                                                 "subject": "Re: missed calls"}}
+    r = _resend(client, secret, event, "msg_reply_1")
+    assert r.status_code == 200 and r.json()["outreach"] == "halted"
+    db.expire_all()
+    assert queued(db).status == "cancelled" and db.scalars(select(OutreachLead)).one().status == "replied"
+    assert db.scalars(select(OutreachSuppression)).all() == []                      # a reply is not an opt-out
+    [copy] = http.sent
+    assert copy["to"] == ["info@firm.example"] and copy["reply_to"] == EMAIL
+    assert copy["from"].endswith("<rene@hello.example>") and "Yes, call me on Tuesday." in copy["text"]
+    assert http.fetched == ["https://api.resend.com/emails/receiving/in_1"]
+    log = db.scalars(select(OutreachLog).where(OutreachLog.outcome == "reply_forward")).one()
+    assert log.detail["result"] == "forwarded"
+    # Resend retries the same event: nothing is sent twice
+    assert _resend(client, secret, event, "msg_reply_1").json() == {"received": True, "duplicate": True}
+    assert len(http.sent) == 1
+
+
+def test_mail_to_another_address_on_the_shared_resend_account_is_left_alone(db, outreach, client, monkeypatch):
+    import httpx
+
+    secret = "whsec_" + "dGVzdHNlY3JldHRlc3RzZWNyZXQ="
+    env(monkeypatch, RESEND_WEBHOOK_SECRET=secret, OUTREACH_SENDER_INBOXES="rene@hello.example",
+        OUTREACH_REPLY_FORWARD_TO="info@firm.example", OUTREACH_RESEND_API_KEY="re_test")
+    http = _Http()
+    monkeypatch.setattr(httpx, "post", http.post)
+    run(db, [raw("US")])
+    other = {"type": "email.received", "data": {"email_id": "in_2", "from": EMAIL, "to": ["hi@another-project.example"]}}
+    assert "outreach" not in _resend(client, secret, other, "msg_other").json()
+    # a bounce on a system e-mail to somebody who is not an outreach lead suppresses nothing
+    stranger = {"type": "email.bounced", "data": {"email_id": "x", "to": ["customer@shop.example"]}}
+    assert "outreach" not in _resend(client, secret, stranger, "msg_bounce_1").json()
+    db.expire_all()
+    assert queued(db).status != "cancelled" and http.sent == [] and db.scalars(select(OutreachSuppression)).all() == []
+    # the same bounce about a lead does
+    ours = {"type": "email.bounced", "data": {"email_id": "y", "to": [EMAIL]}}
+    assert _resend(client, secret, ours, "msg_bounce_2").json()["outreach"] == "suppressed"
+    db.expire_all()
+    assert db.scalars(select(OutreachSuppression)).one().reason == "bounce"
+
+
+def test_a_reply_still_stops_the_sequence_when_the_copy_cannot_be_sent(db, outreach, client, monkeypatch):
+    import httpx
+
+    secret = "whsec_" + "dGVzdHNlY3JldHRlc3RzZWNyZXQ="
+    env(monkeypatch, RESEND_WEBHOOK_SECRET=secret, OUTREACH_SENDER_INBOXES="rene@hello.example",
+        OUTREACH_REPLY_FORWARD_TO="info@firm.example", OUTREACH_RESEND_API_KEY="re_test")
+
+    def boom(*a, **kw):
+        raise httpx.ConnectError("down")
+
+    monkeypatch.setattr(httpx, "get", boom)
+    monkeypatch.setattr(httpx, "post", boom)
+    run(db, [raw("US")])
+    event = {"type": "email.received", "data": {"email_id": "in_3", "from": f"Sam <{EMAIL}>", "to": ["Rene <rene@hello.example>"]}}
+    r = _resend(client, secret, event, "msg_reply_3")
+    assert r.status_code == 200 and r.json()["outreach"] == "halted"
+    db.expire_all()
+    assert queued(db).status == "cancelled"
+    log = db.scalars(select(OutreachLog).where(OutreachLog.outcome == "reply_forward")).one()
+    assert log.detail["result"].startswith("failed")

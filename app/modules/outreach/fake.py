@@ -55,13 +55,19 @@ class FakeClaude:
         b = self._lead(user)
         brief = json.loads(re.search(r"<brief>(.*)</brief>", user, re.S).group(1))
         quote = (brief["review_snippets"] or [{"quote": ""}])[0]["quote"]
+        from app.modules.outreach import localization
+
+        line = localization.locale_for(b["country"]).demo_line if b.get("country") else None
+        line3 = (f"You can hear it yourself in 90 seconds: call our demo line on {line}, any hour. No signup, no "
+                 f"credit card. Details at {localization.demo_url(b['country'])}." if line else
+                 "You can hear it yourself in 90 seconds: enter your number at https://dialogbot.app and it calls "
+                 "you right away. No signup, no credit card.")
         return {
             "subject": f"calls at {b.get('company')}",
             "line1": f'One of your reviewers wrote: "{quote}" Calls like that usually go to the next {b.get("niche")} on the list.',
             "line2": "Dialogbot answers every call in under 2 seconds, books straight into Google Calendar or "
                      "Microsoft 365 and texts the caller an SMS confirmation.",
-            "line3": "You can hear it yourself in 90 seconds: enter your number at https://dialogbot.app and it calls "
-                     "you right away. No signup, no credit card.",
+            "line3": line3,
         }
 
     def _submit_audit(self, user: str) -> dict:

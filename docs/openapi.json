@@ -67,6 +67,33 @@
         "title": "AddonInviteIn",
         "type": "object"
       },
+      "AdoptIn": {
+        "properties": {
+          "e164": {
+            "maxLength": 24,
+            "title": "E164",
+            "type": "string"
+          },
+          "label": {
+            "default": "",
+            "maxLength": 100,
+            "title": "Label",
+            "type": "string"
+          },
+          "note": {
+            "maxLength": 1000,
+            "minLength": 10,
+            "title": "Note",
+            "type": "string"
+          }
+        },
+        "required": [
+          "e164",
+          "note"
+        ],
+        "title": "AdoptIn",
+        "type": "object"
+      },
       "AdvertisingIn": {
         "properties": {
           "advertising_protected": {
@@ -19263,6 +19290,74 @@
           }
         },
         "summary": "Map Number",
+        "tags": [
+          "telephony-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/telephony/workspaces/{ws_id}/numbers/adopt": {
+      "post": {
+        "description": "Give a workspace a number Dialogbot already owns on its Twilio account (bought by hand, e.g. the US demo\nline): import it into Vapi unless it is there already, point its incoming calls at our assistant and add it as\none more number of the workspace. The workspace's main number and its set-up state are left as they are, and\nthe new number may not place calls until an operator allows it. Platform credentials only.",
+        "operationId": "adopt_number_api_v1_operator_telephony_workspaces__ws_id__numbers_adopt_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ws_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Ws Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdoptIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Adopt Number",
         "tags": [
           "telephony-operator"
         ]

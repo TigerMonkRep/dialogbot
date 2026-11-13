@@ -73,7 +73,7 @@ def test_danish_output_is_unchanged():
         "Klik på knappen for at vælge en ny.\n\nVælg ny adgangskode: https://x/r\n\nLinket virker i 1 time og kan kun "
         "bruges én gang. Har du ikke bedt om det, kan du se bort fra denne e-mail – din adgangskode forbliver uændret.\n\n"
         "Venlig hilsen\nDialogbot\n\n—\nDu får denne e-mail, fordi du har en konto hos Dialogbot.\n"
-        "Dialogbot · CVR-nr. 25632710 · Abildgade 18, 8200 Aarhus · dialogbot.dk\n")
+        "Dialogbot · CVR-nr. 25632710 · Abildgade 18, 8200 Aarhus · dialogbot.app\n")
     h = tpl.verify("https://x").html()
     assert '<html lang="da">' in h and "Trin 1" in h and "Virker knappen ikke? Kopiér dette link ind i din browser:<br>" in h
     assert tpl.verify("https://x").subject == "Bekræft din e-mail hos Dialogbot"

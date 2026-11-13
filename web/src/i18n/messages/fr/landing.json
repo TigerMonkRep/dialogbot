@@ -464,7 +464,7 @@
     "faq": [
       [
         "Puis-je parler à un humain ?",
-        "Oui. Appelez-nous au 93 70 34 33 pendant les heures d’ouverture, ou écrivez à info@dialogbot.dk."
+        "Oui. Appelez-nous au 93 70 34 33 pendant les heures d’ouverture, ou écrivez à info@dialogbot.app."
       ],
       [
         "Qui protège les données de mes clients ?",
@@ -475,7 +475,7 @@
   "contact": {
     "meta": {
       "title": "Contact et support | Dialogbot",
-      "description": "Comment contacter Dialogbot au sujet de votre compte, d’un paiement ou de vos données. Appelez le 93 70 34 33 ou écrivez à info@dialogbot.dk."
+      "description": "Comment contacter Dialogbot au sujet de votre compte, d’un paiement ou de vos données. Appelez le 93 70 34 33 ou écrivez à info@dialogbot.app."
     },
     "eyebrow": "Contact",
     "title": "Contact et support",

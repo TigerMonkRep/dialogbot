@@ -25,6 +25,7 @@ function Workspace({ r }: { r: Row }) {
   const [note, setNote] = useState("");
   const [bundle, setBundle] = useState(r.regulatory_bundle_sid ?? "");
   const [map, setMap] = useState({ e164: "", provider_number_id: "" });
+  const [adopt, setAdopt] = useState({ e164: "", label: "" });
   const base = `/operator/telephony/workspaces/${r.workspace_id}`;
   const act = useSubmit(async (path: string, body?: unknown, method: string = "POST") => {
     await api(path, { method, body: body === undefined ? undefined : JSON.stringify(body) }); router.refresh();
@@ -73,6 +74,12 @@ function Workspace({ r }: { r: Row }) {
             <Field label="Vapi nummer-id"><Input value={map.provider_number_id} onChange={(e) => setMap({ ...map, provider_number_id: e.target.value })} /></Field>
             <Button type="button" variant="tonal" disabled={note.length < 10 || act.pending} onClick={() => act.run(`${base}/numbers`, { ...map, note, activate: false })}>Tilknyt (migrering)</Button>
           </div>
+          <div className="flex flex-wrap gap-space-sm items-end">
+            <Field label="Nummer på Dialogbots Twilio-konto"><Input value={adopt.e164} onChange={(e) => setAdopt({ ...adopt, e164: e.target.value })} placeholder="+1…" /></Field>
+            <Field label="Navn på nummeret"><Input value={adopt.label} onChange={(e) => setAdopt({ ...adopt, label: e.target.value })} placeholder="US demo-linje" /></Field>
+            <Button type="button" variant="tonal" disabled={note.length < 10 || !adopt.e164 || act.pending} onClick={() => act.run(`${base}/numbers/adopt`, { ...adopt, note })}>Tilknyt nummer fra Twilio</Button>
+          </div>
+          <p className="font-body-sm text-body-sm text-on-surface-variant">«Tilknyt nummer fra Twilio» importerer nummeret i Vapi, peger indgående opkald på assistenten og tilføjer det som et ekstra nummer. Hovednummeret ændres ikke, og det nye nummer må ikke ringe ud, før du tillader det.</p>
           <ErrorBox error={act.error} />
         </div>
       </details>

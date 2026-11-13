@@ -22,7 +22,7 @@ from app.models import Booking, CustomerLink, DoNotCall, Lead, PhoneNumber, Task
 from app.modules.customer import service as customer
 from app.modules.integrations.connectors.fakes import WORLD
 from tests.test_leads import chat  # noqa: F401 – fixture
-from tests.webchat_phone import last_code, request_code, submit_code, verify_phone
+from tests.webchat_phone import last_code, prove_phone, request_code, submit_code, verify_phone
 
 PUB = "/api/v1/public"
 E164 = "+4520304050"
@@ -212,6 +212,8 @@ def _book(api, client, t, *, phone="+4520304050", email=None, slot=0):
     type_id = _booking_ready(api, t)
     key, conv_id, h = _widget(api, client, t)
     opts = client.get(f"{PUB}/webchat/{key}/booking").json()
+    if phone:
+        prove_phone(client, key, conv_id, h, phone)  # W04 on the booking door (F-VER1113-04)
     r = client.post(f"{PUB}/webchat/{key}/conversations/{conv_id}/booking",
                     json={"type_id": type_id, "start": opts["slots"][slot]["start"], "name": "Henrik Villumsen",
                           "phone": phone, "email": email, "consent": True}, headers=h)
@@ -297,6 +299,8 @@ def test_w13_invalid_wrong_purpose_other_link_and_expired(api, client, two_works
     conv2 = client.post(f"{PUB}/webchat/{last['key']}/conversations", json={"host_origin": "https://fjord.dk"},
                         headers={"origin": last["origin"]}).json()
     other_start = client.get(f"{PUB}/webchat/{last['key']}/booking").json()["slots"][5]["start"]
+    prove_phone(client, last["key"], conv2["conversation_id"], {"origin": last["origin"],
+                                                               "x-visitor-token": conv2["visitor_token"]}, "+4531323334")
     r = client.post(f"{PUB}/webchat/{last['key']}/conversations/{conv2['conversation_id']}/booking",
                     json={"type_id": last["type_id"], "start": other_start, "name": "Anden", "phone": "+4531323334",
                           "consent": True}, headers={"origin": last["origin"], "x-visitor-token": conv2["visitor_token"]})
@@ -415,3 +419,38 @@ def test_db016_token_length_and_unknown_tokens_are_the_same_404(client, path):
     for tok in ("a", "a" * 43, "a" * 101):
         r = client.get(PUB + path.format(t=tok))
         assert r.status_code == 404 and r.json()["code"] == "link_invalid"
+
+
+def test_booking_door_needs_the_sms_code_for_a_phone_number(api, client, two_workspaces, fake, db):  # noqa: F811
+    """F-VER1113-04 (safer default 13/11, same rule as W04): the webchat booking door does not save a phone number the
+    visitor has not proven with the SMS code in this conversation – no booking, no lead, no W13 link. E-mail only books
+    without a code. After the code the booking is made and its lead is marked «Nummer bekræftet med SMS-kode»."""
+    from app.models import Booking
+
+    t = two_workspaces
+    type_id = _booking_ready(api, t)
+    key, conv_id, h = _widget(api, client, t)
+    start = client.get(f"{PUB}/webchat/{key}/booking").json()["slots"][2]["start"]
+    url = f"{PUB}/webchat/{key}/conversations/{conv_id}/booking"
+    body = {"type_id": type_id, "start": start, "name": "Ukendt Nummer", "phone": "+4540506070", "consent": True}
+    r = client.post(url, json=body, headers=h)
+    assert r.status_code == 422 and r.json()["code"] == "verification_required", r.text
+    db.expire_all()
+    assert db.scalar(select(Booking).where(Booking.contact_name == "Ukendt Nummer")) is None
+    # a code proven for ANOTHER number does not count
+    prove_phone(client, key, conv_id, h, "+4540506071")
+    assert client.post(url, json=body, headers=h).json()["code"] == "verification_required"
+    prove_phone(client, key, conv_id, h, "+4540506070")
+    ok = client.post(url, json=body, headers=h)
+    assert ok.status_code == 201, ok.text
+    db.expire_all()
+    b = db.scalar(select(Booking).where(Booking.contact_name == "Ukendt Nummer"))
+    assert b is not None and b.lead_id is not None
+    assert db.get(Lead, b.lead_id).phone_verified_at is not None
+    # e-mail only: no code
+    start2 = client.get(f"{PUB}/webchat/{key}/booking").json()["slots"][4]["start"]
+    key2, conv2, h2 = _widget(api, client, t)
+    r = client.post(f"{PUB}/webchat/{key2}/conversations/{conv2}/booking", headers=h2,
+                    json={"type_id": type_id, "start": start2, "name": "Kun Mail", "email": "kun@example.com",
+                          "consent": True})
+    assert r.status_code == 201, r.text

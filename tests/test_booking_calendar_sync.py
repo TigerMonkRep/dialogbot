@@ -13,6 +13,7 @@ from app.models import Booking, IntegrationConnection
 from app.modules.integrations.connectors import fakes
 from app.modules.integrations.connectors.base import ActionError
 from app.modules.integrations.connectors.fakes import WORLD
+from tests.webchat_phone import prove_phone
 
 
 @pytest.fixture
@@ -129,6 +130,7 @@ def test_calendar_down_widget_booking_awaits_confirmation_then_owner_confirms_an
         _busy_down(m)
         opts = client.get(f"/api/v1/public/webchat/{key}/booking").json()
         assert opts["slots"], "fail-open: free times still come from opening hours"
+        prove_phone(client, key, conv_id, h, "+4520304050")
         r = client.post(f"/api/v1/public/webchat/{key}/conversations/{conv_id}/booking",
                         json={"type_id": type_id, "start": opts["slots"][0]["start"], "name": "Henrik Villumsen",
                               "phone": "+4520304050", "consent": True}, headers=h)
@@ -198,6 +200,7 @@ def test_calendar_readable_books_as_before(api, client, two_workspaces, fake, db
     type_id = _ready(api, client, t, connect=True)
     key, conv_id, h = _widget(api, client, t)
     start = client.get(f"/api/v1/public/webchat/{key}/booking").json()["slots"][0]["start"]
+    prove_phone(client, key, conv_id, h, "+4520304050")
     r = client.post(f"/api/v1/public/webchat/{key}/conversations/{conv_id}/booking",
                     json={"type_id": type_id, "start": start, "name": "Henrik", "phone": "+4520304050", "consent": True},
                     headers=h)

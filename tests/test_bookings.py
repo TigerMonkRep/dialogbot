@@ -9,6 +9,7 @@ import httpx
 from app.config import get_settings
 from app.models import BookingSettings, Lead, Task
 from app.modules.bookings import service
+from tests.webchat_phone import prove_phone
 
 
 def _setup(api, t, *, hours=None):
@@ -80,6 +81,10 @@ def test_webchat_booking_and_feed(api, client, two_workspaces, db, monkeypatch):
     conv = conv.json() | {"id": conv.json()["conversation_id"]}
     h = {"origin": frame, "x-visitor-token": conv["visitor_token"]}
     body = {"type_id": type_id, "start": opts["slots"][0]["start"], "name": "Ole", "phone": "+4520304050", "consent": True}
+    # W04 on the booking door (F-VER1113-04): a phone number needs the SMS code first
+    first = client.post(f"/api/v1/public/webchat/{key}/conversations/{conv['id']}/booking", json=body, headers=h)
+    assert first.status_code == 422 and first.json()["code"] == "verification_required", first.text
+    prove_phone(client, key, conv["id"], h, "+4520304050")
     ok = client.post(f"/api/v1/public/webchat/{key}/conversations/{conv['id']}/booking", json=body, headers=h)
     assert ok.status_code == 201, ok.text
     assert "kl." in ok.json()["label"]

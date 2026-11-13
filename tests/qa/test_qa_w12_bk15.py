@@ -24,6 +24,7 @@ from app.models import Booking, IntegrationConnection, Workspace
 from app.modules.integrations import actions
 from app.modules.integrations.connectors.base import RunContext
 from app.modules.integrations.connectors.fakes import WORLD
+from tests.webchat_phone import prove_phone
 
 SECRET = "vapi-test-secret-0123456789abcdef"
 
@@ -91,6 +92,9 @@ def test_w12_widget_booking_states(api, client, two_workspaces, fake, db):
     assert client.post(url, json=body | {"phone": None}, headers=h).status_code == 422
     assert client.post(url, json=body, headers=h | {"x-visitor-token": "forkert"}).status_code in (401, 403, 404)
     assert client.post(url, json=body, headers={"x-visitor-token": h["x-visitor-token"], "origin": "https://evil.example"}).status_code in (400, 403)
+    unproven = client.post(url, json=body, headers=h)  # W04 on the booking door (F-VER1113-04)
+    assert unproven.status_code == 422 and unproven.json()["code"] == "verification_required", unproven.text
+    prove_phone(client, key, conv_id, h, "+4520304050")
     ok = client.post(url, json=body, headers=h)
     assert ok.status_code == 201 and ok.json()["booked"] is True
     lost = client.post(url, json=body | {"name": "Anden"}, headers=h)
@@ -105,6 +109,7 @@ def test_w12_concurrent_double_submit_books_once(api, client, two_workspaces, fa
     start = client.get(f"/api/v1/public/webchat/{key}/booking").json()["slots"][1]["start"]
     url = f"/api/v1/public/webchat/{key}/conversations/{conv_id}/booking"
     body = {"type_id": type_id, "start": start, "name": "Dobbelt Klik", "phone": "+4520304051", "consent": True}
+    prove_phone(client, key, conv_id, h, "+4520304051")
     codes: list[int] = []
 
     def go():
@@ -127,6 +132,7 @@ def test_w12_widget_booking_reaches_connected_calendar(api, client, two_workspac
     _connect_google(api, client, t)
     key, conv_id, h = _widget(api, client, t)
     start = client.get(f"/api/v1/public/webchat/{key}/booking").json()["slots"][0]["start"]
+    prove_phone(client, key, conv_id, h, "+4520304050")
     r = client.post(f"/api/v1/public/webchat/{key}/conversations/{conv_id}/booking",
                     json={"type_id": type_id, "start": start, "name": "Henrik Villumsen", "phone": "+4520304050", "consent": True},
                     headers=h)

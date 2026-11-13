@@ -1,6 +1,6 @@
 import { expect, type APIRequestContext, type Browser, type BrowserContext, type FrameLocator, type Page, type TestInfo } from "@playwright/test";
 import { freshOwner, serve } from "../../helpers";
-import { smsCodeFor, uniqueIp, uniqueMobile } from "../erhverv-p1a/p1a-helpers";
+import { smsCodeFor, smsLog, uniqueIp, uniqueMobile } from "../erhverv-p1a/p1a-helpers";
 
 /* Shared setup for QA wave 2 instance D (E2D). The customer's website is a fake site on its own port (4318), so it
  * never clashes with :4000 (helpers.CUSTOMER_SITE) or :4127 (erhverv-b). Only canonical demo data (Fjord Gulv). */
@@ -98,6 +98,16 @@ export async function confirmCode(chat: FrameLocator, e164: string) {
   await expect(code).toBeVisible();
   await code.getByLabel("Kode fra SMS").fill(await smsCodeFor(e164));
   await code.getByRole("button", { name: "Bekræft" }).click();
+}
+
+/** Number of simulated SMS codes to `e164` so far – take it before asking for a new code, then `newSmsCode`. */
+export const smsCodeCount = (e164: string) =>
+  smsLog().split("\n").filter((l) => l.includes("sms.simulated") && l.includes(e164) && /er \d{6}\./.test(l)).length;
+/** The first code to `e164` sent after `before` codes (an earlier code to the same number is never picked up). */
+export async function newSmsCode(e164: string, before: number): Promise<string> {
+  await expect.poll(() => smsCodeCount(e164), { timeout: 15_000 }).toBeGreaterThan(before);
+  return smsLog().split("\n").filter((l) => l.includes("sms.simulated") && l.includes(e164))
+    .map((l) => l.match(/er (\d{6})\./)?.[1]).filter(Boolean).at(-1)!;
 }
 
 /** Each visitor gets their own client address on the widget's API calls: the SMS-code door (W04) counts codes per client

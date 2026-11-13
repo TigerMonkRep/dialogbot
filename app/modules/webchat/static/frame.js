@@ -150,14 +150,18 @@
         manageLink(li, j.manage_url, T("contactManage"));
       })
       .catch(function (x) {
-        if (x.code === "verification_required") { pendingContact = body; askCode(body.phone); return; }
+        if (x.code === "verification_required") { pendingContact = body; pendingKind = "contact"; askCode(body.phone); return; }
         codeForm.hidden = true; contactForm.hidden = false;
         err.textContent = x.status === 422 ? T("errCheckContact") : msg(x, "errGeneric"); err.hidden = false;
       });
   }
 
   // W04: the number is proven with a 6-digit SMS code before the business may call it.
-  var pendingContact = null, verification = null, resendTimer = null, checking = false;
+  // The same code step serves «Bliv kontaktet» and the booking form (F-VER1113-04): `pendingKind` says which form
+  // the visitor came from and which request is sent again once the number is proven.
+  var pendingContact = null, pendingBooking = null, pendingKind = "contact", verification = null, resendTimer = null, checking = false;
+  function originForm() { return pendingKind === "booking" ? bookForm : contactForm; }
+  function pendingPhone() { return pendingKind === "booking" ? (pendingBooking && pendingBooking.phone) : (pendingContact && pendingContact.phone); }
   var codeErr = codeForm.querySelector(".err"), codeOk = codeForm.querySelector(".ok"), codeHint = codeForm.querySelector(".hint");
   var resend = codeForm.querySelector(".code-resend"), codeInput = codeForm.querySelector("input[name=code]");
   var missing = codeForm.querySelector(".missing"); // «Fik du ikke koden?» once a new code may be asked for
@@ -174,32 +178,37 @@
   // The SMS goes out from Dialogbot's worker a moment after the answer; a failed delivery is only logged (Fürster
   // 13/11), so once a new code may be asked for the visitor is told how to get one.
   function resendReady() { resend.disabled = false; resend.textContent = T("resend"); missing.hidden = false; }
+  var asking = false; // a double click on «Book»/«Send» answers verification_required twice: ask for one code
   function askCode(phone) {
-    var err = contactForm.querySelector(".err");
+    var err = originForm().querySelector(".err");
+    if (asking) return;
+    asking = true;
     ensureConversation()
       .then(function (s) { return api("POST", "/conversations/" + s.id + "/contact/code", { phone: phone }); })
       .then(function (j) {
         verification = j.verification_id;
-        contactForm.hidden = true; codeForm.hidden = false; codeErr.hidden = true; codeOk.hidden = true;
+        contactForm.hidden = true; bookForm.hidden = true; codeForm.hidden = false; codeErr.hidden = true; codeOk.hidden = true;
         codeHint.textContent = T("codeSent", { phone: j.phone_display });
         codeInput.value = ""; codeInput.disabled = false; codeInput.focus();
         cooldown(j.resend_after || 30);
       })
+      .finally(function () { asking = false; })
       .catch(function (x) {
         if (!codeForm.hidden) {
           if (x.code === "too_soon") { cooldown(x.retryAfter || 30); codeError(T("tooSoon")); }
           else codeError(msg(x, "codeSendFailed"));
           return;
         }
-        err.textContent = x.code === "phone_invalid" ? T("errPhone") : x.status === 422 ? T("errCheckContact")
+        err.textContent = x.code === "phone_invalid" ? T("errPhone")
+          : x.status === 422 ? T(pendingKind === "booking" ? "errCheckBooking" : "errCheckContact")
           : x.code === "too_soon" ? T("tooSoon")
           : msg(x, "codeSendFailed");
         err.hidden = false;
       });
   }
-  resend.addEventListener("click", function () { if (pendingContact) askCode(pendingContact.phone); });
+  resend.addEventListener("click", function () { var p = pendingPhone(); if (p) askCode(p); });
   codeForm.querySelector(".code-back").addEventListener("click", function () {
-    clearInterval(resendTimer); codeForm.hidden = true; contactForm.hidden = false; contactForm.elements.phone.focus();
+    clearInterval(resendTimer); codeForm.hidden = true; var f = originForm(); f.hidden = false; f.elements.phone.focus();
   });
   codeInput.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); checkCode(); } });
   codeForm.querySelector(".code-submit").addEventListener("click", checkCode);
@@ -213,7 +222,7 @@
       .then(function () {
         clearInterval(resendTimer);
         codeOk.textContent = T("codeVerified"); codeOk.hidden = false; codeInput.disabled = true; missing.hidden = true;
-        sendContact(pendingContact);
+        if (pendingKind === "booking") sendBooking(pendingBooking); else sendContact(pendingContact);
       })
       .catch(function (x) {
         if (x.code === "code_invalid") {
@@ -268,10 +277,15 @@
       : !body.consent ? T("errBookConsent") : "";
     if (problem) { err.textContent = problem; err.hidden = false; return; }
     err.hidden = true;
+    // A phone number the visitor has not proven in this conversation is answered with `verification_required` → code step
+    sendBooking(body);
+  });
+  function sendBooking(body) {
+    var err = bookForm.querySelector(".err");
     ensureConversation()
       .then(function (s) { return api("POST", "/conversations/" + s.id + "/booking", body); })
       .then(function (j) {
-        bookForm.hidden = true;
+        bookForm.hidden = true; codeForm.hidden = true;
         // "pending": the business's calendar could not be read – the time is noted, a staff member confirms it
         var at = when(j.starts_at, j.label, j.timezone);
         var li = bubble("system-ok", j.confirmation === "pending"
@@ -279,11 +293,13 @@
         manageLink(li, j.manage_url, T("bookingManage"));
       })
       .catch(function (x) {
+        if (x.code === "verification_required") { pendingBooking = body; pendingKind = "booking"; askCode(body.phone); return; }
+        codeForm.hidden = true; bookForm.hidden = false;
         err.textContent = x.code === "slot_taken" ? T("slotTaken") : x.status === 422 ? T("errCheckBooking") : msg(x, "errGeneric");
         err.hidden = false;
         if (x.code === "slot_taken") bookForm.elements.type.dispatchEvent(new Event("change"));
       });
-  });
+  }
 
   function disable(text) {
     input.disabled = true; send.disabled = true;

@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { login, SEEDED } from "../../helpers";
-import { closeAll, CSRF, EVID, forwardPublicApi, visitor, widgetWorkspace, type Widget } from "./d-helpers";
+import { closeAll, confirmCode, CSRF, EVID, forwardPublicApi, visitor, widgetWorkspace, type Widget } from "./d-helpers";
 
 /* BK02 – /app/bookings/:bookingId: «Booking detail, linked conversation/enquiry, provider, timeline, sync,
  * notification state and permitted actions.» Built as an expandable card on /app/aftaler (no own route). */
@@ -25,6 +25,7 @@ async function pendingWidgetBooking(page: import("@playwright/test").Page, brows
     await form.getByLabel("Telefon").fill("+45 20 30 40 50");
     await form.getByLabel("Virksomheden må kontakte mig om aftalen.").check();
     await form.getByRole("button", { name: "Book", exact: true }).click();
+    await confirmCode(chat, "+4520304050"); // W04 on the booking door (F-VER1113-04)
     await expect(chat.getByText(/er noteret\. En medarbejder bekræfter tiden\./)).toBeVisible();
     await close();
   } finally {

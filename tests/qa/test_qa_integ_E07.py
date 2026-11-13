@@ -10,7 +10,7 @@ What the code has today (proved below with CONNECTORS_PROVIDER=fake, nothing lea
 - No reminder, no proposed-change, no cancellation message, no owner-attention message, no request receipt; no
   e-mail to the customer at all (even when the booking has contact_email). Delivery failure = the action run is
   'failed' with the reason (SMS accepted by Twilio is labelled «SMS sendt»; there is no delivery receipt).
-The requirement test at the bottom is xfail(strict): E07 is not implemented.
+(Historical: the requirement test at the bottom was xfail(strict) until E07 auto-send was built, #222.)
 
 Update 2026-11-13 (E07 auto-send, app/modules/bookings/notify.py): booking events now queue messages automatically –
 e-mail to the customer when the booking has an address, SMS only with the business's opt-in, owner e-mails for

@@ -69,8 +69,10 @@ test("BK15 · /app/aftaler lover kun «Flyt», hvis en aftale kan flyttes (F-EB-
   expect(promisesMove === 0 || canMove > 0, `promises «Flyt» (${promisesMove}) without a move button (${canMove})`).toBeTruthy();
 });
 
-test("BK15 · en aftale kan flyttes i /app/aftaler", async ({ page }, info) => {
-  test.fail(true, "BK15 move appointment in /app/aftaler: not-implemented");
+// Moving an appointment from the staff side is BK13 (P2, approval/changes), not BK15 (sync health) – relabelled by qa-lead
+// 13/11 (F-LEAD1113-03-BK15). Still not built, so still an expected failure.
+test("BK13 · en aftale kan flyttes i /app/aftaler", async ({ page }, info) => {
+  test.fail(true, "BK13 (P2) move appointment in /app/aftaler: not-implemented");
   await bookedCard(page, info);
   await expect(page.getByRole("button", { name: /Flyt/ })).toBeVisible({ timeout: 3000 });
 });

@@ -87,12 +87,12 @@ M07,P2,support_operations,/admin/audit,e2e-erhverv,security-privacy,"Operator ac
 W01,P1,reception,Widget launcher/home,e2e-erhverv,voice-qa,Collapsed launcher and open client-branded chat/callback choices; “Book en tid” when configured and supported.,,handoff,todo,
 W02,P1,reception,Chat,e2e-erhverv,voice-qa,"Greeting, language, typing, answer, follow-up questions, source uncertainty, human fallback and completion.",,handoff,todo,
 W03,P1,reception,Callback request,e2e-erhverv,voice-qa,"Name, phone/country, reason and language; explicit callback request and validation.",,handoff,todo,
-W04,P0,reception,Number verification,e2e-erhverv,voice-qa,"Code entry, resend cooldown, wrong/expired code, verified and exhausted-attempt state.",DB-016,handoff,not-implemented,qa/evidence/W04/notes.txt
+W04,P0,reception,Number verification,e2e-erhverv,voice-qa,"Code entry, resend cooldown, wrong/expired code, verified and exhausted-attempt state.",DB-016,handoff,pass,web/e2e/qa/erhverv-d/W04.spec.ts; tests/qa/test_qa_w04_w09_w13.py (feat/webchat-w04-w09-w13; afventer verifier)
 W05,P1,reception,Callback scheduling,e2e-erhverv,voice-qa,"Available windows, local time-zone explanation, no slots and alternate follow-up.",,handoff,todo,
 W06,P1,reception,Callback confirmation,e2e-erhverv,voice-qa,"Verified number, chosen time, reason, amend/cancel flow and resulting states.",,handoff,todo,
 W07,P1,reception,Customer confirmation,e2e-erhverv,voice-qa,"Summary of agreed details, optional receipt destination and edit-before-submit.",,handoff,todo,
 W08,P1,reception,Widget failure/offline,e2e-erhverv,voice-qa,"Connection failure, unavailable service, retry and business contact fallback.",,handoff,todo,
-W09,P0,reception,Customer preferences,e2e-erhverv,voice-qa,Secure callback cancellation and communication-preference/opt-out views with invalid-link state.,DB-016,handoff,not-implemented,qa/evidence/W09/notes.txt
+W09,P0,reception,Customer preferences,e2e-erhverv,voice-qa,Secure callback cancellation and communication-preference/opt-out views with invalid-link state.,DB-016,handoff,pass,web/e2e/qa/erhverv-d/W09.spec.ts; tests/qa/test_qa_w04_w09_w13.py (feat/webchat-w04-w09-w13; afventer verifier)
 E01,P2,reports_notifications,Account emails,integrations-qa,i18n-a11y-qa,"Verification, password reset and team invitation variants.",,handoff,todo,
 E02,P1,reports_notifications,Owner conversation email,integrations-qa,i18n-a11y-qa,"Concise summary, next action and secure deep link into the correct workspace.",DB-009,handoff,todo,
 E03,P2,reports_notifications,Owner daily email,integrations-qa,i18n-a11y-qa,"Reporting interval, required actions, new enquiries and campaign activity.",,handoff,todo,
@@ -118,7 +118,7 @@ BK16,P2,booking,/app/bookings/channels,e2e-erhverv,integrations-qa,Enable bookin
 W10,P1,booking,Widget booking / /book/:business,e2e-erhverv,voice-qa,"Client-branded service, location and optional staff choice; shared standalone-page variant.",,handoff,todo,
 W11,P1,booking,Widget/public slot selector,e2e-erhverv,voice-qa,"Date/slots/timezone, loading, no slots, limited availability, stale provider and alternatives.",,handoff,todo,
 W12,P0,booking,Widget/public booking review,e2e-erhverv,voice-qa,"Customer details, terms, edit, explicit submit, confirmed, pending, failed and slot-lost states.",DB-007,handoff,pass,F-EB-04 → rettet+verificeret (c3bed12+)
-W13,P0,booking,/booking/manage/:token,e2e-erhverv,voice-qa,"Secure appointment management, verification where needed, reschedule/cancel, policy restrictions and invalid/expired links.",DB-007 DB-011 DB-016,handoff,not-implemented,F-EB-05
+W13,P0,booking,/booking/manage/:token,e2e-erhverv,voice-qa,"Secure appointment management, verification where needed, reschedule/cancel, policy restrictions and invalid/expired links.",DB-007 DB-011 DB-016,handoff,pass,web/e2e/qa/erhverv-d/W13.spec.ts; tests/qa/test_qa_w04_w09_w13.py (feat/webchat-w04-w09-w13; afventer verifier)
 E07,P0,booking,Booking communication templates,integrations-qa,i18n-a11y-qa,"Request receipt, confirmed appointment, reminder, proposed change, rescheduled, cancelled and owner-attention variants; delivery failure.",DB-018,handoff,not-implemented,tests/qa/test_qa_integ_E07.py
 G01,P1,identity_onboarding,/app/setup,e2e-erhverv,security-privacy,"Personalised setup home, one next action, honest progress, dependencies, save/resume and repair states.",DB-014,handoff,todo,
 G02,P1,identity_onboarding,/app/setup/plan,e2e-erhverv,security-privacy,"Goals, existing tools and guidance preference; editable plan using existing business information.",DB-014,handoff,todo,

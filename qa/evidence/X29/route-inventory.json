@@ -1,6 +1,6 @@
 {
  "counts": {
-  "anonymous": 57,
+  "anonymous": 70,
   "public_api": 25,
   "user": 28,
   "workspace": 169,
@@ -478,11 +478,55 @@
    "class": "anonymous"
   },
   {
+   "route": "POST /api/v1/public/webchat/{key}/conversations/{conversation_id}/contact/code",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/public/webchat/{key}/conversations/{conversation_id}/contact/verify",
+   "class": "anonymous"
+  },
+  {
    "route": "POST /api/v1/public/webchat/{key}/conversations/{conversation_id}/contact",
    "class": "anonymous"
   },
   {
    "route": "GET /api/v1/public/webchat/{key}/callback-windows",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/public/customer/callback/{token}",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/public/customer/callback/{token}/cancel",
+   "class": "anonymous"
+  },
+  {
+   "route": "PUT /api/v1/public/customer/callback/{token}/preferences",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/public/booking/manage/{token}",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/public/booking/manage/{token}/code",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/public/booking/manage/{token}/verify",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/public/booking/manage/{token}/slots",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/public/booking/manage/{token}/move",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/public/booking/manage/{token}/cancel",
    "class": "anonymous"
   },
   {
@@ -1003,6 +1047,14 @@
   },
   {
    "route": "GET /api/v1/demo-call",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/demo-call/code",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/demo-call/verify",
    "class": "anonymous"
   },
   {

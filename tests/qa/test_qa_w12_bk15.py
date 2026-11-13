@@ -209,17 +209,14 @@ def test_bk15_failed_external_create_is_not_reported_as_done(api, client, two_wo
 
 
 @pytest.mark.parametrize("req,pattern", [
-    pytest.param("W13", r"/public/.*(booking/manage|bookings/\{)", id="W13-booking-manage-link",
-                 marks=pytest.mark.xfail(strict=True, reason="W13 booking manage link: not-implemented")),
-    pytest.param("W09", r"/public/.*(preferences|callback.*cancel)", id="W09-preferences-and-callback-cancel",
-                 marks=pytest.mark.xfail(strict=True, reason="W09 customer preferences/callback cancel: not-implemented")),
-    pytest.param("W04", r"/public/webchat/.*contact.*(verif|code|otp)", id="W04-contact-number-verification",
-                 marks=pytest.mark.xfail(strict=True, reason="W04 number verification on webchat contact: not-implemented")),
+    pytest.param("W13", r"/public/.*(booking/manage|bookings/\{)", id="W13-booking-manage-link"),
+    pytest.param("W09", r"/public/.*(preferences|callback.*cancel)", id="W09-preferences-and-callback-cancel"),
+    pytest.param("W04", r"/public/webchat/.*contact.*(verif|code|otp)", id="W04-contact-number-verification"),
 ])
 def test_w13_w09_w04_customer_routes_exist(app, req, pattern):
     """W13/W09/W04 requirements: a customer-facing booking management link, preference/opt-out and call-back cancel
-    views, and code verification of the number on «Bliv kontaktet». None exist today (xfail strict – turns red when
-    built). Routes are walked with all_routes (app.routes misses include_router() routes on FastAPI >= 0.140)."""
+    views, and code verification of the number on «Bliv kontaktet» (built 13/11; behaviour in test_qa_w04_w09_w13.py).
+    Routes are walked with all_routes (app.routes misses include_router() routes on FastAPI >= 0.140)."""
     import re
 
     from qa_sec_helpers import all_routes

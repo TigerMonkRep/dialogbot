@@ -451,7 +451,9 @@
     "noName": "(senza nome)",
     "created": "creata {at}",
     "wantsCall": "Desidera essere chiamato {window}",
-    "seeConversation": "Vedi la conversazione"
+    "seeConversation": "Vedi la conversazione",
+    "phoneVerified": "Numero confermato con codice SMS",
+    "callbackCancelled": "Il cliente ha annullato la chiamata"
   },
   "campaigns": {
     "status": {

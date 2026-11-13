@@ -1,21 +1,28 @@
 import { expect, test } from "@playwright/test";
-import { closeAll, EVID, visitor, widgetWorkspace, type Widget } from "./d-helpers";
+import { closeAll, confirmCode, EVID, uniquePhone, visitor, widgetWorkspace, type Widget } from "./d-helpers";
 
 /* W06 – callback confirmation: «Verified number, chosen time, reason, amend/cancel flow and resulting states.» */
 let w: Widget | null = null;
 test.afterEach(async () => { if (w) await closeAll(w.servers); w = null; });
 
+let phone = uniquePhone();
+test.beforeEach(() => { phone = uniquePhone(); });
+
 async function request(chat: import("@playwright/test").FrameLocator, windowIndex: number) {
   await chat.getByRole("button", { name: "Bliv kontaktet af en medarbejder" }).click();
   const form = chat.locator("form.contact");
   await form.getByLabel("Navn").fill("Henrik Villumsen");
-  await form.getByLabel("Telefon").fill("+45 20 30 40 50");
+  await form.getByLabel("Telefon").fill(phone.display);
   const sel = form.getByLabel("Hvornår må vi ringe?");
   await expect(sel.locator("option")).not.toHaveCount(1);
   await sel.selectOption({ index: windowIndex });
   const label = (await sel.locator("option:checked").textContent())!;
   await form.getByLabel("Virksomheden må kontakte mig om min henvendelse.").check();
   await form.getByRole("button", { name: "Send" }).click();
+  // W04: a number not yet proven in this conversation gets the code step; the second request reuses the proven number
+  const code = chat.locator(".code-step");
+  await expect(code.or(chat.locator("li.msg.system-ok").last())).toBeVisible();
+  if (await code.isVisible()) await confirmCode(chat, phone.e164);
   return label;
 }
 

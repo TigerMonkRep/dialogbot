@@ -451,7 +451,9 @@
     "noName": "(ohne Namen)",
     "created": "erstellt {at}",
     "wantsCall": "Wünscht Rückruf {window}",
-    "seeConversation": "Gespräch ansehen"
+    "seeConversation": "Gespräch ansehen",
+    "phoneVerified": "Nummer per SMS-Code bestätigt",
+    "callbackCancelled": "Der Kunde hat den Rückruf abgesagt"
   },
   "campaigns": {
     "status": {

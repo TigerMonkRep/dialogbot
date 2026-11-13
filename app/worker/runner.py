@@ -452,6 +452,9 @@ def run_schedules() -> None:
             from app.modules.sales.verification import purge as purge_codes
 
             purge_codes(db)  # SMS-code rows (the visitor's number) after two days
+            from app.modules.customer.service import purge as purge_customer
+
+            purge_customer(db)  # customers' SMS-code rows after two days, links 30 days after they expired
             db.commit()
             n = place_due(db)
             if n:

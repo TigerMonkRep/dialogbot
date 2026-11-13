@@ -451,7 +451,9 @@
     "noName": "(sans nom)",
     "created": "créée {at}",
     "wantsCall": "Souhaite être rappelé {window}",
-    "seeConversation": "Voir la conversation"
+    "seeConversation": "Voir la conversation",
+    "phoneVerified": "Numéro confirmé par code SMS",
+    "callbackCancelled": "Le client a annulé le rappel"
   },
   "campaigns": {
     "status": {

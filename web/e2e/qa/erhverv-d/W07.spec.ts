@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { closeAll, EVID, visitor, widgetWorkspace, type Widget } from "./d-helpers";
+import { closeAll, confirmCode, EVID, uniquePhone, visitor, widgetWorkspace, type Widget } from "./d-helpers";
 
 /* W07 – customer confirmation: «Summary of agreed details, optional receipt destination and edit-before-submit.»
  * Not built: «Send» submits straight away and only «Tak, <navn>!» is shown. This spec documents the gap. */
@@ -13,9 +13,11 @@ test("W07 · opsummering af det aftalte med «Ret» før afsendelse, og valgfri 
   await chat.getByRole("button", { name: "Bliv kontaktet af en medarbejder" }).click();
   const form = chat.locator("form.contact");
   await form.getByLabel("Navn").fill("Henrik Villumsen");
-  await form.getByLabel("Telefon").fill("+45 20 30 40 50");
+  const phone = uniquePhone();
+  await form.getByLabel("Telefon").fill(phone.display);
   await form.getByLabel("Virksomheden må kontakte mig om min henvendelse.").check();
   await form.getByRole("button", { name: "Send" }).click();
+  await confirmCode(chat, phone.e164); // W04
   await v.screenshot({ path: `${EVID("W07")}/${info.project.name}-ingen-opsummering.png` });
   // what actually happens: the lead is created at once, no summary step
   await expect(chat.getByText("Tak, Henrik Villumsen! Virksomheden kontakter dig hurtigst muligt.")).toBeVisible();

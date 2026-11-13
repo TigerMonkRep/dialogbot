@@ -451,7 +451,9 @@
     "noName": "(utan namn)",
     "created": "skapat {at}",
     "wantsCall": "Vill bli uppringd {window}",
-    "seeConversation": "Se samtalet"
+    "seeConversation": "Se samtalet",
+    "phoneVerified": "Numret bekräftat med sms-kod",
+    "callbackCancelled": "Kunden har avbokat uppringningen"
   },
   "campaigns": {
     "status": {

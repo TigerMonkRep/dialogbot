@@ -27,6 +27,8 @@ export default async function LeadPage({ params }: { params: Promise<{ id: strin
           <h1 className="font-display text-headline-md text-ink">{lead.contact_name || t("leads.noName")}</h1>
           <p className="text-body-sm text-ink-soft">{sourceLabel(t, lead.source)} · {t("leads.created", { at: when(lead.created_at, lang) })}</p>
           {lead.callback_from && lead.callback_to && <p className="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-accent-soft text-accent-deep text-label-md"><Icon name="phone_callback" size={16} />{t("leads.wantsCall", { window: callbackWindow(t, lang, lead.callback_from, lead.callback_to) })}</p>}
+          {lead.callback_cancelled_at && <p className="mt-1 ml-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-danger-soft text-danger text-label-md"><Icon name="phone_disabled" size={16} />{t("leads.callbackCancelled")}</p>}
+          {lead.phone_verified_at && <p className="mt-1 ml-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-success-soft text-success text-label-md"><Icon name="verified" size={16} />{t("leads.phoneVerified")}</p>}
         </div>
         {lead.conversation_id && <Link href={`/app/inbox/${lead.conversation_id}`} className="text-label-lg text-ink flex items-center gap-1"><Icon name="forum" size={18} />{t("leads.seeConversation")}</Link>}
       </div>

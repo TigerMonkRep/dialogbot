@@ -1,5 +1,6 @@
 import { expect, type APIRequestContext, type Browser, type BrowserContext, type FrameLocator, type Page, type TestInfo } from "@playwright/test";
 import { freshOwner, serve } from "../../helpers";
+import { smsCodeFor, uniqueIp, uniqueMobile } from "../erhverv-p1a/p1a-helpers";
 
 /* Shared setup for QA wave 2 instance D (E2D). The customer's website is a fake site on its own port (4318), so it
  * never clashes with :4000 (helpers.CUSTOMER_SITE) or :4127 (erhverv-b). Only canonical demo data (Fjord Gulv). */
@@ -67,7 +68,10 @@ export async function forwardPublicApi(ctx: BrowserContext, opts: { maxRedirects
 }
 
 export async function newVisitorContext(browser: Browser, page: Page) {
-  const ctx = await browser.newContext({ viewport: page.viewportSize() ?? undefined, locale: "da-DK", timezoneId: "Europe/Copenhagen" });
+  // Each visitor has their own address: the SMS-code door (W04) counts codes per client IP (5 an hour), and the E2E stack
+  // takes the first X-Forwarded-For entry as the client (no CLIENT_IP_SECRET), so the catalogue's visitors don't share one.
+  const ctx = await browser.newContext({ viewport: page.viewportSize() ?? undefined, locale: "da-DK", timezoneId: "Europe/Copenhagen",
+    extraHTTPHeaders: { "x-forwarded-for": uniqueIp() } });
   await forwardPublicApi(ctx);
   return ctx;
 }
@@ -81,4 +85,19 @@ export async function visitor(browser: Browser, page: Page): Promise<{ v: Page; 
   const chat = v.frameLocator('iframe[title^="Chat med"]');
   await expect(chat.locator("textarea")).toBeVisible();
   return { v, chat, close: () => ctx.close() };
+}
+
+/** A fresh Danish mobile per test (the per-number SMS budget is 4 an hour across every public door). */
+export function uniquePhone(): { display: string; e164: string } {
+  const m = uniqueMobile();
+  return { display: `+45 ${m.replace(/(\d{2})(?=\d)/g, "$1 ")}`, e164: `+45${m}` };
+}
+
+/** W04 in the widget: after «Send» with a phone number, the code step asks for the SMS code (read from the API log, where
+ *  the fake SMS adapter writes it) – type it and confirm. */
+export async function confirmCode(chat: FrameLocator, e164: string) {
+  const code = chat.locator(".code-step");
+  await expect(code).toBeVisible();
+  await code.getByLabel("Kode fra SMS").fill(await smsCodeFor(e164));
+  await code.getByRole("button", { name: "Bekræft" }).click();
 }

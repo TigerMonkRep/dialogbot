@@ -1,6 +1,6 @@
 export type Lead = {
   id: string; version: number; source: string; conversation_id: string | null; contact_name: string; contact_email: string | null;
-  contact_phone: string | null; need_summary: string; callback_from: string | null; callback_to: string | null; qualification_status: string; qualification_reason: string | null;
+  contact_phone: string | null; need_summary: string; callback_from: string | null; callback_to: string | null; phone_verified_at?: string | null; callback_cancelled_at?: string | null; qualification_status: string; qualification_reason: string | null;
   pipeline_status: string; billing_status: string; billing_reason: string | null; billing_decided_at: string | null;
   fee_snapshot: { net_minor: number; tax_minor: number; gross_minor: number; agreement_version: number; model: string } | null;
   created_at: string; tasks?: TaskItem[];

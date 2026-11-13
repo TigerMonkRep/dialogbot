@@ -31,10 +31,16 @@
     '<label class="check"><input name="consent" type="checkbox" required> Virksomheden må kontakte mig om min henvendelse.</label>' +
     '<p class="err" role="alert" hidden></p>' +
     '<div class="row"><button type="button" class="contact-cancel">Annullér</button><button type="submit">Send</button></div></form>' +
+    '<div class="code-step" role="group" aria-label="Bekræft dit nummer" hidden><strong>Bekræft dit nummer</strong><p class="hint"></p>' +
+    '<label>Kode fra SMS<input name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}"></label>' +
+    '<p class="err" role="alert" hidden></p><p class="ok" role="status" hidden></p>' +
+    '<div class="row"><button type="button" class="code-back">Ret nummer</button><button type="button" class="code-resend"></button>' +
+    '<button type="button" class="code-submit">Bekræft</button></div></div>' +
     '<form><label for="msg" class="sr">Din besked</label><textarea id="msg" rows="2" maxlength="' + cfg.maxChars +
     '" placeholder="Skriv din besked…"></textarea><button type="submit">Send</button></form>';
   var log = app.querySelector(".log");
   var form = app.querySelector("form:not(.contact):not(.book)");
+  var codeForm = app.querySelector(".code-step"); // not a <form>: the chat's own message form stays the only other one
   var contactForm = app.querySelector("form.contact");
   var contactBar = app.querySelector(".contact-bar");
   var bookForm = app.querySelector("form.book");
@@ -79,7 +85,10 @@
       method: method, headers: h, body: body ? JSON.stringify(body) : undefined, credentials: "omit"
     }).then(function (r) {
       return r.json().catch(function () { return {}; }).then(function (j) {
-        if (!r.ok) { var err = new Error(j.message || "Fejl"); err.status = r.status; err.code = j.code; throw err; }
+        if (!r.ok) {
+          var err = new Error(j.message || "Fejl"); err.status = r.status; err.code = j.code;
+          err.retryAfter = j.retry_after; err.attemptsLeft = j.attempts_left; throw err;
+        }
         return j;
       });
     });
@@ -110,14 +119,100 @@
       : !body.consent ? "Sæt flueben, så virksomheden må kontakte dig." : "";
     if (problem) { err.textContent = problem; err.hidden = false; return; }
     err.hidden = true;
+    // A phone number the visitor has not proven in this conversation is answered with `verification_required` → code step
+    sendContact(body);
+  });
+  function sendContact(body) {
+    var err = contactForm.querySelector(".err");
     ensureConversation()
       .then(function (s) { return api("POST", "/conversations/" + s.id + "/contact", body); })
-      .then(function () {
-        contactForm.hidden = true;
-        bubble("system-ok", "Tak, " + body.name + "! Virksomheden kontakter dig hurtigst muligt.");
+      .then(function (j) {
+        contactForm.hidden = true; codeForm.hidden = true;
+        var li = bubble("system-ok", "Tak, " + body.name + "! Virksomheden kontakter dig hurtigst muligt.");
+        manageLink(li, j.manage_url, "Aflys opringningen eller ret dine valg");
       })
-      .catch(function (x) { err.textContent = x.status === 422 ? "Tjek e-mail og telefonnummer." : (x.message || "Det lykkedes ikke. Prøv igen."); err.hidden = false; });
+      .catch(function (x) {
+        if (x.code === "verification_required") { pendingContact = body; askCode(body.phone); return; }
+        codeForm.hidden = true; contactForm.hidden = false;
+        err.textContent = x.status === 422 ? "Tjek e-mail og telefonnummer." : (x.message || "Det lykkedes ikke. Prøv igen."); err.hidden = false;
+      });
+  }
+
+  // W04: the number is proven with a 6-digit SMS code before the business may call it.
+  var pendingContact = null, verification = null, resendTimer = null, checking = false;
+  var codeErr = codeForm.querySelector(".err"), codeOk = codeForm.querySelector(".ok"), codeHint = codeForm.querySelector(".hint");
+  var resend = codeForm.querySelector(".code-resend"), codeInput = codeForm.querySelector("input[name=code]");
+  function codeError(text) { codeErr.textContent = text; codeErr.hidden = false; codeOk.hidden = true; }
+  function cooldown(seconds) {
+    clearInterval(resendTimer);
+    var left = seconds;
+    function tick() {
+      if (left <= 0) { clearInterval(resendTimer); resend.disabled = false; resend.textContent = "Send ny kode"; return; }
+      resend.disabled = true; resend.textContent = "Send ny kode (" + left + " s)"; left -= 1;
+    }
+    tick(); resendTimer = setInterval(tick, 1000);
+  }
+  function askCode(phone) {
+    var err = contactForm.querySelector(".err");
+    ensureConversation()
+      .then(function (s) { return api("POST", "/conversations/" + s.id + "/contact/code", { phone: phone }); })
+      .then(function (j) {
+        verification = j.verification_id;
+        contactForm.hidden = true; codeForm.hidden = false; codeErr.hidden = true; codeOk.hidden = true;
+        codeHint.textContent = "Vi har sendt en kode på 6 cifre til " + j.phone_display + ". Den gælder i 10 minutter.";
+        codeInput.value = ""; codeInput.disabled = false; codeInput.focus();
+        cooldown(j.resend_after || 30);
+      })
+      .catch(function (x) {
+        if (!codeForm.hidden) {
+          if (x.code === "too_soon") { cooldown(x.retryAfter || 30); codeError("Vent et øjeblik, før du beder om en ny kode."); }
+          else codeError(x.message || "Koden kunne ikke sendes. Prøv igen.");
+          return;
+        }
+        err.textContent = x.code === "phone_invalid" ? "Tjek telefonnummeret." : x.status === 422 ? "Tjek e-mail og telefonnummer."
+          : x.code === "too_soon" ? "Vent et øjeblik, før du beder om en ny kode."
+          : (x.message || "Koden kunne ikke sendes. Prøv igen.");
+        err.hidden = false;
+      });
+  }
+  resend.addEventListener("click", function () { if (pendingContact) askCode(pendingContact.phone); });
+  codeForm.querySelector(".code-back").addEventListener("click", function () {
+    clearInterval(resendTimer); codeForm.hidden = true; contactForm.hidden = false; contactForm.elements.phone.focus();
   });
+  codeInput.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); checkCode(); } });
+  codeForm.querySelector(".code-submit").addEventListener("click", checkCode);
+  function checkCode() {
+    var code = codeInput.value.replace(/\s/g, "");
+    if (!/^[0-9]{6}$/.test(code)) { codeError("Skriv de 6 cifre fra SMS'en."); return; }
+    if (checking) return; // a double click checks the code once
+    checking = true; codeErr.hidden = true;
+    api("POST", "/conversations/" + state.id + "/contact/verify", { verification_id: verification, code: code })
+      .finally(function () { checking = false; })
+      .then(function () {
+        clearInterval(resendTimer);
+        codeOk.textContent = "Nummeret er bekræftet."; codeOk.hidden = false; codeInput.disabled = true;
+        sendContact(pendingContact);
+      })
+      .catch(function (x) {
+        if (x.code === "code_invalid") {
+          codeError(x.attemptsLeft > 0 ? "Koden passer ikke. Du har " + x.attemptsLeft + (x.attemptsLeft === 1 ? " forsøg" : " forsøg") + " tilbage."
+            : "Koden passer ikke. Bed om en ny kode.");
+          if (!(x.attemptsLeft > 0)) { resend.disabled = false; resend.textContent = "Send ny kode"; clearInterval(resendTimer); }
+        } else if (x.code === "too_many_attempts") {
+          codeError("For mange forsøg. Bed om en ny kode."); clearInterval(resendTimer); resend.disabled = false; resend.textContent = "Send ny kode";
+        } else if (x.code === "code_expired") {
+          codeError("Koden er udløbet. Bed om en ny kode."); clearInterval(resendTimer); resend.disabled = false; resend.textContent = "Send ny kode";
+        } else codeError(x.message || "Det lykkedes ikke. Prøv igen.");
+      });
+  }
+
+  /** The customer's secure link (W09/W13) under a confirmation. Built with DOM nodes, only http(s) URLs. */
+  function manageLink(li, url, text) {
+    if (typeof url !== "string" || !/^https?:\/\//.test(url)) return;
+    var a = document.createElement("a");
+    a.href = url; a.target = "_blank"; a.rel = "noopener noreferrer"; a.className = "manage"; a.textContent = text;
+    li.appendChild(document.createElement("br")); li.appendChild(a);
+  }
 
   // Online booking: shown only when the business has it switched on.
   function fillSlots(j) {
@@ -149,9 +244,10 @@
       .then(function (j) {
         bookForm.hidden = true;
         // "pending": the business's calendar could not be read – the time is noted, a staff member confirms it
-        bubble("system-ok", j.confirmation === "pending"
+        var li = bubble("system-ok", j.confirmation === "pending"
           ? "Tak, " + body.name + "! Din tid " + j.label + " er noteret. En medarbejder bekræfter tiden."
           : "Tak, " + body.name + "! Du er booket " + j.label + ".");
+        manageLink(li, j.manage_url, "Se, flyt eller aflys din tid");
       })
       .catch(function (x) {
         err.textContent = x.code === "slot_taken" ? "Tiden blev lige taget – vælg en anden." : x.status === 422 ? "Tjek telefon og e-mail." : (x.message || "Det lykkedes ikke. Prøv igen.");

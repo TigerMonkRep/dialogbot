@@ -451,7 +451,9 @@
     "noName": "(uten navn)",
     "created": "opprettet {at}",
     "wantsCall": "Ønsker å bli ringt {window}",
-    "seeConversation": "Se samtalen"
+    "seeConversation": "Se samtalen",
+    "phoneVerified": "Nummer bekreftet med SMS-kode",
+    "callbackCancelled": "Kunden har avlyst oppringingen"
   },
   "campaigns": {
     "status": {

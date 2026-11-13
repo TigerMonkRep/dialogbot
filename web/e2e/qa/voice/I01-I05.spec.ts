@@ -1,3 +1,4 @@
+import { smsCodeFor, uniqueIp, uniqueMobile } from "../erhverv-p1a/p1a-helpers";
 import { expect, test, type Page } from "@playwright/test";
 import { freshOwner, login, SEEDED } from "../../helpers";
 
@@ -24,7 +25,13 @@ async function seedChatLead(page: Page, wsId: string, who: string) {
   const h = { origin: apiOrigin, "content-type": "application/json" };
   const conv = await (await page.request.post(`${pub}/conversations`, { headers: h, data: { host_origin: "http://localhost:4199" } })).json();
   expect((await page.request.post(`${pub}/conversations/${conv.conversation_id}/messages`, { headers: { ...h, "x-visitor-token": conv.visitor_token }, data: { text: "Kan I slibe et egetræsgulv på 60 m²?" } })).ok()).toBeTruthy();
-  const c = await page.request.post(`${pub}/conversations/${conv.conversation_id}/contact`, { headers: { ...h, "x-visitor-token": conv.visitor_token }, data: { name: who, phone: "20 30 40 50", window: "asap", consent: true } });
+  // W04: the visitor proves the number with the SMS code first (own number and client address: the per-number/-IP limits)
+  const mobile = uniqueMobile();
+  const vh = { ...h, "x-visitor-token": conv.visitor_token, "x-forwarded-for": uniqueIp() };
+  const sent = await (await page.request.post(`${pub}/conversations/${conv.conversation_id}/contact/code`, { headers: vh, data: { phone: mobile } })).json();
+  const ok = await page.request.post(`${pub}/conversations/${conv.conversation_id}/contact/verify`, { headers: vh, data: { verification_id: sent.verification_id, code: await smsCodeFor(`+45${mobile}`) } });
+  expect(ok.ok(), await ok.text()).toBeTruthy();
+  const c = await page.request.post(`${pub}/conversations/${conv.conversation_id}/contact`, { headers: { ...h, "x-visitor-token": conv.visitor_token }, data: { name: who, phone: mobile, window: "asap", consent: true } });
   expect(c.ok(), await c.text()).toBeTruthy();
   return conv.conversation_id as string;
 }

@@ -12,6 +12,7 @@ from app.models import AuditLog, Lead, OutboxEvent, Task
 from app.modules.ai import provider as ai_provider
 from app.modules.ai.provider import FakeProvider
 from app.worker import runner
+from tests.webchat_phone import verify_phone
 
 SITE = "https://www.fjordgulv.example"
 API = "http://localhost:8000"
@@ -74,7 +75,8 @@ def test_webchat_contact_creates_lead_task_and_notification(client, api, chat, d
     ev = db.scalar(select(OutboxEvent).where(OutboxEvent.event_type == "email.new_lead"))
     assert ev.payload["to_email"] == "owner-a@testmail.dk" and f"/app/leads/{lead.id}" in ev.payload["link"]
     runner.drain()
-    # a second submit updates the same lead, no second task or notification
+    # a second submit updates the same lead, no second task or notification (a phone number is proven first, W04)
+    verify_phone(client, chat["key"], chat["conv"], "+45 20 30 40 50", "+4520304050")
     assert _contact(client, chat, name="Henrik V.", phone="+45 20 30 40 50", note="Helst om formiddagen").status_code == 200
     db.expire_all()
     assert db.scalar(select(Lead)).contact_phone == "+45 20 30 40 50"
@@ -220,6 +222,8 @@ def test_contact_with_callback_window_sets_lead_period_and_task_due(client, chat
     assert opts["timezone"] == "Europe/Copenhagen" and opts["options"][0]["key"] == "asap"
     choice = opts["options"][-1]
     assert _contact(client, chat, window=choice["key"]).status_code == 422  # phone required for a call back
+    assert _contact(client, chat, phone="+4520304050", window=choice["key"]).json()["code"] == "verification_required"
+    verify_phone(client, chat["key"], chat["conv"], "+4520304050", "+4520304050")
     r = _contact(client, chat, phone="+4520304050", window=choice["key"])
     assert r.status_code == 200, r.text
     lead = db.scalar(select(Lead))

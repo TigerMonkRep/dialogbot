@@ -283,7 +283,10 @@ def visitor_book(key: str, conversation_id: uuid.UUID, body: VisitorBookingIn, o
                      email=str(body.email) if body.email else None, note=body.note, source="webchat", tz=tz,
                      conversation=conv)
     calendar.mirror_create(db, ws.id, b)  # the owner sees a failed write on the booking
+    from app.modules.customer import service as customer
+
+    url = customer.issue_link(db, purpose="booking", ws_id=ws.id, booking=b)  # W13: see, move or cancel
     db.commit()
     # confirmation 'pending': the connected calendar could not be read – the widget says a staff member confirms
     return {"booked": True, "label": service.label(b.starts_at, tz), "title": b.title,
-            "confirmation": "pending" if b.confirmation == "pending" else "confirmed"}
+            "confirmation": "pending" if b.confirmation == "pending" else "confirmed", "manage_url": url}

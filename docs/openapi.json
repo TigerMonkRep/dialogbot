@@ -5187,7 +5187,7 @@
           "locale": {
             "anyOf": [
               {
-                "pattern": "^(da|en|de|es|fr|it|no|sv)$",
+                "pattern": "^(da|en|de|es|fr|it|no|sv|us)$",
                 "type": "string"
               },
               {
@@ -5611,7 +5611,7 @@
           "locale": {
             "anyOf": [
               {
-                "pattern": "^(da|en|de|es|fr|it|no|sv)$",
+                "pattern": "^(da|en|de|es|fr|it|no|sv|us)$",
                 "type": "string"
               },
               {

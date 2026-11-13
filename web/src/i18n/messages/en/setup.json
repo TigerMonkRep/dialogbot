@@ -129,6 +129,8 @@
       "address": "Address",
       "postalCode": "Postcode",
       "city": "City",
+      "country": "Country",
+      "timezone": "Time zone",
       "cvrLooked": "Looked up: {note}",
       "categories": "Industries (one or more)",
       "categoryAdd": "Add an industry",

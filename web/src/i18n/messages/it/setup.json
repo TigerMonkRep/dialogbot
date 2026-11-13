@@ -129,6 +129,8 @@
       "address": "Indirizzo",
       "postalCode": "CAP",
       "city": "Città",
+      "country": "Paese",
+      "timezone": "Fuso orario",
       "cvrLooked": "Verificato: {note}",
       "categories": "Settori (uno o più)",
       "categoryAdd": "Aggiungi un settore",

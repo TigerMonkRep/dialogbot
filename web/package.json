@@ -9,7 +9,8 @@
     "start": "next start",
     "e2e": "playwright test",
     "i18n:index": "node scripts/i18n-index.mjs",
-    "i18n:check": "node scripts/i18n-check.mjs",
+    "i18n:check": "node scripts/i18n-check.mjs && node scripts/i18n-us.mjs --check",
+    "i18n:us": "node scripts/i18n-us.mjs",
     "sw:version": "node scripts/sw-version.mjs"
   },
   "dependencies": {

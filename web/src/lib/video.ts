@@ -4,7 +4,7 @@ import type { Locale } from "@/i18n/config";
 /** The explainer (~90 s) in web/public/video/, one version per language: its own voiceover, screens and burned-in
  *  captions (made from web/video/ – see its README). The human texts (title, poster alt, description) live in
  *  messages/<locale>/site.json under "video". */
-const DURATION: Record<Locale, number> = { da: 83, en: 86, de: 91, es: 90, fr: 93, it: 91, no: 85, sv: 84 };
+const DURATION: Record<Locale, number> = { da: 83, en: 86, de: 91, es: 90, fr: 93, it: 91, no: 85, sv: 84, us: 86 };
 
 export function videoFor(locale: Locale) {
   const base = `/video/dialogbot-${locale}`;

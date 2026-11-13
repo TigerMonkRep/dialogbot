@@ -24,6 +24,7 @@ import pytest
 from app.config import get_settings
 from app.models import CreditLedger, PrivateCall, PrivateSubscription, PrivateTask
 from app.models.domain import EmailDelivery, OutboxEvent
+from app.modules.billing import markets
 from app.modules.billing import stripe as stripe_api
 from app.modules.privat import addons, bills, expenses
 from tests.privat_fixtures import WED_10
@@ -39,16 +40,18 @@ EXPECTED_PLANS = {  # currency: plan: (monthly, yearly per month, yearly total)
     "SEK": {"basis": (6900, 5500, 66000), "plus": (14900, 11900, 142800), "familie": (24900, 19900, 238800)},
     "NOK": {"basis": (7900, 6300, 75600), "plus": (15900, 12700, 152400), "familie": (26900, 21500, 258000)},
     "EUR": {"basis": (649, 519, 6228), "plus": (1349, 1079, 12948), "familie": (2249, 1799, 21588)},
+    "USD": {"basis": (699, 559, 6708), "plus": (1449, 1159, 13908), "familie": (2399, 1919, 23028)},  # US site, 2026-11-13
 }
 EXPECTED_QUOTA = {"basis": (3, 1, False), "plus": (10, 1, True), "familie": (25, 5, True)}  # calls, people, all apps
 # Opkaldssaldo top-ups incl. moms (F-PDEC-01): 50/100/200 kr.; other currencies × the market factor, whole units
 EXPECTED_TOPUP = {"DKK": (5000, 10000, 20000), "SEK": (7500, 15000, 30000), "NOK": (7500, 15000, 30000),
-                  "EUR": (700, 1500, 3000)}  # round amounts, decision Fürster 2026-11-11
+                  "EUR": (700, 1500, 3000), "USD": (800, 1500, 3000)}  # round amounts, decision Fürster 2026-11-11
 # The 8 Privat languages → (currency, Stripe locale, inclusive tax rate id on the line in the default «danish» mode)
 EXPECTED_LOCALE = {"da": ("DKK", "da", ["txr_dk_vat_2500_incl"]), "en": ("EUR", "en", ["txr_dk_vat_2500_incl"]),
                    "de": ("EUR", "de", ["txr_dk_vat_2500_incl"]), "es": ("EUR", "es", ["txr_dk_vat_2500_incl"]),
                    "fr": ("EUR", "fr", ["txr_dk_vat_2500_incl"]), "it": ("EUR", "it", ["txr_dk_vat_2500_incl"]),
-                   "no": ("NOK", "nb", None), "sv": ("SEK", "sv", ["txr_dk_vat_2500_incl"])}
+                   "no": ("NOK", "nb", None), "sv": ("SEK", "sv", ["txr_dk_vat_2500_incl"]),
+                   "us": ("USD", "en", None)}  # the US edition: English at Stripe, dollars, no VAT
 
 
 def vat_inclusive_split(gross: int, rate_bp: int = 2500) -> tuple[int, int]:
@@ -524,10 +527,13 @@ def test_pc_sub_18_currency_is_kept_and_stripe_tax_mode(api, pv, stripe, monkeyp
 
 
 def test_vat_split_of_every_privat_amount_is_exact_or_documented():
-    """Inclusive 25 %: DKK/SEK/NOK amounts split exactly; EUR amounts need Stripe's rounding (documented in the table)."""
-    exact = {(c, p, i) for c, plans in EXPECTED_PLANS.items() for p, v in plans.items() for i, g in zip("mt", (v[0], v[2]), strict=False)
+    """Inclusive 25 %: DKK/SEK/NOK amounts split exactly; EUR amounts need Stripe's rounding (documented in the table).
+    USD carries no VAT (the US is outside the EU: markets.privat_vat → rate 0), so it has nothing to split."""
+    assert markets.privat_vat(markets.LOCALE_COUNTRY["us"]).rate_bp == 0
+    vat_plans = {c: v for c, v in EXPECTED_PLANS.items() if c != "USD"}
+    exact = {(c, p, i) for c, plans in vat_plans.items() for p, v in plans.items() for i, g in zip("mt", (v[0], v[2]), strict=False)
              if g * 2500 % 12500 == 0}
-    inexact = {(c, p, i) for c, plans in EXPECTED_PLANS.items() for p, v in plans.items() for i, g in zip("mt", (v[0], v[2]), strict=False)
+    inexact = {(c, p, i) for c, plans in vat_plans.items() for p, v in plans.items() for i, g in zip("mt", (v[0], v[2]), strict=False)
                if g * 2500 % 12500}
     assert all(c == "EUR" for c, _p, _i in inexact) and len(exact) == 18
     assert vat_inclusive_split(649) == (519, 130) and vat_inclusive_split(1349) == (1079, 270)

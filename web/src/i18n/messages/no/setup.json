@@ -129,6 +129,8 @@
       "address": "Adresse",
       "postalCode": "Postnummer",
       "city": "Sted",
+      "country": "Land",
+      "timezone": "Tidssone",
       "cvrLooked": "Slått opp: {note}",
       "categories": "Bransjer (én eller flere)",
       "categoryAdd": "Legg til en bransje",

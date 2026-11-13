@@ -129,6 +129,8 @@
       "address": "Dirección",
       "postalCode": "Código postal",
       "city": "Ciudad",
+      "country": "País",
+      "timezone": "Zona horaria",
       "cvrLooked": "Consultado: {note}",
       "categories": "Sectores (uno o varios)",
       "categoryAdd": "Añadir un sector",

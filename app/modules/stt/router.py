@@ -104,11 +104,11 @@ def start_batch(request: Request, tasks: BackgroundTasks, body: dict, principal:
 
 
 @router.post("/runs/upload", status_code=202)
-async def start_upload(request: Request, tasks: BackgroundTasks, file: UploadFile = File(...), profile: str = Form(...),
-                       reference: str = Form(""), mode: str = Form("controlled"), workspace_id: str | None = Form(None),
-                       principal: Principal = Depends(operator), db: OrmSession = Depends(get_db)):
+def start_upload(request: Request, tasks: BackgroundTasks, file: UploadFile = File(...), profile: str = Form(...),
+                 reference: str = Form(""), mode: str = Form("controlled"), workspace_id: str | None = Form(None),
+                 principal: Principal = Depends(operator), db: OrmSession = Depends(get_db)):
     """Replay an uploaded 16-bit WAV (not stored) against a typed reference text. Result is stored, audio is not."""
-    data = await file.read(MAX_UPLOAD + 1)
+    data = file.file.read(MAX_UPLOAD + 1)
     if len(data) > MAX_UPLOAD:
         raise ValidationFailed("Filen er for stor (højst 5 MB)", field_errors={"file": "for stor"})
     import tempfile

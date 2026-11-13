@@ -6,20 +6,21 @@ from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session as OrmSession
 
 from app.config import get_settings
+from app.core.body import raw_body
 from app.core.errors import ValidationFailed
 from app.db import get_db
 from app.modules.webhooks import resend
 
 router = APIRouter(prefix="/webhooks", tags=["webhooks"])
+# Plain `def` endpoints (threadpool): the handlers do synchronous DB work; the raw body comes from `raw_body`.
 
 
 @router.post("/resend")
-async def resend_webhook(request: Request, db: OrmSession = Depends(get_db)):
+def resend_webhook(request: Request, db: OrmSession = Depends(get_db), body: bytes = Depends(raw_body)):
     """Resend delivery events. Public, but every request must carry a valid Svix signature."""
     secret = get_settings().resend_webhook_secret
     if not secret:
         raise resend.WebhookNotConfigured("Resend-webhook er ikke konfigureret (RESEND_WEBHOOK_SECRET mangler)")
-    body = await request.body()
     h = request.headers
     msg_id = h.get("svix-id")
     resend.verify_signature(secret, msg_id, h.get("svix-timestamp"), h.get("svix-signature"), body)
@@ -35,14 +36,13 @@ async def resend_webhook(request: Request, db: OrmSession = Depends(get_db)):
 
 
 @router.post("/stripe")
-async def stripe_webhook(request: Request, db: OrmSession = Depends(get_db)):
+def stripe_webhook(request: Request, db: OrmSession = Depends(get_db), body: bytes = Depends(raw_body)):
     """Stripe events (card saved, invoice finalized/paid/failed). Every request must be signed."""
     from app.modules.billing import stripe
 
     secret = get_settings().stripe_webhook_secret
     if not secret:
         raise stripe.PaymentNotConfigured("Stripe-webhook er ikke konfigureret (STRIPE_WEBHOOK_SECRET mangler)")
-    body = await request.body()
     stripe.verify_signature(secret, request.headers.get("stripe-signature"), body)
     try:
         event = json.loads(body)

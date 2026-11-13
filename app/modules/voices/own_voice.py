@@ -27,6 +27,7 @@ from sqlalchemy.orm import Session as OrmSession
 from app.config import get_settings
 from app.core.audit import record_audit
 from app.core.auth import WorkspaceContext, require_capability
+from app.core.body import raw_body
 from app.core.errors import Conflict, NotFound, ValidationFailed
 from app.db import get_db
 from app.models import (
@@ -212,15 +213,15 @@ def create_project(body: ProjectIn, request: Request, ctx: WorkspaceContext = De
 
 
 @router.put("/{project_id}/recordings/{sentence_id}")
-async def put_recording(project_id: uuid.UUID, sentence_id: str, request: Request,
-                        ctx: WorkspaceContext = Depends(require_capability("voices.manage")), db: OrmSession = Depends(get_db)):
+def put_recording(project_id: uuid.UUID, sentence_id: str,
+                  ctx: WorkspaceContext = Depends(require_capability("voices.manage")), db: OrmSession = Depends(get_db),
+                  data: bytes = Depends(raw_body)):
     p = _project(db, ctx, project_id)
     if p.status != "recording":
         raise Conflict("Indtalingen er allerede sendt eller trukket tilbage", code="own_voice_state")
     ids = {s["id"] for s in _manuscript(p.manuscript)["sentences"]}
     if sentence_id not in ids:
         raise NotFound("Sætningen findes ikke i manuskriptet")
-    data = await request.body()
     if not data or len(data) > MAX_WAV_BYTES:
         raise ValidationFailed("Optagelsen mangler eller er for stor (højst 6 MB)", field_errors=[{"field": "audio"}])
     qc = qc_wav(data)

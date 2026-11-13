@@ -6,11 +6,12 @@ from __future__ import annotations
 import uuid
 from datetime import timedelta
 
-from fastapi import APIRouter, Depends, Header, Query, Request, Response
+from fastapi import APIRouter, Depends, Header, Query, Response
 from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session as OrmSession
 
+from app.core.body import raw_body
 from app.core.errors import ApiError, Conflict, NotFound, ValidationFailed
 from app.core.idempotency import IdempotencyGuard, scope_for
 from app.db import get_db
@@ -108,8 +109,7 @@ class DesignIn(BaseModel):
     design: DesignBody | None = Field(default=None, description="null = tilbage til standardtemaet (kun designet)")
 
 
-async def _body(request: Request) -> bytes:
-    data = await request.body()
+def _checked(data: bytes) -> bytes:
     if len(data) > files.MAX_BYTES:
         raise ValidationFailed("Billedet er for stort (højst 6 MB)", field_errors=[{"field": "file"}])
     return data
@@ -153,9 +153,9 @@ def wish_import(body: ImportIn, ctx: PrivateCtx = Depends(private_ctx), db: OrmS
 
 
 @router.post("/wishes/images")
-async def wish_image(request: Request, ctx: PrivateCtx = Depends(private_ctx)):
+def wish_image(ctx: PrivateCtx = Depends(private_ctx), data: bytes = Depends(raw_body)):
     """The owner's own photo for a wish (raw JPEG/PNG/WebP body, ≤ 6 MB). Returns image_key for the wish form."""
-    stored = wish_images.store(ctx.ws_id, await _body(request), "oensker")
+    stored = wish_images.store(ctx.ws_id, _checked(data), "oensker")
     return {"image_key": stored["key"], "image": wish_images.urls(stored["key"])}
 
 
@@ -237,13 +237,13 @@ def save_design(task_id: uuid.UUID, body: DesignIn, ctx: PrivateCtx = Depends(pr
 
 
 @router.post("/tasks/{task_id}/design/cover")
-async def upload_cover(task_id: uuid.UUID, request: Request, ctx: PrivateCtx = Depends(private_ctx),
-                       db: OrmSession = Depends(get_db)):
+def upload_cover(task_id: uuid.UUID, ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db),
+                 data: bytes = Depends(raw_body)):
     """Upload a cover (raw image body). Not applied until «Gem design» sends its key."""
     t, _m = sharing.access(db, task_id, ctx.user_id, min_role="owner")
     if t.list_type != "wishlist":
         raise Conflict("Kun ønskelister har et design", code="not_a_wishlist")
-    stored = wish_images.store(t.workspace_id, await _body(request), "cover")
+    stored = wish_images.store(t.workspace_id, _checked(data), "cover")
     return {"key": stored["key"], "image": wish_images.urls(stored["key"]), "width": stored["width"],
             "height": stored["height"]}
 

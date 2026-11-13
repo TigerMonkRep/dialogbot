@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session as OrmSession
 from app.config import get_settings
 from app.core.audit import record_audit
 from app.core.auth import WorkspaceContext, get_scoped, require_capability
+from app.core.body import raw_body
 from app.core.errors import ApiError, ValidationFailed
 from app.db import get_db
 from app.models import Call, PhoneNumber, WebhookEvent
@@ -31,40 +32,39 @@ async def vapi_transcriber(socket: WebSocket):
 
 
 @webhook_router.post("/elevenlabs/init")
-async def elevenlabs_init(request: Request, db: OrmSession = Depends(get_db),
-                          x_dialogbot_secret: str | None = Header(default=None)):
+def elevenlabs_init(db: OrmSession = Depends(get_db), x_dialogbot_secret: str | None = Header(default=None),
+                    raw: bytes = Depends(raw_body)):
     """ElevenLabs Agents conversation-initiation webhook (trial engine): the call's prompt, greeting and voice."""
     from app.modules.telephony import elevenlabs_agent
 
     elevenlabs_agent.verify_init(x_dialogbot_secret)
     try:
-        body = json.loads(await request.body() or b"{}")
+        body = json.loads(raw or b"{}")
     except ValueError as e:
         raise ValidationFailed("Ugyldig JSON") from e
     return elevenlabs_agent.initiation(db, body if isinstance(body, dict) else {})
 
 
 @webhook_router.post("/elevenlabs/tools/{name}")
-async def elevenlabs_tool(name: str, request: Request, db: OrmSession = Depends(get_db),
-                          x_dialogbot_secret: str | None = Header(default=None)):
+def elevenlabs_tool(name: str, db: OrmSession = Depends(get_db), x_dialogbot_secret: str | None = Header(default=None),
+                    raw: bytes = Depends(raw_body)):
     """ElevenLabs Agents server tool: run one action (free times, booking, SMS …) for the number's workspace."""
     from app.modules.telephony import elevenlabs_agent
 
     elevenlabs_agent.verify_init(x_dialogbot_secret)
     try:
-        body = json.loads(await request.body() or b"{}")
+        body = json.loads(raw or b"{}")
     except ValueError as e:
         raise ValidationFailed("Ugyldig JSON") from e
     return elevenlabs_agent.run_tool(db, name, body if isinstance(body, dict) else {})
 
 
 @webhook_router.post("/elevenlabs/post-call")
-async def elevenlabs_post_call(request: Request, db: OrmSession = Depends(get_db),
-                               elevenlabs_signature: str | None = Header(default=None)):
+def elevenlabs_post_call(db: OrmSession = Depends(get_db), elevenlabs_signature: str | None = Header(default=None),
+                         raw: bytes = Depends(raw_body)):
     """ElevenLabs Agents post-call webhook: store the call like a Vapi end-of-call report."""
     from app.modules.telephony import elevenlabs_agent
 
-    raw = await request.body()
     elevenlabs_agent.verify_post_call(raw, elevenlabs_signature)
     try:
         payload = json.loads(raw)
@@ -80,12 +80,13 @@ async def elevenlabs_post_call(request: Request, db: OrmSession = Depends(get_db
 
 
 @webhook_router.post("/vapi")
-async def vapi_webhook(request: Request, db: OrmSession = Depends(get_db),
-                       authorization: str | None = Header(default=None),
-                       x_vapi_secret: str | None = Header(default=None)):
+def vapi_webhook(db: OrmSession = Depends(get_db), authorization: str | None = Header(default=None),
+                 x_vapi_secret: str | None = Header(default=None), raw: bytes = Depends(raw_body)):
+    # Plain `def` (threadpool), never `async def`: everything below is synchronous SQLAlchemy. On the event loop a
+    # wait for a pooled connection froze the whole process and end-of-call reports were lost (loadtest-2026-11-13).
     vapi.verify(authorization, x_vapi_secret)
     try:
-        body = json.loads(await request.body())
+        body = json.loads(raw)
     except ValueError as e:
         raise ValidationFailed("Ugyldig JSON") from e
     message = body.get("message") if isinstance(body, dict) else None

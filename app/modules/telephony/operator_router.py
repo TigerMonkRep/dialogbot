@@ -8,6 +8,7 @@ import uuid
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, File, Request, Response, UploadFile
+from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
@@ -306,7 +307,7 @@ async def linden_replay(file: UploadFile | None = File(default=None), fixture: s
         raise ValidationFailed("WAV skal være 16-bit PCM", field_errors=[{"field": "file"}])
     target = rate if rate in linden.SUPPORTED_RATES else 16000
     mono = linden.customer_channel(pcm, channels, rate, target)
-    ws = _ws(db, ws_id) if ws_id else None
+    ws = await run_in_threadpool(_ws, db, ws_id) if ws_id else None  # sync DB: never on the event loop
     segments = await linden.replay(mono, db, ws, [], rate=target)
     return {"rate_in": rate, "channels_in": channels, "rate_sent": target, "seconds": round(len(mono) / 2 / target, 1),
             "segments": segments, "text": " ".join(s["text"] for s in segments).strip()}

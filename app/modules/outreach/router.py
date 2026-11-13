@@ -20,6 +20,7 @@ from sqlalchemy.orm import Session as OrmSession
 
 from app.config import get_settings
 from app.core.auth import Principal
+from app.core.body import raw_body
 from app.core.errors import Unauthenticated, ValidationFailed
 from app.db import get_db
 from app.models import OutreachCallQueue
@@ -64,11 +65,10 @@ class EventIn(BaseModel):
 
 
 @public_router.post("/webhooks/events")
-async def provider_events(request: Request, db: OrmSession = Depends(get_db)):
+def provider_events(request: Request, db: OrmSession = Depends(get_db), body: bytes = Depends(raw_body)):
     """Events from the sending provider. Resend signs with Svix (RESEND_WEBHOOK_SECRET); any other sender posts
     `{"event": "reply|bounce|complaint|unsubscribe", "email": "…"}` with the header X-Outreach-Secret."""
     s = get_settings()
-    body = await request.body()
     h = request.headers
     try:
         payload = json.loads(body)

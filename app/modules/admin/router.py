@@ -183,6 +183,12 @@ def _billing(db: OrmSession, ws: Workspace) -> dict:
     return customer_billing(db, ws)
 
 
+def _readiness(db: OrmSession, ws: Workspace) -> dict:
+    from app.modules.admin.readiness import customer_readiness
+
+    return customer_readiness(db, ws)
+
+
 @router.get("/customers/{workspace_id}")
 def customer(workspace_id: uuid.UUID, db: OrmSession = Depends(get_db), principal: Principal = Depends(operator)):
     ws = db.get(Workspace, workspace_id)
@@ -213,6 +219,8 @@ def customer(workspace_id: uuid.UUID, db: OrmSession = Depends(get_db), principa
         "invoices": [{"month": i.month.isoformat(), "status": i.status, "gross_minor": i.gross_minor, "number": i.number} for i in invoices],
         # M04: the agreement's package snapshot and this month's usage (inbound/outbound, package, overage)
         **_billing(db, ws),
+        # M02: entitlements (subscription, live gates) and goal-specific setup/channel/booking readiness
+        **_readiness(db, ws),
         "calls": [{"started_at": _iso(c.started_at), "from": c.from_number, "seconds": c.duration_seconds, "reason": c.ended_reason,
                    "summary": c.summary[:200]} for c in calls],
         "campaigns": [{"id": str(c.id), "name": c.name, "status": c.status, "created_at": _iso(c.created_at)} for c in campaigns],

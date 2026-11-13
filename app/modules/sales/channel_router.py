@@ -857,6 +857,7 @@ def update_meeting(meeting_id: uuid.UUID, body: MeetingIn, db: OrmSession = Depe
                    principal: Principal = Depends(operator)):
     from app.models import Booking, SalesMeeting
     from app.modules.bookings import service as bookings
+    from app.modules.integrations.connectors import calendar
     from app.modules.sales import meetings
 
     m = db.get(SalesMeeting, meeting_id)
@@ -866,6 +867,7 @@ def update_meeting(meeting_id: uuid.UUID, body: MeetingIn, db: OrmSession = Depe
         b = db.get(Booking, m.booking_id)
         if b is not None and b.status != "cancelled":
             bookings.cancel(db, b)
+            calendar.mirror_cancel(db, b.workspace_id, b)
     m.status = body.status
     record_audit(db, workspace_id=None, actor_user_id=principal.user.id, action="sales.meeting_updated",
                  object_type="sales_meeting", object_id=m.id, after={"status": m.status})

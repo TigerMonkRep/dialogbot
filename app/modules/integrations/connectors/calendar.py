@@ -63,7 +63,7 @@ def _http(method: str, url: str, token: str, *, headers: dict | None = None, **k
     if r.status_code in (401, 403):
         raise ActionError("Kalenderforbindelsen er ikke længere gyldig – forbind kalenderen igen",
                           code="provider_unauthorized")
-    if r.status_code == 404:
+    if r.status_code in (404, 410):  # Google answers 410 Gone for an event that is already deleted
         raise ActionError("Aftalen findes ikke længere i kalenderen", code="event_not_found")
     if r.status_code >= 400:
         raise ActionError(f"Kalenderen afviste kaldet ({r.status_code})", code="provider_rejected",

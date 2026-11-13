@@ -516,7 +516,8 @@
       "consent": "samtycke",
       "noConsent": "Samtycke saknas – rings inte upp",
       "attempts": "{n} försök",
-      "priceNote": "Inget pris per samtal inom paketet. Därefter {answered} (besvarat), {voicemail} (röstbrevlåda) eller {noAnswer} (obesvarat) per samtal plus {price} per minut exkl. moms. Stoppa när som helst."
+      "priceNote": "Inget pris per samtal inom paketet. Därefter {answered} (besvarat), {voicemail} (röstbrevlåda) eller {noAnswer} (obesvarat) per samtal plus {price} per minut exkl. moms. Stoppa när som helst.",
+      "awaiting": "{n} samtal väntar på samtalsrapporten – minuterna räknas när den kommer."
     },
     "new": {
       "title": "Ny kampanj",
@@ -578,7 +579,9 @@
       "confirm": "Bekräfta reglerna för samtal",
       "starting": "Startar…",
       "resume": "Återuppta",
-      "start": "Starta kampanj"
+      "start": "Starta kampanj",
+      "needsSubscription": "Kampanjen kan startas när abonnemanget är bekräftat och det finns ett betalkort på kontot.",
+      "toAccount": "Gå till Konto"
     },
     "remove": "Ta bort",
     "dnc": {
@@ -874,7 +877,8 @@
       "fromSetupNoCard": "Sista steget: bekräfta abonnemanget nedan. Sedan är ni live.",
       "fromSetupCard": "Abonnemanget är bekräftat. Sista steget: lägg till ett betalkort nedan.",
       "fromSetupLive": "Ni är live. Abonnemanget är på plats.",
-      "goToday": "Gå till Idag"
+      "goToday": "Gå till Idag",
+      "packageLeft": "{n} minuter kvar i paketet den här månaden"
     },
     "usage": {
       "title": "Förbrukning per samtal",
@@ -897,7 +901,23 @@
       "dispute": "Klaga på samtalet",
       "reason": "Vad var fel med samtalet?",
       "send": "Skicka klagomål",
-      "cancel": "Avbryt"
+      "cancel": "Avbryt",
+      "packageLeft": "Minutpaket: {used} av {included} minuter använda · {remaining} kvar · {over} minuter utöver paketet.",
+      "duration": "längd {d}",
+      "pending": "Väntar på samtalsrapporten – minuterna räknas när den kommer.",
+      "split": "{pkg} min i paketet · {extra} min utöver paketet",
+      "inPackage": "{n} min i paketet",
+      "outcome": {
+        "answered": "besvarat",
+        "voicemail": "röstbrevlåda",
+        "no_answer": "obesvarat/upptaget"
+      },
+      "callPrice": "samtalspris efter paketet {amount}",
+      "total": "totalt {amount} exkl. moms",
+      "refunded": "Återbetalt hos Stripe: {amount} inkl. moms.",
+      "creditOnInvoice": "Klagomål godkänt: {amount} ({minutes} min) har krediterats på faktura {number}.",
+      "creditNext": "Klagomål godkänt: {amount} ({minutes} min) krediteras på nästa faktura.",
+      "decisionNote": "Dialogbots motivering: {note}"
     },
     "pay": {
       "title": "Betalning",

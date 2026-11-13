@@ -77,7 +77,7 @@ def test_import_rules_and_do_not_call(api, two_workspaces):
     assert api.get(t["tok_b"], f"/workspaces/{t['ws_b']}/campaigns/{c['id']}").status_code == 404
 
 
-def _ready(api, t, monkeypatch, *, key=True):
+def _ready(api, t, monkeypatch, *, key=True, paid=True):
     tok, ws = t["tok_a"], t["ws_a"]
     monkeypatch.setenv("VAPI_SERVER_SECRET", SECRET)
     monkeypatch.setenv("AI_PROVIDER", "fake")
@@ -90,19 +90,26 @@ def _ready(api, t, monkeypatch, *, key=True):
     api.submit(tok, ws, it["open_draft"]["id"])
     api.approve(tok, ws, it["open_draft"]["id"])
     api.map_number(ws, "+4570123456", "pn_out", outbound=True)
+    if paid:  # C09: a campaign starts only with a paid subscription (no Stripe in tests: the confirmed agreement)
+        api.post(tok, f"/workspaces/{ws}/agreement", {"model": "A"})
 
 
 def test_start_is_explicit_and_honest(api, two_workspaces, monkeypatch):
     t = two_workspaces
     tok, ws = t["tok_a"], t["ws_a"]
-    _ready(api, t, monkeypatch, key=False)
+    _ready(api, t, monkeypatch, key=False, paid=False)
     c = _campaign(api, t)
-    assert c["phone_number_id"] is not None and c["status"] == "draft"
+    assert c["phone_number_id"] is not None and c["status"] == "draft" and c["billing_ready"] is False
     api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts/import", {"csv": "Mette;20304050\nOle;21222324", "kind": "business", "consent_source": "Tilmelding på hjemmesiden"})
     start = f"/workspaces/{ws}/campaigns/{c['id']}/start"
     body = {"expected_version": c["version"], "legal_confirmed": False, "accept_max_net_minor": 4000}
     assert api.post(tok, start, body).status_code == 422
     assert api.post(tok, start, body | {"legal_confirmed": True, "accept_max_net_minor": 800}).json()["code"] == "price_changed"
+    # C09: no subscription (agreement + card, or only the agreement without Stripe) → no start, pointing at Konto
+    r = api.post(tok, start, body | {"legal_confirmed": True})
+    assert r.status_code == 409 and r.json()["code"] == "subscription_required", r.text
+    assert api.post(tok, f"/workspaces/{ws}/agreement", {"model": "A"}).status_code == 201
+    assert api.get(tok, f"/workspaces/{ws}/campaigns/{c['id']}").json()["billing_ready"] is True
     r = api.post(tok, start, body | {"legal_confirmed": True})
     assert r.status_code == 501 and r.json()["code"] == "outbound_not_configured"
     monkeypatch.setenv("VAPI_API_KEY", "vapi-private-key-test")

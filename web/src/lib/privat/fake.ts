@@ -357,7 +357,8 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
   const projectAddon = (a: CatalogEntry): Addon => {
     const st = s.appState?.[a.key];
     const live = a.status !== "coming_soon" && on(a.key);
-    return { ...a, included: addonIncluded(a), enabled: live, enabled_at: live ? atDay(-3, 9) : null,
+    // like the backend (addons.out): switched on, but stopped while the plan has lapsed (F-PBQ-06)
+    return { ...a, included: addonIncluded(a), enabled: live, needs_plan: live && !!a.requires_plan && !isEntitled(), enabled_at: live ? atDay(-3, 9) : null,
       summary_line: live ? DEMO_LINES[a.key] ?? null : null,
       // The default apps were switched on for the user: no setup prompt for them.
       setup: { done: Math.min(st?.done ?? ((([ADDON.call, ADDON.sharedLists, ADDON.wishlists] as string[]).includes(a.key)) ? a.steps.length : 0), a.steps.length), total: a.steps.length },

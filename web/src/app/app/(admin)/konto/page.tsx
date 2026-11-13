@@ -83,13 +83,14 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
     callNoAnswer: cur?.outbound_call?.no_answer.net_minor ?? agr.plan.outbound_call_net_minor.no_answer,
   } : null;
   const campaignCalls = st?.lines.filter((l) => l.kind === "campaign_calls").reduce((n, l) => n + (l.calls ?? 0), 0) ?? 0;
-  const campaignNet = st?.lines.filter((l) => l.kind === "campaign_calls").reduce((n, l) => n + l.net_minor, 0) ?? 0;
+  // A': a campaign call that starts after the package also has its call price by outcome (line campaign_call_fees)
+  const campaignNet = st?.lines.filter((l) => l.kind === "campaign_calls" || l.kind === "campaign_call_fees").reduce((n, l) => n + l.net_minor, 0) ?? 0;
   const campaignMinutes = st?.lines.filter((l) => l.kind === "campaign_calls").reduce((n, l) => n + (l.minutes ?? 0), 0) ?? 0;
   const inbound = st?.lines.find((l) => l.kind === "inbound_minutes");
   // the shared package (inbound + outbound minutes); months before 2026-11 have none: inbound only
   const pkgUsed = st?.package ? st.package.used : (inbound?.minutes ?? 0);
   const overMinutes = st?.package ? st.package.over : (inbound?.extra_minutes ?? 0);
-  const overNet = (st?.lines.filter((l) => l.kind === "inbound_minutes" || (st?.package && l.kind === "campaign_calls")).reduce((n, l) => n + l.net_minor, 0)) ?? 0;
+  const overNet = (st?.lines.filter((l) => l.kind === "inbound_minutes" || (st?.package && (l.kind === "campaign_calls" || l.kind === "campaign_call_fees"))).reduce((n, l) => n + l.net_minor, 0)) ?? 0;
   // Amounts in the agreement's / statement's own currency (DKK when the backend does not say).
   const kr = (minor: number) => krDa(minor, lang, cur?.currency ?? agr?.plan.currency ?? agr?.currency ?? acc?.currency);
   const krSt = (minor: number) => krDa(minor, lang, st?.currency ?? agr?.currency ?? acc?.currency);
@@ -150,6 +151,7 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
                 <div className="flex flex-col gap-1 rounded-xl border-[1.5px] border-ink bg-paper px-4 py-3.5 md:col-span-2">
                   <span className="eyebrow">{t("account.sub.package")}</span>
                   <span className="font-display font-extrabold text-[22px] text-ink">{pkgUsed} <span className="text-[14px] font-semibold">{t("account.sub.packageUsed", { n: st.package?.included ?? terms!.included })}</span></span>
+                  {st.package && <span className="text-[14px] font-semibold text-ink" data-testid="package-left">{t("account.sub.packageLeft", { n: st.package.remaining })}</span>}
                   <span className="text-[14px] text-ink-soft">{overMinutes ? t("account.sub.packageExtra", { n: overMinutes, amount: kr(overNet) }) : t("account.sub.packagePrice", { n: st.package?.included ?? terms!.included, inPrice: kr(terms!.inbound), outPrice: kr(terms!.outbound) })}</span>
                 </div>
               </div>

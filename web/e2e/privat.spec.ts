@@ -551,6 +551,37 @@ for (const width of [375, 1440]) {
       await expect(page.getByTestId("app-page")).toBeVisible();
     });
 
+    test("apps: prøveperioden slutter uden plan → plan-appen står «Kræver plan» (Mine apps, appens side, ikke Min dag) → Vælg plan → kører igen (F-PBQ-06)", async ({ page }) => {
+      await open(page, "/privat/butik/regninger");
+      await page.getByTestId("enable-app").click();
+      await page.getByRole("dialog", { name: "Slå Regninger til?" }).getByTestId("enable-confirm").click();
+      await page.getByRole("dialog", { name: "Regninger er slået til" }).getByRole("button", { name: "Senere" }).click();
+      await page.goto("/privat/apps");
+      await expect(page.getByTestId("app-row-regninger")).not.toContainText("Kræver plan");
+      await page.goto("/privat/konto");
+      await page.getByRole("button", { name: "Afslut prøveperioden" }).click();
+      await expect(page.getByTestId("subscription-card")).toContainText("Prøveperiode slut");
+      // Mine apps: still switched on (data kept), but listed apart as stopped – honest, not «Slået til»
+      await page.goto("/privat/apps");
+      const paused = page.getByTestId("mine-paused");
+      await expect(paused.getByTestId("app-row-regninger")).toContainText("Kræver plan");
+      await expect(paused.getByTestId("app-row-regninger")).toContainText("dine data er gemt");
+      // Min dag does not show it as running
+      await page.goto("/privat/dag");
+      await expect(page.getByTestId("day-apps").getByText("Regninger")).toHaveCount(0);
+      // The app's page: the pause and the way to a plan – no panel calling endpoints that answer needs_plan
+      await page.goto("/privat/apps/regninger");
+      await expect(page.getByTestId("app-needs-plan")).toContainText("Regninger er sat på pause");
+      await expect(page.getByTestId("app-needs-plan")).toContainText("Dine data er gemt");
+      await expect(page.getByTestId("app-page")).toHaveCount(0);
+      await page.getByTestId("paused-choose-plan").click();
+      const plan = page.getByRole("dialog", { name: "Regninger kræver Plus" });
+      await plan.getByTestId("plan-go").click();
+      await expect(page).toHaveURL(/\/privat\/apps\/regninger$/, { timeout: 20000 });
+      await expect(page.getByTestId("app-page")).toBeVisible();
+      await expect(page.getByTestId("app-needs-plan")).toHaveCount(0);
+    });
+
     test("abonnement: Vælg plan → Plus (årligt) → retur fra betaling → «Dit abonnement er aktivt»", async ({ page }) => {
       await open(page, "/privat/konto");
       // Only the visible card: on a slow runner the server-streamed copy of the pane (inside a hidden Suspense

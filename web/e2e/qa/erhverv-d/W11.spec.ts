@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { API, closeAll, CSRF, EVID, forwardPublicApi, visitor, widgetWorkspace, type Widget } from "./d-helpers";
+import { API, closeAll, confirmCode, CSRF, EVID, forwardPublicApi, uniquePhone, visitor, widgetWorkspace, type Widget } from "./d-helpers";
 
 /* W11 – widget/public slot selector: «Date/slots/timezone, loading, no slots, limited availability, stale provider and
  * alternatives.» Stale provider = the connected calendar cannot be read (dev hook POST /dev/fake-calendar/busy-down):
@@ -71,9 +71,11 @@ test("W11 · kalenderen kan ikke læses: tider fra åbningstiden, kunden får «
     await expect(form.getByLabel("Tidspunkt").locator("option").first()).not.toHaveText("Ingen ledige tider lige nu");
     const label = (await form.getByLabel("Tidspunkt").locator("option:checked").textContent())!;
     await form.getByLabel("Navn").fill("Henrik Villumsen");
-    await form.getByLabel("Telefon").fill("+45 20 30 40 50");
+    const phone = uniquePhone(); // W04 on the booking door (F-VER1113-04): a fresh number, the code limit is per number
+    await form.getByLabel("Telefon").fill(phone.display);
     await form.getByLabel("Virksomheden må kontakte mig om aftalen.").check();
     await form.getByRole("button", { name: "Book", exact: true }).dblclick();
+    await confirmCode(chat, phone.e164);
     await expect(chat.getByText(`Tak, Henrik Villumsen! Din tid ${label} er noteret. En medarbejder bekræfter tiden.`)).toBeVisible();
     await expect(chat.getByText(/Du er booket/)).toHaveCount(0);
     await v.screenshot({ path: `${EVID("W11")}/${info.project.name}-afventer.png` });

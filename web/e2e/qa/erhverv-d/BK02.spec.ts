@@ -1,12 +1,13 @@
 import { expect, test } from "@playwright/test";
 import { login, SEEDED } from "../../helpers";
-import { closeAll, confirmCode, CSRF, EVID, forwardPublicApi, visitor, widgetWorkspace, type Widget } from "./d-helpers";
+import { closeAll, confirmCode, CSRF, EVID, forwardPublicApi, uniquePhone, visitor, widgetWorkspace, type Widget } from "./d-helpers";
 
 /* BK02 – /app/bookings/:bookingId: «Booking detail, linked conversation/enquiry, provider, timeline, sync,
  * notification state and permitted actions.» Built as an expandable card on /app/aftaler (no own route). */
 let w: Widget | null = null;
 test.afterEach(async () => { if (w) await closeAll(w.servers); w = null; });
 
+let phone = uniquePhone();
 async function pendingWidgetBooking(page: import("@playwright/test").Page, browser: import("@playwright/test").Browser, info: import("@playwright/test").TestInfo) {
   w = await widgetWorkspace(page, info, { booking: true });
   const r = await (await page.request.post(`/api/backend/workspaces/${w.wsId}/integrations/google_calendar/connect`, { headers: { ...CSRF, "Idempotency-Key": `qa-e2d-bk02-${Date.now()}` }, data: { config: {}, secrets: {} } })).json();
@@ -22,10 +23,11 @@ async function pendingWidgetBooking(page: import("@playwright/test").Page, brows
     await chat.getByRole("button", { name: "Book en tid" }).click();
     const form = chat.locator("form.book");
     await form.getByLabel("Navn").fill("Henrik Villumsen");
-    await form.getByLabel("Telefon").fill("+45 20 30 40 50");
+    phone = uniquePhone(); // W04 on the booking door (F-VER1113-04): a fresh number, the code limit is per number
+    await form.getByLabel("Telefon").fill(phone.display);
     await form.getByLabel("Virksomheden må kontakte mig om aftalen.").check();
     await form.getByRole("button", { name: "Book", exact: true }).click();
-    await confirmCode(chat, "+4520304050"); // W04 on the booking door (F-VER1113-04)
+    await confirmCode(chat, phone.e164);
     await expect(chat.getByText(/er noteret\. En medarbejder bekræfter tiden\./)).toBeVisible();
     await close();
   } finally {
@@ -47,7 +49,7 @@ test("BK02 · aftalekortet: kilde, kontakt, «Afventer bekræftelse», udbyder, 
   await expect(card.getByText("Afventer bekræftelse", { exact: true })).toBeVisible();
   await card.click();
   await expect(page.getByText(`${b.label} · Webchat`)).toBeVisible();
-  await expect(page.getByText("+45 20 30 40 50").first()).toBeVisible();
+  await expect(page.getByText(phone.display).first()).toBeVisible();
   await page.screenshot({ path: `${EVID("BK02")}/${info.project.name}-detalje.png`, fullPage: true });
   // linked conversation and enquiry open and show this customer
   const conv = page.getByRole("link", { name: "Samtalen" });

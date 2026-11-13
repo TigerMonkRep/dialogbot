@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { freshOwner, serve } from "../../helpers";
 import { smsCodeFor } from "../erhverv-p1a/p1a-helpers";
+import { ownClientIp, uniquePhone } from "../erhverv-d/d-helpers";
 
 /* QA W12 (e2e-erhverv B): booking in the customer-facing widget – details, consent, explicit submit, confirmed and
  * slot-lost states, double click. Own port (4127) so parallel agents using :4000 are not disturbed. */
@@ -35,7 +36,8 @@ test("W12 · kunden booker i widgetten: samtykke kræves, bekræftet, tiden-tage
   const first = await formA.getByLabel("Tidspunkt").locator("option").first().getAttribute("value");
   // details and consent are required
   await formA.getByLabel("Navn").fill("Henrik Villumsen");
-  await formA.getByLabel("Telefon").fill("+45 20 30 40 50");
+  const phone = uniquePhone(); // W04 on the booking door (F-VER1113-04): a fresh number, the code limit is per number
+  await formA.getByLabel("Telefon").fill(phone.display);
   await formA.getByRole("button", { name: "Book", exact: true }).click();
   await expect(formA.getByText("Sæt flueben, så virksomheden må kontakte dig om aftalen.")).toBeVisible();
   await formA.getByLabel("Virksomheden må kontakte mig om aftalen.").check();
@@ -43,7 +45,7 @@ test("W12 · kunden booker i widgetten: samtykke kræves, bekræftet, tiden-tage
   await formA.getByRole("button", { name: "Book", exact: true }).dblclick();
   // W04 on the booking door (F-VER1113-04): one code step for the double click, then exactly one booking
   await expect(chatA.locator(".code-step")).toBeVisible();
-  await chatA.locator(".code-step").getByLabel("Kode fra SMS").fill(await smsCodeFor("+4520304050"));
+  await chatA.locator(".code-step").getByLabel("Kode fra SMS").fill(await smsCodeFor(phone.e164));
   await chatA.locator(".code-step").getByRole("button", { name: "Bekræft" }).click();
   await expect(chatA.getByText(/Tak, Henrik Villumsen! Du er booket .+kl\./)).toBeVisible();
   await a.screenshot({ path: `../qa/evidence/W12/${info.project.name}-booket.png` });

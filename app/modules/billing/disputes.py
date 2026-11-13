@@ -48,7 +48,7 @@ def billable_call(db: OrmSession, workspace_id: uuid.UUID, kind: str, call_id: u
         at = row.dialled_at
     period = _period(at, tz)
     if not statement.shared_pool(period):
-        raise ValidationFailed("Opkald fra før november 2026 behandles af supporten – skriv til info@dialogbot.dk.",
+        raise ValidationFailed("Opkald fra før november 2026 behandles af supporten – skriv til info@dialogbot.app.",
                                code="period_not_supported", field_errors=[{"field": "call_id"}])
     start, end = statement.month_bounds(period, tz)
     events = statement.usage_events(db, workspace_id, start, end, include_pool_credited=True)

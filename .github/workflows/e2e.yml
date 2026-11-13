@@ -35,6 +35,7 @@ jobs:
       ALLOW_PRIVATE_FETCH: "true" # app/core/safe_fetch: the journeys import knowledge from a site on 127.0.0.1:4000
       CREDENTIALS_KEY: "0123456789abcdefghijklmnopqrstuvwxyzABCDEF0"  # test-only key so API and worker decrypt alike
       TELEPHONY_VERIFY_NUMBER_ID: vapi-verify-e2e
+      OUTREACH_MODE: dry_run   # admin · Kold e-mail (e2e/outreach.spec.ts): checked, written, audited – never sent
       DATABASE_URL: postgresql+psycopg://postgres:postgres@localhost:5432/dialogbot_e2e
       FRONTEND_BASE_URL: http://localhost:3000
       SEED_DEMO_PASSWORD: E2e-Demo-Password-2026
@@ -128,6 +129,7 @@ jobs:
       ALLOW_PRIVATE_FETCH: "true" # app/core/safe_fetch: the journeys import knowledge from a site on 127.0.0.1:4000
       CREDENTIALS_KEY: "0123456789abcdefghijklmnopqrstuvwxyzABCDEF0"  # test-only key so API and worker decrypt alike
       TELEPHONY_VERIFY_NUMBER_ID: vapi-verify-e2e
+      OUTREACH_MODE: dry_run   # admin · Kold e-mail (e2e/outreach.spec.ts): checked, written, audited – never sent
       DATABASE_URL: postgresql+psycopg://postgres:postgres@localhost:5432/dialogbot_e2e
       FRONTEND_BASE_URL: http://localhost:3000
       SEED_DEMO_PASSWORD: E2e-Demo-Password-2026

@@ -35,6 +35,11 @@
     "knowledgeShort": "Cosa sa"
   },
   "shell": {
+    "suspended": {
+      "title": "Dialogbot ha messo temporaneamente in pausa questo spazio di lavoro.",
+      "body": "Le chiamate delle campagne e le azioni nei sistemi collegati (calendario, SMS, webhook) attendono la fine della pausa. Le chiamate in entrata e la chat ricevono risposta come di consueto.",
+      "support": "Scrivi al supporto"
+    },
     "verify": {
       "before": "Il suo indirizzo e-mail non è confermato.",
       "link": "Conferma ora",

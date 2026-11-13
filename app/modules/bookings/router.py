@@ -294,7 +294,7 @@ def visitor_booking_options(key: str, type_id: uuid.UUID | None = None, db: OrmS
     chosen = next((t for t in types if t.id == type_id), types[0] if types else None)
     return {"enabled": bool(types), "types": [{"id": str(t.id), "name": t.name, "duration_minutes": t.duration_minutes,
                                                "description": t.description} for t in types],
-            "type_id": str(chosen.id) if chosen else None,
+            "type_id": str(chosen.id) if chosen else None, "timezone": _tz(db, ws.id),
             "slots": service.slots(db, ws, chosen, _tz(db, ws.id), limit=24) if chosen else []}
 
 
@@ -323,4 +323,5 @@ def visitor_book(key: str, conversation_id: uuid.UUID, body: VisitorBookingIn, o
     db.commit()
     # confirmation 'pending': the connected calendar could not be read – the widget says a staff member confirms
     return {"booked": True, "label": service.label(b.starts_at, tz), "title": b.title,
+            "starts_at": b.starts_at.isoformat(), "timezone": tz,
             "confirmation": "pending" if b.confirmation == "pending" else "confirmed", "manage_url": url}

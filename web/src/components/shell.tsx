@@ -11,7 +11,7 @@ import { InstallCapture } from "@/components/install-app";
 import { SwUpdate } from "@/components/sw-update";
 import { StandaloneBack, StandaloneChrome } from "@/components/standalone";
 
-type Ws = { id: string; name: string; role: string; product_intent: string };
+type Ws = { id: string; name: string; role: string; product_intent: string; suspended?: boolean };
 type Me = { display_name: string; email: string; email_verified: boolean; is_platform_operator?: boolean };
 type Capability = { key: string; status: "available" | "simulated" | "not_implemented"; environment: string };
 
@@ -51,6 +51,21 @@ async function VerifyBanner({ me }: { me: Me | null }) {
   );
 }
 
+/** M03: a Dialogbot operator paused the workspace's outbound work. Inbound calls and the chat go on, so the banner
+ *  says what waits and what does not (Fürster 13/11). */
+async function SuspendedBanner({ ws }: { ws: Ws | null }) {
+  if (!ws?.suspended) return null;
+  const t = await getT("app");
+  return (
+    <div role="status" data-suspended-banner className="bg-highlight text-ink border-b-2 border-ink px-4 py-2 text-[14px]">
+      <div className="max-w-[1280px] mx-auto">
+        <strong className="font-semibold">{t("shell.suspended.title")}</strong> {t("shell.suspended.body")}{" "}
+        <Link className="underline font-semibold whitespace-nowrap" href="/app/support">{t("shell.suspended.support")}</Link>
+      </div>
+    </div>
+  );
+}
+
 const SkipLink = ({ label }: { label: string }) => <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:px-3 focus:py-2 focus:rounded-lg focus:bg-ink focus:text-paper">{label}</a>;
 
 /** One shell for the whole logged-in app: header with the four pages and the avatar, bottom tabs on a phone, and the
@@ -83,6 +98,7 @@ async function Shell({ children }: { children: React.ReactNode }) {
             has no room for it next to the logo and the avatar. */}
         {workspaces.length > 1 && <div className="md:hidden max-w-[1280px] mx-auto px-4 pb-1 -mt-1"><WorkspaceChip workspaces={workspaces} current={current} plain /></div>}
         <VerifyBanner me={me} />
+        <SuspendedBanner ws={current} />
       </header>
 
       <main id="main" className="flex-grow w-full pb-[148px] sm:pb-24 xl:pb-0">

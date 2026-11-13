@@ -35,6 +35,11 @@
     "knowledgeShort": "Viden"
   },
   "shell": {
+    "suspended": {
+      "title": "Dialogbot har midlertidigt sat dette arbejdsrum på pause.",
+      "body": "Kampagneopkald og handlinger i jeres forbundne systemer (kalender, SMS, webhooks) venter, til pausen er ophævet. Indgående opkald og chatten bliver besvaret som normalt.",
+      "support": "Skriv til support"
+    },
     "verify": {
       "before": "Din e-mail er ikke bekræftet.",
       "link": "Bekræft nu",

@@ -35,11 +35,15 @@ class WorkspaceOut(BaseModel):
     knowledge_revision: int
     role: str
     created_at: datetime
+    # M03: a Dialogbot operator paused the workspace's outbound work (the app shows a banner; inbound calls and the
+    # chat go on). Only the flag – the operator's internal reason stays in the operations screen.
+    suspended: bool = False
 
 
 def ws_out(w, role: str) -> WorkspaceOut:
     return WorkspaceOut(id=w.id, name=w.name, slug=w.slug, status=w.status, product_intent=w.product_intent,
-                        knowledge_revision=w.knowledge_revision, role=role, created_at=w.created_at)
+                        knowledge_revision=w.knowledge_revision, role=role, created_at=w.created_at,
+                        suspended=w.ops_suspended_at is not None)
 
 
 class MemberOut(BaseModel):

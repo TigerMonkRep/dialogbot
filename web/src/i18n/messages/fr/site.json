@@ -461,6 +461,7 @@
       "confirmCode": "Confirmer",
       "resend": "Renvoyer",
       "resendIn": "Renvoyer dans {s} s",
+      "codeMissing": "Vous n'avez pas reçu le code ?",
       "changeNumber": "Changer de numéro",
       "errCodeFormat": "Le code comporte 6 chiffres.",
       "errCodeWrong": "Le code n’est pas correct. Il vous reste {left} essais.",

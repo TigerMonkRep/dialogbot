@@ -32,7 +32,8 @@ def options(tz: str, now: datetime | None = None) -> list[dict]:
         for wkey, (_start, end, wlabel) in WINDOWS.items():
             if datetime.combine(d, end, tzinfo=z) - local < timedelta(hours=1):
                 continue
-            out.append({"key": f"{dkey}_{wkey}", "label": f"{dlabel} {wlabel}"})
+            out.append({"key": f"{dkey}_{wkey}", "label": f"{dlabel} {wlabel}", "date": d.isoformat(),
+                        "tomorrow": d == local.date() + timedelta(days=1)})
     return out
 
 

@@ -161,9 +161,29 @@ def notify_customer(db: OrmSession, t: SupportTicket, message_id: uuid.UUID) -> 
         User.id == t.created_by, Membership.workspace_id == t.workspace_id)).first()
     if row is None or not row.is_active or not row.email:
         return False
+    if t.category == "billing":  # a billing ticket is only for admin and owner (Fürster 13/11)
+        role = db.scalar(select(Membership.role).where(Membership.user_id == t.created_by,
+                                                       Membership.workspace_id == t.workspace_id))
+        if role not in ("owner", "admin"):
+            return False
     ws = db.get(Workspace, t.workspace_id)
     link = f"{get_settings().frontend_base_url.rstrip('/')}/app/support/{t.number}"
     mail = tpl.support_reply(ws.name if ws else "", t.number, t.subject, link, user_language(db, t.created_by))
     enqueue(db, event_type="email.branded", dedupe_key=f"support-reply:{message_id}", workspace_id=t.workspace_id,
             payload={"to_email": row.email, "email": tpl.to_payload(mail)})
     return True
+
+
+def notify_support_inbox(db: OrmSession, t: SupportTicket, workspace_name: str) -> None:
+    """A new ticket → one mail to Dialogbot's support inbox (SUPPORT_INBOX_EMAIL, info@dialogbot.dk) through the
+    outbox. Only the ticket number, the subject and the workspace leave the app (Fürster 13/11)."""
+    from app.modules.integrations import email_templates as tpl
+
+    s = get_settings()
+    if not s.support_inbox_email:
+        return
+    link = f"{s.frontend_base_url.rstrip('/')}/app/operator/admin/support/{t.id}"
+    mail = tpl.support_new_ticket(workspace_name, t.number, t.subject, link)
+    # workspace_id stays empty: an operator's pause of the workspace (M03) must not hold Dialogbot's own notice
+    enqueue(db, event_type="email.branded", dedupe_key=f"support-new:{t.id}",
+            payload={"to_email": s.support_inbox_email, "email": tpl.to_payload(mail)})

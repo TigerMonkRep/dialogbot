@@ -1138,6 +1138,33 @@ class DemoCallVerification(Base):
     created_at: Mapped[datetime] = ts_now()
 
 
+class SmsUsage(Base):
+    """One row per code SMS the platform sent (or simulated) for a workspace: who pays (workspace), what for (purpose)
+    and how many segments. Like ai_usage: append-only, no number and no text in the row. `outbox_event_id` makes the
+    worker's send idempotent (a redelivered event never sends a second SMS).
+
+    Purposes: `webchat_phone` / `booking_manage` (W04/W13: the business's own customer – the business pays, Fürster
+    13/11) and `demo_call_code` (the «Ring mig op nu» code, Dialogbot's own sales workspace). SMS have no list price
+    yet, so nothing here is priced (`net_minor` NULL) – the rows are the usage a price can be applied to later."""
+
+    __tablename__ = "sms_usage"
+    __table_args__ = (
+        CheckConstraint("purpose in ('webchat_phone','booking_manage','demo_call_code')", name="ck_sms_usage_purpose"),
+        UniqueConstraint("outbox_event_id", name="uq_sms_usage_outbox_event"),
+        Index("ix_sms_usage_workspace_created", "workspace_id", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    purpose: Mapped[str] = mapped_column(String(24), nullable=False)
+    segments: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    simulated: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    provider_ref: Mapped[str | None] = mapped_column(String(64))
+    net_minor: Mapped[int | None] = mapped_column(Integer)  # NULL: SMS are not priced (open question to Fürster)
+    outbox_event_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("outbox_events.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = ts_now()
+
+
 class CustomerLink(Base):
     """A secure link a business's customer uses without a login (W09, W13, DB-016): `callback` = cancel the requested
     call back and set communication preferences for one lead; `booking` = see, move or cancel one booking. Only an

@@ -1,7 +1,9 @@
 /* Dialogbot web widget loader.
  * <script src="https://<api>/api/v1/public/webchat/loader.js" data-dialogbot-key="wk_…" async></script>
  * Shows a launcher only when the workspace allows this site and the chat is available.
- * The chat runs in an iframe on the Dialogbot origin; this page never sees the conversation token. */
+ * The chat runs in an iframe on the Dialogbot origin; this page never sees the conversation token.
+ * Language: data-language="en" on the script tag, else this page's <html lang>, else the visitor's browser (the frame
+ * falls back to the business's language) – one of da, en, de, es, fr, it, no, sv. */
 (function () {
   "use strict";
   var script = document.currentScript;
@@ -11,6 +13,23 @@
   if (!/^wk_[A-Za-z0-9_-]{8,}$/.test(key)) return;
   var api = new URL(script.src).origin;
   var base = api + "/api/v1/public/webchat/" + encodeURIComponent(key);
+  var LABELS = {
+    da: ["Åbn chat", "Luk chat", "Chat med virksomhedens digitale assistent"],
+    en: ["Open chat", "Close chat", "Chat with the business's digital assistant"],
+    de: ["Chat öffnen", "Chat schließen", "Chat mit dem digitalen Assistenten des Unternehmens"],
+    es: ["Abrir chat", "Cerrar chat", "Chat con el asistente digital de la empresa"],
+    fr: ["Ouvrir le chat", "Fermer le chat", "Chat avec l'assistant numérique de l'entreprise"],
+    it: ["Apri chat", "Chiudi chat", "Chat con l'assistente digitale dell'azienda"],
+    no: ["Åpne chat", "Lukk chat", "Chat med virksomhetens digitale assistent"],
+    sv: ["Öppna chatten", "Stäng chatten", "Chatta med företagets digitala assistent"]
+  };
+  function supported(tag) {
+    var b = String(tag || "").toLowerCase().split(/[-_]/)[0];
+    if (b === "nb" || b === "nn") b = "no";
+    return LABELS[b] ? b : "";
+  }
+  var lang = supported(script.getAttribute("data-language")) || supported(document.documentElement.getAttribute("lang"));
+  var L = LABELS[lang || supported(navigator.language) || "da"];
 
   fetch(base + "/status", { credentials: "omit", mode: "cors" })
     .then(function (r) { return r.ok ? r.json() : { available: false }; })
@@ -33,20 +52,20 @@
     var wrap = document.createElement("div");
     var frame = document.createElement("iframe");
     frame.className = "panel";
-    frame.title = "Chat med virksomhedens digitale assistent";
+    frame.title = L[2];
     frame.setAttribute("allow", "");
     frame.setAttribute("referrerpolicy", "strict-origin");
     var btn = document.createElement("button");
     btn.className = "btn";
     btn.type = "button";
-    btn.setAttribute("aria-label", "Åbn chat");
+    btn.setAttribute("aria-label", L[0]);
     btn.setAttribute("aria-expanded", "false");
     btn.innerHTML = '<svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2Z"/></svg>';
     function setOpen(open) {
-      if (open && !frame.src) frame.src = base + "/frame";
+      if (open && !frame.src) frame.src = base + "/frame" + (lang ? "?lang=" + lang : "");
       wrap.className = open ? "open" : "";
       btn.setAttribute("aria-expanded", open ? "true" : "false");
-      btn.setAttribute("aria-label", open ? "Luk chat" : "Åbn chat");
+      btn.setAttribute("aria-label", open ? L[1] : L[0]);
       if (open) frame.focus(); else btn.focus();
     }
     btn.addEventListener("click", function () { setOpen(wrap.className !== "open"); });

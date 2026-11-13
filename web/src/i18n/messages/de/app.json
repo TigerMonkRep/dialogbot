@@ -35,6 +35,11 @@
     "knowledgeShort": "Wissen"
   },
   "shell": {
+    "suspended": {
+      "title": "Dialogbot hat diesen Arbeitsbereich vorübergehend pausiert.",
+      "body": "Kampagnenanrufe und Aktionen in Ihren verbundenen Systemen (Kalender, SMS, Webhooks) warten, bis die Pause aufgehoben ist. Eingehende Anrufe und der Chat werden wie gewohnt beantwortet.",
+      "support": "Support kontaktieren"
+    },
     "verify": {
       "before": "Ihre E-Mail-Adresse ist nicht bestätigt.",
       "link": "Jetzt bestätigen",

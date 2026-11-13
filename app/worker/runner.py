@@ -128,7 +128,14 @@ HANDLERS = {
     "privat.calendar_sync": lambda db, ev: _privat_calendar(db, ev),
     "privat.data_export": lambda db, ev: _privat_export(db, ev),
     "push.send": lambda db, ev: _push_send(db, ev),
+    "sms.code": lambda db, ev: _sms_code(db, ev),
 }
+
+
+def _sms_code(db: OrmSession, ev: OutboxEvent) -> None:
+    from app.modules.integrations.sms_codes import handle
+
+    handle(db, ev)
 
 
 def _privat(name: str, db: OrmSession, ev: OutboxEvent) -> None:
@@ -407,6 +414,16 @@ def run_schedules() -> None:
         except Exception as exc:  # noqa: BLE001
             db.rollback()
             log.warning("sales.retention_failed", error=f"{type(exc).__name__}: {exc}")
+    with get_session_factory()() as db:
+        try:  # GDPR: support files of deleted tickets/workspaces (queued by the database, app/models/support.py)
+            from app.modules.support.attachments import sweep_deletions
+
+            n = sweep_deletions(db)
+            if n:
+                log.info("support.files_deleted", count=n)
+        except Exception as exc:  # noqa: BLE001
+            db.rollback()
+            log.warning("support.files_delete_failed", error=f"{type(exc).__name__}")
     with get_session_factory()() as db:
         try:  # Dialogbot Privat: release reservations of calls that never got a report
             from app.modules.privat.calls import sweep_stale

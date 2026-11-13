@@ -7010,6 +7010,11 @@
           "status": {
             "title": "Status",
             "type": "string"
+          },
+          "suspended": {
+            "default": false,
+            "title": "Suspended",
+            "type": "boolean"
           }
         },
         "required": [
@@ -9505,7 +9510,7 @@
     },
     "/api/v1/demo-call/code": {
       "post": {
-        "description": "Step 1 of «Ring mig op nu»: a 6-digit code by SMS to the number (10 minutes, 5 attempts). Peter rings only\nafter the code is entered (F-AUD26-02-P06). Limits per number and per client IP; 429 `sms_rate_limited`.",
+        "description": "Step 1 of «Ring mig op nu»: a 6-digit code by SMS to the number (10 minutes, 5 attempts). Peter rings only\nafter the code is entered (F-AUD26-02-P06). Limits per number and per client IP; 429 `sms_rate_limited`. The SMS\nis sent by the worker after this answer, for every number (no 502 here; a failed delivery is retried there).",
         "operationId": "request_code_api_v1_demo_call_code_post",
         "requestBody": {
           "content": {
@@ -27805,7 +27810,7 @@
     },
     "/api/v1/public/webchat/{key}/callback-windows": {
       "get": {
-        "description": "Time windows the visitor can choose for a call back, in the business's local time.",
+        "description": "Time windows the visitor can choose for a call back, in the business's local time; labels in `lang` (one of\nthe eight, Danish by default). The lead keeps the Danish label for staff.",
         "operationId": "callback_windows_api_v1_public_webchat__key__callback_windows_get",
         "parameters": [
           {
@@ -27815,6 +27820,22 @@
             "schema": {
               "title": "Key",
               "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lang"
             }
           }
         ],
@@ -28097,7 +28118,7 @@
     },
     "/api/v1/public/webchat/{key}/conversations/{conversation_id}/contact/code": {
       "post": {
-        "description": "W04 step 1: a 6-digit code by SMS (the business's own text and sender) to the number the visitor typed in «Bliv\nkontaktet». 10 minutes, 5 attempts, resend after 30 s (409 `too_soon` + `retry_after`); 429 `sms_rate_limited`\nper number (all public doors), per client IP and per business.",
+        "description": "W04 step 1: a 6-digit code by SMS (the business's own text and sender) to the number the visitor typed in «Bliv\nkontaktet». 10 minutes, 5 attempts, resend after 30 s (409 `too_soon` + `retry_after`); 429 `sms_rate_limited`\nper number (all public doors), per client IP and per business. The SMS is sent by the worker after this answer\n(no 502 here) and counted as the business's SMS usage.",
         "operationId": "phone_code_api_v1_public_webchat__key__conversations__conversation_id__contact_code_post",
         "parameters": [
           {

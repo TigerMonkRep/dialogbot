@@ -35,6 +35,11 @@
     "knowledgeShort": "Kunskap"
   },
   "shell": {
+    "suspended": {
+      "title": "Dialogbot har tillfälligt pausat den här arbetsytan.",
+      "body": "Kampanjsamtal och åtgärder i era anslutna system (kalender, sms, webhooks) väntar tills pausen hävs. Inkommande samtal och chatten besvaras som vanligt.",
+      "support": "Skriv till supporten"
+    },
     "verify": {
       "before": "Din e-post är inte bekräftad.",
       "link": "Bekräfta nu",

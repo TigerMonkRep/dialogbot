@@ -1,6 +1,5 @@
-import { readFileSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
-import { API_LOG, evid, noHorizontalScroll, snap, unlock, uniqueIp, uniqueMobile } from "./p1a-helpers";
+import { evid, smsLog, noHorizontalScroll, snap, unlock, uniqueIp, uniqueMobile } from "./p1a-helpers";
 
 /* F-AUD26-02-P06 (Fürster 12/11: «A, SMS-kode først»): «Ring mig op nu» on /proev – and the chat widget, which is the
  * same component – rings only a number its visitor proved with a 6-digit SMS code: number → «Vi har sendt en kode til …»
@@ -21,13 +20,13 @@ function cphHour() {
 async function smsCode(e164: string, after = 0): Promise<string> {
   let code: string | undefined;
   await expect.poll(() => {
-    const lines = readFileSync(API_LOG, "utf8").split("\n").filter((l) => l.includes("sms.simulated") && l.includes(e164));
+    const lines = smsLog().split("\n").filter((l) => l.includes("sms.simulated") && l.includes(e164));
     code = lines.length > after ? lines.at(-1)?.match(/\b(\d{6})\b/)?.[1] : undefined;
     return code;
   }, { timeout: 15_000 }).toBeTruthy();
   return code!;
 }
-const smsCount = (e164: string) => readFileSync(API_LOG, "utf8").split("\n").filter((l) => l.includes("sms.simulated") && l.includes(e164)).length;
+const smsCount = (e164: string) => smsLog().split("\n").filter((l) => l.includes("sms.simulated") && l.includes(e164)).length;
 
 async function open(page: Page, path: string) {
   await page.setExtraHTTPHeaders({ "x-real-ip": uniqueIp() });
@@ -102,7 +101,7 @@ test("P06 · på engelsk: kodetrin, fejl og «send igen» efter 30 s på sidens 
   await expect(page.locator("[data-code-step]")).toContainText("We have sent a code to");
   await smsCode(e164);
   const sent = smsCount(e164);
-  expect(readFileSync(API_LOG, "utf8")).toContain("Your Dialogbot code is"); // the SMS in the page's language
+  expect(smsLog()).toContain("Your Dialogbot code is"); // the SMS in the page's language
   await page.getByLabel("Code from SMS").fill("12");
   await page.getByLabel("Code from SMS").press("Enter");
   await expect(page.locator("#code-hint")).toContainText("The code is 6 digits.");

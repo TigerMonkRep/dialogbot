@@ -1,17 +1,16 @@
-import { readFileSync } from "node:fs";
 import { expect, test, type FrameLocator } from "@playwright/test";
-import { API_LOG, noHorizontalScroll } from "../erhverv-p1a/p1a-helpers";
+import { noHorizontalScroll, smsLog } from "../erhverv-p1a/p1a-helpers";
 import { closeAll, EVID, uniquePhone, visitor, widgetWorkspace, type Widget } from "./d-helpers";
 
 /* W04 – number verification (P0, DB-016): «Code entry, resend cooldown, wrong/expired code, verified and exhausted-attempt
  * state.» A phone number in the widget's «Bliv kontaktet» is stored only after the visitor typed the 6-digit code the
- * business sent to it (simulated SMS: read from the API log). The chat is switched on without any phone number of the
+ * business sent to it (simulated SMS, sent by the worker: read from the API and worker logs). The chat is switched on without any phone number of the
  * business – the SMS goes out with the business's name as sender. */
 let w: Widget | null = null;
 test.afterEach(async () => { if (w) await closeAll(w.servers); w = null; });
 
 /** All simulated codes to `e164`, oldest first. */
-const codes = (e164: string) => readFileSync(API_LOG, "utf8").split("\n").filter((l) => l.includes("sms.simulated") && l.includes(e164))
+const codes = (e164: string) => smsLog().split("\n").filter((l) => l.includes("sms.simulated") && l.includes(e164))
   .map((l) => l.match(/er (\d{6})\./)?.[1]).filter(Boolean) as string[];
 async function newCode(e164: string, before: number) {
   await expect.poll(() => codes(e164).length, { timeout: 15_000 }).toBeGreaterThan(before);
@@ -39,6 +38,7 @@ test("W04 · kode sendt, nedtælling på «Send ny kode», forkert og ufuldstæn
   const resend = code.getByRole("button", { name: /Send ny kode/ });
   await expect(resend).toBeDisabled();
   await expect(resend).toHaveText(/Send ny kode \(\d+ s\)/);
+  await expect(code.locator(".missing")).toBeHidden(); // «Fik du ikke koden?» only once a new code may be asked for
   // nothing is stored before the number is proven
   expect((await (await page.request.get(`/api/backend/workspaces/${w.wsId}/leads`)).json()).total).toBe(0);
   const right = await newCode(phone.e164, 0);
@@ -84,6 +84,7 @@ test("W04 · for mange forsøg: koden låses, «Send ny kode» efter 30 s giver 
   await code.getByLabel("Kode fra SMS").fill(first); // even the right code is refused now
   await code.getByRole("button", { name: "Bekræft" }).click();
   await expect(code.locator(".err")).toHaveText("For mange forsøg. Bed om en ny kode.");
+  await expect(code.locator(".missing")).toHaveText("Fik du ikke koden?");
   await v.screenshot({ path: `${EVID("W04")}/${info.project.name}-for-mange-forsoeg.png` });
   // the server's 30 s cooldown since the first code
   const resend = code.getByRole("button", { name: /Send ny kode/ });

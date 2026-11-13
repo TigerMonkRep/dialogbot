@@ -1,6 +1,8 @@
 """H01 – customer support: a workspace's members open support tickets with attachments, follow the status and write
 in the thread at /app/support/<number>. Staff and up (`support.read` / `support.write`); a reader sees the help page
-but not the tickets. Every lookup is by (workspace, number): another workspace's ticket is 404."""
+but not the tickets. Billing tickets (category `billing`) only for admin and owner (`support.billing`, Fürster 13/11):
+staff do not see them in the list, get 404 on them and cannot open one. Every lookup is by (workspace, number): another
+workspace's ticket is 404. A new ticket is announced to Dialogbot's support inbox (number, subject, workspace only)."""
 from __future__ import annotations
 
 import uuid
@@ -38,13 +40,28 @@ def _audit(db, ctx: WorkspaceContext, request: Request, action: str, t: SupportT
                  request_id=request.state.request_id)
 
 
+def _ticket(db: OrmSession, ctx: WorkspaceContext, number: int, *, lock: bool = False) -> SupportTicket:
+    """The workspace's ticket – a billing ticket only for admin and owner (404 for anyone else, like another
+    workspace's ticket, so its existence is not shown either)."""
+    t = svc.ticket_for_customer(db, ctx.workspace.id, number, lock=lock)
+    if t.category == "billing" and not ctx.can("support.billing"):
+        raise NotFound("Sagen findes ikke")
+    return t
+
+
+def _categories(ctx: WorkspaceContext) -> list[str]:
+    return [c for c in SUPPORT_CATEGORIES if c != "billing" or ctx.can("support.billing")]
+
+
 @router.get("")
 def list_tickets(ctx: WorkspaceContext = Depends(require_capability("support.read")), db: OrmSession = Depends(get_db)):
-    rows = db.scalars(select(SupportTicket).where(SupportTicket.workspace_id == ctx.workspace.id)
-                      .order_by(SupportTicket.status == "resolved", SupportTicket.updated_at.desc()).limit(200))
+    q = select(SupportTicket).where(SupportTicket.workspace_id == ctx.workspace.id)
+    if not ctx.can("support.billing"):
+        q = q.where(SupportTicket.category != "billing")
+    rows = db.scalars(q.order_by(SupportTicket.status == "resolved", SupportTicket.updated_at.desc()).limit(200))
     items = [svc.customer_summary(t) for t in rows]
     return {"items": items, "open": sum(1 for i in items if i["status"] != "resolved"),
-            "categories": list(SUPPORT_CATEGORIES), "max_files": files.MAX_FILES, "max_bytes": files.MAX_BYTES}
+            "categories": _categories(ctx), "max_files": files.MAX_FILES, "max_bytes": files.MAX_BYTES}
 
 
 @router.post("", status_code=201)
@@ -57,6 +74,8 @@ async def create_ticket(request: Request, subject: str = Form(...), category: st
     body = _text(body, "body", lo=1, hi=5000, label="Beskrivelsen")
     if category not in SUPPORT_CATEGORIES:
         raise ValidationFailed("Ukendt kategori", field_errors=[{"field": "category"}])
+    if category == "billing":
+        ctx.require("support.billing")  # 403: a staff member could not see the ticket afterwards
     uploads = await files.read_files(files_)
     svc.check_new_ticket_rate(db, ctx.workspace.id)
     t = SupportTicket(workspace_id=ctx.workspace.id, number=svc.next_number(db, ctx.workspace.id), subject=subject,
@@ -66,6 +85,7 @@ async def create_ticket(request: Request, subject: str = Form(...), category: st
     db.flush()
     svc.add_message(db, t, author=ctx.user_id, kind="customer", visibility="public", body=body, uploads=uploads)
     _audit(db, ctx, request, "support.ticket_created", t, {"category": category, "attachments": len(uploads)})
+    svc.notify_support_inbox(db, t, ctx.workspace.name)
     db.commit()
     return svc.customer_detail(db, t)
 
@@ -73,7 +93,7 @@ async def create_ticket(request: Request, subject: str = Form(...), category: st
 @router.get("/{number}")
 def get_ticket(number: int, ctx: WorkspaceContext = Depends(require_capability("support.read")),
                db: OrmSession = Depends(get_db)):
-    return svc.customer_detail(db, svc.ticket_for_customer(db, ctx.workspace.id, number))
+    return svc.customer_detail(db, _ticket(db, ctx, number))
 
 
 @router.post("/{number}/messages", status_code=201)
@@ -82,7 +102,7 @@ async def reply(number: int, request: Request, body: str = Form(...),
                 ctx: WorkspaceContext = Depends(require_capability("support.write")), db: OrmSession = Depends(get_db)):
     body = _text(body, "body", lo=1, hi=5000, label="Beskeden")
     uploads = await files.read_files(files_)
-    t = svc.ticket_for_customer(db, ctx.workspace.id, number, lock=True)
+    t = _ticket(db, ctx, number, lock=True)
     svc.check_message_rate(db, t.id)
     svc.add_message(db, t, author=ctx.user_id, kind="customer", visibility="public", body=body, uploads=uploads)
     if t.status in ("waiting_customer", "resolved"):
@@ -95,7 +115,7 @@ async def reply(number: int, request: Request, body: str = Form(...),
 @router.post("/{number}/resolve")
 def resolve(number: int, request: Request, ctx: WorkspaceContext = Depends(require_capability("support.write")),
             db: OrmSession = Depends(get_db)):
-    t = svc.ticket_for_customer(db, ctx.workspace.id, number, lock=True)
+    t = _ticket(db, ctx, number, lock=True)
     if t.status != "resolved":
         svc.set_status(t, "resolved")
         _audit(db, ctx, request, "support.ticket_resolved", t)
@@ -106,7 +126,7 @@ def resolve(number: int, request: Request, ctx: WorkspaceContext = Depends(requi
 @router.post("/{number}/reopen")
 def reopen(number: int, request: Request, ctx: WorkspaceContext = Depends(require_capability("support.write")),
            db: OrmSession = Depends(get_db)):
-    t = svc.ticket_for_customer(db, ctx.workspace.id, number, lock=True)
+    t = _ticket(db, ctx, number, lock=True)
     if t.status != "resolved":
         raise Conflict("Sagen er ikke afsluttet", code="not_resolved")
     svc.set_status(t, "open")
@@ -118,7 +138,7 @@ def reopen(number: int, request: Request, ctx: WorkspaceContext = Depends(requir
 @router.get("/{number}/attachments/{attachment_id}")
 def download(number: int, attachment_id: uuid.UUID, ctx: WorkspaceContext = Depends(require_capability("support.read")),
              db: OrmSession = Depends(get_db)):
-    t = svc.ticket_for_customer(db, ctx.workspace.id, number)
+    t = _ticket(db, ctx, number)
     # Only an attachment of a PUBLIC message on this workspace's ticket (DB-016: never one on an internal note).
     row = db.scalar(select(SupportAttachment).join(SupportMessage, SupportMessage.id == SupportAttachment.message_id)
                     .where(SupportAttachment.id == attachment_id, SupportAttachment.ticket_id == t.id,

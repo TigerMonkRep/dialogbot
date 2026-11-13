@@ -10,15 +10,23 @@ FRAME_ORIGIN = "http://localhost:8000"
 
 def last_code(e164: str) -> str:
     from app.modules.integrations.connectors.fakes import WORLD
+    from app.worker import runner
 
+    runner.drain()  # the code SMS is sent by the worker (app/modules/integrations/sms_codes.py)
     sms = [m for m in WORLD.sms if m["to"] == e164]
     assert sms, f"no SMS to {e164}"
     return re.search(r"\b(\d{6})\b", sms[-1]["body"]).group(1)
 
 
-def request_code(client, key: str, conv: dict, phone: str):
-    return client.post(f"{PUB}/{key}/conversations/{conv['conversation_id']}/contact/code", json={"phone": phone},
-                       headers={"origin": FRAME_ORIGIN, "x-visitor-token": conv["visitor_token"]})
+def request_code(client, key: str, conv: dict, phone: str, *, send: bool = True):
+    """POST the code request; `send` lets the worker deliver the queued SMS right after (as it does within a second)."""
+    from app.worker import runner
+
+    r = client.post(f"{PUB}/{key}/conversations/{conv['conversation_id']}/contact/code", json={"phone": phone},
+                    headers={"origin": FRAME_ORIGIN, "x-visitor-token": conv["visitor_token"]})
+    if send:
+        runner.drain()
+    return r
 
 
 def submit_code(client, key: str, conv: dict, verification_id: str, code: str):

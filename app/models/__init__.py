@@ -99,6 +99,7 @@ from app.models.outreach import (  # noqa: F401, E402
     OutreachLog,
     OutreachMessage,
     OutreachSuppression,
+    OutreachTodoMark,
 )
 from app.models.privat import (  # noqa: F401, E402
     CreditLedger,

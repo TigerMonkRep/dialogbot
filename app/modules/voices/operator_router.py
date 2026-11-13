@@ -17,6 +17,7 @@ from sqlalchemy.orm import Session as OrmSession
 
 from app.core.audit import record_audit
 from app.core.auth import Principal, get_current_principal
+from app.core.body import raw_body
 from app.core.errors import Forbidden, NotFound, ValidationFailed
 from app.db import get_db
 from app.models import AuditLog, VoiceProfile, VoiceRightsRecord, VoiceVersion, Workspace
@@ -173,11 +174,11 @@ def patch_profile(profile_id: uuid.UUID, body: ProfilePatch, request: Request, p
 
 
 @router.post("/voices/{profile_id}/references", status_code=201)
-async def upload_reference(profile_id: uuid.UUID, request: Request, source_id: str = Query(default="", max_length=200),
-                           principal: Principal = Depends(operator), db: OrmSession = Depends(get_db)):
+def upload_reference(profile_id: uuid.UUID, request: Request, source_id: str = Query(default="", max_length=200),
+                     principal: Principal = Depends(operator), db: OrmSession = Depends(get_db),
+                     data: bytes = Depends(raw_body)):
     """Upload one reference WAV (body = raw bytes). Stored privately under the voice's own scope."""
     p = _profile(db, profile_id)
-    data = await request.body()
     if not data or len(data) > MAX_REFERENCE_BYTES or data[:4] != b"RIFF" or data[8:12] != b"WAVE":
         raise ValidationFailed("Upload en WAV-fil på højst 20 MB", field_errors=[{"field": "body"}])
     import io

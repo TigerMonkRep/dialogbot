@@ -25,6 +25,7 @@ from urllib.parse import quote
 
 import structlog
 from fastapi import WebSocket
+from fastapi.concurrency import run_in_threadpool
 from sqlalchemy.orm import Session as OrmSession
 
 from app.config import get_settings
@@ -160,7 +161,7 @@ class Session:
         self.in_rate = int(start.get("sampleRate") or 16000)
         self.rate = self.in_rate if self.in_rate in SUPPORTED_RATES else 16000
         vocab = [{"content": v["content"], **({"sounds_like": v["sounds_like"]} if v.get("sounds_like") else {})}
-                 for v in additional_vocab(self.db, self.ws, self.own)]
+                 for v in await run_in_threadpool(additional_vocab, self.db, self.ws, self.own)]
         # Vapi owns the turn here, and Vapi only acts on FINAL text: release finished words at every pause
         cfg = adapters.AdapterConfig(sample_rate=self.rate, vocabulary=vocab, controlled=False, release_on_pause=True,
                                      language=self.lang)
@@ -190,9 +191,11 @@ class Session:
         in_rate = int(start.get("sampleRate") or 16000)
         self.in_rate = in_rate
         self.rate = in_rate if in_rate in SUPPORTED_RATES else 16000
-        # Agent STT rejects the RT-only options (max_delay and friends): language, partials and the dictionary only
-        config = TranscriptionConfig(language=self.lang, enable_partials=True,
-                                     additional_vocab=additional_vocab(self.db, self.ws, self.own))
+        # Agent STT rejects the RT-only options (max_delay and friends): language, partials and the dictionary only.
+        # The dictionary is read with synchronous SQLAlchemy: in the threadpool, never on the event loop (a wait for a
+        # pooled connection there freezes every request of the process – loadtest-2026-11-13).
+        vocab = await run_in_threadpool(additional_vocab, self.db, self.ws, self.own)
+        config = TranscriptionConfig(language=self.lang, enable_partials=True, additional_vocab=vocab)
         self.client = AgentSttAsyncClient(api_key=s.speechmatics_api_key, url=s.speechmatics_rt_url,
                                           app="dialogbot/1.0", transcription_config=config,
                                           audio_format=AudioFormat(encoding=AudioEncoding.PCM_S16LE,
@@ -313,7 +316,7 @@ async def serve(socket: WebSocket) -> None:
         ws_id = socket.query_params.get("ws")
         if ws_id:
             try:
-                ws = db.get(Workspace, uuid.UUID(ws_id))
+                ws = await run_in_threadpool(db.get, Workspace, uuid.UUID(ws_id))
             except ValueError:
                 ws = None
         session = Session(socket, db, ws, socket.query_params.getlist("extra"), stt)
@@ -352,7 +355,9 @@ async def serve(socket: WebSocket) -> None:
 async def replay(pcm16k_mono: bytes, db: OrmSession, ws: Workspace | None, own: list[str],
                  rate: int = 16000) -> list[dict]:
     """Run a known recording through the same Speechmatics session the bridge uses, without a phone call.
-    Returns the final segments ({text, start, end}) – the offline test of "can Linden do Danish over our bridge"."""
+    Returns the final segments ({text, start, end}) – the offline test of "can Linden do Danish over our bridge".
+    `db` is only needed for the dictionary: it is read in the threadpool and the session is closed before the audio
+    plays, so no pooled connection is held for the length of the recording."""
     from speechmatics.agent_stt import (
         AgentSttAsyncClient,
         AudioEncoding,
@@ -362,8 +367,9 @@ async def replay(pcm16k_mono: bytes, db: OrmSession, ws: Workspace | None, own: 
     )
 
     s = get_settings()
-    config = TranscriptionConfig(language=LANGUAGE, enable_partials=False,
-                                 additional_vocab=additional_vocab(db, ws, own))
+    vocab = await run_in_threadpool(additional_vocab, db, ws, own)
+    await run_in_threadpool(db.close)
+    config = TranscriptionConfig(language=LANGUAGE, enable_partials=False, additional_vocab=vocab)
     client = AgentSttAsyncClient(api_key=s.speechmatics_api_key, url=s.speechmatics_rt_url, app="dialogbot/replay",
                                  transcription_config=config,
                                  audio_format=AudioFormat(encoding=AudioEncoding.PCM_S16LE, sample_rate=rate),

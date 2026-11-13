@@ -4,10 +4,11 @@ from __future__ import annotations
 
 import uuid
 
-from fastapi import APIRouter, Depends, Request, Response
+from fastapi import APIRouter, Depends, Response
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session as OrmSession
 
+from app.core.body import raw_body
 from app.db import get_db
 from app.modules.privat import addons, bills, birthdays, car, health, meals, parcels, travel
 from app.modules.privat.deps import PrivateCtx, private_ctx
@@ -280,8 +281,8 @@ def app_overview(key: str, ctx: PrivateCtx = Depends(private_ctx), db: OrmSessio
 
 
 @router.post("/apps/{key}/items/{item_id}/photo")
-async def app_item_photo(key: str, item_id: str, request: Request, ctx: PrivateCtx = Depends(private_ctx),
-                         db: OrmSession = Depends(get_db)):
+def app_item_photo(key: str, item_id: str, ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db),
+                   data: bytes = Depends(raw_body)):
     """The raw image as the request body (image/jpeg, png, webp, heic; ≤ 6 MB). Only apps with photos (Garanti)."""
     from app.core.errors import NotFound
     from app.modules.privat import app_kit, files
@@ -290,7 +291,6 @@ async def app_item_photo(key: str, item_id: str, request: Request, ctx: PrivateC
     addons.require(db, ctx.ws_id, key)
     if not hasattr(mod, "add_photo"):
         raise NotFound("Appen tager ikke billeder")
-    data = await request.body()
     if len(data) > files.MAX_BYTES:
         from app.core.errors import ValidationFailed
 

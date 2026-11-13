@@ -232,12 +232,13 @@ CHANNEL_INSTRUCTIONS: dict[str, tuple[str, str]] = {
 
 def complete_logged(db: OrmSession, workspace: Workspace, *, user_id: uuid.UUID | None, purpose: str,
                     messages: list[dict], channel: str | None = None, tools: list[dict] | None = None,
-                    extra_instructions: str | None = None) -> tuple[Completion, AiUsage]:
+                    extra_instructions: str | None = None, release_db: bool = False) -> tuple[Completion, AiUsage]:
     """Call the provider with the approved-knowledge prompt and log one `ai_usage` row.
 
     Commits the usage row (also on failure, then re-raises). `messages` is the conversation so far,
     alternating user/assistant and ending with the user's turn (or the tool results answering the model's calls).
-    `tools` are function tools from connected connectors; `extra_instructions` tells the model about them."""
+    `tools` are function tools from connected connectors; `extra_instructions` tells the model about them.
+    `release_db`: see `log_call`."""
     provider = get_provider()  # 501 before anything else when AI is not configured
     system, revision = build_system_prompt(db, workspace)
     prompt_version = PROMPT_VERSION
@@ -248,16 +249,25 @@ def complete_logged(db: OrmSession, workspace: Workspace, *, user_id: uuid.UUID 
         system, prompt_version = f"{system}\n\n{extra_instructions}", f"{prompt_version}+actions"
     return log_call(db, workspace, provider, user_id=user_id, purpose=purpose, system=system, messages=messages,
                     prompt_version=prompt_version, revision=revision, max_tokens=get_settings().ai_max_output_tokens,
-                    tools=tools)
+                    tools=tools, release_db=release_db)
 
 
 def log_call(db: OrmSession, workspace: Workspace, provider, *, user_id: uuid.UUID | None, purpose: str, system: str,
              messages: list[dict], prompt_version: str, revision: int, max_tokens: int,
-             tools: list[dict] | None = None, model: str | None = None, effort: str | None = None) -> tuple[Completion, AiUsage]:
+             tools: list[dict] | None = None, model: str | None = None, effort: str | None = None,
+             release_db: bool = False) -> tuple[Completion, AiUsage]:
     """Run one provider call and write its `ai_usage` row (committed on failure, flushed on success).
-    `model` / `effort` override the provider's defaults for this call."""
+    `model` / `effort` override the provider's defaults for this call.
+
+    `release_db=True` ends the session's transaction before the provider is called, so no pooled connection is held
+    while the model answers (seconds); the row is then written on a fresh connection. Only for callers whose session
+    has nothing uncommitted they might still want to roll back (the transaction is committed, not discarded): a
+    request waiting on the model must not take one of the API's few connections from the calls and webhooks that
+    share the pool (loadtest-2026-11-13 §1.4.3)."""
     row = AiUsage(workspace_id=workspace.id, user_id=user_id, purpose=purpose, provider=provider.name,
                   requested_model=model or provider.model, prompt_version=prompt_version[:32], knowledge_revision=revision)
+    if release_db:
+        db.commit()  # returns the connection to the pool; expire_on_commit=False keeps loaded objects usable
     try:
         c = provider.complete(system=system, messages=messages, max_tokens=max_tokens, tools=tools, model=model, effort=effort)
     except ApiError as e:

@@ -28,6 +28,7 @@ test("W12 · kunden booker i widgetten: samtykke kræves, bekræftet, tiden-tage
   servers.push(await serve(4127, `<!doctype html><html lang="da"><head><title>Kundeside</title></head><body><h1>Fjord Gulv</h1>${w.embed_code}</body></html>`));
 
   const ctx = await browser.newContext({ viewport: page.viewportSize() ?? undefined });
+  await ownClientIp(ctx); // the SMS-code door counts codes per client IP (5 an hour)
   const [a, b] = [await ctx.newPage(), await ctx.newPage()];
   for (const p of [a, b]) { await p.goto(`${SITE}/`); await p.getByRole("button", { name: "Åbn chat" }).click(); }
   const chatA = a.frameLocator('iframe[title^="Chat med"]'), chatB = b.frameLocator('iframe[title^="Chat med"]');

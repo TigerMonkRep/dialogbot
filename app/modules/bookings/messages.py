@@ -12,7 +12,8 @@ All eight exist in the eight languages of app/core/languages.py (Danish is the s
 Spanish use the formal register). `render()` builds a message; `preview()` fills it with a booking of the workspace
 or with sample data. Nothing in this module queues, sends or writes anything – the preview endpoint
 (GET /workspaces/{id}/bookings/messages) is read-only and is tested to leave the outbox, the SMS provider and the
-mail log untouched. When each message is sent automatically is not decided here (see qa/ledger.md, E07)."""
+mail log untouched. When each message is sent automatically is decided in app/modules/bookings/notify.py (outbox +
+worker); every customer e-mail sent from there carries an unsubscribe link (`Context.unsubscribe_url`)."""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -309,6 +310,47 @@ TEXTS: dict[str, dict] = {
 }
 
 
+# E07: the customer's opt-out from the business's booking e-mails – the link in the mail and the page behind it.
+UNSUBSCRIBE: dict[str, dict[str, str]] = {
+    "da": {"link": "Afmeld e-mails om aftaler fra {business}", "title": "Afmeld e-mails om aftaler",
+           "body": "Vil du ikke længere have e-mails fra {business} om dine aftaler – bekræftelser, ændringer og påmindelser?",
+           "button": "Afmeld", "done_title": "Du er afmeldt",
+           "done_body": "{business} sender ikke flere e-mails om aftaler til denne adresse. Kontakt {business} direkte, hvis du har spørgsmål til en aftale."},
+    "en": {"link": "Unsubscribe from appointment e-mails from {business}", "title": "Unsubscribe from appointment e-mails",
+           "body": "Do you no longer want e-mails from {business} about your appointments – confirmations, changes and reminders?",
+           "button": "Unsubscribe", "done_title": "You are unsubscribed",
+           "done_body": "{business} will not send any more appointment e-mails to this address. Contact {business} directly if you have questions about an appointment."},
+    "de": {"link": "E-Mails zu Terminen von {business} abbestellen", "title": "E-Mails zu Terminen abbestellen",
+           "body": "Möchten Sie keine E-Mails mehr von {business} zu Ihren Terminen erhalten – Bestätigungen, Änderungen und Erinnerungen?",
+           "button": "Abbestellen", "done_title": "Sie sind abgemeldet",
+           "done_body": "{business} sendet keine weiteren E-Mails zu Terminen an diese Adresse. Wenden Sie sich bei Fragen zu einem Termin direkt an {business}."},
+    "es": {"link": "Darse de baja de los correos sobre citas de {business}", "title": "Darse de baja de los correos sobre citas",
+           "body": "¿Ya no desea recibir correos de {business} sobre sus citas (confirmaciones, cambios y recordatorios)?",
+           "button": "Darse de baja", "done_title": "Se ha dado de baja",
+           "done_body": "{business} no enviará más correos sobre citas a esta dirección. Si tiene preguntas sobre una cita, contacte directamente con {business}."},
+    "fr": {"link": "Se désabonner des e-mails de rendez-vous de {business}", "title": "Se désabonner des e-mails de rendez-vous",
+           "body": "Vous ne souhaitez plus recevoir d'e-mails de {business} concernant vos rendez-vous (confirmations, modifications et rappels) ?",
+           "button": "Se désabonner", "done_title": "Vous êtes désabonné",
+           "done_body": "{business} n'enverra plus d'e-mails de rendez-vous à cette adresse. Pour toute question sur un rendez-vous, contactez directement {business}."},
+    "it": {"link": "Annulla l'iscrizione alle e-mail sugli appuntamenti di {business}", "title": "Annulla l'iscrizione alle e-mail sugli appuntamenti",
+           "body": "Non desidera più ricevere e-mail da {business} sui Suoi appuntamenti (conferme, modifiche e promemoria)?",
+           "button": "Annulla l'iscrizione", "done_title": "Iscrizione annullata",
+           "done_body": "{business} non invierà più e-mail sugli appuntamenti a questo indirizzo. Per domande su un appuntamento contatti direttamente {business}."},
+    "no": {"link": "Meld deg av e-poster om avtaler fra {business}", "title": "Meld deg av e-poster om avtaler",
+           "body": "Vil du ikke lenger ha e-poster fra {business} om avtalene dine – bekreftelser, endringer og påminnelser?",
+           "button": "Meld av", "done_title": "Du er meldt av",
+           "done_body": "{business} sender ikke flere e-poster om avtaler til denne adressen. Kontakt {business} direkte hvis du har spørsmål om en avtale."},
+    "sv": {"link": "Avregistrera dig från e-post om bokningar från {business}", "title": "Avregistrera dig från e-post om bokningar",
+           "body": "Vill du inte längre få e-post från {business} om dina bokningar – bekräftelser, ändringar och påminnelser?",
+           "button": "Avregistrera", "done_title": "Du är avregistrerad",
+           "done_body": "{business} skickar ingen mer e-post om bokningar till den här adressen. Kontakta {business} direkt om du har frågor om en bokning."},
+}
+
+
+def unsubscribe_text(lang: str | None, key: str, business: str) -> str:
+    return (UNSUBSCRIBE.get(normalize(lang)) or UNSUBSCRIBE[DEFAULT])[key].format(business=business)
+
+
 @dataclass
 class Context:
     """What a message is about. `when`/`new_when` are datetimes; they are written in the message's language."""
@@ -322,6 +364,7 @@ class Context:
     failed_variant: str = "confirmed"  # delivery_failure: which message did not arrive
     channel: str = "sms"  # delivery_failure
     error: str = ""  # delivery_failure: the provider's reason
+    unsubscribe_url: str | None = None  # customer e-mails that are actually sent (never in a preview)
 
 
 def _table(lang: str | None) -> dict:
@@ -363,7 +406,9 @@ def render(variant: str, lang: str | None, ctx: Context) -> dict:
         paragraphs = ([tb["hello"].format(first=v["first"])] if v["first"] else []) + [t["body"].format(**v)]
         mail = Email(subject=t["subject"].format(**v), heading=t["heading"].format(**v), paragraphs=paragraphs, rows=rows,
                      footer_reason=tb["footer"].format(**v), lang=lang, sender=ctx.business,
-                     footer_line=ctx.business, preheader=t["body"].format(**v)[:120])
+                     footer_line=ctx.business, preheader=t["body"].format(**v)[:120],
+                     unsubscribe_url=ctx.unsubscribe_url,
+                     unsubscribe_label=unsubscribe_text(lang, "link", ctx.business) if ctx.unsubscribe_url else None)
         return {"variant": variant, "audience": "customer", "lang": lang, "label": tb["labels"][variant],
                 "sms": {"text": text, **segments(text)}, "email": mail}
     from app.config import get_settings

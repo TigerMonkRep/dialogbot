@@ -18,6 +18,19 @@ class OutgoingEmail:
     body_text: str
     workspace_id: uuid.UUID | None = None
     body_html: str | None = None
+    # E07: a mail in a business's name to its customer shows the business as the sender's name (the address stays
+    # Dialogbot's sending address) and carries List-Unsubscribe headers (RFC 2369/8058).
+    from_name: str | None = None
+    headers: dict[str, str] | None = None
+
+
+def _from(mail: OutgoingEmail) -> str:
+    from email.utils import formataddr, parseaddr
+
+    s = get_settings()
+    if not mail.from_name:
+        return s.email_from
+    return formataddr((mail.from_name, parseaddr(s.email_from)[1]))
 
 
 class SimulatedEmailAdapter:
@@ -54,8 +67,9 @@ class ResendEmailAdapter:
         s = get_settings()
         r = httpx.post(self.endpoint, timeout=15.0,
                        headers={"Authorization": f"Bearer {s.resend_api_key}", "Idempotency-Key": str(outbox_event_id)},
-                       json={"from": s.email_from, "to": [mail.to_email], "subject": mail.subject, "text": mail.body_text,
-                             **({"html": mail.body_html} if mail.body_html else {})})
+                       json={"from": _from(mail), "to": [mail.to_email], "subject": mail.subject, "text": mail.body_text,
+                             **({"html": mail.body_html} if mail.body_html else {}),
+                             **({"headers": mail.headers} if mail.headers else {})})
         if r.status_code >= 400:
             raise RuntimeError(f"resend {r.status_code}: {r.text[:300]}")
         rec = EmailDelivery(outbox_event_id=outbox_event_id, workspace_id=mail.workspace_id, adapter=self.name,

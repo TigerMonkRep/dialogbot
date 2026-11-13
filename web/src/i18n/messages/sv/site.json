@@ -461,6 +461,7 @@
       "confirmCode": "Bekräfta",
       "resend": "Skicka igen",
       "resendIn": "Skicka igen om {s} s",
+      "codeMissing": "Fick du ingen kod?",
       "changeNumber": "Byt nummer",
       "errCodeFormat": "Koden är 6 siffror.",
       "errCodeWrong": "Koden stämmer inte. Du har {left} försök kvar.",

@@ -80,6 +80,7 @@ PERMISSIONS: dict[str, str] = {
     "agreements.edit": "owner",  # reserved for the billing stage
     "support.read": "staff",  # H01: the workspace's support tickets (readers see the help page only)
     "support.write": "staff",  # open a ticket, reply, resolve/reopen
+    "support.billing": "admin",  # billing tickets: only admin and owner see or open them (Fürster 13/11)
 }
 
 

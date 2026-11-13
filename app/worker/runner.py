@@ -128,7 +128,22 @@ HANDLERS = {
     "privat.calendar_sync": lambda db, ev: _privat_calendar(db, ev),
     "privat.data_export": lambda db, ev: _privat_export(db, ev),
     "push.send": lambda db, ev: _push_send(db, ev),
+    "booking.event": lambda db, ev: _booking_notify("handle_event", db, ev),  # E07: decide the messages
+    "booking.message": lambda db, ev: _booking_notify("handle_message", db, ev),  # E07: one message, one channel
+    "sms.code": lambda db, ev: _sms_code(db, ev),
 }
+
+
+def _booking_notify(name: str, db: OrmSession, ev: OutboxEvent) -> None:
+    from app.modules.bookings import notify
+
+    getattr(notify, name)(db, ev)
+
+
+def _sms_code(db: OrmSession, ev: OutboxEvent) -> None:
+    from app.modules.integrations.sms_codes import handle
+
+    handle(db, ev)
 
 
 def _privat(name: str, db: OrmSession, ev: OutboxEvent) -> None:
@@ -326,6 +341,16 @@ def run_schedules() -> None:
             db.rollback()
             log.warning("billing.grace_failed", error=f"{type(exc).__name__}: {exc}")
     with get_session_factory()() as db:
+        try:  # E07: booking reminders 24 hours before, at a sensible local time (idempotent per booking and time)
+            from app.modules.bookings.notify import run_reminders
+
+            n = run_reminders(db)
+            if n:
+                log.info("bookings.reminders_queued", count=n)
+        except Exception as exc:  # noqa: BLE001
+            db.rollback()
+            log.warning("bookings.reminders_failed", error=f"{type(exc).__name__}: {exc}")
+    with get_session_factory()() as db:
         try:
             n = sync_calendars(db)
             if n:
@@ -407,6 +432,16 @@ def run_schedules() -> None:
         except Exception as exc:  # noqa: BLE001
             db.rollback()
             log.warning("sales.retention_failed", error=f"{type(exc).__name__}: {exc}")
+    with get_session_factory()() as db:
+        try:  # GDPR: support files of deleted tickets/workspaces (queued by the database, app/models/support.py)
+            from app.modules.support.attachments import sweep_deletions
+
+            n = sweep_deletions(db)
+            if n:
+                log.info("support.files_deleted", count=n)
+        except Exception as exc:  # noqa: BLE001
+            db.rollback()
+            log.warning("support.files_delete_failed", error=f"{type(exc).__name__}")
     with get_session_factory()() as db:
         try:  # Dialogbot Privat: release reservations of calls that never got a report
             from app.modules.privat.calls import sweep_stale

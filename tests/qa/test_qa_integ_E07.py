@@ -11,6 +11,11 @@ What the code has today (proved below with CONNECTORS_PROVIDER=fake, nothing lea
   e-mail to the customer at all (even when the booking has contact_email). Delivery failure = the action run is
   'failed' with the reason (SMS accepted by Twilio is labelled «SMS sendt»; there is no delivery receipt).
 The requirement test at the bottom is xfail(strict): E07 is not implemented.
+
+Update 2026-11-13 (E07 auto-send, app/modules/bookings/notify.py): booking events now queue messages automatically –
+e-mail to the customer when the booking has an address, SMS only with the business's opt-in, owner e-mails for
+«kræver opmærksomhed» and «levering fejlede». Steps 5 and the owner-attention check below follow that; the full
+behaviour is tested in tests/test_booking_auto_messages.py.
 """
 from __future__ import annotations
 
@@ -117,10 +122,15 @@ def test_e07_inventory_of_booking_messages(api, client, fake, db):
     assert cancelled["run"]["status"] == "ok" and fake.events == {}
     after = _call(db, ws, "send_sms_bekraeftelse", {"skabelon": "booking"})
     assert after["run"]["status"] == "refused" and len(fake.sms) == 2
-    # 5) No reminder or customer e-mail is ever queued for a booking.
+    # 5) Since E07 auto-send (bookings/notify.py): every booking event is queued, but a phone booking has no e-mail and
+    #    SMS messages are off by default – so the customer gets nothing automatically (only the SMS asked for above).
+    runner.drain()
     types = set(db.scalars(select(OutboxEvent.event_type)))
-    assert not {t for t in types if "remind" in t or t.startswith("email.booking")}, types
-    assert not [h for h in runner.HANDLERS if "booking" in h]
+    assert {"booking.event"} <= types and {"booking.event", "booking.message"} <= set(runner.HANDLERS), types
+    from app.models import BookingMessage
+
+    assert not [r for r in db.scalars(select(BookingMessage)) if r.audience == "customer"]
+    assert len(fake.sms) == 2
 
 
 def test_e07_delivery_failure_and_owner_attention(api, client, fake, db, monkeypatch):
@@ -147,7 +157,8 @@ def test_e07_delivery_failure_and_owner_attention(api, client, fake, db, monkeyp
     g = {i["key"]: i for i in api.get(tok, f"/workspaces/{ws}/integrations").json()["items"]}["google_calendar"]
     assert g["status"] == "error" and "Kalenderen kunne ikke opdateres" in (g["error"] or "")
     owner_mails = [s for s in _mail_subjects(api, tok) if s not in before]
-    assert not [s for s in owner_mails if "kalender" in s.lower()], owner_mails  # documents: no owner-attention mail
+    # Since E07 auto-send: the owner is told by e-mail («En aftale kræver din opmærksomhed»)
+    assert [s for s in owner_mails if "kræver din opmærksomhed" in s and "Jens Poulsen" in s], owner_mails
     # SMS delivery failure: the run is 'failed' with the reason and the assistant is told to say so.
     fake.fail_next.add("sms")
     f = _call(db, ws, "send_sms_bekraeftelse", {"skabelon": "booking"})

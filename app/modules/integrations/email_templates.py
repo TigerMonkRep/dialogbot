@@ -105,6 +105,9 @@ class Email:
     # replaces Dialogbot in the header and the signature, and `footer_line` replaces Dialogbot's company line.
     sender: str | None = None
     footer_line: str | None = None
+    # E07: the customer's own opt-out from the business's booking e-mails (a link in the small print).
+    unsubscribe_label: str | None = None
+    unsubscribe_url: str | None = None
 
     def text(self) -> str:
         lang = self.lang
@@ -118,6 +121,8 @@ class Email:
             parts += [self.note, ""]
         parts += [t(lang, "regards"), self.sender or "Dialogbot", "", "—", self.footer_reason,
                   self.footer_line or f"{t(lang, 'company_line')} · {SITE}"]
+        if self.unsubscribe_url:
+            parts += [f"{self.unsubscribe_label or 'Unsubscribe'}: {self.unsubscribe_url}"]
         return "\n".join(parts).strip() + "\n"
 
     def html(self) -> str:
@@ -160,6 +165,8 @@ class Email:
                 if self.note else "")
         pre = (f'<div style="display:none;max-height:0;overflow:hidden;opacity:0;">{e(self.preheader)}</div>'
                if self.preheader else "")
+        unsub = (f'<br><a class="lk" href="{e(self.unsubscribe_url, quote=True)}" style="color:{MUTED};">'
+                 f'{e(self.unsubscribe_label or "Unsubscribe")}</a>' if self.unsubscribe_url else "")
         step = ""
         if self.step:  # the yellow step square from the building guide (stays yellow with ink text in dark mode)
             step = (f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 18px;">'
@@ -178,7 +185,7 @@ class Email:
 <tr><td style="padding:0 4px 20px;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
 {logo_td}
-<td class="wm" style="vertical-align:middle;padding-left:{0 if self.sender else 10}px;font:800 22px/1 {HEAD_FONT};color:{INK};letter-spacing:-0.3px;">{brand}</td>
+<td class="wm" style="vertical-align:middle;padding-left:{0 if self.sender else 10}px;font:800 22px/1 {HEAD_FONT};color:{INK};letter-spacing:-0.3px;">{e(brand)}</td>
 </tr></table></td></tr>
 <tr><td class="card" style="background:{PAPER};border:2px solid {INK};border-radius:20px;">
 <div class="pad" style="padding:32px 32px 16px;">
@@ -187,7 +194,7 @@ class Email:
 <p class="tx" style="margin:8px 0 16px;font:16px/1.6 {FONT};color:{INK_SOFT};">{e(t(lang, "regards"))}<br><strong class="hd" style="color:{INK};">{e(self.sender or "Dialogbot")}</strong></p>
 </div></td></tr>
 <tr><td class="mt" style="padding:20px 8px 0;font:12px/1.6 {FONT};color:{MUTED};text-align:center;">
-{e(self.footer_reason)}<br>{company}
+{e(self.footer_reason)}<br>{company}{unsub}
 </td></tr>
 </table></td></tr></table></body></html>"""
 
@@ -312,6 +319,19 @@ def support_reply(workspace: str, number: int, subject: str, link: str, lang: st
         footer_reason=t(lang, "support_reply_footer"), lang=lang)
 
 
+def support_new_ticket(workspace: str, number: int, subject: str, link: str) -> Email:
+    """H01 → M06: a customer opened a ticket. To Dialogbot's own support inbox, in Danish; on purpose nothing but the
+    number, the subject and the workspace (no name, e-mail, description or files – those stay in the app)."""
+    return Email(
+        subject=f"Ny supportsag #{number} fra {workspace}",
+        preheader=subject[:90],
+        heading=f"Ny supportsag #{number}",
+        rows=[("Arbejdsrum", workspace), ("Sag", f"#{number}"), ("Emne", subject)],
+        paragraphs=["Beskrivelse, afsender og vedhæftninger står kun i supportkøen."],
+        button_label="Åbn sagen i supportkøen", button_url=link,
+        footer_reason="Du får denne e-mail, fordi adressen er Dialogbots supportindbakke.")
+
+
 def intro_mail(business: str) -> Email:
     """The one fixed mail a business gets after it said yes to «send en mail» in a Privat call (docs/sales/privat-opkald-leads.md).
     Fixed text on purpose: verified facts only, no prices, no comparisons; it says why they get it and how to stop it."""
@@ -433,7 +453,8 @@ def to_payload(mail: Email) -> dict:
             "button_label": mail.button_label, "button_url": mail.button_url, "note": mail.note,
             "footer_reason": mail.footer_reason, "preheader": mail.preheader, "step": mail.step,
             "rows": [list(r) for r in mail.rows], "lang": mail.lang, "audience": mail.audience,
-            "sender": mail.sender, "footer_line": mail.footer_line}
+            "sender": mail.sender, "footer_line": mail.footer_line, "unsubscribe_label": mail.unsubscribe_label,
+            "unsubscribe_url": mail.unsubscribe_url}
 
 
 def from_payload(p: dict) -> Email:
@@ -477,6 +498,8 @@ def samples() -> dict[str, Email]:
         "social_drafts_waiting": social_drafts_waiting(
             [("Facebook · i dag kl. 15.30", "Booking"), ("Instagram · i dag kl. 16.15", "Booking"),
              ("TikTok · i dag kl. 19.00", "Booking")], "https://dialogbot.app/app/operator/social"),
+        "support_new_ticket": support_new_ticket("Hansen VVS", 3, "Kalenderen viser ikke mine aftaler",
+                                                 "https://dialogbot.app/app/operator/admin/support/00000000-0000-0000-0000-000000000000"),
         "support_reply": support_reply("Hansen VVS", 3, "Kalenderen viser ikke mine aftaler",
                                        "https://dialogbot.app/app/support/3"),
         "intro_mail": intro_mail("Salon Test"),

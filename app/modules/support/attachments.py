@@ -99,3 +99,32 @@ def download(row: SupportAttachment) -> Response:
 
 def out(a: SupportAttachment) -> dict:
     return {"id": str(a.id), "filename": a.filename, "content_type": a.content_type, "size_bytes": a.size_bytes}
+
+
+def sweep_deletions(db, limit: int = 200) -> int:
+    """Remove the stored files of deleted attachment rows (GDPR, Fürster 13/11). The database queues every deleted
+    support_attachments row in storage_deletions (trigger, migration d1a7c3e5f9b2) – a deleted ticket, or a deleted
+    workspace whose delete cascaded – and the worker calls this on its schedule. A failure stays queued (attempts,
+    last_error) and is retried on the next pass; the key never leaves the support prefix it was stored under."""
+    from datetime import UTC, datetime
+
+    from sqlalchemy import select
+
+    from app.models import StorageDeletion
+
+    rows = list(db.scalars(select(StorageDeletion).where(StorageDeletion.done_at.is_(None), StorageDeletion.attempts < 20)
+                          .order_by(StorageDeletion.created_at).limit(limit).with_for_update(skip_locked=True)))
+    done = 0
+    for r in rows:
+        r.attempts += 1
+        try:
+            if "/support/" not in r.storage_key:
+                raise ValueError("not a support key")
+            storage.delete([r.storage_key])
+        except Exception as e:  # noqa: BLE001 - kept for the next pass
+            r.last_error = f"{type(e).__name__}: {e}"[:200]
+            continue
+        r.done_at, r.last_error = datetime.now(UTC), None
+        done += 1
+    db.commit()
+    return done

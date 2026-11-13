@@ -90,3 +90,22 @@ class SupportAttachment(Base):
     storage_key: Mapped[str] = mapped_column(String(250), nullable=False)
     uploaded_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     created_at: Mapped[datetime] = ts_now()
+
+
+class StorageDeletion(Base):
+    """An object in private storage that must be removed because its row is gone (GDPR, Fürster 13/11: a deleted
+    workspace or ticket takes its support files with it). Filled by the database itself – an AFTER DELETE trigger on
+    support_attachments (migration d1a7c3e5f9b2) – so every way a row can disappear (a ticket deleted, a workspace
+    deleted and the delete cascading, a privat account deleted) queues its file. The worker removes the objects
+    (app/modules/support/attachments.sweep_deletions) and marks the row done."""
+
+    __tablename__ = "storage_deletions"
+    __table_args__ = (Index("ix_storage_deletions_pending", "done_at", "created_at"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    storage_key: Mapped[str] = mapped_column(String(250), nullable=False)
+    reason: Mapped[str] = mapped_column(String(40), nullable=False)
+    attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
+    last_error: Mapped[str | None] = mapped_column(String(200))
+    done_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = ts_now()

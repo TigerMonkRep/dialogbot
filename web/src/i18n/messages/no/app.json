@@ -35,6 +35,11 @@
     "knowledgeShort": "Kunnskap"
   },
   "shell": {
+    "suspended": {
+      "title": "Dialogbot har midlertidig satt dette arbeidsområdet på pause.",
+      "body": "Kampanjeanrop og handlinger i de tilkoblede systemene deres (kalender, SMS, webhooks) venter til pausen er opphevet. Innkommende anrop og chatten besvares som vanlig.",
+      "support": "Skriv til support"
+    },
     "verify": {
       "before": "E-posten din er ikke bekreftet.",
       "link": "Bekreft nå",
@@ -390,7 +395,20 @@
       "title": "Meldinger om avtaler",
       "intro": "Slik ser meldingene om en avtale ut – til kunden som SMS og e-post i deres navn, og til dere når en avtale trenger en person. Velg melding og språk.",
       "noSend": "Kun forhåndsvisning: ingenting sendes herfra.",
-      "status": "I dag sender Dialogbot bare bekreftelses-SMS-en når assistenten eller dere ber om det. De andre meldingene er klare som maler.",
+      "status": "Meldingene til kunden sendes automatisk når en avtale blir laget, bekreftet, flyttet eller avlyst – og som påminnelse dagen før.",
+      "sending": {
+        "title": "Slik sendes meldingene",
+        "email": "E-post til kunden: automatisk når avtalen har en e-postadresse. Kunden kan melde seg av med lenken nederst i e-posten.",
+        "reminder": "Påminnelse: 24 timer før avtalen – innenfor åpningstidene deres, eller kl. 8–21 hvis dere ikke har angitt noen.",
+        "owner": "Til dere: «Krever din oppmerksomhet» og «Levering mislyktes» som e-post til eiere og administratorer.",
+        "smsLabel": "Send også meldingene som SMS",
+        "smsHelp": "Bare til kunder med mobilnummer. Hver SMS teller i forbruket deres – en melding på opptil 160 tegn er én SMS, lengre meldinger teller som flere. Slått av til dere slår det på.",
+        "blocked": "Numre på sperrelisten deres får aldri en SMS.",
+        "on": "SMS er slått på",
+        "off": "SMS er slått av",
+        "error": "Innstillingen kunne ikke lagres. Prøv igjen.",
+        "readOnly": "Bare eiere og administratorer kan endre dette."
+      },
       "language": "Språk",
       "variantsAria": "Velg melding",
       "toCustomer": "Til kunden",

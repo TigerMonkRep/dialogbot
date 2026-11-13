@@ -4,7 +4,8 @@ Why: the consent box is ticked by whoever types the number, so without proof one
 ring other people – at any hour, since Dialogbot's own demo calls ring at once, day and night. Now:
 
 1. POST /demo-call/code {phone, consent, …} → a 6-digit code by SMS to the number (10 minutes, 5 attempts; only an
-   HMAC is stored). Nothing is sent to a number on the do-not-call list (same answer, so opt-outs stay secret).
+   HMAC is stored). The SMS is sent by the worker after the answer, for every number (Fürster 13/11, «A»); nothing is
+   sent to a number on the do-not-call list (same answer and timing, so opt-outs stay secret).
 2. POST /demo-call/verify {verification_id, code} → a one-time call token bound to that number (10 minutes).
 3. POST /demo-call {phone, verification_token, …} → the token is used up and Peter rings at once.
 
@@ -13,9 +14,10 @@ number SMS_PER_NUMBER_HOUR/DAY codes from any public door (shared with the /star
 SMS_PER_IP_HOUR/DAY codes and CALLS_PER_IP_HOUR calls; SMS_GLOBAL_HOUR codes for all. The IP is
 lookup_limits.client_ip (the BFF-signed address with CLIENT_IP_SECRET), stored only as a keyed hash.
 
-The code text is GSM-7 in every language (one SMS segment) and tells a person who did not ask to ignore it. Sent
-through the existing Twilio adapter (connectors/sms.py) on Dialogbot's main account; simulated with
-CONNECTORS_PROVIDER=fake or in dev/test without telephony, like Privat and the quiz.
+The code text is GSM-7 in every language (one SMS segment) and tells a person who did not ask to ignore it. Sent by
+the worker (app/modules/integrations/sms_codes.py) through the existing Twilio adapter (connectors/sms.py) on
+Dialogbot's main account; simulated with CONNECTORS_PROVIDER=fake or in dev/test without telephony, like Privat and
+the quiz.
 """
 from __future__ import annotations
 
@@ -125,8 +127,7 @@ def _count(db: OrmSession, *where) -> int:
 
 def start(db: OrmSession, *, phone: str, ip: str, language: str | None) -> dict:
     """Validate, apply the limits and send the code. Returns what the page shows («Vi har sendt en kode til …»)."""
-    from app.modules.integrations.connectors import sms
-    from app.modules.privat import phone as privat_phone
+    from app.modules.integrations import sms_codes
     from app.modules.privat import rules
     from app.modules.sales import service
 
@@ -159,19 +160,13 @@ def start(db: OrmSession, *, phone: str, ip: str, language: str | None) -> dict:
            "resend_after": int(RESEND_AFTER.total_seconds()), "expires_in": int(CODE_TTL.total_seconds())}
     # Spent for do-not-call numbers too, so the 429 comes at the same code either way (F-VER1112-01-P06).
     number_sms_budget(db, phone, now)
-    if service._blocked(db, ws, phone):
-        # Do-not-call: no SMS either, but the same answer (the row counts towards the limits; no code can match).
-        v.code_hash = _code_hash(v.id, phone, secrets.token_hex(16))
-        db.add(v)
-        db.flush()
-        return out
+    # Every number gets exactly the same work here: the row and a queued SMS. The worker sends it – or, for a number on
+    # the do-not-call list, sends nothing and voids the code (app/modules/integrations/sms_codes.py). So the answer,
+    # its timing and a Twilio failure (retried by the worker, never a 502 here) do not tell the two apart.
     v.code_hash = _code_hash(v.id, phone, code)
     db.add(v)
     db.flush()
-    try:
-        sms.send(db, ws, sender=SENDER, to=phone, body=sms_text(code, lang), simulated=privat_phone._simulated())
-    except Exception as e:  # noqa: BLE001 - ApiError, or ActionError from the adapter
-        raise ApiError("SMS kunne ikke sendes lige nu. Prøv igen om lidt.", code="sms_failed", status_code=502) from e
+    sms_codes.queue(db, kind="demo", verification_id=v.id, code=code)
     return out
 
 

@@ -43,6 +43,7 @@ form.book .book-cancel{background:transparent;color:#404946;border:0}
 .code-step label{display:flex;flex-direction:column;gap:2px;font-size:13px;font-weight:600;color:#404946}
 .code-step input{border:1px solid #bfc9c4;border-radius:8px;padding:7px 9px;font:inherit;font-weight:400;letter-spacing:.2em}
 .code-step .hint{margin:0;font-size:13px;color:#404946}
+.code-step .missing{margin:0;font-size:13px;color:#404946}
 .code-step .ok{margin:0;color:#1b6b3a;font-size:13px;font-weight:600}
 .code-step .row{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px}
 .code-step .row button{padding:8px 14px;border:0;border-radius:10px;background:#d6ec85;color:#171e00;font:inherit;font-weight:700;cursor:pointer}

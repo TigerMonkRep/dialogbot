@@ -35,6 +35,11 @@
     "knowledgeShort": "Knowledge"
   },
   "shell": {
+    "suspended": {
+      "title": "Dialogbot has temporarily paused this workspace.",
+      "body": "Campaign calls and actions in your connected systems (calendar, SMS, webhooks) wait until the pause is lifted. Inbound calls and the chat are answered as usual.",
+      "support": "Contact support"
+    },
     "verify": {
       "before": "Your email isn't verified.",
       "link": "Verify now",
@@ -390,7 +395,20 @@
       "title": "Booking messages",
       "intro": "What the messages about a booking look like – to your customer by SMS and email in your name, and to you when a booking needs a person. Choose a message and a language.",
       "noSend": "Preview only: nothing is sent from here.",
-      "status": "Today Dialogbot only sends the confirmation SMS when the assistant or you ask for it. The other messages are ready as templates.",
+      "status": "Messages to the customer are sent automatically when an appointment is made, confirmed, moved or canceled – and as a reminder the day before.",
+      "sending": {
+        "title": "How the messages are sent",
+        "email": "E-mail to the customer: automatically when the appointment has an e-mail address. The customer can unsubscribe with the link at the bottom of the e-mail.",
+        "reminder": "Reminder: 24 hours before the appointment – within your opening hours, or 8:00–21:00 if you have not set any.",
+        "owner": "To you: «Needs your attention» and «Delivery failed» by e-mail to owners and administrators.",
+        "smsLabel": "Also send the messages by SMS",
+        "smsHelp": "Only to customers with a mobile number. Every SMS counts in your usage – a message of up to 160 characters is one SMS, longer messages count as several. Off until you turn it on.",
+        "blocked": "Numbers on your block list never get an SMS.",
+        "on": "SMS is on",
+        "off": "SMS is off",
+        "error": "The setting could not be saved. Please try again.",
+        "readOnly": "Only owners and administrators can change this."
+      },
       "language": "Language",
       "variantsAria": "Choose a message",
       "toCustomer": "To the customer",

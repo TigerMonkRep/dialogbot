@@ -4,7 +4,8 @@ W04 – number verification in the chat's «Bliv kontaktet»: a phone number is 
 typed the 6-digit code the business sent to it. Same rules as the demo-call code (F-AUD26-02-P06, app/modules/sales/
 verification.py): 10 minutes, 5 attempts, resend after 30 s, only HMACs stored; the per-number budget is shared with
 every other public door (`number_sms_budget`), plus per-IP and per-workspace ceilings. The SMS is the business's own
-text (sms_templates.code, the business as sender – no phone number needed: Denmark allows alphanumeric senders).
+text (sms_templates.code, the business as sender – no phone number needed: Denmark allows alphanumeric senders), sent
+by the worker after the answer (app/modules/integrations/sms_codes.py) and paid by the business (sms_usage).
 
 W09 / W13 – secure customer links. A `callback` link (after «Bliv kontaktet») lets the customer cancel the call back and
 say «ring ikke til mig i kampagner» (the workspace's do-not-call list); a `booking` link (after a booking in the chat)
@@ -94,9 +95,7 @@ def _sender(db: OrmSession, ws: Workspace) -> str:
 def send_code(db: OrmSession, ws: Workspace, *, purpose: str, phone: str, ip: str,
               conversation: Conversation | None = None, link: CustomerLink | None = None) -> dict:
     """Validate, apply the limits and send the code. `phone` is already E.164."""
-    from app.modules.integrations import sms_templates
-    from app.modules.integrations.connectors import sms
-    from app.modules.privat import phone as privat_phone
+    from app.modules.integrations import sms_codes
     from app.modules.sales.verification import SmsRateLimited, number_sms_budget
 
     assert purpose in PURPOSES
@@ -124,13 +123,10 @@ def send_code(db: OrmSession, ws: Workspace, *, purpose: str, phone: str, ip: st
     v.code_hash = _h(f"code:{purpose}", f"{v.id}:{phone}:{code}")
     db.add(v)
     db.flush()
-    lang = sms.caller_language(db, ws)
-    try:
-        sms.send(db, ws, sender=_sender(db, ws), to=phone, body=sms_templates.code(ws.name, code, lang),
-                 simulated=privat_phone._simulated())
-    except Exception as e:  # noqa: BLE001 - ApiError, or ActionError from the adapter
-        raise ApiError("SMS kunne ikke sendes lige nu. Prøv igen om lidt, eller skriv din e-mail i stedet.",
-                       code="sms_failed", status_code=502) from e
+    # Sent by the worker after this answer (Fürster 13/11, «A» – app/modules/integrations/sms_codes.py): the visitor
+    # never waits for Twilio, and a failed delivery is retried there instead of a 502 here. The SMS is counted as the
+    # business's usage (sms_usage) when it goes out.
+    sms_codes.queue(db, kind="customer", verification_id=v.id, code=code)
     return {"status": "code_sent", "verification_id": str(v.id), "phone_display": masked(phone),
             "resend_after": int(RESEND_AFTER.total_seconds()), "expires_in": int(CODE_TTL.total_seconds())}
 

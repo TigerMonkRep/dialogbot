@@ -93,6 +93,10 @@ def process_event(db: OrmSession, msg_id: str, payload: dict[str, Any]) -> dict[
             current = STATUS_RANK.get(f"email.{rec.provider_status}", 0) if rec.provider_status else 0
             if STATUS_RANK[event_type] > current:
                 rec.provider_status = event_type.removeprefix("email.")
+                if rec.provider_status in ("failed", "bounced", "complained"):
+                    from app.modules.bookings.notify import on_email_problem
+
+                    on_email_problem(db, rec, rec.provider_status)  # E07: a booking e-mail to a customer did not arrive
                 created = payload.get("created_at")
                 try:
                     rec.provider_status_at = datetime.fromisoformat(str(created).replace("Z", "+00:00")) if created else datetime.now(UTC)

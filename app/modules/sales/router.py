@@ -61,7 +61,8 @@ class DemoCodeIn(BaseModel):
 @public_router.post("/code", status_code=status.HTTP_202_ACCEPTED)
 def request_code(body: DemoCodeIn, request: Request, db: OrmSession = Depends(get_db)):
     """Step 1 of «Ring mig op nu»: a 6-digit code by SMS to the number (10 minutes, 5 attempts). Peter rings only
-    after the code is entered (F-AUD26-02-P06). Limits per number and per client IP; 429 `sms_rate_limited`."""
+    after the code is entered (F-AUD26-02-P06). Limits per number and per client IP; 429 `sms_rate_limited`. The SMS
+    is sent by the worker after this answer, for every number (no 502 here; a failed delivery is retried there)."""
     from app.modules.privat.lookup_limits import client_ip
 
     _check_consent(body.consent, body.consent_version)

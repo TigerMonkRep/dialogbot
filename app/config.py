@@ -32,6 +32,8 @@ class Settings(BaseSettings):
     secret_key: str | None = Field(default=None, alias="SECRET_KEY")
     public_base_url: str = Field(default="http://localhost:8000", alias="PUBLIC_BASE_URL")
     frontend_base_url: str = Field(default="http://localhost:5173", alias="FRONTEND_BASE_URL")
+    # H01/M06: a new support ticket is announced here (number, subject and workspace only – Fürster 13/11)
+    support_inbox_email: str = Field(default="info@dialogbot.dk", alias="SUPPORT_INBOX_EMAIL")
 
     # Auth. "local" = maintained password hashing (argon2 via pwdlib) + opaque
     # server-side sessions. "external" is reserved for an OIDC provider and is

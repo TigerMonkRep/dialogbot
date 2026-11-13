@@ -4,6 +4,7 @@ import uuid
 from datetime import UTC, date, datetime, timedelta
 
 from fastapi import APIRouter, Depends, Header, Query, Request, Response
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, EmailStr, Field
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session as OrmSession
@@ -13,7 +14,7 @@ from app.core.audit import record_audit
 from app.core.auth import WorkspaceContext, get_scoped, require_capability
 from app.core.errors import Conflict, NotFound, ValidationFailed
 from app.db import get_db
-from app.models import Booking, BookingSettings, BookingType, Workspace
+from app.models import Booking, BookingMessage, BookingSettings, BookingType, Workspace
 from app.modules.bookings import service
 from app.modules.integrations.connectors import calendar
 from app.modules.setup.checks import invalidate_checks
@@ -46,7 +47,8 @@ def _connected_calendar(db: OrmSession, ws_id) -> dict | None:
 
 
 def settings_out(db: OrmSession, s: BookingSettings, ws_id) -> dict:
-    return {"version": s.version, "calendar_connection": _connected_calendar(db, ws_id), "enabled": s.enabled, "lead_time_hours": s.lead_time_hours,
+    return {"version": s.version, "calendar_connection": _connected_calendar(db, ws_id), "enabled": s.enabled,
+            "sms_messages_enabled": s.sms_messages_enabled, "lead_time_hours": s.lead_time_hours,
             "horizon_days": s.horizon_days, "buffer_minutes": s.buffer_minutes, "busy_ics_url": s.busy_ics_url,
             "busy_synced_at": s.busy_synced_at.isoformat() if s.busy_synced_at else None, "busy_error": s.busy_error,
             "busy_blocks": len(s.busy_blocks or []),
@@ -180,8 +182,59 @@ def booking_messages(lang: str | None = Query(default=None, max_length=5), booki
         items.append({"variant": v, "audience": r["audience"], "label": r["label"], "sms": r["sms"],
                       "email": {"subject": mail.subject, "preheader": mail.preheader, "html": mail.html(), "text": mail.text(),
                                 "from_name": ws.name if r["audience"] == "customer" else "Dialogbot"}})
+    s = service.settings(db, ws.id)
+    db.commit()
     return {"lang": language, "default_lang": default_lang, "languages": list(LANGUAGES), "source": source,
-            "business": ws.name, "sends_nothing": True, "items": items}
+            "business": ws.name, "sends_nothing": True, "items": items, "sending": _sending(s)}
+
+
+def _sending(s: BookingSettings) -> dict:
+    """E07: what is sent automatically. E-mail to the customer whenever the booking has an address; SMS only when the
+    business turned it on; the reminder 24 hours before; the business's own messages by e-mail."""
+    from app.modules.bookings import notify
+
+    return {"email": True, "sms_enabled": s.sms_messages_enabled, "reminder_hours": int(notify.REMINDER_BEFORE.total_seconds() // 3600),
+            "version": s.version}
+
+
+class MessageSettingsIn(BaseModel):
+    sms_enabled: bool = Field(description="Also send the customer's booking messages by SMS (each SMS counts in the usage)")
+    expected_version: int | None = None
+
+
+@router.put("/messages/settings")
+def put_message_settings(body: MessageSettingsIn, request: Request,
+                         ctx: WorkspaceContext = Depends(require_capability("bookings.manage")),
+                         db: OrmSession = Depends(get_db)):
+    """E07: turn the booking messages' SMS on or off (off by default). E-mail needs no setting."""
+    s = service.settings(db, ctx.workspace.id, lock=True)
+    if body.expected_version is not None and body.expected_version != s.version:
+        raise Conflict("Indstillingerne er ændret af en anden. Genindlæs.", code="version_conflict")
+    if s.sms_messages_enabled != body.sms_enabled:
+        before = s.sms_messages_enabled
+        s.sms_messages_enabled = body.sms_enabled
+        s.version += 1
+        record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id,
+                     action="bookings.message_settings_updated", object_type="booking_settings",
+                     object_id=ctx.workspace.id, before={"sms_enabled": before}, after={"sms_enabled": body.sms_enabled},
+                     request_id=request.state.request_id)
+    db.commit()
+    return _sending(s)
+
+
+@router.get("/messages/log")
+def booking_message_log(booking_id: uuid.UUID | None = None, limit: int = Query(default=50, ge=1, le=200),
+                        ctx: WorkspaceContext = Depends(require_capability("bookings.read")),
+                        db: OrmSession = Depends(get_db)):
+    """E07: the booking messages that were sent, skipped or failed (newest first), for one booking or all."""
+    q = select(BookingMessage).where(BookingMessage.workspace_id == ctx.workspace.id)
+    if booking_id is not None:
+        q = q.where(BookingMessage.booking_id == booking_id)
+    rows = db.scalars(q.order_by(BookingMessage.created_at.desc()).limit(limit))
+    return {"items": [{"id": str(r.id), "booking_id": str(r.booking_id), "variant": r.variant, "audience": r.audience,
+                       "channel": r.channel, "status": r.status, "skip_reason": r.skip_reason, "error": r.error,
+                       "lang": r.lang, "starts_at": r.starts_at.isoformat(), "segments": r.segments,
+                       "created_at": r.created_at.isoformat()} for r in rows]}
 
 
 @router.get("")
@@ -294,7 +347,7 @@ def visitor_booking_options(key: str, type_id: uuid.UUID | None = None, db: OrmS
     chosen = next((t for t in types if t.id == type_id), types[0] if types else None)
     return {"enabled": bool(types), "types": [{"id": str(t.id), "name": t.name, "duration_minutes": t.duration_minutes,
                                                "description": t.description} for t in types],
-            "type_id": str(chosen.id) if chosen else None,
+            "type_id": str(chosen.id) if chosen else None, "timezone": _tz(db, ws.id),
             "slots": service.slots(db, ws, chosen, _tz(db, ws.id), limit=24) if chosen else []}
 
 
@@ -323,4 +376,55 @@ def visitor_book(key: str, conversation_id: uuid.UUID, body: VisitorBookingIn, o
     db.commit()
     # confirmation 'pending': the connected calendar could not be read – the widget says a staff member confirms
     return {"booked": True, "label": service.label(b.starts_at, tz), "title": b.title,
+            "starts_at": b.starts_at.isoformat(), "timezone": tz,
             "confirmation": "pending" if b.confirmation == "pending" else "confirmed", "manage_url": url}
+
+
+# --------------------------------------------------------------------------- E07: the customer's unsubscribe link
+
+def _unsubscribe_page(lang: str, business: str, *, done: bool, action: str) -> HTMLResponse:
+    import html
+
+    from app.modules.bookings.messages import unsubscribe_text
+
+    e = html.escape
+    title = unsubscribe_text(lang, "done_title" if done else "title", business)
+    body = unsubscribe_text(lang, "done_body" if done else "body", business)
+    form = "" if done else (f'<form method="post" action="{e(action, quote=True)}"><button type="submit" style="font:600 16px '
+                            'system-ui;padding:14px 22px;border-radius:12px;border:2px solid #14213D;background:#14213D;'
+                            f'color:#fff;cursor:pointer;min-height:44px">{e(unsubscribe_text(lang, "button", business))}'
+                            '</button></form>')
+    return HTMLResponse(
+        f"<!doctype html><html lang=\"{e(lang)}\"><meta charset=utf-8><meta name=viewport content='width=device-width'>"
+        f"<meta name=robots content=noindex><title>{e(title)}</title><body style='font:16px/1.6 system-ui;color:#14213D;"
+        f"max-width:32rem;margin:12vh auto;padding:0 1rem'><p style='font-weight:800'>{e(business)}</p><h1>{e(title)}</h1>"
+        f"<p>{e(body)}</p>{form}</body></html>", headers={"cache-control": "no-store"})
+
+
+def _unsubscribe_row(db: OrmSession, token: str) -> tuple[BookingMessage, str]:
+    from app.modules.bookings import notify
+
+    row = notify.resolve_unsubscribe(db, token) if len(token) <= 100 else None
+    if row is None:
+        raise NotFound("Linket virker ikke", code="link_invalid")
+    ws = db.get(Workspace, row.workspace_id)
+    return row, ws.name if ws else ""
+
+
+@public_router.get("/booking-messages/unsubscribe/{token}", response_class=HTMLResponse)
+def unsubscribe_page(token: str, request: Request, db: OrmSession = Depends(get_db)):
+    """The link in every booking e-mail to a customer. Shows a button (a mail scanner that opens links must not
+    unsubscribe anyone); the button – or the mail client's one-click POST (RFC 8058) – unsubscribes."""
+    row, business = _unsubscribe_row(db, token)
+    return _unsubscribe_page(row.lang, business, done=False, action=str(request.url.path))
+
+
+@public_router.post("/booking-messages/unsubscribe/{token}", response_class=HTMLResponse)
+def unsubscribe_post(token: str, db: OrmSession = Depends(get_db)):
+    """Unsubscribe the address from this business's booking e-mails (idempotent). Other businesses are unaffected."""
+    from app.modules.bookings import notify
+
+    row, business = _unsubscribe_row(db, token)
+    notify.unsubscribe(db, row, "unsubscribe_link")
+    db.commit()
+    return _unsubscribe_page(row.lang, business, done=True, action="")

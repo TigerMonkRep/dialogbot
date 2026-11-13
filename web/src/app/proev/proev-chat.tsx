@@ -346,7 +346,10 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
                   <p id="code-hint" role={codeError ? "alert" : undefined} className={`m-0 ${codeError ? "text-danger font-semibold" : "text-ink-soft"}`}>
                     {codeError ?? c("codeHelp")}
                   </p>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    {/* The SMS goes out from the worker a moment after the answer; a failed delivery is only in the log
+                        (Fürster 13/11), so the way out is always shown once the wait is over. */}
+                    {waitLeft === 0 && <span data-code-missing className="text-ink-soft">{c("codeMissing")}</span>}
                     <button type="button" data-resend onClick={resend} disabled={pending || waitLeft > 0} className={`${chip} disabled:opacity-60 disabled:cursor-not-allowed`}>
                       {waitLeft > 0 ? c("resendIn", { s: waitLeft }) : c("resend")}
                     </button>

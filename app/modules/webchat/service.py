@@ -88,11 +88,16 @@ def api_origin() -> str:
     return f"{u.scheme}://{u.netloc}"
 
 
-def greeting_text(db: OrmSession, s: WebchatSettings) -> str:
+def greeting_text(db: OrmSession, s: WebchatSettings, lang: str = "da") -> str:
+    """The business's own greeting as written, else the default one in the widget's language."""
+    from app.modules.webchat import texts
+
     if s.greeting.strip():
         return s.greeting.strip()
     ws = db.get(Workspace, s.workspace_id)
-    return DEFAULT_GREETING.format(name=ws.name if ws else "virksomheden")
+    if lang == "da":
+        return DEFAULT_GREETING.format(name=ws.name if ws else "virksomheden")
+    return texts.t(lang)["greeting"].format(name=ws.name if ws else "")
 
 
 def unavailable_reasons(db: OrmSession, s: WebchatSettings, *, ignore_enabled: bool = False,

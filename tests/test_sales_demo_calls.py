@@ -58,7 +58,9 @@ def last_code(phone_e164: str) -> str | None:
     import re
 
     from app.modules.integrations.connectors.fakes import WORLD
+    from app.worker import runner
 
+    runner.drain()  # the code SMS is sent by the worker (app/modules/integrations/sms_codes.py)
     for m in reversed(WORLD.sms):
         if m["to"] == phone_e164:
             return re.search(r"\b(\d{6})\b", m["body"]).group(1)
@@ -150,7 +152,9 @@ def test_do_not_call_is_kept_secret_and_global_cap(client, sales, db, monkeypatc
     other = client.post("/api/v1/demo-call/code", json={"phone": "21 22 23 24", "consent": True})
     assert set(r.json()) == set(other.json())
     from app.modules.integrations.connectors.fakes import WORLD
+    from app.worker import runner
 
+    runner.drain()  # the worker sends the codes: only to the number that is not on the list
     assert [m["to"] for m in WORLD.sms] == ["+4521222324"]
     assert sales["calls"] == [] and db.query(DemoCall).count() == 0
     guessed = client.post("/api/v1/demo-call/verify", json={"verification_id": r.json()["verification_id"],

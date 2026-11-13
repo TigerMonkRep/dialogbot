@@ -3628,6 +3628,31 @@
         "title": "MembersIn",
         "type": "object"
       },
+      "MessageSettingsIn": {
+        "properties": {
+          "expected_version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Version"
+          },
+          "sms_enabled": {
+            "description": "Also send the customer's booking messages by SMS (each SMS counts in the usage)",
+            "title": "Sms Enabled",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "sms_enabled"
+        ],
+        "title": "MessageSettingsIn",
+        "type": "object"
+      },
       "ModeIn": {
         "properties": {
           "mode": {
@@ -6995,6 +7020,11 @@
           "status": {
             "title": "Status",
             "type": "string"
+          },
+          "suspended": {
+            "default": false,
+            "title": "Suspended",
+            "type": "boolean"
           }
         },
         "required": [
@@ -9586,7 +9616,7 @@
     },
     "/api/v1/demo-call/code": {
       "post": {
-        "description": "Step 1 of «Ring mig op nu»: a 6-digit code by SMS to the number (10 minutes, 5 attempts). Peter rings only\nafter the code is entered (F-AUD26-02-P06). Limits per number and per client IP; 429 `sms_rate_limited`.",
+        "description": "Step 1 of «Ring mig op nu»: a 6-digit code by SMS to the number (10 minutes, 5 attempts). Peter rings only\nafter the code is entered (F-AUD26-02-P06). Limits per number and per client IP; 429 `sms_rate_limited`. The SMS\nis sent by the worker after this answer, for every number (no 502 here; a failed delivery is retried there).",
         "operationId": "request_code_api_v1_demo_call_code_post",
         "requestBody": {
           "content": {
@@ -27482,6 +27512,90 @@
         ]
       }
     },
+    "/api/v1/public/booking-messages/unsubscribe/{token}": {
+      "get": {
+        "description": "The link in every booking e-mail to a customer. Shows a button (a mail scanner that opens links must not\nunsubscribe anyone); the button – or the mail client's one-click POST (RFC 8058) – unsubscribes.",
+        "operationId": "unsubscribe_page_api_v1_public_booking_messages_unsubscribe__token__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Unsubscribe Page",
+        "tags": [
+          "public"
+        ]
+      },
+      "post": {
+        "description": "Unsubscribe the address from this business's booking e-mails (idempotent). Other businesses are unaffected.",
+        "operationId": "unsubscribe_post_api_v1_public_booking_messages_unsubscribe__token__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Unsubscribe Post",
+        "tags": [
+          "public"
+        ]
+      }
+    },
     "/api/v1/public/booking/manage/{token}": {
       "get": {
         "description": "The appointment, whether it can still be changed (`policy`) and whether a code is needed first.",
@@ -28196,7 +28310,7 @@
     },
     "/api/v1/public/webchat/{key}/callback-windows": {
       "get": {
-        "description": "Time windows the visitor can choose for a call back, in the business's local time.",
+        "description": "Time windows the visitor can choose for a call back, in the business's local time; labels in `lang` (one of\nthe eight, Danish by default). The lead keeps the Danish label for staff.",
         "operationId": "callback_windows_api_v1_public_webchat__key__callback_windows_get",
         "parameters": [
           {
@@ -28206,6 +28320,22 @@
             "schema": {
               "title": "Key",
               "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lang"
             }
           }
         ],
@@ -28488,7 +28618,7 @@
     },
     "/api/v1/public/webchat/{key}/conversations/{conversation_id}/contact/code": {
       "post": {
-        "description": "W04 step 1: a 6-digit code by SMS (the business's own text and sender) to the number the visitor typed in «Bliv\nkontaktet». 10 minutes, 5 attempts, resend after 30 s (409 `too_soon` + `retry_after`); 429 `sms_rate_limited`\nper number (all public doors), per client IP and per business.",
+        "description": "W04 step 1: a 6-digit code by SMS (the business's own text and sender) to the number the visitor typed in «Bliv\nkontaktet». 10 minutes, 5 attempts, resend after 30 s (409 `too_soon` + `retry_after`); 429 `sms_rate_limited`\nper number (all public doors), per client IP and per business. The SMS is sent by the worker after this answer\n(no 502 here) and counted as the business's SMS usage.",
         "operationId": "phone_code_api_v1_public_webchat__key__conversations__conversation_id__contact_code_post",
         "parameters": [
           {
@@ -31669,6 +31799,161 @@
           }
         },
         "summary": "Booking Messages",
+        "tags": [
+          "bookings"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/bookings/messages/log": {
+      "get": {
+        "description": "E07: the booking messages that were sent, skipped or failed (newest first), for one booking or all.",
+        "operationId": "booking_message_log_api_v1_workspaces__workspace_id__bookings_messages_log_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "booking_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Booking Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Booking Message Log",
+        "tags": [
+          "bookings"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/bookings/messages/settings": {
+      "put": {
+        "description": "E07: turn the booking messages' SMS on or off (off by default). E-mail needs no setting.",
+        "operationId": "put_message_settings_api_v1_workspaces__workspace_id__bookings_messages_settings_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MessageSettingsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Message Settings",
         "tags": [
           "bookings"
         ]

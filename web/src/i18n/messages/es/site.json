@@ -461,6 +461,7 @@
       "confirmCode": "Confirmar",
       "resend": "Enviar de nuevo",
       "resendIn": "Enviar de nuevo en {s} s",
+      "codeMissing": "¿No ha recibido el código?",
       "changeNumber": "Cambiar número",
       "errCodeFormat": "El código tiene 6 dígitos.",
       "errCodeWrong": "El código no es correcto. Le quedan {left} intentos.",

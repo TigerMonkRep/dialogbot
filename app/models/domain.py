@@ -784,6 +784,9 @@ class BookingSettings(Base):
     busy_blocks: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
     # Token for the read-only feed of our bookings that the owner subscribes to in their calendar.
     feed_token: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
+    # E07: booking messages to the customer go by e-mail when the booking has an address; SMS only when the business
+    # has turned it on here (each SMS counts in the business's usage). Off by default.
+    sms_messages_enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default=text("false"))
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(),
                                                  onupdate=func.now())
 
@@ -839,6 +842,68 @@ class Booking(Base):
     created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     created_at: Mapped[datetime] = ts_now()
     cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+BOOKING_MESSAGE_STATUSES = ("sending", "retrying", "sent", "simulated", "skipped", "failed")
+
+
+class BookingMessage(Base):
+    """E07: one automatic booking message on one channel to one recipient – the log, the idempotency record and the
+    audit trail of what was sent. One row per outbox event (`booking.message`), whose dedupe key is
+    booking + event + channel + recipient, so a booking event never produces a second message on a channel.
+
+    `sending` = the provider is being called (a row left in it by a crashed worker is never re-sent by SMS);
+    `retrying` = a temporary provider error, the worker tries again; `skipped` = deliberately not sent
+    (`skip_reason`: unsubscribed, blocked, sms_off, superseded …)."""
+
+    __tablename__ = "booking_messages"
+    __table_args__ = (
+        CheckConstraint("status in ('" + "','".join(BOOKING_MESSAGE_STATUSES) + "')", name="ck_booking_messages_status"),
+        CheckConstraint("channel in ('email','sms')", name="ck_booking_messages_channel"),
+        CheckConstraint("audience in ('customer','owner')", name="ck_booking_messages_audience"),
+        UniqueConstraint("outbox_event_id", name="uq_booking_messages_outbox_event"),
+        Index("ix_booking_messages_booking", "booking_id", "created_at"),
+        Index("ix_booking_messages_workspace", "workspace_id", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    booking_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("bookings.id", ondelete="CASCADE"), nullable=False)
+    outbox_event_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("outbox_events.id", ondelete="SET NULL"))
+    event_key: Mapped[str] = mapped_column(String(80), nullable=False)  # created | confirmed:<start> | reminder:<start> …
+    variant: Mapped[str] = mapped_column(String(32), nullable=False)
+    audience: Mapped[str] = mapped_column(String(8), nullable=False)
+    channel: Mapped[str] = mapped_column(String(8), nullable=False)
+    recipient: Mapped[str] = mapped_column(String(320), nullable=False)  # e-mail address or E.164 number
+    lang: Mapped[str] = mapped_column(String(5), nullable=False, default="da")
+    starts_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)  # the time the message is about
+    status: Mapped[str] = mapped_column(String(12), nullable=False, default="sending")
+    skip_reason: Mapped[str | None] = mapped_column(String(40))
+    error: Mapped[str | None] = mapped_column(String(500))
+    provider_ref: Mapped[str | None] = mapped_column(String(100))
+    segments: Mapped[int | None] = mapped_column(SmallInteger)  # SMS parts (what counts in the usage)
+    created_at: Mapped[datetime] = ts_now()
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(),
+                                                 onupdate=func.now())
+
+
+class CustomerMessageSuppression(Base):
+    """E07: a business's customer who must not get booking messages on a channel – unsubscribed with the link in an
+    e-mail, or a complaint reported by the mail provider. Per workspace (one business's list says nothing about
+    another's). Numbers on the workspace's do-not-call list (spærrelisten) get no SMS either."""
+
+    __tablename__ = "customer_message_suppressions"
+    __table_args__ = (
+        CheckConstraint("channel in ('email','sms')", name="ck_customer_message_suppressions_channel"),
+        UniqueConstraint("workspace_id", "channel", "value", name="uq_customer_message_suppressions_value"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    channel: Mapped[str] = mapped_column(String(8), nullable=False)
+    value: Mapped[str] = mapped_column(String(320), nullable=False)  # lower-cased address or E.164 number
+    source: Mapped[str] = mapped_column(String(24), nullable=False)  # unsubscribe_link | one_click | complaint
+    created_at: Mapped[datetime] = ts_now()
 
 
 class IntegrationConnection(Base):
@@ -1135,6 +1200,33 @@ class DemoCallVerification(Base):
     consumed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     call_ip_hash: Mapped[str | None] = mapped_column(String(64))
     demo_call_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("demo_calls.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = ts_now()
+
+
+class SmsUsage(Base):
+    """One row per code SMS the platform sent (or simulated) for a workspace: who pays (workspace), what for (purpose)
+    and how many segments. Like ai_usage: append-only, no number and no text in the row. `outbox_event_id` makes the
+    worker's send idempotent (a redelivered event never sends a second SMS).
+
+    Purposes: `webchat_phone` / `booking_manage` (W04/W13: the business's own customer – the business pays, Fürster
+    13/11) and `demo_call_code` (the «Ring mig op nu» code, Dialogbot's own sales workspace). SMS have no list price
+    yet, so nothing here is priced (`net_minor` NULL) – the rows are the usage a price can be applied to later."""
+
+    __tablename__ = "sms_usage"
+    __table_args__ = (
+        CheckConstraint("purpose in ('webchat_phone','booking_manage','demo_call_code')", name="ck_sms_usage_purpose"),
+        UniqueConstraint("outbox_event_id", name="uq_sms_usage_outbox_event"),
+        Index("ix_sms_usage_workspace_created", "workspace_id", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    purpose: Mapped[str] = mapped_column(String(24), nullable=False)
+    segments: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    simulated: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    provider_ref: Mapped[str | None] = mapped_column(String(64))
+    net_minor: Mapped[int | None] = mapped_column(Integer)  # NULL: SMS are not priced (open question to Fürster)
+    outbox_event_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("outbox_events.id", ondelete="SET NULL"))
     created_at: Mapped[datetime] = ts_now()
 
 

@@ -30,6 +30,12 @@ async def resend_webhook(request: Request, db: OrmSession = Depends(get_db)):
     if not isinstance(payload, dict):
         raise ValidationFailed("Ugyldig hændelse")
     result = resend.process_event(db, msg_id, payload)
+    if not result.get("duplicate"):
+        from app.modules.outreach import replies
+
+        # replies, bounces and complaints on cold e-mails; the answer names it only when something was done
+        if (did := replies.on_resend_event(db, payload)) != "ignored":
+            result["outreach"] = did
     db.commit()
     return {"received": True, **result}
 

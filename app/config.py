@@ -386,6 +386,9 @@ class Settings(BaseSettings):
     outreach_price_uk: str = Field(default="£275/mo", alias="OUTREACH_PRICE_UK")
     # Shared secret for POST /webhooks/events from providers that do not sign with Svix (header X-Outreach-Secret).
     outreach_webhook_secret: str | None = Field(default=None, alias="OUTREACH_WEBHOOK_SECRET")
+    # A person reads replies: a copy of every reply to an outreach inbox is sent here (Resend receives for the
+    # inbox domain; see outreach/replies.py). Unset = replies stop the sequence but are only visible in Resend.
+    outreach_reply_forward_to: str | None = Field(default=None, alias="OUTREACH_REPLY_FORWARD_TO")
 
     @property
     def outreach_inboxes(self) -> list[str]:

@@ -92,8 +92,13 @@ def todos(db: OrmSession) -> list[dict]:
          (s.outreach_provider == "resend" and bool(s.outreach_resend_api_key))
          or (s.outreach_provider == "smtp" and bool(s.outreach_smtp_host)))
     auto("webhooks", "Svar, afvisninger og klager kommer retur fra udbyderen",
-         "Peg udbyderens webhook på /api/v1/webhooks/events og sæt RESEND_WEBHOOK_SECRET (Resend) eller "
-         "OUTREACH_WEBHOOK_SECRET (andre).", bool(s.resend_webhook_secret or s.outreach_webhook_secret))
+         "Resend: slå «email.received», «email.bounced» og «email.complained» til på den webhook, der allerede peger "
+         "på /api/v1/webhooks/resend (RESEND_WEBHOOK_SECRET), og slå modtagelse til på afsenderdomænet. Andre "
+         "udbydere: /api/v1/webhooks/events med OUTREACH_WEBHOOK_SECRET.",
+         bool(s.resend_webhook_secret or s.outreach_webhook_secret))
+    auto("replies", "Et menneske får en kopi af hvert svar",
+         "Sæt OUTREACH_REPLY_FORWARD_TO (fx info@dialogbot.app). Afsenderadressen har ingen postkasse: uden en kopi "
+         "kan et svar kun læses i Resend under Emails → Receiving.", bool(s.outreach_reply_forward_to))
     auto("prices", "Priserne i e-mailen kan faktisk købes",
          f"E-mails til UK nævner {s.outreach_price_uk}, men der faktureres ikke i pund (en britisk kunde betaler i "
          "euro). Tilføj GBP i priserne, ret OUTREACH_PRICE_UK til europrisen – eller lad punktet stå, hvis du kun "

@@ -19,12 +19,11 @@ import asyncio
 import json
 import os
 import random
-import statistics
 import sys
 import time
 import uuid
 from collections import defaultdict
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 
 import httpx
 
@@ -166,6 +165,11 @@ async def chat_loop(st: Stats, c: httpx.AsyncClient, base: str, key: str, stop: 
                       f"{base}/api/v1/public/webchat/{key}/conversations/{d['conversation_id']}/messages",
                       headers=hv, json={"text": rnd.choice(texts)})
             st.chat_msgs += 1
+        if rnd.random() < 0.3 and time.monotonic() < stop:  # «Bliv kontaktet» with e-mail: lead + task + new-lead mails
+            await req(st, c, "chat.contact", "POST",
+                      f"{base}/api/v1/public/webchat/{key}/conversations/{d['conversation_id']}/contact", headers=hv,
+                      json={"name": "Test Testesen", "email": f"visitor{slot}@{LABEL}.example",
+                            "note": "Ring gerne", "consent": True})
         await asyncio.sleep(think * rnd.uniform(1, 3))
 
 

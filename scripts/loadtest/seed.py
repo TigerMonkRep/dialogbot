@@ -22,8 +22,19 @@ from sqlalchemy import select
 from app.config import get_settings
 from app.core.security import hash_password, normalize_email
 from app.db import get_session_factory
-from app.models import (BusinessProfile, GoalSelection, KnowledgeItem, KnowledgeVersion, LanguageSettings, Membership,
-                        PhoneNumber, TelephonySetup, User, WebchatSettings, Workspace)
+from app.models import (
+    BusinessProfile,
+    GoalSelection,
+    KnowledgeItem,
+    KnowledgeVersion,
+    LanguageSettings,
+    Membership,
+    PhoneNumber,
+    TelephonySetup,
+    User,
+    WebchatSettings,
+    Workspace,
+)
 
 LABEL = "loadtest-2026-11-13"
 NS = uuid.UUID("7d1c0c55-2026-4111-8a13-10ad7e575eed")

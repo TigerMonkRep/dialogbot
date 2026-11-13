@@ -157,7 +157,7 @@ def test_migration_down_and_up(db):
     cfg = Config(os.path.join(root, "alembic.ini"))
     cfg.set_main_option("script_location", os.path.join(root, "alembic"))
     db.close()
-    command.downgrade(cfg, "c5e1f7a3d9b2")
+    command.downgrade(cfg, "e9a1c3b5d7f2")
     try:
         with db.bind.connect() as conn:
             for tbl in ("sms_usage", "storage_deletions"):

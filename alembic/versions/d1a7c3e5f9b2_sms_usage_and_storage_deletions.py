@@ -1,7 +1,7 @@
 """sms usage (code SMS the business pays for) and storage deletions (support files follow their rows)
 
 Revision ID: d1a7c3e5f9b2
-Revises: c5e1f7a3d9b2
+Revises: e9a1c3b5d7f2
 Create Date: 2026-11-13 12:00:00
 
 - sms_usage: one row per code SMS sent from the worker (W04/W13 for the business, the demo-call code for Dialogbot's
@@ -13,7 +13,7 @@ from alembic import op
 import sqlalchemy as sa
 
 revision = 'd1a7c3e5f9b2'
-down_revision = 'c5e1f7a3d9b2'
+down_revision = 'e9a1c3b5d7f2'
 branch_labels = None
 depends_on = None
 

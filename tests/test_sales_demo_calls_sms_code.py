@@ -5,6 +5,7 @@ calls; do-not-call: no SMS, same answer; SMS text GSM-7 in 8 languages. Fake SMS
 from __future__ import annotations
 
 import os
+import uuid
 from datetime import UTC, datetime, timedelta
 
 import pytest
@@ -176,6 +177,41 @@ def test_sms_failure_is_reported(client, sales, db):  # noqa: F811
     r = _code(client)
     assert r.status_code == 502 and r.json()["code"] == "sms_failed"
     assert db.query(DemoCallVerification).count() == 0  # rolled back: it does not count against the visitor
+
+
+def _shape(r):
+    body = r.json()
+    return r.status_code, body.get("status") or body.get("code"), sorted(body)
+
+
+def test_a_do_not_call_number_gets_the_same_answers_as_any_number_over_many_codes(client, sales, db, monkeypatch):  # noqa: F811
+    """F-VER1112-01-P06: the do-not-call branch must spend the same per-number, per-IP and global budgets (and the
+    30 s resend wait) as any number, so a 5th code in an hour gives 429 for both – and still no SMS to the opt-out."""
+    from app.models import DoNotCall
+
+    db.add(DoNotCall(workspace_id=uuid.UUID(sales["ws"]), phone="+4520304051", source="call"))
+    db.commit()
+    monkeypatch.setenv("CLIENT_IP_SECRET", "test-client-ip-secret")
+    get_settings.cache_clear()
+
+    def run(phone, net):
+        out = []
+        for i in range(verification.SMS_PER_NUMBER_HOUR + 1):
+            ip = f"198.51.{net}.{i + 1}"  # a fresh IP each time: the per-number limit is what bites
+            h = {"x-dialogbot-client-ip": ip, "x-dialogbot-client-ip-sig": client_ip_sig("test-client-ip-secret", ip)}
+            out.append(_shape(client.post("/api/v1/demo-call/code", headers=h,
+                                          json={"phone": phone, "consent": True})))
+            out.append(_shape(client.post("/api/v1/demo-call/code", headers=h,
+                                          json={"phone": phone, "consent": True})))  # inside the 30 s wait
+            _later(sales, seconds=31)
+        return out
+
+    plain, blocked = run("20 30 40 50", 100), run("20 30 40 51", 101)
+    assert plain == blocked
+    assert [s for s, _, _ in plain] == [202, 409] * verification.SMS_PER_NUMBER_HOUR + [429, 429]
+    assert {m["to"] for m in WORLD.sms} == {"+4520304050"}  # never an SMS to the do-not-call number
+    assert len(WORLD.sms) == verification.SMS_PER_NUMBER_HOUR
+    assert sales["calls"] == []
 
 
 def test_the_quiz_shares_the_per_number_sms_limit(client, sales, db):  # noqa: F811

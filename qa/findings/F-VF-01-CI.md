@@ -3,7 +3,7 @@ id: F-VF-01-CI
 scenario: CI (lint + pytest) på qa/privat-deep
 reported_by: verifier
 severity: S1
-status: fixed
+status: closed
 owner_fix: verifier (kun testfiler)
 related: [F-PK-01-PC-SUB-08, F-PBQ-04-PC-SUB-13, F-PBQ-08-PC-ACC-04, F-PQ-03-X09]
 ---
@@ -21,3 +21,13 @@ Branchen var rød i CI før PR: `ruff check` gav 30 fejl (kun i tests/qa/test_qa
 
 ## Evidens
 tests/qa/test_qa_pd_{billing,sec,core}.py grønne efter (xfail som forventet); apps_a/apps_b/x 179 passed, 2 skipped.
+
+## Verifikation (udfyldes af verifier)
+- Verifier 2026-11-13 (uafhængig, start forfra), main 5c75ea3; stak :3336/:8336, DB qa_ver1112*; logs i /home/claude/ver1112/logs.
+- Gentest: `ruff check app tests scripts client voice_pipeline tts_service browser_worker` → «All checks passed!» på main
+  5c75ea3; GitHub `test`-jobbet (ruff + alembic + fuld pytest + kontrakt-cmp) er grønt på main 5c75ea3 og på 587e648.
+- Fejler uden rettelsen? **Ja**: på 15c3704 (= d024446^) giver samme ruff-kommando «Found 30 errors» (som fundet beskriver).
+- Naboscenarier: hele CI-matrixen på main 5c75ea3: test, voice-services, browser-worker, journeys, qa-catalog 1–4,
+  privat grønne. **Undtagelse:** provider-sandbox (nyt i #208) er rød – nyt fund F-VER1112-03-CI (konfiguration, ikke
+  denne rettelse).
+- Dom: **closed**

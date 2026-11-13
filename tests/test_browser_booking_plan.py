@@ -218,8 +218,9 @@ def test_at_the_cap_the_chat_says_so_and_starts_nothing(api, db, pv, user, world
 
 def test_the_limit_text_exists_in_all_8_languages_and_never_names_a_number_or_price():
     base = ROOT / "web/src/i18n/messages"
+    # "us" is a market edition generated from "en", not a ninth language – it is checked too
     langs = sorted(p.name for p in base.iterdir() if p.is_dir())
-    assert len(langs) == 8
+    assert len([lang for lang in langs if lang != "us"]) == 8
     for lang in langs:
         b = json.loads((base / lang / "privat.json").read_text())["browser"]
         assert b["limit"] and "30" not in b["limit"] and "kr" not in b["limit"].lower(), lang

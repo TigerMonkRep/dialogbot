@@ -45,7 +45,7 @@ class OutreachCopywriterAgent:
         spelling = {"US": "US English", "UK": "British English", "INTL": "concise international English"}[loc.spelling]
         number = (f'The demo rings from the local number {loc.callback_number}; you may mention it.' if loc.callback_number
                   else "Do not mention any phone number or a local number.")
-        system = SYSTEM.format(demo=localization.DEMO_URL, facts="\n".join("- " + f for f in localization.PRODUCT_FACTS),
+        system = SYSTEM.format(demo=localization.demo_url(lead.country), facts="\n".join("- " + f for f in localization.PRODUCT_FACTS),
                                country=lead.country, spelling=spelling, price=loc.price, number=number)
         user = (f"<business>{json.dumps({'company': lead.company_name, 'niche': lead.niche, 'city': lead.city})}</business>\n"
                 f"<brief>{brief.model_dump_json()}</brief>")

@@ -121,3 +121,15 @@ Kræver operatørrollen (`python -m scripts.grant_operator grant <e-mail>`). All
 - **Ingen opfølgning på kommentarer eller beskeder.** Systemet poster og måler (følgere, likes, kommentarer, delinger, visninger); det besvarer ikke. Kommentarer skal stadig læses af et menneske.
 - Meta- og TikTok-kaldene er skrevet efter leverandørernes dokumentation og testet mod en mock; formater og fejlkoder kan afvige i praksis. Følg det første rigtige opslag på hver platform.
 - Dialogbot skriver kun om sig selv. Indholdet er markedsføring af egen virksomhed på egne profiler; det er ikke kundeindhold.
+
+## Forløb, regelsæt og fremgang (admin)
+
+Hvert opslag gemmer et **forløb** (`social_posts.pipeline`), som vises under "Forløb" på opslaget i `/app/operator/social`:
+idé (emne + regelsæt) → hook-kandidater med score, formel og valg → tekst (AI eller håndskrevet, med årsag til fallback) →
+tjek (faktakontrol, platformregler, automatiske rettelser) → evt. rettelse → godkendelse (hvem, hvordan) → udsendelse (eller fejl).
+Øverst på siden viser "Proces og fremgang" tallene pr. platform: lavet → godkendt → udsendt, AI/håndskrevet, gennemsnitlig hook-score, svage hooks.
+Opslag lavet før forløbet blev indført har intet forløb.
+
+Regelsæt (`app/modules/social/craft.py`): Instagram følger `ig-*`-skillsættet (maks. **5** hashtags siden dec. 2025, første ~125 tegn er hook),
+TikTok og Facebook følger `social-media-skills`. X har regler klar, men er ikke koblet på (der postes ikke dér).
+Hook-scoren er en hjælp til at fange svage hooks – den forudsiger ikke rækkevidde, og intet blokeres af den; et menneske godkender stadig alt.

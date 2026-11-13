@@ -51,6 +51,24 @@ email_source, email_source_url, context`. `context` is free text for the researc
 snippets). `email_source=published_website` plus `email_source_url` is required for CA and AU. Rows exported from
 Outscraper/Apify can be mapped with `agents/sourcing.from_scraper_rows()`.
 
+## 1b. The admin tab: Admin → «Kold e-mail» (`/app/operator/outreach`)
+
+Operator-only, Danish. Everything above without a terminal:
+
+- **Start en kampagne** – pick a country (only e-mail markets can be chosen), a city and a category; «Find virksomheder»
+  searches Google Places (`GOOGLE_PLACES_API_KEY`) and reads the e-mail address each business publishes on its own
+  website (`finder.py`, through `app/core/safe_fetch`). Tick the ones to use, name the campaign, and the leads are
+  checked (one request, no AI) and then researched, written and audited one lead per request. A pasted CSV works too.
+- **Kampagner** – every lead's status, block reasons, confidence, the e-mail and the audit's objections. In dry run
+  «Gør e-mails færdige» renders them with the real unsubscribe link; in live «Send køen nu» asks once more, then sends.
+- **Inden du går live** – the to-do list (`readiness.py`). Automatic points follow the configuration (mode, Claude,
+  demo countries, postal address, inboxes, provider, webhooks, billable prices); three manual points (lawyer, sending
+  domain DNS, dry run read) are ticked by hand and stored in `outreach_todo_marks`.
+- **Ringeliste (Danmark)** and **Landeregler** – the call-list download and the matrix in plain words.
+
+API behind it: `GET …/overview` (answers also while off), `POST …/search`, `POST …/batches` with `research: false`,
+`POST …/batches/{name}/process?limit=1`, `PUT …/todos/{key}`.
+
 ## 2. Market matrix (`compliance/matrix.py`)
 
 | Market | Decision | Extra rules enforced in code |
@@ -93,7 +111,7 @@ calls only happen when a prospect enters their own number on dialogbot.app (the 
 |---|---|---|---|
 | 1 | **The callback demo only rings Danish numbers today** (`DK_NUMBER` in `sales/service.py`), in Danish, with a script aimed at 3–4 minutes (`MAX_SECONDS = 420`) | The e-mail promises a 90-second demo call in the reader's market; for a US or UK reader the form rejects the number. Live sending to a country waits until it is listed in `OUTREACH_DEMO_CALLBACK_COUNTRIES` | demo flow + Twilio numbers |
 | 2 | Full postal address | CAN-SPAM and CASL ask for a valid physical postal address; «Aarhus, Denmark» is not one. Live mode refuses to start without `OUTREACH_POSTAL_ADDRESS` | env |
-| 3 | USD and GBP prices | Billing only knows DKK/SEK/NOK/EUR (`billing/markets.py`); a US customer is billed €329 today. `$349/mo` and `£275/mo` are display values (`OUTREACH_PRICE_US/UK`) – add the currencies or change the copy before quoting them | billing |
+| 3 | GBP price | USD is a billing currency since 13 November 2026 (`billing/markets.py`: $349/mo; US leads are sent to `dialogbot.app/us`). GBP is not: a UK company is billed in EUR, so `£275/mo` (`OUTREACH_PRICE_UK`) is a display value – add the currency or change the copy before quoting it | billing |
 | 4 | Local callback numbers | The copy may only mention a `+1`/`+44` number when `OUTREACH_CALLBACK_NUMBER_US/UK` is set | Twilio |
 | 5 | Sending domain | Use a separate, warmed-up domain with SPF, DKIM and DMARC; list its inboxes in `OUTREACH_SENDER_INBOXES` | DNS |
 | 6 | Webhooks | Point the provider's events at `POST /api/v1/webhooks/events` (Resend: `RESEND_WEBHOOK_SECRET`; others: `OUTREACH_WEBHOOK_SECRET` in `X-Outreach-Secret`) | provider |

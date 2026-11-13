@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/client";
 import { Alert, Button, ErrorBox, Field, Icon, Input, Select, Textarea, useSubmit } from "@/components/ui";
 import { useLocale, useT } from "@/i18n/client";
-import { HTML_LANG, LOCALES, LOCALE_NAMES } from "@/i18n/config";
+import { HTML_LANG, LANGUAGES, LOCALE_NAMES } from "@/i18n/config";
 
 export type PhoneNumber = {
   id: string; e164: string; status: string; label: string; active: boolean; greeting: string; speaking_style: string;
@@ -328,8 +328,8 @@ function CustomerLanguage({ wsId, languages, canManage }: { wsId: string; langua
     <div className="flex flex-col gap-2">
       <Field label={tr("telephony.language.label")} hint={tr("telephony.language.help")}>
         <Select value={cur.default_conversation_language} disabled={!canManage || save.pending} onChange={(e) => save.run(e.target.value)}>
-          {LOCALES.map((l) => <option key={l} value={l}>{LOCALE_NAMES[l]}</option>)}
-          {!(LOCALES as readonly string[]).includes(cur.default_conversation_language) && <option value={cur.default_conversation_language}>{cur.default_conversation_language}</option>}
+          {LANGUAGES.map((l) => <option key={l} value={l}>{LOCALE_NAMES[l]}</option>)}
+          {!(LANGUAGES as readonly string[]).includes(cur.default_conversation_language) && <option value={cur.default_conversation_language}>{cur.default_conversation_language}</option>}
         </Select>
       </Field>
       {saved && <Alert kind="ok">{tr("telephony.language.saved")}</Alert>}

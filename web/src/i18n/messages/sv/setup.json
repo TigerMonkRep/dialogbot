@@ -129,6 +129,8 @@
       "address": "Adress",
       "postalCode": "Postnummer",
       "city": "Ort",
+      "country": "Land",
+      "timezone": "Tidszon",
       "cvrLooked": "Uppslaget: {note}",
       "categories": "Branscher (en eller flera)",
       "categoryAdd": "Lägg till en bransch",

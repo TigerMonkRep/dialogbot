@@ -38,7 +38,7 @@ def _out(db: OrmSession, p: SocialPost) -> dict:
             "attempts": p.attempts, "last_error": p.last_error, "approved_by": str(p.approved_by_user_id) if p.approved_by_user_id else None,
             "published_at": p.published_at.isoformat() if p.published_at else None,
             "metrics": p.metrics, "metrics_at": p.metrics_at.isoformat() if p.metrics_at else None,
-            "images": [publishers.media_url(i) for i in ids]}
+            "images": [publishers.media_url(i) for i in ids], "pipeline": p.pipeline or []}
 
 
 @router.get("/dashboard")

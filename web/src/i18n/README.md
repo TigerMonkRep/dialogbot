@@ -28,3 +28,12 @@ Sprog: `da` (kilde), `en`, `de`, `es`, `fr`, `it`, `no` (bokmål), `sv`. Konfigu
 - Operatør-sider (`/app/operator/**`) forbliver danske (kun Dialogbots egne operatører bruger dem).
 
 Efter en ny namespace-fil: `node scripts/i18n-index.mjs`. `npm run i18n:check` sammenligner nøgler på tværs af sprog.
+
+## US-udgaven (`us`)
+`/us/…` er den amerikanske udgave: engelske tekster, dollarpriser, egen video. Den er et marked, ikke et sprog:
+- `messages/us/*.json` er GENERERET fra `messages/en/` af `scripts/i18n-us.mjs` (amerikansk stavning, «before tax» i
+  stedet for «excl. VAT», amerikanske eksempler). Ret aldrig i `messages/us/` – ret den engelske tekst, en regel i
+  scriptet eller `us-overrides.json`, og kør `npm run i18n:us`. `npm run i18n:check` fejler, hvis mappen er forældet.
+- Priser: `lib/markets.ts` giver `us` valutaen USD (`prices.json` fra `app/modules/billing/markets.py`).
+- Mod API'et er `us` engelsk (`apiLanguage`), og den findes ikke blandt samtalesprogene (`LANGUAGES`).
+- En besøgende fra USA (Vercels `x-vercel-ip-country`) lander på `/us`, medmindre de selv har valgt sprog.

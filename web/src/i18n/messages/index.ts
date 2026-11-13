@@ -95,6 +95,18 @@ import sv_settings from "./sv/settings.json";
 import sv_setup from "./sv/setup.json";
 import sv_site from "./sv/site.json";
 import sv_widget from "./sv/widget.json";
+import us_app from "./us/app.json";
+import us_articles from "./us/articles.json";
+import us_auth from "./us/auth.json";
+import us_common from "./us/common.json";
+import us_entry from "./us/entry.json";
+import us_landing from "./us/landing.json";
+import us_legal from "./us/legal.json";
+import us_privat from "./us/privat.json";
+import us_settings from "./us/settings.json";
+import us_setup from "./us/setup.json";
+import us_site from "./us/site.json";
+import us_widget from "./us/widget.json";
 
 export const MESSAGES: Record<string, Record<string, Record<string, unknown>>> = {
   da: {
@@ -208,5 +220,19 @@ export const MESSAGES: Record<string, Record<string, Record<string, unknown>>> =
     setup: sv_setup,
     site: sv_site,
     widget: sv_widget,
+  },
+  us: {
+    app: us_app,
+    articles: us_articles,
+    auth: us_auth,
+    common: us_common,
+    entry: us_entry,
+    landing: us_landing,
+    legal: us_legal,
+    privat: us_privat,
+    settings: us_settings,
+    setup: us_setup,
+    site: us_site,
+    widget: us_widget,
   },
 };

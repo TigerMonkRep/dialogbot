@@ -1,0 +1,13 @@
+{
+  "site": {
+    "proev.chat.errNumber": "Enter a US phone number with 10 digits.",
+    "funnel.gate.errPhone": "Enter a US mobile number with 10 digits."
+  },
+  "common": {
+    "pwa.manifestErhverv": "AI reception, callbacks and campaigns for local businesses"
+  },
+  "setup": {
+    "step1.b.descriptionPlaceholder": "E.g. Plumbing, drain cleaning and water heaters in Austin and the surrounding area",
+    "step1.b.zonesPlaceholder": "Austin + 30 miles"
+  }
+}

@@ -6,7 +6,7 @@ from collections import Counter
 from collections.abc import Callable, Iterable
 
 import structlog
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session as OrmSession
 
 from app.config import get_settings
@@ -27,18 +27,26 @@ def require_on() -> None:
         raise NotImplementedYet("Outreach is switched off (OUTREACH_MODE=off)", code="outreach_off")
 
 
-def run_batch(db: OrmSession, raws: Iterable[RawLead], *, batch: str, countries: set[str] | None = None,
-              mx_check: Callable[[str], bool | None] | None = None,
-              cvr_lookup: Callable[[str], bool | None] | None = None) -> dict:
+def ingest_batch(db: OrmSession, raws: Iterable[RawLead], *, batch: str, countries: set[str] | None = None,
+                 mx_check: Callable[[str], bool | None] | None = None,
+                 cvr_lookup: Callable[[str], bool | None] | None = None) -> list[OutreachLead]:
+    """Step 1 (no model): every lead through the ComplianceEngine, then niche, MX and the Danish call list."""
     require_on()
     leads = LeadSourcingAndQualificationAgent(db, mx_check=mx_check, cvr_lookup=cvr_lookup).ingest(
         raws, batch=batch, countries=countries)
     db.commit()
+    return leads
+
+
+def process(db: OrmSession, batch: str, *, limit: int | None = None) -> dict:
+    """Step 2 (Claude): research, write and audit the batch's qualified leads, `limit` at a time. The admin calls this
+    one lead per request so a long batch never hangs a request; the CLI runs it to the end."""
+    require_on()
+    q = select(OutreachLead).where(OutreachLead.batch == batch, OutreachLead.status == "qualified").order_by(OutreachLead.created_at)
+    leads = db.scalars(q.limit(limit) if limit else q).all()
     engine, research = ComplianceEngine(db), PainPointResearchAgent(db)
     writer, auditor = OutreachCopywriterAgent(db), ComplianceAndSafetyAuditorAgent(db)
     for lead in leads:
-        if lead.status != "qualified":
-            continue
         try:
             clearance = engine.evaluate(LeadFacts(
                 company_name=lead.company_name, email=lead.email_normalized, country=lead.country,
@@ -54,6 +62,16 @@ def run_batch(db: OrmSession, raws: Iterable[RawLead], *, batch: str, countries:
             lead.status = "error"
             db.add(OutreachLog(lead_id=lead.id, kind="research", outcome="error", detail={"error": str(e)}))
         db.commit()   # a lead at a time: a crash later in the batch never loses finished work
+    remaining = db.scalar(select(func.count()).select_from(OutreachLead).where(
+        OutreachLead.batch == batch, OutreachLead.status == "qualified")) or 0
+    return {"processed": len(leads), "remaining": remaining}
+
+
+def run_batch(db: OrmSession, raws: Iterable[RawLead], *, batch: str, countries: set[str] | None = None,
+              mx_check: Callable[[str], bool | None] | None = None,
+              cvr_lookup: Callable[[str], bool | None] | None = None) -> dict:
+    ingest_batch(db, raws, batch=batch, countries=countries, mx_check=mx_check, cvr_lookup=cvr_lookup)
+    process(db, batch)
     return report(db, batch)
 
 

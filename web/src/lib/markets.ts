@@ -5,7 +5,7 @@
 import PRICES from "./prices.json";
 import { HTML_LANG, type Locale } from "@/i18n/config";
 
-export type Currency = "DKK" | "SEK" | "NOK" | "EUR";
+export type Currency = "DKK" | "SEK" | "NOK" | "EUR" | "USD";
 /** extra_minute = inbound minute above the package, outbound_extra_minute = outbound (campaign) minute above it.
  *  No price per call (decision 2026-11-10). */
 export type ErhvervItem = "monthly" | "extra_minute" | "outbound_extra_minute" | "call_answered" | "call_voicemail" | "call_no_answer" | "setup";

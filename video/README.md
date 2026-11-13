@@ -22,3 +22,10 @@ Færdige filer ligger i `web/public/video/dialogbot-<sprog>.mp4` (+ `-poster.jpg
    `inter-latin-wght-normal.woff2` → `fonts/inter.woff2` fra `web/node_modules/@fontsource-variable/`.
 5. `python3 align.py <sprog> && node render.js <sprog> video`, læg lyd på:
    `ffmpeg -i out/<sprog>/silent.mp4 -i out/<sprog>/voice.m4a -map 0:v -map 1:a -c copy -movflags +faststart -shortest …`
+
+## US-udgaven (`us`)
+`script/us.json` er den amerikanske udgave af den engelske (amerikanske ord, «Business hours», 9:00 AM). Stemme:
+Curtis `l7mlSJVCAXDwFX44amqm` (amerikansk, varm), model `eleven_multilingual_v2`, godkendt af Fürster 13.11.2026.
+Speaken er lavet uden ordtider (ElevenLabs-connectoren giver kun lydfilen), så `raw/us-words.json` er bygget fra
+pauserne i lyden: `ffmpeg -af silencedetect=noise=-38dB:d=0.3`, pauser ≥ 0,8 s er linjeskift (pausen efter «Just type:»
+er ikke et linjeskift) – én «ord»-post pr. linje med start/slut, adskilt af `<break`-poster som i de andre sprog.

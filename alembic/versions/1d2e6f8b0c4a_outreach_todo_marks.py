@@ -1,7 +1,7 @@
 """outreach todo marks
 
 Revision ID: 1d2e6f8b0c4a
-Revises: b8e4f1a6c3d7
+Revises: c5e1f7a3d9b2
 Create Date: 2026-11-13 11:14:55.401053
 """
 from alembic import op
@@ -9,7 +9,7 @@ import sqlalchemy as sa
 
 
 revision = '1d2e6f8b0c4a'
-down_revision = 'b8e4f1a6c3d7'
+down_revision = 'c5e1f7a3d9b2'
 branch_labels = None
 depends_on = None
 

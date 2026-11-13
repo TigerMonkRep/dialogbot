@@ -23,7 +23,7 @@ const roleOf = async (page: Page, wsId: string, email: string) =>
   ((await (await page.request.get(`/api/backend/workspaces/${wsId}/members`)).json()) as { email: string; role: string }[]).find((m) => m.email === email)?.role;
 
 test("S02 · «Kan ændre» betyder det samme ved invitation og ved rolleskift", async ({ page, browser }, info) => {
-  test.fail(true, "F-EA-04-S02: needs-decision – «Kan ændre» = staff ved invitation, admin ved rolleskift (open finding)");
+  // F-EA-04-S02: safer default 13/11 – «Kan ændre» is staff both ways (least privilege); Fürster may still choose admin.
   const { wsId } = await freshOwner(page, info);
   await page.goto("/app/settings/team");
   await expect(page).toHaveURL(/\/app\/konto$/);
@@ -46,6 +46,7 @@ test("S02 · «Kan ændre» betyder det samme ved invitation og ved rolleskift",
   info.annotations.push({ type: "roles", description: `invite «Kan ændre» → ${inv.role}; change to «Kan ændre» → ${changed}` });
   // Same label must give the same permissions (staff cannot invite or approve knowledge; admin can).
   expect(changed, "«Kan ændre» via rolleskift giver en anden backend-rolle end «Kan ændre» via invitation").toBe(inv.role);
+  expect(inv.role).toBe("staff");
 });
 
 test("S02 · fjern medlem og tilbagekald invitation kræver bekræftelse; «Annullér» ændrer intet; reload viser sandheden", async ({ page, browser }, info) => {

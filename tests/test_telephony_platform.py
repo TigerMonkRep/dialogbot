@@ -287,3 +287,37 @@ def test_numbers_are_bought_in_the_business_country(client, api, two_workspaces)
         assert platform.number_country(db, ws) is None
     finally:
         db.close()
+
+
+def test_operator_adopts_a_number_bought_by_hand_as_an_extra_number(api, two_workspaces, fake, monkeypatch, db):
+    """The US demo line: bought in Twilio's console, then given to the sales workspace. It is imported into Vapi,
+    its incoming calls go to our assistant, the workspace's main number stays, and it may not ring out."""
+    from sqlalchemy import select
+
+    from app.models import AuditLog, PhoneNumber
+    from app.modules.telephony.providers import Number
+
+    monkeypatch.setenv("VAPI_SERVER_SECRET", "s3cret")
+    monkeypatch.setenv("PUBLIC_BASE_URL", "https://api.dialogbot.dk")
+    monkeypatch.setenv("TWILIO_AUTH_TOKEN", "tok")
+    get_settings.cache_clear()
+    t = two_workspaces
+    main = api.map_number(t["ws_a"], "+4593703433", "pn_main", activate=True, outbound=True)
+    WORLD.numbers["PN_us"] = {"sub": "ACfake00000000000000000000000000", "n": Number("PN_us", "+16283773337", "US")}
+    op = api.operator()
+    path = f"/operator/telephony/workspaces/{t['ws_a']}/numbers/adopt"
+    body = {"e164": "+1 628 377 3337", "label": "US demo line", "note": "US demo line for the /us site"}
+    assert api.post(t["tok_a"], path, body).status_code == 403
+    assert api.post(op, path, {**body, "e164": "+16285550100"}).json()["code"] == "number_not_on_twilio"
+    r = api.post(op, path, body)
+    assert r.status_code == 201, r.text
+    nums = {n["e164"]: n for n in r.json()["numbers"]}
+    us = nums["+16283773337"]
+    assert us["provider_sid"] == "PN_us" and us["outbound_allowed"] is False and us["status"] == "active"
+    assert WORLD.vapi[us["provider_number_id"]] == "+16283773337"
+    assert WORLD.numbers["PN_us"]["voice_url"] == "https://api.vapi.ai/twilio/inbound_call"
+    assert nums["+4593703433"]["id"] == main["id"] and nums["+4593703433"]["outbound_allowed"] is True
+    db.expire_all()
+    assert db.scalar(select(PhoneNumber.label).where(PhoneNumber.e164 == "+16283773337")) == "US demo line"
+    assert db.scalar(select(AuditLog.id).where(AuditLog.action == "telephony.number_adopted")) is not None
+    assert api.post(op, path, body).json()["code"] == "number_taken"

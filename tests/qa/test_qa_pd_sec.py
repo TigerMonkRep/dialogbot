@@ -584,6 +584,8 @@ def test_ps_call_06_scheduled_call_is_not_dialled_after_the_basis_is_withdrawn(a
     "/api/v1/privat/invites/{tok}", "/api/v1/privat/invites/{tok}/accept", "/api/v1/privat/invites/by-code/ABCDEFGH",
     "/api/v1/privat/invites/by-code/ABCDEFGH/accept", "/api/v1/privat/group-invites/by-code/ABCDEFGH",
     "/api/v1/privat/group-invites/by-code/ABCDEFGH/join", "/api/v1/privat/calendar/feed/{tok}.ics",
+    "/api/v1/public/customer/callback/{tok}", "/api/v1/public/customer/callback/{tok}/preferences",
+    "/api/v1/public/booking/manage/{tok}", "/api/v1/public/booking/manage/{tok}/move",
 ])
 def test_ps_log_01_bearer_link_secrets_are_not_written_to_the_request_log(path):
     """→ F-PS-04 (fixed by fix-engineer, regression). app/core/logging.py redacted only /privat/calendar/feed/. Invitation

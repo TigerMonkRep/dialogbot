@@ -36,11 +36,13 @@ log = structlog.get_logger("dialogbot")
 
 
 # Path parts that are bearer secrets – whoever has one gets in: calendar feeds (Privat and bookings), Privat list
-# invitations by token or short code, group join links, team invitations, sales offers and parent consent links. The
+# invitations by token or short code, group join links, team invitations, sales offers, parent consent links and the
+# customer's own links (callback page and booking management, W09/W13, F-VER1113-06). The
 # part is never written to the log (F-PS-04). Only the path is logged, never the query string.
 _SECRET_PATHS = re.compile(
     r"(/privat/calendar/feed/|/privat/invites/by-code/|/privat/invites/(?!by-code/)|/privat/group-invites/by-code/"
-    r"|^(?:/api/v1)?/invitations/(?!accept/?$)|/public/offers/|/public/calendar/|/public/ambassadors/parent-consent/)"
+    r"|^(?:/api/v1)?/invitations/(?!accept/?$)|/public/offers/|/public/calendar/|/public/ambassadors/parent-consent/"
+    r"|/public/customer/callback/|/public/booking/manage/)"
     r"[^/]+")
 
 

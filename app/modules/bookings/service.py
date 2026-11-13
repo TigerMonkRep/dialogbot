@@ -13,11 +13,11 @@ import uuid
 from datetime import UTC, date, datetime, time, timedelta
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session as OrmSession
 
 from app.core.errors import ApiError, Conflict, NotFound, ValidationFailed
-from app.models import Booking, BookingSettings, BookingType, Conversation, Workspace
+from app.models import Booking, BookingSettings, BookingType, Conversation, CustomerLink, Workspace
 from app.modules.knowledge.service import active_knowledge
 
 DAYS = ("mon", "tue", "wed", "thu", "fri", "sat", "sun")
@@ -273,6 +273,9 @@ def move(db: OrmSession, ws: Workspace, b: Booking, *, start: str, tz: str) -> B
     if not free:
         raise Conflict("Den nye tid er ikke ledig – vælg en anden", code="slot_taken")
     b.starts_at, b.ends_at = st, en
+    # The customer's manage link lives until the appointment is over – the current one, not the original (F-VER1113-02).
+    db.execute(update(CustomerLink).where(CustomerLink.booking_id == b.id, CustomerLink.purpose == "booking",
+                                          CustomerLink.revoked_at.is_(None)).values(expires_at=en))
     if not readable:  # the new time was not checked against the connected calendar
         b.confirmation = "pending"
         _ask_staff_to_confirm(db, b, tz)
@@ -281,27 +284,13 @@ def move(db: OrmSession, ws: Workspace, b: Booking, *, start: str, tz: str) -> B
 
 
 def cancel(db: OrmSession, b: Booking) -> Booking:
+    """Mark the booking cancelled. The caller removes it from the connected calendar through the shared mirror path
+    (`connectors.calendar.mirror_cancel`) – exactly once; deleting here as well sent a second DELETE (F-VER1113-01)."""
     if b.status != "cancelled":
         b.status, b.cancelled_at = "cancelled", _now()
         _close_confirm_task(db, b, None)
-        _mirror_cancel(db, b)
         _emit(db, b.workspace_id, "booking.cancelled", b, "Europe/Copenhagen")
     return b
-
-
-def _mirror_cancel(db: OrmSession, b: Booking) -> None:
-    """A booking cancelled from the UI also leaves the connected calendar (best effort)."""
-    if not (b.calendar_connector and b.calendar_event_id):
-        return
-    from app.modules.integrations import connectors, credentials
-    from app.modules.integrations.connectors.base import ActionError
-
-    try:
-        connectors.calendar_client(db, b.workspace_id, b.calendar_connector).delete_event(b.calendar_event_id)
-    except ActionError as e:
-        conn = credentials.connection(db, b.workspace_id, b.calendar_connector)
-        if conn is not None:
-            credentials.mark_error(conn, f"Aflysningen kunne ikke skrives til kalenderen: {e.message}")
 
 
 def _emit(db: OrmSession, ws_id: uuid.UUID, event: str, b: Booking, tz: str) -> None:

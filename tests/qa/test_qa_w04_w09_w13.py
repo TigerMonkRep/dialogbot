@@ -333,6 +333,83 @@ def test_w13_move_when_the_calendar_write_fails_is_not_told_as_done(api, client,
     assert any(x.title.startswith("Bekræft aftale") for x in db.scalars(select(Task).where(Task.status == "open")))
 
 
+def _delete_like_google(monkeypatch):
+    """The fake calendar's DELETE behaves like Google: a second DELETE of the same event is refused (410 Gone)."""
+    from app.modules.integrations.connectors import fakes
+    from app.modules.integrations.connectors.base import ActionError
+
+    calls = []
+
+    def delete(self, event_id):
+        calls.append(event_id)
+        if event_id not in WORLD.events:
+            raise ActionError("Kalenderen afviste kaldet (410)", code="provider_rejected")
+        WORLD.events.pop(event_id)
+
+    monkeypatch.setattr(fakes.FakeCalendarClient, "delete_event", delete)
+    return calls
+
+
+@pytest.mark.parametrize("who", ["customer", "staff"])
+def test_w13_cancel_deletes_the_calendar_event_once(api, client, two_workspaces, fake, db, monkeypatch, who):  # noqa: F811
+    """F-VER1113-01: one cancellation → one DELETE; the booking stays synced and the connection is not set to error."""
+    from app.models import IntegrationConnection
+
+    t = two_workspaces
+    _connect_google(api, client, t)
+    token, _ = _book(api, client, t)
+    db.expire_all()
+    b = db.scalar(select(Booking))
+    assert b.calendar_event_id and b.calendar_sync == "synced"
+    calls = _delete_like_google(monkeypatch)
+    if who == "customer":
+        r = client.post(f"{PUB}/booking/manage/{token}/cancel", json={"session": _session(client, token)})
+    else:
+        r = api.post(t["tok_a"], f"/workspaces/{t['ws_a']}/bookings/{b.id}/cancel", {})
+    assert r.status_code == 200, r.text
+    db.expire_all()
+    b = db.scalar(select(Booking))
+    assert calls == [b.calendar_event_id]
+    assert (b.status, b.calendar_sync, b.calendar_sync_error) == ("cancelled", "synced", None)
+    assert all(c.status != "error" for c in db.scalars(select(IntegrationConnection)))
+
+
+@pytest.mark.parametrize("status", [404, 410])
+def test_calendar_delete_of_an_event_already_gone_is_success(monkeypatch, status):
+    """F-VER1113-01: Google answers 410 Gone (Microsoft 404) on an event that is already deleted – that is the
+    outcome a DELETE wants, not a provider error."""
+    import httpx
+
+    from app.modules.integrations.connectors import calendar
+
+    monkeypatch.setattr(httpx, "request", lambda *a, **kw: httpx.Response(status, json={"error": "gone"}))
+    for cls in (calendar.GoogleCalendarClient, calendar.MicrosoftCalendarClient):
+        cls("tok").delete_event("ev-1")  # no ActionError
+
+
+def test_w13_link_follows_a_moved_booking(api, client, two_workspaces, fake, db, monkeypatch):  # noqa: F811
+    """F-VER1113-02: after the customer moves the appointment to a later day, the link opens it until the new end."""
+    t = two_workspaces
+    token, _ = _book(api, client, t)
+    before = client.get(f"{PUB}/booking/manage/{token}").json()
+    old_end = datetime.fromisoformat(before["ends_at"])
+    slots = client.get(f"{PUB}/booking/manage/{token}/slots").json()["slots"]
+    later = [s for s in slots if datetime.fromisoformat(s["start"]) > old_end + timedelta(hours=2)]
+    assert later, "need a later slot"
+    r = client.post(f"{PUB}/booking/manage/{token}/move", json={"start": later[-1]["start"],
+                                                                "session": _session(client, token)})
+    assert r.status_code == 200, r.text
+    moved = r.json()
+    assert moved["expires_at"] == moved["ends_at"]
+    real_now = datetime.now(old_end.tzinfo)
+    _clock(monkeypatch, old_end + timedelta(hours=1) - real_now)  # after the original end, before the new one
+    r = client.get(f"{PUB}/booking/manage/{token}")
+    assert r.status_code == 200, r.text
+    _clock(monkeypatch, datetime.fromisoformat(moved["ends_at"]) + timedelta(minutes=1) - real_now)
+    r = client.get(f"{PUB}/booking/manage/{token}")
+    assert r.status_code == 410 and r.json()["code"] == "link_expired"
+
+
 @pytest.mark.parametrize("path", ["/customer/callback/{t}", "/booking/manage/{t}"])
 def test_db016_token_length_and_unknown_tokens_are_the_same_404(client, path):
     for tok in ("a", "a" * 43, "a" * 101):

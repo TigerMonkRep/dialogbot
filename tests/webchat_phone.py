@@ -40,3 +40,18 @@ def verify_phone(client, key: str, conv: dict, phone: str, e164: str) -> None:
     assert r.status_code == 202, r.text
     v = submit_code(client, key, conv, r.json()["verification_id"], last_code(e164))
     assert v.status_code == 200, v.text
+
+
+def prove_phone(client, key: str, conversation_id, headers: dict, phone: str) -> None:
+    """W04 before the booking door (F-VER1113-04): the visitor proves `phone` with the SMS code in this conversation,
+    using the request's own headers (origin + x-visitor-token)."""
+    from app.modules.customer.service import normalize
+    from app.worker import runner
+
+    base = f"{PUB}/{key}/conversations/{conversation_id}"
+    r = client.post(f"{base}/contact/code", json={"phone": phone}, headers=headers)
+    assert r.status_code == 202, r.text
+    runner.drain()
+    v = client.post(f"{base}/contact/verify", json={"verification_id": r.json()["verification_id"],
+                                                     "code": last_code(normalize(phone))}, headers=headers)
+    assert v.status_code == 200, v.text

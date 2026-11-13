@@ -14,7 +14,7 @@ from app.core.audit import record_audit
 from app.core.auth import WorkspaceContext, get_scoped, require_capability
 from app.core.errors import Conflict, NotFound, ValidationFailed
 from app.db import get_db
-from app.models import Booking, BookingMessage, BookingSettings, BookingType, Workspace
+from app.models import Booking, BookingMessage, BookingSettings, BookingType, Lead, Workspace
 from app.modules.bookings import service
 from app.modules.integrations.connectors import calendar
 from app.modules.setup.checks import invalidate_checks
@@ -364,13 +364,27 @@ def visitor_book(key: str, conversation_id: uuid.UUID, body: VisitorBookingIn, o
         raise ValidationFailed("Sæt flueben for at give os lov til at kontakte dig om aftalen", field_errors=[{"field": "consent"}])
     if not body.email and not body.phone:
         raise ValidationFailed("Angiv e-mail eller telefonnummer", field_errors=[{"field": "email"}, {"field": "phone"}])
+    from app.modules.customer import service as customer
+
+    # W04 also on the booking door (F-VER1113-04, safer default 13/11): a phone number goes on the booking, the lead
+    # and the task – and later gets the W13 code and E07 SMS – only after the visitor proved it with the SMS code in
+    # this conversation (same endpoints as «Bliv kontaktet»: …/contact/code and …/contact/verify). E-mail only: no code.
+    verified_at = None
+    if body.phone:
+        verified_at = customer.verified_phone(db, conv, customer.normalize(body.phone))
+        if verified_at is None:
+            raise ValidationFailed("Bekræft dit telefonnummer med koden fra SMS'en først", code="verification_required",
+                                   field_errors=[{"field": "phone"}])
     ws = db.get(Workspace, wc.workspace_id)
     tz = _tz(db, ws.id)
     b = service.book(db, ws, type_id=body.type_id, start=body.start, name=body.name, phone=body.phone,
                      email=str(body.email) if body.email else None, note=body.note, source="webchat", tz=tz,
                      conversation=conv)
+    if verified_at is not None and b.lead_id is not None:
+        lead = db.get(Lead, b.lead_id)
+        if lead is not None and lead.phone_verified_at is None:
+            lead.phone_verified_at = verified_at
     calendar.mirror_create(db, ws.id, b)  # the owner sees a failed write on the booking
-    from app.modules.customer import service as customer
 
     url = customer.issue_link(db, purpose="booking", ws_id=ws.id, booking=b)  # W13: see, move or cancel
     db.commit()

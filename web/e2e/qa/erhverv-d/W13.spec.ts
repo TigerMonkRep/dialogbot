@@ -1,6 +1,6 @@
 import { expect, test, type Browser, type Page, type TestInfo } from "@playwright/test";
-import { noHorizontalScroll, smsCodeFor } from "../erhverv-p1a/p1a-helpers";
-import { CSRF, closeAll, EVID, uniquePhone, visitor, widgetWorkspace, type Widget } from "./d-helpers";
+import { noHorizontalScroll } from "../erhverv-p1a/p1a-helpers";
+import { CSRF, closeAll, confirmCode, EVID, newSmsCode, smsCodeCount, uniquePhone, visitor, widgetWorkspace, type Widget } from "./d-helpers";
 
 /* W13 – /booking/manage/:token (P0, DB-007/DB-011/DB-016): «Secure appointment management, verification where needed,
  * reschedule/cancel, policy restrictions and invalid/expired links.» A booking made in the widget comes with a secure
@@ -20,6 +20,7 @@ async function book(page: Page, browser: Browser, info: TestInfo, contact: { pho
   if (contact.email) await form.getByLabel("E-mail").fill(contact.email);
   await form.getByLabel("Virksomheden må kontakte mig om aftalen.").check();
   await form.getByRole("button", { name: "Book", exact: true }).click();
+  if (contact.phone) await confirmCode(vis.chat, `+45${contact.phone.replace(/\D/g, "").slice(-8)}`); // W04 on the booking door
   const link = vis.chat.getByRole("link", { name: "Se, flyt eller aflys din tid" });
   await expect(link).toHaveAttribute("href", /\/booking\/manage\/[\w-]{40,}$/);
   return { ...vis, path: new URL((await link.getAttribute("href"))!).pathname };
@@ -44,12 +45,13 @@ test("W13 · kode til aftalens nummer før ændring, flyt til ny tid, aflys – 
   await expect(tab.getByText(`Før du kan flytte eller aflyse, sender vi en kode på 6 cifre til ${phone.e164.slice(3, 5)} •• •• ${phone.e164.slice(-2)}.`)).toBeVisible();
   await tab.screenshot({ path: `${EVID("W13")}/${info.project.name}-kode.png`, fullPage: true });
   await noHorizontalScroll(tab);
+  const codesBefore = smsCodeCount(phone.e164); // the booking's own W04 code went to the same number
   await tab.getByRole("button", { name: "Send kode" }).click();
   await expect(tab.getByRole("button", { name: /Send ny kode \(\d+ s\)/ })).toBeDisabled();
   await tab.getByLabel("Kode fra SMS").fill("123");
   await tab.getByRole("button", { name: "Bekræft" }).click();
   await expect(tab.getByText("Skriv de 6 cifre fra SMS'en.")).toBeVisible();
-  const right = await smsCodeFor(phone.e164);
+  const right = await newSmsCode(phone.e164, codesBefore);
   await tab.getByLabel("Kode fra SMS").fill(right === "000000" ? "111111" : "000000");
   await tab.getByRole("button", { name: "Bekræft" }).click();
   await expect(tab.getByText("Koden passer ikke. Du har 4 forsøg tilbage.")).toBeVisible();

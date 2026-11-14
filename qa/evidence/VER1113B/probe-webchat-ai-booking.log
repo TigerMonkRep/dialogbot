@@ -1,0 +1,8 @@
+INFO  [alembic.runtime.migration] Running upgrade 0c1d5e7a9b3f -> a7d3e9c2b5f1, demo call verifications: SMS code before Peter rings (F-AUD26-02-P06)
+INFO  [alembic.runtime.migration] Running upgrade f1b3d5a7c9e2 -> d1a7c3e5f9b2, sms usage (code SMS the business pays for) and storage deletions (support files follow their rows)
+INFO  [alembic.runtime.migration] Running upgrade d1a7c3e5f9b2 -> d6f2a8c4e1b7, E07 automatic booking messages: the SMS opt-in on booking settings, the message log and the customers' opt-outs
+book_tid status: ok None Booket: Besigtigelse lørdag 14. november kl. 08.00. Bekræft tiden over for kunden. (simuleret)
+booking.phone: +4522334455 source: webchat lead.phone: +4522334455 lead.phone_verified_at: None
+fake SMS to: []
+booking_messages: []
+fake world sms: []

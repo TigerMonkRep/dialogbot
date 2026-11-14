@@ -1,0 +1,6 @@
+
+Running 136 tests using 1 worker
+
+  6 skipped
+  130 passed (12.2m)
+EXIT 0

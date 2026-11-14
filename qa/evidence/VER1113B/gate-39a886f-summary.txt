@@ -1,0 +1,14 @@
+  153 skipped
+  225 passed (13.2m)
+EXIT 0
+  306 skipped
+  590 passed (41.8m)
+EXIT 0
+  10 passed (35.8s)
+EXIT 0
+# JSON-optælling (playwright --reporter=json)
+journeys: 225 bestået (expected), 153 skipped (privat.spec 104 = kræver fake-build, third-party 28, funnel 8, security-headers 7, oensker 6)
+qa-katalog: 590 «expected» heraf 120 test.fail (forventede fejl for kendte åbne fund/not-implemented) => 470 rigtige bestået; 306 skipped (privat-deep 266, privat 32, erhverv-p1a 6, erhverv-d 2); 0 uventede fejl
+pwa: 10 «expected» heraf 4 test.fail => 6 rigtige bestået; 0 fejl
+Ren DB (qa_v1113b_e2e droppet + seed) før journeys og igen før qa/pwa; nye browser-kontekster pr. test (Playwright standard); workers 1, retries 0; 1440 + 390.
+pytest (CI-lignende miljø, egen DB): 2653 passed, 39 skipped, 38 xfailed, 0 failed (38m46s)

@@ -3,7 +3,7 @@ id: F-PBQ-06-PC-ENT-02
 scenario: PC-ENT-02
 reported_by: billing-qa
 severity: S1
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: [PC-ENT-03, PC-SUB-15, F-P2-06-X12]
 ---
@@ -56,3 +56,12 @@ Backend-delen var allerede bygget efter beslutningen 2026-11-10/11 (commit de118
 - Rigtig stak: ikke relevant ud over pytest – gaten er backend-only og testet via API (403 `needs_plan` på app-endpoints, ingen tools, ingen påmindelser); UI'et læser kun `needs_plan`-feltet, som fake-backenden spejler.
 
 ## Verifikation (udfyldes af verifier)
+
+## Verifikation (verifier 2026-11-13 b, uafhængig)
+- Kandidat: main 39a886f (39a886fe84d12ad261fd1afb27a9aa52e2df431e, ren worktree /home/claude/wt-ver1113b; alembic heads = d6f2a8c4e1b7, ét head)
+- Separat spawnet verifier-agent. Rettelserne er ikke skrevet af mig. CI-lignende miljø (APP_ENV=test, ENABLE_DEV_TOOLS, egen DB qa_v1113b_test/qa_v1113b_rev), e2e-stak på egne porte 3437/8437 (DB qa_v1113b_e2e). Fuld pytest og CI på kandidaten: se ledger 2026-11-13 b.
+- Gentest: Privat-fake prod-build (NEXT_PUBLIC_PRIVAT_FAKE=1, :3438): `privat.spec.ts:554` (F-PBQ-06) 4/4 (375 + 1440 × begge projekter). Hele privat.spec 116/116. `tests/test_privat_plan_apps_lapse.py` og `test_qa_pd_billing::test_pc_ent_0[23]_*` er grønne.
+- Fejler testen uden rettelsen? ja. Når apps.tsx fra 8ed36d9 vendes (fake/api.ts beholdt), fejler 1440-varianterne på «Kræver plan» (element(s) not found). 375-varianterne fejlede i `next dev`, fordi Next.js' dev-overlay opfangede klik. I prod-buildet er de grønne med rettelsen. Det var en harness-fejl og ingen produktfejl.
+- Naboscenarier kørt: privat.spec.ts (116, begge viewports)
+- Dom: **closed**
+- Bemærk: Fixerens ledger nævner kun 1440. Her er 375 også kørt.

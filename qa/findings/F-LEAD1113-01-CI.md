@@ -3,7 +3,7 @@ id: F-LEAD1113-01-CI
 scenario: CI (Deploy check / schema-head)
 reported_by: qa-lead (Erhverv-P0-runde 13/11)
 severity: S2
-status: fixing
+status: closed
 owner_fix: fix-engineer
 related: []
 ---
@@ -36,3 +36,11 @@ Regex'en for `down_revision` matcher kun én streng; `down_revision = ("a", "b")
 - Fejler testen uden rettelsen? ja/nej
 - Naboscenarier kørt:
 - Dom: closed | reopened
+
+## Verifikation (verifier 2026-11-13 b, uafhængig)
+- Kandidat: main 39a886f (39a886fe84d12ad261fd1afb27a9aa52e2df431e, ren worktree /home/claude/wt-ver1113b; alembic heads = d6f2a8c4e1b7, ét head)
+- Separat spawnet verifier-agent. Rettelserne er ikke skrevet af mig. CI-lignende miljø (APP_ENV=test, ENABLE_DEV_TOOLS, egen DB qa_v1113b_test/qa_v1113b_rev), e2e-stak på egne porte 3437/8437 (DB qa_v1113b_e2e). Fuld pytest og CI på kandidaten: se ledger 2026-11-13 b.
+- Gentest: `scripts/check_live_schema.code_head()` → d6f2a8c4e1b7 (= `alembic heads`). `tests/test_schema_head.py` er grøn. Den planlagte Deploy check har ikke kørt siden #230 (sidste kørsel 16:24 var rød før rettelsen). Den skal bekræftes ved næste kørsel.
+- Fejler testen uden rettelsen? ja. Revert af #230 (scripts/) gør `test_deploy_check_script_finds_the_same_single_head_as_alembic` rød med de 5 «heads» fra fundet.
+- Naboscenarier kørt: Regex'en dækker også en tuple over flere linjer (`[^)]*`). Alle down_revision-former i alembic/versions er tjekket (streng, tuple, None).
+- Dom: **closed**

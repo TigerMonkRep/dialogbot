@@ -1,0 +1,5 @@
+  ✓  1 [desktop-1440] › e2e/privat.spec.ts:554:9 › 375px › apps: prøveperioden slutter uden plan → plan-appen står «Kræver plan» (Mine apps, appens side, ikke Min dag) → Vælg plan → kører igen (F-PBQ-06) (4.0s)
+  ✓  2 [desktop-1440] › e2e/privat.spec.ts:554:9 › 1440px › apps: prøveperioden slutter uden plan → plan-appen står «Kræver plan» (Mine apps, appens side, ikke Min dag) → Vælg plan → kører igen (F-PBQ-06) (4.3s)
+  ✓  3 [mobil-390] › e2e/privat.spec.ts:554:9 › 375px › apps: prøveperioden slutter uden plan → plan-appen står «Kræver plan» (Mine apps, appens side, ikke Min dag) → Vælg plan → kører igen (F-PBQ-06) (3.9s)
+  ✓  4 [mobil-390] › e2e/privat.spec.ts:554:9 › 1440px › apps: prøveperioden slutter uden plan → plan-appen står «Kræver plan» (Mine apps, appens side, ikke Min dag) → Vælg plan → kører igen (F-PBQ-06) (3.8s)
+  4 passed (18.1s)

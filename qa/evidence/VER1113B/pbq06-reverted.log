@@ -1,0 +1,20 @@
+  ✘  1 [desktop-1440] › e2e/privat.spec.ts:554:9 › 375px › apps: prøveperioden slutter uden plan → plan-appen står «Kræver plan» (Mine apps, appens side, ikke Min dag) → Vælg plan → kører igen (F-PBQ-06) (1.0m)
+  ✘  2 [desktop-1440] › e2e/privat.spec.ts:554:9 › 1440px › apps: prøveperioden slutter uden plan → plan-appen står «Kræver plan» (Mine apps, appens side, ikke Min dag) → Vælg plan → kører igen (F-PBQ-06) (17.9s)
+  ✘  3 [mobil-390] › e2e/privat.spec.ts:554:9 › 375px › apps: prøveperioden slutter uden plan → plan-appen står «Kræver plan» (Mine apps, appens side, ikke Min dag) → Vælg plan → kører igen (F-PBQ-06) (1.0m)
+  ✘  4 [mobil-390] › e2e/privat.spec.ts:554:9 › 1440px › apps: prøveperioden slutter uden plan → plan-appen står «Kræver plan» (Mine apps, appens side, ikke Min dag) → Vælg plan → kører igen (F-PBQ-06) (15.8s)
+    Error: locator.click: Test timeout of 60000ms exceeded.
+    ../../pw-out/pbq-rev/privat-375px-apps-prøveper-af189-plan-→-kører-igen-F-PBQ-06--desktop-1440/test-failed-1.png
+    Error Context: ../../pw-out/pbq-rev/privat-375px-apps-prøveper-af189-plan-→-kører-igen-F-PBQ-06--desktop-1440/error-context.md
+    Error: expect(locator).toContainText(expected) failed
+    Expected substring: "Kræver plan"
+    Error: element(s) not found
+    ../../pw-out/pbq-rev/privat-1440px-apps-prøvepe-b2256-plan-→-kører-igen-F-PBQ-06--desktop-1440/test-failed-1.png
+    Error Context: ../../pw-out/pbq-rev/privat-1440px-apps-prøvepe-b2256-plan-→-kører-igen-F-PBQ-06--desktop-1440/error-context.md
+    Error: locator.click: Test timeout of 60000ms exceeded.
+    ../../pw-out/pbq-rev/privat-375px-apps-prøveper-af189-plan-→-kører-igen-F-PBQ-06--mobil-390/test-failed-1.png
+    Error Context: ../../pw-out/pbq-rev/privat-375px-apps-prøveper-af189-plan-→-kører-igen-F-PBQ-06--mobil-390/error-context.md
+    Error: expect(locator).toContainText(expected) failed
+    Expected substring: "Kræver plan"
+    Error: element(s) not found
+    ../../pw-out/pbq-rev/privat-1440px-apps-prøvepe-b2256-plan-→-kører-igen-F-PBQ-06--mobil-390/test-failed-1.png
+    Error Context: ../../pw-out/pbq-rev/privat-1440px-apps-prøvepe-b2256-plan-→-kører-igen-F-PBQ-06--mobil-390/error-context.md

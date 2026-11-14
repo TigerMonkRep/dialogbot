@@ -1,0 +1,72 @@
+SKIPPED [1] tests/test_browser_orchestrator.py:12: could not import 'playwright': No module named 'playwright'
+SKIPPED [1] tests/qa/test_qa_pd_apps_a.py:243: places.Place findes ikke – dækket af tests/test_privat_household.py
+SKIPPED [1] tests/qa/test_qa_pd_apps_a.py:569: meals.shopping_list findes ikke – se web-spec
+SKIPPED [1] tests/qa/test_qa_pd_core.py:102: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_pd_core.py:110: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_pd_core.py:127: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_pd_core.py:137: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_pd_core.py:142: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_pd_core.py:155: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_pd_core.py:165: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_pd_core.py:176: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_pd_core.py:189: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_pd_core.py:203: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_pd_core.py:226: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_pd_core.py:233: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_pd_core.py:245: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_pd_core.py:254: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_pd_core.py:274: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_pd_core.py:294: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_pd_core.py:302: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_pd_core.py:317: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_pd_core.py:342: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_pd_core.py:369: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_pd_core.py:399: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_pd_core.py:416: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_pd_core.py:442: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_pd_core.py:461: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_pd_core.py:486: kræver Privat-stakken på :8400 (tests/qa/qa_privat_stack.py)
+SKIPPED [1] tests/qa/test_qa_sec_X20.py:228: local stack (API :8000, web :3000) not running
+SKIPPED [1] tests/qa/test_qa_voice_X18.py:127: blocked: replay through Soniox needs SONIOX_API_KEY and the network (wave 2: no network). Fixtures: tests/fixtures/stemmetest/audio/*.wav + manifest.json; run with RUN_LIVE_STT=1 tests/test_stemmetest_live.py
+SKIPPED [3] tests/sandbox/test_resend_sandbox.py: RESEND_API_KEY er ikke sat (provider-sandbox-test)
+SKIPPED [2] tests/sandbox/test_stripe_sandbox.py: STRIPE_SECRET_KEY er ikke sat (provider-sandbox-test)
+SKIPPED [4] tests/test_stemmetest_live.py:19: sæt RUN_LIVE_STT=1 og udbydernes nøgler for rigtige kørsler
+XFAIL tests/qa/test_qa_S07.py::test_privacy_center_export_and_closure_exist - F-M2-01-S07: S2 new – S07 er ikke bygget: ingen privatlivsside, ingen dataeksport, ingen lukning/sletning af arbejdsrum eller …
+XFAIL tests/qa/test_qa_S07.py::test_a_closed_workspace_stops_answering_on_phone_and_widget - F-M2-02-S07: S2 new – Et lukket arbejdsrum (status='closed') bliver ved med at besvare telefonen og webchat-widgetten og gemme …
+XFAIL tests/qa/test_qa_S07.py::test_retention_is_not_blocked_by_one_recording_that_fails_to_delete - F-M2-03-S07: S2 new – Retention af kundeoptagelser er alt-eller-intet: fejler sletning af én fil i lageret, ruller hele kørslen …
+XFAIL tests/qa/test_qa_S07.py::test_transcript_and_summary_have_a_retention - F-M2-04-S07: S2 new – Udskrift og resumé af kundens egne opkald har ingen frist og ingen sletning – heller ikke når lyden …
+XFAIL tests/qa/test_qa_S07.py::test_own_voice_withdrawal_also_deletes_cached_synthesis_in_cloud_storage - F-M2-05-S07: S2 new – Egen stemme: «Træk samtykke tilbage» sletter optagelserne, men syntetiseret tale i personens stemme bliver …
+XFAIL tests/qa/test_qa_X22.py::test_error_answers_are_documented_and_match_the_documented_shape - F-M2-09-X22: S2 new – OpenAPI-kontrakten (docs/public-openapi.json) dokumenterer ingen fejlsvar ud over 422 – og 422 er …
+XFAIL tests/qa/test_qa_X22.py::test_message_list_never_says_last_page_when_it_truncated - F-M2-10-X22: S2 new – GET /v1/…/conversations/{id}/messages afkorter stille ved `limit` (standard 200, maks 500) og svarer …
+XFAIL tests/qa/test_qa_X22.py::test_webhook_payload_respects_the_contacts_scope - F-M2-07-X22: S2 new – En nøgle med kun `webhooks:manage` kan abonnere på lead.created/booking.*/call.completed og få …
+XFAIL tests/qa/test_qa_X22.py::test_revoked_key_its_webhooks_are_visible_or_stopped - F-M2-08-X22: S2 new – Webhook-endpoints oprettet med en nøgle bliver ved med at modtage data, efter nøglen er tilbagekaldt – og …
+XFAIL tests/qa/test_qa_X22.py::test_expired_key_does_not_block_rotation - F-M2-11-X22: S3 new – En udløbet API-nøgle tæller stadig med i grænsen på 2 aktive nøgler; rotation kræver, at man først …
+XFAIL tests/qa/test_qa_X27.py::test_callback_errors_are_explained_in_words_not_codes - F-M2-12-X27: S2 new – Afvist samtykke og manglende kalenderadgang i Google vises som rå fejlkode: «Google Kalender blev ikke …
+XFAIL tests/qa/test_qa_X27.py::test_reconnecting_with_another_account_revokes_the_old_grant - F-M2-13-X27: S3 new – Forbinder ejeren Google Kalender igen (fx med en anden konto), overskrives den gamle nøgle uden at blive …
+XFAIL tests/qa/test_qa_billing_x08.py::test_x08_immediate_cancel_in_trial_ends_rights - F-BQ-005-X08: needs-decision – an immediately canceled trial keeps Plus/plan rights until the original trial end
+XFAIL tests/qa/test_qa_billing_x28.py::test_x28_fractional_second_past_a_minute_is_a_started_minute - F-BQ-001-X28: needs-decision – fractional seconds are truncated before rounding up (60.4 s billed as 1 started minute)
+XFAIL tests/qa/test_qa_e2c_campaigns.py::test_c05_invalid_row_number_matches_the_file_line - F-E2C-09-C05: S3 new – «ugyldige numre (fx række N)» tæller ikke overskriftsrækken med: det ugyldige nummer på linje 3 i filen …
+XFAIL tests/qa/test_qa_e2c_campaigns.py::test_c07_unknown_script_variable_is_rejected_not_spoken - F-E2C-04-C07: S2 new – Ukendte variabler i første replik ({fornavn}, {firma}, {Navn}) gemmes uden advarsel og læses højt for …
+XFAIL tests/qa/test_qa_e2c_k04.py::test_k04_discount_percent_is_validated - F-E2C-07-K04: S2 new – API'et validerer ikke rabatprocenten: et tilbud med 150 %, -10 % eller «femten» accepteres (201) og kan …
+XFAIL tests/qa/test_qa_journey_erhverv.py::test_F_JE_11_new_lead_link_carries_workspace - F-JE-11: «Ny henvendelse»-mailens link bærer ikke arbejdsrummet – ejer med to virksomheder får fejl/den forkerte virksomhed
+XFAIL tests/qa/test_qa_journey_erhverv.py::test_F_JE_11b_daily_report_link_carries_workspace - F-JE-11: dagsrapportens link /app/ugen?date=… viser den valgte virksomheds uge, ikke rapportens
+XFAIL tests/qa/test_qa_journey_erhverv.py::test_F_JE_12_auth_errors_are_localized - F-JE-12: login/tilmelding/bekræft/nulstil viser backendens danske fejltekst på alle 8 sprog
+XFAIL tests/qa/test_qa_journey_privat.py::test_jp09_portal_is_privat - F-JP-09: the Stripe Billing Portal session (cancel, change plan, update card) carries no Privat configuration/branding – it shows the Erhverv account branding
+XFAIL tests/qa/test_qa_journey_privat.py::test_jp13_ref_on_privat_landing_is_used - F-JP-13: the invite page's brand card links to /privat?ref=<invite token>, but nothing reads ?ref – the referral is lost when the visitor starts their own trial
+XFAIL tests/qa/test_qa_pd_billing.py::test_pc_sub_06_new_email_same_card_is_refused_a_second_trial - F-PBQ-02-PC-SUB-06: needs-decision – a new e-mail with the same card gets a new 14-day trial (one trial per ACCOUNT, no card-fingerprint check)
+XFAIL tests/qa/test_qa_pd_billing.py::test_topup_refund_takes_the_amount_back - F-PBQ-05-PC-SUB-21 (open, confirmed): a refunded top-up is not taken back from the balance
+XFAIL tests/qa/test_qa_pd_billing.py::test_pc_inv_08_referral_caps_hold - F-VF-04 (test debt): written before F-PBQ-02/F-PQ-03 - the referral bonus now needs the invitee's first PAID period; rewrite with paid periods
+XFAIL tests/qa/test_qa_pd_sec.py::test_ps_inv_05a_forwarded_for_rotation_bypasses_the_per_ip_lookup_limits - F-PS-02-PC-INV-05 (open, needs-decision): X-Forwarded-For rotation bypasses the per-IP lookup limits
+XFAIL tests/qa/test_qa_pd_sec.py::test_ps_acc_05_trip_searches_are_kept_but_marked_not_deletable - F-PS-10-PC-ACC-05 (open): trip searches are kept but marked not deletable
+XFAIL tests/qa/test_qa_pd_sec.py::test_ps_wish_11b_wish_images_have_no_rate_limit_or_quota - F-PS-06-PC-WISH-11 (open): /wishes/images has no rate limit or quota
+XFAIL tests/qa/test_qa_pd_sec.py::test_ps_app_02b_warranty_receipt_photo_keeps_gps_exif - F-PS-08-PC-APP-02 (open): the warranty receipt photo keeps GPS EXIF
+XFAIL tests/qa/test_qa_pd_sec.py::test_ps_pwa_03_logout_clears_the_simulation_state - F-PS-09-PC-PWA-03 (open): logout leaves the simulation state
+XFAIL tests/qa/test_qa_privat_x10_x12.py::test_x12_reinstall_after_the_trial_ended_is_still_idempotent - F-P2-06-X12: S3 new – «Slå til» er ikke idempotent efter prøveperioden: en plan-app, der allerede er slået til (den forbliver …
+XFAIL tests/qa/test_qa_sec_X20.py::test_m07_operator_audit_and_view_as_access_reason_exist - F-SQ-03-X20/M07 operator audit with access reasons: not-implemented
+XFAIL tests/qa/test_qa_sec_X29_secrets.py::test_postgres_echoed_values_do_not_reach_exception_text - F-SQ-02-X29/F-VR-02-X29: needs-decision – Postgres echoes an offending value in its own error message (e.g. invalid input syntax, unique-violation DETAIL); hide_parameters cannot remove it and the worker logs f'{exc}' (app/worker/runner.py). Scrubbing server messages is a decision.
+XFAIL tests/qa/test_qa_voice_I01_I05.py::test_i01_a_call_peter_fully_answered_is_not_put_on_the_to_you_list - F-V2-03-I01: S2 new – Hvert telefonopkald med nummervisning bliver til en henvendelse og en opgave «Ring tilbage til +45…». Det …
+XFAIL tests/qa/test_qa_voice_R01_R07.py::test_r07_fallback_when_knowledge_is_withdrawn_from_a_live_number - F-V2-06-R07: S2 new – Når et aktivt nummer ikke længere har godkendt viden (sidste emne arkiveret), svarer assistant-request …
+XFAIL tests/qa/test_qa_voice_X17.py::test_x17_website_chat_only_claims_what_the_sales_workspace_has_approved - F-V2-01-X17: S2 new – Peter i chatten på dialogbot.dk og i demo-opkaldet får altid de hårdkodede produktpåstande …
+XFAIL tests/qa/test_qa_voice_X17.py::test_x17_demo_call_only_claims_what_the_sales_workspace_has_approved - F-V2-01-X17: S2 new – Peter i chatten på dialogbot.dk og i demo-opkaldet får altid de hårdkodede produktpåstande …
+XFAIL tests/qa/test_qa_voice_X17.py::test_x17_every_peter_prompt_allows_humour_but_never_at_the_callers_expense - F-V2-02-X17: S3 new – Ingen af Peters prompts (indgående, chat, demo-opkald) siger noget om humor: hverken at lun humor er i …
+2653 passed, 39 skipped, 38 xfailed in 2326.04s (0:38:46)

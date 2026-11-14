@@ -1,0 +1,5 @@
+grace.sync: stopped subscription_paid: False
+GET telephony active: True subscription_paid: False
+assistant-request after grace: 200 keys: ['assistant'] error: None firstMessage: Hej, du har ringet til Fjord Gulvservice ApS. Du taler med en digital assistent,
+E           sqlalchemy.exc.OperationalError: (psycopg.errors.DeadlockDetected) deadlock detected
+../../venv/lib/python3.13/site-packages/psycopg/cursor.py:117: OperationalError

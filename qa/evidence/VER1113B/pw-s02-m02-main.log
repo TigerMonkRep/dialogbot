@@ -1,0 +1,15 @@
+Running 12 tests using 1 worker
+
+[1A[2K[1/12] [desktop-1440] › e2e/qa/erhverv-a/A05.spec.ts:9:5 › A05 · ukendt link, forkert konto, log ind og acceptér, dobbeltklik, genbrug og tilbagekaldt
+[1A[2K[2/12] [desktop-1440] › e2e/qa/erhverv-a/M02.spec.ts:9:5 › M02 · kunde nægtes; operatør søger, åbner kunden og ser medlemmer uden hemmeligheder
+[1A[2K[3/12] [desktop-1440] › e2e/qa/erhverv-a/M02.spec.ts:40:5 › M02 · en ukendt kunde vises som «findes ikke» – ikke som «kun for operatører»
+[1A[2K[4/12] [desktop-1440] › e2e/qa/erhverv-a/S02.spec.ts:25:5 › S02 · «Kan ændre» betyder det samme ved invitation og ved rolleskift
+[1A[2K[5/12] [desktop-1440] › e2e/qa/erhverv-a/S02.spec.ts:52:5 › S02 · fjern medlem og tilbagekald invitation kræver bekræftelse; «Annullér» ændrer intet; reload viser sandheden
+[1A[2K[6/12] [desktop-1440] › e2e/qa/erhverv-a/S02.spec.ts:88:5 › S02 · læser ser medlemmer, men ingen invitationsformular eller rollevalg; server afviser alligevel
+[1A[2K[7/12] [mobil-390] › e2e/qa/erhverv-a/A05.spec.ts:9:5 › A05 · ukendt link, forkert konto, log ind og acceptér, dobbeltklik, genbrug og tilbagekaldt
+[1A[2K[8/12] [mobil-390] › e2e/qa/erhverv-a/M02.spec.ts:9:5 › M02 · kunde nægtes; operatør søger, åbner kunden og ser medlemmer uden hemmeligheder
+[1A[2K[9/12] [mobil-390] › e2e/qa/erhverv-a/M02.spec.ts:40:5 › M02 · en ukendt kunde vises som «findes ikke» – ikke som «kun for operatører»
+[1A[2K[10/12] [mobil-390] › e2e/qa/erhverv-a/S02.spec.ts:25:5 › S02 · «Kan ændre» betyder det samme ved invitation og ved rolleskift
+[1A[2K[11/12] [mobil-390] › e2e/qa/erhverv-a/S02.spec.ts:52:5 › S02 · fjern medlem og tilbagekald invitation kræver bekræftelse; «Annullér» ændrer intet; reload viser sandheden
+[1A[2K[12/12] [mobil-390] › e2e/qa/erhverv-a/S02.spec.ts:88:5 › S02 · læser ser medlemmer, men ingen invitationsformular eller rollevalg; server afviser alligevel
+[1A[2K  12 passed (1.0m)

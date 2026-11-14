@@ -3,7 +3,7 @@ id: F-VF-01-CI
 scenario: CI (lint + pytest) på qa/privat-deep
 reported_by: verifier
 severity: S1
-status: fixed
+status: closed
 owner_fix: verifier (kun testfiler)
 related: [F-PK-01-PC-SUB-08, F-PBQ-04-PC-SUB-13, F-PBQ-08-PC-ACC-04, F-PQ-03-X09]
 ---
@@ -21,3 +21,12 @@ Branchen var rød i CI før PR: `ruff check` gav 30 fejl (kun i tests/qa/test_qa
 
 ## Evidens
 tests/qa/test_qa_pd_{billing,sec,core}.py grønne efter (xfail som forventet); apps_a/apps_b/x 179 passed, 2 skipped.
+
+## Verifikation (verifier 2026-11-13 b, uafhængig)
+- Kandidat: main 39a886f (39a886fe84d12ad261fd1afb27a9aa52e2df431e, ren worktree /home/claude/wt-ver1113b; alembic heads = d6f2a8c4e1b7, ét head)
+- Separat spawnet verifier-agent. Rettelserne er ikke skrevet af mig. CI-lignende miljø (APP_ENV=test, ENABLE_DEV_TOOLS, egen DB qa_v1113b_test/qa_v1113b_rev), e2e-stak på egne porte 3437/8437 (DB qa_v1113b_e2e). Fuld pytest og CI på kandidaten: se ledger 2026-11-13 b.
+- Gentest: `ruff check app tests scripts client voice_pipeline tts_service browser_worker` er grøn på kandidaten. De 8 xfail(strict)-markører med fund-id står i test_qa_pd_{billing,sec,core}.py. Fuld pytest: se ledger.
+- Fejler testen uden rettelsen? ja. `ruff` på test_qa_pd_billing/sec/core.py fra d0244464^ fejler (2/5/1 fejl). Fra d0244464 er de grønne.
+- Naboscenarier kørt: tests/qa/test_qa_pd_*.py (pd_sec alene: 66 passed, 5 xfailed)
+- Dom: **closed**
+- Bemærk: VF-01 blev rettet af en tidligere verifier (kun testfiler). Jeg er en anden agent end den.

@@ -1,0 +1,3 @@
+/api/v1/public/booking-messages/unsubscribe/TOKSECRET123 -> /api/v1/public/booking-messages/unsubscribe/TOKSECRET123
+/api/v1/public/booking/manage/TOKSECRET123/move -> /api/v1/public/booking/manage/***/move
+/api/v1/public/customer/callback/TOKSECRET123 -> /api/v1/public/customer/callback/***

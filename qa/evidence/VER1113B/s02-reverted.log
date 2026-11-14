@@ -1,0 +1,12 @@
+  ✘  1 [desktop-1440] › e2e/qa/erhverv-a/S02.spec.ts:25:5 › S02 · «Kan ændre» betyder det samme ved invitation og ved rolleskift (5.7s)
+  ✓  2 [desktop-1440] › e2e/qa/erhverv-a/S02.spec.ts:52:5 › S02 · fjern medlem og tilbagekald invitation kræver bekræftelse; «Annullér» ændrer intet; reload viser sandheden (6.6s)
+  ✓  3 [desktop-1440] › e2e/qa/erhverv-a/S02.spec.ts:88:5 › S02 · læser ser medlemmer, men ingen invitationsformular eller rollevalg; server afviser alligevel (2.4s)
+  ✘  4 [mobil-390] › e2e/qa/erhverv-a/S02.spec.ts:25:5 › S02 · «Kan ændre» betyder det samme ved invitation og ved rolleskift (5.7s)
+  ✓  5 [mobil-390] › e2e/qa/erhverv-a/S02.spec.ts:52:5 › S02 · fjern medlem og tilbagekald invitation kræver bekræftelse; «Annullér» ændrer intet; reload viser sandheden (5.5s)
+  ✓  6 [mobil-390] › e2e/qa/erhverv-a/S02.spec.ts:88:5 › S02 · læser ser medlemmer, men ingen invitationsformular eller rollevalg; server afviser alligevel (2.0s)
+    Expected: "staff"
+    Received: "admin"
+    ../../pw-out/s02-rev/qa-erhverv-a-S02-S02-·-«Ka-c8dec-nvitation-og-ved-rolleskift-desktop-1440/test-failed-1.png
+    Expected: "staff"
+    Received: "admin"
+    ../../pw-out/s02-rev/qa-erhverv-a-S02-S02-·-«Ka-c8dec-nvitation-og-ved-rolleskift-mobil-390/test-failed-1.png

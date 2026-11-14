@@ -430,7 +430,13 @@ def call_mode(db: OrmSession, number: PhoneNumber, message: dict) -> str:
         return "test"
     if number.source == "legacy_customer" and s.state == "active":
         return "normal"
-    return "normal" if s.state == "active" else "not_active"
+    if s.state == "active":
+        from app.modules.billing import grace
+
+        if grace.lapsed(db, number.workspace_id):
+            return "not_active"  # grace over: the phone stops like the chat (F-VER1113B-03)
+        return "normal"
+    return "not_active"
 
 
 def start_test(db: OrmSession, ws_id: uuid.UUID, user_id: uuid.UUID, *, called_business_number: bool,

@@ -75,6 +75,14 @@ def subscription_paid(db: OrmSession, ws_id: uuid.UUID, now: datetime | None = N
     return ends is not None and now < ends
 
 
+def lapsed(db: OrmSession, ws_id: uuid.UUID, now: datetime | None = None) -> bool:
+    """A subscription that was paid and whose 7 days' grace has run out: chat and phone stop (grace mail 3 promises
+    it, F-VER1113B-03). Never-paid workspaces are not «lapsed» – they never went live through this path."""
+    now = now or _now()
+    ends = grace_ends(db.get(BillingAccount, ws_id), now)
+    return ends is not None and now >= ends and not strictly_paid(db, ws_id, now)
+
+
 def sync(db: OrmSession, ws_id: uuid.UUID, now: datetime | None = None) -> str:
     """Record paid / lapsed and queue the due grace mail. Returns paid | grace | stopped | never_paid."""
     now = now or _now()

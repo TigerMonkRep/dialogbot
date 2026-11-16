@@ -123,7 +123,7 @@ Supabase bruger selv ~8):
 | `CONNECTORS_PROVIDER` | nej | API + worker | `live` (standard) eller `fake` (kun dev/test) | `fake` = simulerede kalender/SMS/webhooks; alt mærkes simuleret. Nægtes uden for dev/test. |
 | `SMS_DEFAULT_SENDER` | nej | API | Fx `Dialogbot` (≤ 11 tegn) | Afsender for SMS, når et arbejdsrums navn ikke kan bruges som alfanumerisk afsender. |
 | `VAPI_MODEL` | nej | API | — | Sprogmodellen i telefonsamtaler (standard `claude-haiku-4-5-20251001`, fordi hurtige svar lyder mest naturligt; en Anthropic-model, Vapi ikke kender, erstattes af den). Telefoni kræver hurtige svar; vælg en model, som Vapi understøtter, og mål latenstiden ved prøveopkald. |
-| `EMAIL_FROM` | ved resend | worker | Verificeret afsenderdomæne i Resend | `Dialogbot <noreply@mail.<domæne>>` |
+| `EMAIL_FROM` | ved resend | worker | Verificeret afsenderdomæne i Resend | `Dialogbot <noreply@mail.<domæne>>`. Nøglen i `RESEND_API_KEY` skal have adgang til netop dette domæne (Resend → API Keys → Edit → Domain). Afviser Resend nøglen eller domænet (401/403), fejler mailjobbet med det samme uden nye forsøg, driftsoversigten viser hændelsen «afsenderdomænet … afvises», og `/health/ready` får advarslen `email_sender_rejected` (stadig 200). Ret konfigurationen, og genkør de fejlede opgaver fra driftsoversigten. |
 | `PUBLIC_BASE_URL` | ja | API | Render-URL | Bruges i OpenAPI/links. |
 | `FRONTEND_BASE_URL` | ja | API, worker | Vercel-URL | Links i mails (verificering, reset, invitation). |
 | `WORKER_POLL_SECONDS`, `WORKER_LEASE_SECONDS`, `WORKER_MAX_ATTEMPTS` | nej | worker | — | 1 / 60 / 5. |

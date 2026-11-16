@@ -5,7 +5,8 @@ Run: `python -m app.worker.runner` (loop) or call `process_once()` from tests.
 Guarantees:
 - at-least-once delivery with a time-bounded lease; a crashed worker's job is
   re-picked once the lease expires (resume after process interruption);
-- controlled retries with exponential backoff up to max_attempts, then `failed`;
+- controlled retries with exponential backoff up to max_attempts, then `failed`; an error marked `permanent`
+  (a refused mail key or sender domain) fails at once, without retries;
 - handlers are idempotent: side effects are keyed on the event id via unique
   constraints (e.g. email_deliveries.outbox_event_id), so redelivery never
   produces a second domain effect.
@@ -236,7 +237,9 @@ def claim_one(db: OrmSession, worker_id: str, *, only_types: tuple[str, ...] | N
     return ev
 
 
-def finish(db: OrmSession, ev_id: uuid.UUID, *, error: str | None) -> None:
+def finish(db: OrmSession, ev_id: uuid.UUID, *, error: str | None, permanent: bool = False) -> None:
+    """`permanent` = the error will not go away by itself (e.g. the mail provider refuses the key or sender domain):
+    the job fails at once, without the remaining retries. An operator retries it from the operations screen."""
     ev = db.scalar(select(OutboxEvent).where(OutboxEvent.id == ev_id).with_for_update())
     if ev is None:
         return
@@ -246,7 +249,7 @@ def finish(db: OrmSession, ev_id: uuid.UUID, *, error: str | None) -> None:
         ev.last_error = None
     else:
         ev.last_error = error[:2000]
-        if ev.attempts >= ev.max_attempts:
+        if permanent or ev.attempts >= ev.max_attempts:
             ev.status = "failed"
         else:
             ev.status = "queued"
@@ -268,6 +271,7 @@ def process_once(worker_id: str | None = None, *, handlers: dict | None = None,
             return None
         ev_id, ev_type = ev.id, ev.event_type
     error: str | None = None
+    permanent = False
     with factory() as db:
         try:
             ev = db.get(OutboxEvent, ev_id)
@@ -281,9 +285,11 @@ def process_once(worker_id: str | None = None, *, handlers: dict | None = None,
         except Exception as exc:  # noqa: BLE001
             db.rollback()
             error = f"{type(exc).__name__}: {exc}"
-            log.warning("outbox.handler_failed", event_id=str(ev_id), event_type=ev_type, error=error)
+            permanent = bool(getattr(exc, "permanent", False))
+            log.warning("outbox.handler_failed", event_id=str(ev_id), event_type=ev_type, error=error,
+                        permanent=permanent)
     with factory() as db:
-        finish(db, ev_id, error=error)
+        finish(db, ev_id, error=error, permanent=permanent)
         return db.get(OutboxEvent, ev_id)
 
 

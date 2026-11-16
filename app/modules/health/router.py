@@ -26,5 +26,37 @@ def ready(response: Response, db: OrmSession = Depends(get_db)):
     ok = head == expected_head()
     if not ok:
         response.status_code = 503
-    return {"status": "ok" if ok else "migrations_pending", "database": "ok", "migration": head,
-            "expected_migration": expected_head()}
+    out = {"status": "ok" if ok else "migrations_pending", "database": "ok", "migration": head,
+           "expected_migration": expected_head()}
+    warnings = _warnings(db) if ok else []
+    if warnings:  # a warning never changes the status code: the service is up, something around it needs a human
+        out["warnings"] = warnings
+    return out
+
+
+_WARNINGS_TTL_SECONDS = 60.0
+_warnings_cache: tuple[float, list[dict]] | None = None
+
+
+def _warnings(db: OrmSession) -> list[dict]:
+    """Things that do not make the API unready but need attention. Cached for a minute (Render polls this often).
+    `email_sender_rejected`: the mail key may not send from EMAIL_FROM's domain, so no mail leaves."""
+    import time
+
+    global _warnings_cache
+    now = time.monotonic()
+    if _warnings_cache and now - _warnings_cache[0] < _WARNINGS_TTL_SECONDS:
+        return _warnings_cache[1]
+    found: list[dict] = []
+    try:
+        from app.modules.integrations.email import sender_problem
+
+        p = sender_problem(db)
+        if p:
+            found.append({"code": "email_sender_rejected", "domain": p["domain"], "failed": p["count"],
+                          "since": p["since"].isoformat(),
+                          "detail": f"E-mailnøglen må ikke sende fra {p['domain']}. Ret nøgle eller domæne i Resend."})
+    except Exception:  # noqa: BLE001 – a warning must never take readiness down
+        db.rollback()
+    _warnings_cache = (now, found)
+    return found

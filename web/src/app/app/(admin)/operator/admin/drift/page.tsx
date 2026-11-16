@@ -25,7 +25,7 @@ const OUTCOME: Record<string, string> = {
   not_created: "Aftalen blev ikke oprettet – den oprettes én gang.",
   unknown: "Ukendt: sidste forsøg fik intet svar. Se efter i kalenderen før genkørsel.",
 };
-const KIND: Record<string, string> = { integration: "Forbindelse", job: "Opgavetype", email: "E-mail", telephony: "Telefoni" };
+const KIND: Record<string, string> = { integration: "Forbindelse", job: "Opgavetype", email: "E-mail", email_sender: "E-mail", telephony: "Telefoni" };
 
 /** M03 – «Drift»: is the system healthy, what failed where, and the operator's controlled interventions (one retry,
  *  pause/resume of a tenant). Nothing on this page changes by itself: no timers, no simulated recovery (DB-007). */

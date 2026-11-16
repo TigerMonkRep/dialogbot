@@ -133,6 +133,13 @@ def status(db: OrmSession, failed_jobs: list[OutboxEvent]) -> dict:
     if mails[0]:
         incidents.append({"kind": "email", "source": "e-mail", "count": mails[0], "since": _iso(mails[1]), "detail": "",
                           "unit": "e-mails"})
+    from app.modules.integrations.email import sender_problem
+
+    rejected = sender_problem(db)
+    if rejected:  # the key may not send from EMAIL_FROM's domain: every mail fails until the configuration is fixed
+        incidents.append({"kind": "email_sender", "source": f"e-mail: afsenderdomænet {rejected['domain']} afvises",
+                          "count": rejected["count"], "since": _iso(rejected["since"]),
+                          "detail": rejected["detail"][:400], "unit": "e-mails"})
     if tel[0]:
         incidents.append({"kind": "telephony", "source": "telefoni-opsætning", "count": tel[0], "since": _iso(tel[1]),
                           "detail": (tel[2] or "")[:200], "unit": "jobs"})

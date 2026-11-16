@@ -65,6 +65,7 @@ from app.models.domain import (  # noqa: F401
     SocialMedia,
     SocialPost,
     SocialProspect,
+    SocialVideo,
     SourceImport,
     SttTestRun,
     Task,

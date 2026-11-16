@@ -117,7 +117,7 @@ Kræver operatørrollen (`python -m scripts.grant_operator grant <e-mail>`). All
 
 ## Begrænsninger (ærligt)
 
-- **Kun fotos/karruseller — ingen video.** TikTok-opslagene er fotokarruseller (TikTok kalder det "photo mode"), ikke videoer. Video kræver en anden pipeline.
+- **Opslagene er fotokarruseller, ikke video.** TikTok-opslagene er fotokarruseller ("photo mode"). Video har fået sin egen model (se *Video* nedenfor), men selve produktionen og udsendelsen som video er endnu ikke koblet på.
 - **Ingen opfølgning på kommentarer eller beskeder.** Systemet poster og måler (følgere, likes, kommentarer, delinger, visninger); det besvarer ikke. Kommentarer skal stadig læses af et menneske.
 - Meta- og TikTok-kaldene er skrevet efter leverandørernes dokumentation og testet mod en mock; formater og fejlkoder kan afvige i praksis. Følg det første rigtige opslag på hver platform.
 - Dialogbot skriver kun om sig selv. Indholdet er markedsføring af egen virksomhed på egne profiler; det er ikke kundeindhold.
@@ -133,3 +133,17 @@ Opslag lavet før forløbet blev indført har intet forløb.
 Regelsæt (`app/modules/social/craft.py`): Instagram følger `ig-*`-skillsættet (maks. **5** hashtags siden dec. 2025, første ~125 tegn er hook),
 TikTok og Facebook følger `social-media-skills`. X har regler klar, men er ikke koblet på (der postes ikke dér).
 Hook-scoren er en hjælp til at fange svage hooks – den forudsiger ikke rækkevidde, og intet blokeres af den; et menneske godkender stadig alt.
+
+## Video (manuskripter, score, budget, læring)
+
+`app/modules/social/video.py`, tabellen `social_videos`, og afsnittet *Video* i `/app/operator/social`. Endpoints: `GET /operator/social/videos`, `POST /operator/social/videos/plan {count, topic?, persona?}`, `POST …/{id}/approve`, `POST …/{id}/reject`.
+
+Et **manuskript** er en 15-35 sekunders lodret video med et menneske i billedet: hook (0-3 s) med talt linje, tekst på skærmen og bevægelse; 3-5 beats á højst ca. 4 s med eget billede og egen tekst; en afslutning, der ekkoer hooken, så videoen kan loope; og noget at gemme. Det følger én af fire formler: *værktøj-resultat-tid*, *mikro-fortælling*, *myte/fejl*, *genkendelig frustration*.
+
+**Score (0-100, kun rådgivning):** første 3 sekunder (30 %), koncept (20 %), del- og gemværdi (20 %), tempo (15 %), signaler (15 %). Hvert punkt viser, hvad der mangler. Scoren forudsiger ikke rækkevidde og blokerer ikke; et menneske godkender hver video. Faktatjekket er det samme som for opslag (ingen priser, løfter eller links), og en AI-person skal være mærket "AI-genereret".
+
+**Budget:** `VIDEO_MONTHLY_BUDGET_DKK` (standard 500). Prisen pr. video er sekunder × `VIDEO_PRICE_USD_PER_SECOND` (0,10, Veo 3.1 Fast 720p) × `VIDEO_RETRY_FACTOR` (1,3) × `VIDEO_USD_DKK` (6,9), ca. 20 kr. for 23 s. Beløbet reserveres, når videoen **godkendes**; rækker budgettet ikke, afvises godkendelsen. Stemme er ikke med (kører på den eksisterende plan).
+
+**Læring:** udsendte videoer med visninger får et sammenligneligt tal (sends og saves vægter mest, derefter seertid, til sidst likes). Hver formel prøves mindst 3 gange, før én favoriseres, og en fjerdedel af nye manuskripter afprøver altid noget andet, så en tilfældig tidlig vinder ikke låser resten ude.
+
+**Ikke gjort endnu:** rendering (`video.render`), udsendelse som Reel/TikTok/Facebook-video og hentning af seertid/saves pr. video. TikToks API giver kun visninger, likes, kommentarer og delinger; Instagram giver også saves og gennemsnitlig seertid for Reels.

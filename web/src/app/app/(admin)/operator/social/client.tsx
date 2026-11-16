@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api } from "@/lib/client";
-import { Alert, Badge, Button, ErrorBox, Field, Icon, Select, Textarea, useSubmit } from "@/components/ui";
+import { Alert, Badge, Button, ErrorBox, Field, Icon, Select, Tag, Textarea, useSubmit } from "@/components/ui";
 
 export type Platform = "facebook" | "instagram" | "tiktok";
 export type PipelineStep = { step: string; status: "ok" | "warn" | "fail" | "skipped"; at: string; detail: Record<string, unknown> };
@@ -27,6 +27,25 @@ export type Prospect = {
   website: string | null; facebook_url: string | null; instagram_url: string | null; tiktok_url: string | null;
   suggested_comment: string; status: "new" | "done" | "skipped"; found_on: string; acted_platforms: Platform[]; note: string | null; acted_at: string | null;
 };
+export type VideoCriterion = { score: number; notes: string[] };
+export type VideoBrief = {
+  formula: string; persona: string; duration: number; caption: string; save_asset: string; disclosure: string;
+  hook: { spoken: string; on_screen: string; visual: string; motion: string; end: number };
+  beats: { role: string; start: number; end: number; spoken: string; on_screen: string; visual: string; cut: string }[];
+  cta: { spoken: string; on_screen: string; ask: string };
+};
+export type VideoItem = {
+  id: string; topic: string; formula: string; formula_label: string; hook_formula: string | null;
+  status: "draft" | "approved" | "rejected" | "rendered" | "published"; brief: VideoBrief;
+  score: { total: number; verdict: string; criteria: Record<string, VideoCriterion>; flags: string[] };
+  generator: string; generator_model: string | null; note: { code?: string; errors?: string[]; message?: string } | null;
+  est_cost_dkk: number; metrics: Record<string, number> | null;
+};
+export type VideoOverview = {
+  budget: { monthly_dkk: number; committed_dkk: number; left_dkk: number };
+  learning: { formulas: { key: string; n: number; mean: number }[]; hooks: { key: string; n: number; mean: number }[]; measured: number };
+  min_samples: number; rendering_connected: boolean; items: VideoItem[]; formulas: Record<string, string>; criteria: Record<string, string>;
+};
 export type Dashboard = {
   overview: { provider: string; require_approval: boolean; weekdays: number[]; plan_days_ahead: number; slot_times: Record<string, string>; topics: string[] };
   platforms: PlatformStats[]; pending: Post[]; scheduled: Post[]; recent: Post[]; failed: Post[];
@@ -46,7 +65,7 @@ const num = (n: number | null | undefined) => (n == null ? "–" : n.toLocaleStr
 const when = (iso: string | null) => (iso ? new Date(iso).toLocaleString("da-DK", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "–");
 const topicLabel = (t: string) => t.replace(/_/g, " ");
 
-export function SocialDashboard({ data }: { data: Dashboard }) {
+export function SocialDashboard({ data, videos }: { data: Dashboard; videos?: VideoOverview | null }) {
   const router = useRouter();
   const [refreshed, setRefreshed] = useState<{ accounts: number; posts: number } | null>(null);
   const refresh = useSubmit(async () => {
@@ -98,6 +117,8 @@ export function SocialDashboard({ data }: { data: Dashboard }) {
       </Section>
 
       <ProspectsBox prospects={data.prospects} enabled={data.prospects_enabled} counts={data.prospect_counts} />
+
+      {videos && <VideoBox v={videos} topics={o.topics} />}
 
       <PlanBox topics={o.topics} />
     </div>
@@ -378,6 +399,90 @@ function PipelineSummary({ pipeline, days }: { pipeline: NonNullable<Dashboard["
         </table>
       </div>
     </Section>
+  );
+}
+
+// --- short-form video: manuscripts, score, budget, what the numbers say ----------------------------------------------------
+
+const VERDICT_TONE: Record<string, string> = { stærk: "text-secondary", ok: "text-accent-deep", svag: "text-error" };
+const VIDEO_STATUS: Record<VideoItem["status"], string> = { draft: "Venter på dig", approved: "Godkendt – venter på produktion", rejected: "Afvist", rendered: "Lavet", published: "Udsendt" };
+
+function VideoBox({ v, topics }: { v: VideoOverview; topics: string[] }) {
+  const router = useRouter();
+  const [count, setCount] = useState("3");
+  const [topic, setTopic] = useState("");
+  const [persona, setPersona] = useState("ai_person");
+  const make = useSubmit(async () => {
+    await api("/operator/social/videos/plan", { method: "POST", body: JSON.stringify({ count: Number(count), topic: topic || null, persona }) });
+    router.refresh();
+  });
+  const used = v.budget.monthly_dkk ? Math.min(100, Math.round((v.budget.committed_dkk / v.budget.monthly_dkk) * 100)) : 0;
+  const best = v.learning.formulas.filter((f) => f.n >= v.min_samples)[0];
+  return (
+    <Section title="Video: manuskripter, budget og læring" hint="Korte lodrette videoer med et menneske i billedet. Hvert manuskript scores på de fem ting, der afgør, om en video ses til ende og sendes videre: de første 3 sekunder, koncept, del- og gemværdi, tempo og signaler til algoritmen. Scoren er en hjælp, ikke en garanti; du godkender hver video.">
+      {!v.rendering_connected && <Alert kind="info">Selve videoproduktionen er ikke koblet på endnu. Du kan allerede læse, rette og godkende manuskripter; en godkendelse reserverer budget og lægger videoen i kø til produktion.</Alert>}
+      <div className="grid gap-space-sm md:grid-cols-3">
+        <div className="rounded-lg bg-surface-container-low p-space-sm">
+          <p className="font-label-sm text-label-sm text-on-surface-variant">Budget denne måned</p>
+          <p className="font-headline-sm text-headline-sm font-bold text-primary tabular-nums">{num(Math.round(v.budget.left_dkk))} kr. tilbage</p>
+          <div className="h-2 rounded-full bg-surface-container-high mt-1" role="img" aria-label={`${used} procent af budgettet er reserveret`}><div className="h-2 rounded-full bg-primary" style={{ width: `${used}%` }} /></div>
+          <p className="font-label-sm text-label-sm text-on-surface-variant mt-1">{num(Math.round(v.budget.committed_dkk))} af {num(v.budget.monthly_dkk)} kr. reserveret</p>
+        </div>
+        <div className="rounded-lg bg-surface-container-low p-space-sm md:col-span-2">
+          <p className="font-label-sm text-label-sm text-on-surface-variant">Hvad tallene siger (fra udsendte videoer med visninger)</p>
+          {v.learning.measured === 0
+            ? <p className="font-body-sm text-body-sm">Ingen målinger endnu. Hver formel prøves mindst {v.min_samples} gange, før én favoriseres; en fjerdedel af nye manuskripter afprøver altid noget andet.</p>
+            : <ul className="font-body-sm text-body-sm">{v.learning.formulas.map((f) => <li key={f.key}>{v.formulas[f.key] ?? f.key}: <b className="tabular-nums">{f.mean}</b> pr. video ({f.n} målt){best?.key === f.key ? " · fører" : f.n < v.min_samples ? " · for få til at sige noget" : ""}</li>)}</ul>}
+        </div>
+      </div>
+      <div className="flex flex-wrap items-end gap-space-sm">
+        <Field label="Antal"><Select value={count} onChange={(e) => setCount(e.target.value)}>{[1, 2, 3, 4, 5, 6].map((n) => <option key={n} value={n}>{n}</option>)}</Select></Field>
+        <Field label="Emne"><Select value={topic} onChange={(e) => setTopic(e.target.value)}><option value="">Automatisk</option>{topics.map((t) => <option key={t} value={t}>{topicLabel(t)}</option>)}</Select></Field>
+        <Field label="Person i videoen"><Select value={persona} onChange={(e) => setPersona(e.target.value)}><option value="ai_person">AI-person (mærkes som AI)</option><option value="rigtig_person">Rigtigt menneske</option><option value="blandet">Blanding</option></Select></Field>
+        <Button icon="movie" disabled={make.pending} onClick={() => make.run()}>{make.pending ? "Skriver… (op til et minut)" : "Skriv nye manuskripter"}</Button>
+      </div>
+      <ErrorBox error={make.error} />
+      {v.items.length === 0 && <p className="font-body-sm text-body-sm text-on-surface-variant">Ingen manuskripter endnu.</p>}
+      {v.items.map((item) => <VideoCard key={item.id} item={item} criteria={v.criteria} />)}
+    </Section>
+  );
+}
+
+function VideoCard({ item, criteria }: { item: VideoItem; criteria: Record<string, string> }) {
+  const router = useRouter();
+  const b = item.brief;
+  const act = useSubmit(async (what: "approve" | "reject") => {
+    await api(`/operator/social/videos/${item.id}/${what}`, { method: "POST", body: "{}" });
+    router.refresh();
+  });
+  return (
+    <article className="rounded-xl border-2 border-ink bg-surface p-space-md space-y-space-xs">
+      <div className="flex flex-wrap items-center gap-space-xs">
+        <Tag>{topicLabel(item.topic)}</Tag><Tag tone="secondary">{item.formula_label}</Tag>
+        <span className={`font-label-md text-label-md font-bold tabular-nums ${VERDICT_TONE[item.score.verdict] ?? ""}`}>{item.score.total}/100 · {item.score.verdict}</span>
+        <span className="font-label-sm text-label-sm text-on-surface-variant">{VIDEO_STATUS[item.status]} · {b.duration} s · op til {num(Math.round(item.est_cost_dkk))} kr. · {item.generator === "ai" ? `AI (${item.generator_model ?? ""})` : "håndskrevet"}{b.disclosure ? ` · ${b.disclosure}` : ""}</span>
+      </div>
+      <p className="font-label-md text-label-md"><b>0-{b.hook.end} s · Hook:</b> “{b.hook.spoken}”</p>
+      <p className="font-label-sm text-label-sm text-on-surface-variant">På skærmen: {b.hook.on_screen} · Billede: {b.hook.visual} · Bevægelse: {b.hook.motion}</p>
+      <ol className="font-label-sm text-label-sm space-y-0.5">
+        {b.beats.map((x, i) => <li key={i}><b className="tabular-nums">{x.start}-{x.end} s</b> {x.role}: “{x.spoken}” <span className="text-on-surface-variant">· tekst: {x.on_screen} · {x.visual} · {x.cut}</span></li>)}
+        <li><b>Slut ({b.cta.ask || "opfordring"}):</b> “{b.cta.spoken}” <span className="text-on-surface-variant">· tekst: {b.cta.on_screen}</span></li>
+      </ol>
+      <p className="font-label-sm text-label-sm"><b>Gem-værdi:</b> {b.save_asset || "–"}</p>
+      <div className="grid gap-x-space-md gap-y-0.5 sm:grid-cols-2 font-label-sm text-label-sm">
+        {Object.entries(item.score.criteria).map(([k, c]) => (
+          <p key={k}><span className="tabular-nums font-semibold">{c.score}</span> {criteria[k] ?? k}{c.notes.length ? <span className="text-accent-deep"> · {c.notes.join(" · ")}</span> : null}</p>
+        ))}
+      </div>
+      {item.note?.code && item.note.code !== "ai_off" && <p className="font-label-sm text-label-sm text-accent-deep">Håndskrevet fordi: {item.note.code}{item.note.errors?.length ? ` (${item.note.errors.join(", ")})` : ""}</p>}
+      {item.status === "draft" && (
+        <div className="flex gap-space-xs pt-space-xs">
+          <Button icon="check" disabled={act.pending} onClick={() => act.run("approve")}>Godkend</Button>
+          <Button variant="outline" icon="close" disabled={act.pending} onClick={() => act.run("reject")}>Afvis</Button>
+        </div>
+      )}
+      <ErrorBox error={act.error} />
+    </article>
   );
 }
 

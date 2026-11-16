@@ -247,6 +247,12 @@ class Settings(BaseSettings):
     social_platforms: str = Field(default="facebook,instagram,tiktok", alias="SOCIAL_PLATFORMS")
     # A slot older than this when the worker finds it is skipped instead of posted at a strange hour.
     social_max_late_minutes: int = Field(default=360, alias="SOCIAL_MAX_LATE_MINUTES")
+    # Short-form video (app/modules/social/video.py). Nothing is rendered yet; these numbers drive the cost guard that a
+    # brief must pass before it can be approved. Price: Veo 3.1 Fast at 720p, USD per second of output (read 2026-11).
+    video_monthly_budget_dkk: int = Field(default=500, alias="VIDEO_MONTHLY_BUDGET_DKK")
+    video_price_usd_per_second: float = Field(default=0.10, alias="VIDEO_PRICE_USD_PER_SECOND")
+    video_retry_factor: float = Field(default=1.3, alias="VIDEO_RETRY_FACTOR")  # about 3 in 10 generated clips are discarded
+    video_usd_dkk: float = Field(default=6.9, alias="VIDEO_USD_DKK")
     meta_graph_version: str = Field(default="v23.0", alias="META_GRAPH_VERSION")
     meta_page_id: str | None = Field(default=None, alias="META_PAGE_ID")
     meta_page_access_token: str | None = Field(default=None, alias="META_PAGE_ACCESS_TOKEN")  # long-lived Page token

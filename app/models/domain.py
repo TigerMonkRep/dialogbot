@@ -14,6 +14,7 @@ from sqlalchemy import (
     Index,
     Integer,
     LargeBinary,
+    Numeric,
     SmallInteger,
     String,
     Text,
@@ -1981,6 +1982,40 @@ class SocialPost(Base):
     # The post's trail ("forløb"): idea → hook candidates with scores → copy → checks → approval/edits → publish. One
     # {step, status, at, detail} entry each; the operator dashboard draws it (see app/modules/social/craft.py).
     pipeline: Mapped[list] = mapped_column(JSONB, nullable=False, default=list, server_default=text("'[]'::jsonb"))
+    created_at: Mapped[datetime] = ts_now()
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+
+
+class SocialVideo(Base):
+    """A manuscript for one short vertical video (app/modules/social/video.py): the brief, its five-point score, what
+    it would cost to render, and later the numbers the platforms report. draft → approved → rendered → published, or
+    rejected. A person approves every one; the cost is committed against the monthly budget when it is approved."""
+
+    __tablename__ = "social_videos"
+    __table_args__ = (
+        CheckConstraint("status in ('draft','approved','rejected','rendered','published')", name="ck_social_videos_status"),
+        Index("ix_social_videos_status_created", "status", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    topic: Mapped[str] = mapped_column(String(40), nullable=False)
+    formula: Mapped[str] = mapped_column(String(24), nullable=False)
+    hook_formula: Mapped[str | None] = mapped_column(String(24))  # craft.classify_formula of the spoken hook
+    status: Mapped[str] = mapped_column(String(12), nullable=False, default="draft")
+    brief: Mapped[dict] = mapped_column(JSONB, nullable=False)
+    score: Mapped[dict] = mapped_column(JSONB, nullable=False)
+    generator: Mapped[str] = mapped_column(String(16), nullable=False, default="template")  # ai | template
+    generator_model: Mapped[str | None] = mapped_column(String(80))
+    note: Mapped[dict | None] = mapped_column(JSONB)  # why the hand-written brief was used, when it was
+    est_cost_dkk: Mapped[float] = mapped_column(Numeric(8, 2), nullable=False, default=0, server_default=text("0"))
+    approved_by_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Set once the video exists and is posted: the post per platform it became, and what the platforms report for it.
+    post_ids: Mapped[list] = mapped_column(JSONB, nullable=False, default=list, server_default=text("'[]'::jsonb"))
+    metrics: Mapped[dict | None] = mapped_column(JSONB)
+    metrics_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = ts_now()
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()

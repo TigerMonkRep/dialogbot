@@ -106,6 +106,10 @@ Supabase bruger selv ~8):
 | `SOCIAL_PLATFORMS` | nej | API + worker | — | Standard `facebook,instagram,tiktok`. Kun platforme på listen **og** med gyldige nøgler får opslag. |
 | `SOCIAL_WEEKDAYS` / `SOCIAL_PLAN_DAYS_AHEAD` | nej | API + worker | — | Ugedage (mandag=0) med opslag, standard `0,2,4` (man/ons/fre), og hvor mange dage frem kladderne laves, standard 3. |
 | `SOCIAL_MAX_LATE_MINUTES` | nej | worker | — | Standard 360. Er et tidspunkt mere forsinket end det, når workeren det, springes opslaget over i stedet for at gå ud på et underligt tidspunkt. |
+| `VIDEO_MONTHLY_BUDGET_DKK` | nej | api | — | Standard 500. Loft for, hvor meget godkendte videoer må koste pr. måned (se docs/social-media.md, afsnittet Video). |
+| `VIDEO_PRICE_USD_PER_SECOND` | nej | api | — | Standard 0.10 (Veo 3.1 Fast, 720p). Bruges kun til at skønne prisen pr. video. |
+| `VIDEO_RETRY_FACTOR` | nej | api | — | Standard 1.3 (omtrent tre ud af ti genererede klip kasseres). |
+| `VIDEO_USD_DKK` | nej | api | — | Standard 6.9. |
 | `SOCIAL_SITE_URL` | nej | API + worker | — | Standard `https://www.dialogbot.dk`. Linket i Facebook-opslagene. |
 | `META_PAGE_ID` / `META_PAGE_ACCESS_TOKEN` | ved Facebook | API + worker | Meta for Developers → Graph API Explorer / System User (se `docs/social-media.md`) | Dialogbots Facebook-side og dens langlivede sidetoken. **Server-only.** |
 | `META_INSTAGRAM_USER_ID` | ved Instagram | API + worker | `GET /{page-id}?fields=instagram_business_account` | Instagram-virksomhedskontoen, der er knyttet til siden. Bruger samme token. `META_GRAPH_VERSION` (standard `v23.0`) kan hæves. |

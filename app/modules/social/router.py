@@ -20,7 +20,7 @@ from app.core.auth import Principal
 from app.core.errors import Conflict, NotFound, NotImplementedYet, ValidationFailed
 from app.db import get_db
 from app.models import SocialMedia, SocialPost, SocialProspect
-from app.modules.social import insights, prospects, publishers, service
+from app.modules.social import insights, prospects, publishers, service, video
 from app.modules.voices.operator_router import operator
 
 router = APIRouter(prefix="/operator/social", tags=["social-operator"])
@@ -224,3 +224,48 @@ def media(filename: str, db: OrmSession = Depends(get_db)):
     if m is None:
         raise NotFound("Billedet findes ikke")
     return Response(m.data, media_type="image/jpeg", headers={"Cache-Control": "public, max-age=86400, immutable"})
+
+
+# --- short-form video: manuscripts, score, budget, what the numbers say -------------------------------------------------
+
+class VideoPlanIn(BaseModel):
+    count: int = Field(default=3, ge=1, le=6)
+    topic: str | None = None
+    persona: Literal["ai_person", "rigtig_person", "blandet"] = "ai_person"
+
+
+@router.get("/videos")
+def list_videos(_: Principal = Depends(operator), db: OrmSession = Depends(get_db)):
+    """Budget for the month, which formulas the measured videos favour, and the latest manuscripts with their score."""
+    return video.overview(db)
+
+
+@router.post("/videos/plan")
+def plan_videos(body: VideoPlanIn, request: Request, principal: Principal = Depends(operator),
+                db: OrmSession = Depends(get_db)):
+    """New draft manuscripts. Text only: nothing is rendered and nothing costs money until one is approved."""
+    created = video.plan_videos(db, body.count, topic_key=body.topic, persona=body.persona)
+    record_audit(db, workspace_id=None, actor_user_id=principal.user.id, action="social.video_plan", object_type="social_video",
+                 object_id=created[0].id, request_id=request.state.request_id, after={"count": len(created), "topic": body.topic})
+    db.commit()
+    return {"created": [video.to_dict(v) for v in created], "budget": video.budget(db)}
+
+
+@router.post("/videos/{video_id}/approve")
+def approve_video(video_id: uuid.UUID, request: Request, principal: Principal = Depends(operator),
+                  db: OrmSession = Depends(get_db)):
+    v = video.approve(db, video.get_video(db, video_id), principal.user.id)
+    record_audit(db, workspace_id=None, actor_user_id=principal.user.id, action="social.video_approve", object_type="social_video",
+                 object_id=v.id, request_id=request.state.request_id, after={"est_cost_dkk": float(v.est_cost_dkk)})
+    db.commit()
+    return video.to_dict(v)
+
+
+@router.post("/videos/{video_id}/reject")
+def reject_video(video_id: uuid.UUID, request: Request, principal: Principal = Depends(operator),
+                 db: OrmSession = Depends(get_db)):
+    v = video.reject(db, video.get_video(db, video_id))
+    record_audit(db, workspace_id=None, actor_user_id=principal.user.id, action="social.video_reject", object_type="social_video",
+                 object_id=v.id, request_id=request.state.request_id)
+    db.commit()
+    return video.to_dict(v)

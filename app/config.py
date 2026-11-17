@@ -430,6 +430,16 @@ class Settings(BaseSettings):
         return self._codes(self.outreach_demo_callback_countries) | set(self.outreach_demo_lines)
 
     @model_validator(mode="after")
+    def _supabase_url_with_scheme(self):
+        """SUPABASE_URL pasted without «https://» (just the project host) made every storage call fail with
+        «Request URL is missing an 'http://' or 'https://' protocol»: the scheme is added here."""
+        u = (self.supabase_url or "").strip()
+        if u and not u.lower().startswith(("https://", "http://")):
+            u = "https://" + u.lstrip("/")
+        self.supabase_url = u or None
+        return self
+
+    @model_validator(mode="after")
     def _fail_closed(self) -> Settings:
         if self.app_env in ("staging", "prod"):
             if not self.secret_key or len(self.secret_key) < 32:

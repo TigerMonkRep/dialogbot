@@ -146,7 +146,9 @@ def wish_out(item: PrivateTaskItem) -> dict:
 
 # --------------------------------------------------------------------------- import («Indsæt link»)
 
-def _store_image(ws_id: uuid.UUID, url: str | None) -> dict | None:
+def _store_image(ws_id: uuid.UUID, url: str | None, *, strict: bool = False) -> dict | None:
+    """`strict` (the worker job): a failure of OUR storage is raised, so the job is retried instead of leaving the
+    wish without its picture for good. A picture the shop will not give us is still just None."""
     if not url:
         return None
     try:
@@ -158,6 +160,8 @@ def _store_image(ws_id: uuid.UUID, url: str | None) -> dict | None:
         return None
     except Exception:  # noqa: BLE001 – storage down, odd image: the wish works without it
         log.warning("wishes: product image not stored", exc_info=True)
+        if strict:
+            raise
         return None
     return {"image_key": stored["key"], "image": wish_images.urls(stored["key"])}
 
@@ -279,7 +283,13 @@ def handle_enrich(db, ev) -> None:
     if not facts or why:
         log.info("wishes.enrich_skipped item=%s shop=%s reason=%s", item_id, _shop_from(link), why or "no_facts")
         return
-    stored = _store_image(ws_id, facts.get("image_url")) if not it.image_key else None
+    storage_error: Exception | None = None
+    stored = None
+    if not it.image_key:
+        try:
+            stored = _store_image(ws_id, facts.get("image_url"), strict=True)
+        except Exception as e:  # noqa: BLE001 – our storage failed: save the price now, retry the picture
+            storage_error = e
     it = db.scalar(select(PrivateTaskItem).where(PrivateTaskItem.id == item_id).with_for_update())
     if it is None or it.link != link or it.archived_at is not None:  # changed while we were reading the shop
         if stored:
@@ -300,6 +310,9 @@ def handle_enrich(db, ev) -> None:
         it.details = _clean_details({**facts, "source_url": final})
     log.info("wishes.enriched item=%s shop=%s image=%s price=%s", item_id, it.shop, bool(it.image_key),
              it.price_minor is not None)
+    if storage_error is not None:
+        db.commit()  # the price and details are kept; the job fails and is retried for the picture
+        raise RuntimeError(f"billedlageret svarede ikke: {type(storage_error).__name__}") from storage_error
 
 
 def _shop_from(url: str) -> str | None:

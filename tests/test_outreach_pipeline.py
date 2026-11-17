@@ -230,3 +230,20 @@ def test_with_a_demo_line_the_email_invites_the_reader_to_ring_it(db, outreach, 
     msg.body = msg.body.replace("+1 628 377 3337", "+1 415 555 0100")
     issues = deterministic_issues(db, lead, msg)
     assert any(i.startswith("phone:") for i in issues) and any("demo line" in i for i in issues)
+
+
+def test_a_draft_that_is_too_long_is_rewritten_once_and_then_passes(db, outreach):
+    from app.modules.outreach.fake import FakeClaude
+
+    class LongThenShort(FakeClaude):
+        def _submit_email(self, user):
+            return {**GOOD, "line1": "One reviewer wrote: " + " ".join(["ab"] * 95)} \
+                if "previous_draft_too_long" not in user else GOOD
+
+    fake = LongThenShort()
+    llm.set_client_override(fake)
+    rep = run(db, [raw("US")])
+    copies = fake.by_tool("submit_email")
+    assert len(copies) == 2 and "previous_draft_too_long" in copies[1]["messages"][0]["content"]
+    d = rep["leads"][0]["email_draft"]
+    assert d["status"] == "queued" and d["words"] < 90

@@ -230,3 +230,16 @@ def test_with_a_demo_line_the_email_invites_the_reader_to_ring_it(db, outreach, 
     msg.body = msg.body.replace("+1 628 377 3337", "+1 415 555 0100")
     issues = deterministic_issues(db, lead, msg)
     assert any(i.startswith("phone:") for i in issues) and any("demo line" in i for i in issues)
+
+
+def test_a_draft_that_is_too_long_is_rewritten_once_and_then_passes(db, outreach):
+    too_long = {**GOOD, "line1": "One reviewer wrote: " + " ".join(["word"] * 80)}
+    answers = iter([too_long, GOOD])
+    original = outreach._submit_email
+    outreach._submit_email = lambda user: next(answers) if "previous_draft_too_long" not in user and not outreach.by_tool(
+        "submit_email") else (GOOD if "previous_draft_too_long" in user else original(user))
+    rep = run(db, [raw("US")])
+    copies = outreach.by_tool("submit_email")
+    assert len(copies) == 2 and "previous_draft_too_long" in copies[1]["messages"][0]["content"]
+    d = rep["leads"][0]["email_draft"]
+    assert d["status"] == "queued" and d["words"] < 90

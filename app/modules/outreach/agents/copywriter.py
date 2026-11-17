@@ -61,6 +61,14 @@ class OutreachCopywriterAgent:
                               user=user, output=EmailDraft, tool_name="submit_email",
                               tool_description="Return the finished e-mail.", max_tokens=700, lead_id=lead.id)
         draft: EmailDraft = call.data
+        if word_count(draft.body) >= MAX_WORDS:   # the auditor rejects >= MAX_WORDS: ask once for a tighter rewrite
+            too_long = (f"{user}\n<previous_draft_too_long>Your last draft had {word_count(draft.body)} words. Rewrite it "
+                        f"at no more than {MAX_WORDS - 15} words in total across the three lines, keeping every rule above."
+                        f"</previous_draft_too_long>")
+            call = llm.structured(self.db, clearance=clearance, purpose="copy", model=self.s.claude_writer_model,
+                                  system=system, user=too_long, output=EmailDraft, tool_name="submit_email",
+                                  tool_description="Return the finished e-mail.", max_tokens=700, lead_id=lead.id)
+            draft = call.data
         msg = OutreachMessage(lead_id=lead.id, step=1, to_email=lead.email_normalized, subject=draft.subject.strip(),
                               body=draft.body, footer=localization.footer(lead.country, lead.company_name, lead.email_source),
                               word_count=word_count(draft.body), status="draft")

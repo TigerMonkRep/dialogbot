@@ -6272,6 +6272,40 @@
         "title": "VersionOut",
         "type": "object"
       },
+      "VideoPlanIn": {
+        "properties": {
+          "count": {
+            "default": 3,
+            "maximum": 6.0,
+            "minimum": 1.0,
+            "title": "Count",
+            "type": "integer"
+          },
+          "persona": {
+            "default": "ai_person",
+            "enum": [
+              "ai_person",
+              "rigtig_person",
+              "blandet"
+            ],
+            "title": "Persona",
+            "type": "string"
+          },
+          "topic": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topic"
+          }
+        },
+        "title": "VideoPlanIn",
+        "type": "object"
+      },
       "ViewAsIn": {
         "properties": {
           "user_id": {
@@ -17717,6 +17751,226 @@
           }
         },
         "summary": "Prospect Skip",
+        "tags": [
+          "social-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/social/videos": {
+      "get": {
+        "description": "Budget for the month, which formulas the measured videos favour, and the latest manuscripts with their score.",
+        "operationId": "list_videos_api_v1_operator_social_videos_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Videos",
+        "tags": [
+          "social-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/social/videos/plan": {
+      "post": {
+        "description": "New draft manuscripts. Text only: nothing is rendered and nothing costs money until one is approved.",
+        "operationId": "plan_videos_api_v1_operator_social_videos_plan_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VideoPlanIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Plan Videos",
+        "tags": [
+          "social-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/social/videos/{video_id}/approve": {
+      "post": {
+        "operationId": "approve_video_api_v1_operator_social_videos__video_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "video_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Video Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Approve Video",
+        "tags": [
+          "social-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/social/videos/{video_id}/reject": {
+      "post": {
+        "operationId": "reject_video_api_v1_operator_social_videos__video_id__reject_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "video_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Video Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reject Video",
         "tags": [
           "social-operator"
         ]

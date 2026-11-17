@@ -49,6 +49,9 @@ Regler:
   som brugeren skal godkende.
 - Beder brugeren om noget, som kræver en tilføjelse, der ikke er slået til, så brug suggest_addon.
 - En rettelse af en eksisterende opgave er gratis; brug add_items/move_reminder i stedet for at lave en ny opgave.
+- Billede og pris på ønsker: har et ønske et link, henter Dialogbot selv billede og pris fra butikkens side i løbet
+  af et øjeblik. Mangler de stadig, eller beder brugeren om dem, så kald fetch_product_info – sig aldrig, at det ikke
+  kan lade sig gøre. Nogle butikker lader sig ikke læse; så kan brugeren selv skrive prisen og lægge et billede på.
 {search}{lists}{about}{addons}"""
 
 SEARCH_RULE = """- Købslinks: vil brugeren have et link til, hvor noget kan købes, så kald find_buy_link med punktets tekst – den
@@ -101,6 +104,10 @@ CORE_TOOLS = [
                                              "på et eller flere punkter, der står på listen. items er punkternes tekst.",
      "input_schema": _obj({"task_id": {"type": "string"}, "items": {"type": "array", "items": {"type": "string"}}},
                           ["items"])},
+    {"name": "fetch_product_info", "description": "Hent billede og pris fra butikkens side til de ønsker på en "
+                                                  "ønskeliste, der har et link, men mangler billede eller pris. "
+                                                  "Udelad task_id for den liste, samtalen handler om.",
+     "input_schema": _obj({"task_id": {"type": "string"}})},
     {"name": "create_reminder", "description": "Lav en påmindelse på et bestemt tidspunkt.",
      "input_schema": _obj({"title": {"type": "string"}, "remind_at": {"type": "string"}}, ["title", "remind_at"])},
     {"name": "move_reminder", "description": "Flyt en eksisterende påmindelse (gratis). remind_at er et fuldt "
@@ -443,6 +450,28 @@ def h_set_item_link(turn: Turn, a: dict) -> str:
     return f"Link sat på {row.id}."
 
 
+def h_fetch_product_info(turn: Turn, a: dict) -> str:
+    from app.modules.privat import wishes
+
+    task, m = _resolve(turn, a.get("task_id"), "list", "editor")
+    service.can_add(task, m)
+    rows = list(turn.db.scalars(select(PrivateTaskItem).where(PrivateTaskItem.task_id == task.id,
+                                                              PrivateTaskItem.archived_at.is_(None))))
+    no_link = sum(1 for r in rows if not r.link and (not r.image_key or r.price_minor is None))
+    # a new attempt each hour at most: the same shop is not read again and again from one conversation
+    n = wishes.queue_enrich(turn.db, rows, retry=f":{rules.now():%Y%m%d%H}")
+    turn.db.flush()
+    if not n:
+        text = ("Alle ønsker med link har allerede billede og pris." if not no_link else
+                "Ønskerne uden billede og pris har ikke noget link endnu – skal jeg finde købslinks til dem?")
+    else:
+        text = (f"Jeg henter billede og pris til {n} ønske{'r' if n != 1 else ''} fra butikkernes sider nu – de dukker "
+                "op på listen om et øjeblik. Lader en butik sig ikke læse, kan du selv skrive prisen og lægge et "
+                "billede på under «Detaljer».")
+    turn.say("text", text, task_id=task.id)
+    return f"{n} ønsker sat i kø til hentning af billede og pris; {no_link} mangler link."
+
+
 def h_create_reminder(turn: Turn, a: dict) -> str:
     when = _parse_when(a.get("remind_at"))
     if when is None or when <= rules.now():
@@ -505,6 +534,7 @@ def h_suggest_addon(turn: Turn, a: dict) -> str:
 
 
 CORE_HANDLERS = {"create_list": h_create_list, "add_items": h_add_items, "set_item_link": h_set_item_link, "find_buy_link": h_find_buy_link,
+                 "fetch_product_info": h_fetch_product_info,
                  "create_reminder": h_create_reminder,
                  "move_reminder": h_move_reminder, "list_waiting": h_list_waiting,
                  "ask_clarifying": h_ask_clarifying, "suggest_addon": h_suggest_addon}

@@ -233,13 +233,17 @@ def test_with_a_demo_line_the_email_invites_the_reader_to_ring_it(db, outreach, 
 
 
 def test_a_draft_that_is_too_long_is_rewritten_once_and_then_passes(db, outreach):
-    too_long = {**GOOD, "line1": "One reviewer wrote: " + " ".join(["word"] * 80)}
-    answers = iter([too_long, GOOD])
-    original = outreach._submit_email
-    outreach._submit_email = lambda user: next(answers) if "previous_draft_too_long" not in user and not outreach.by_tool(
-        "submit_email") else (GOOD if "previous_draft_too_long" in user else original(user))
+    from app.modules.outreach.fake import FakeClaude
+
+    class LongThenShort(FakeClaude):
+        def _submit_email(self, user):
+            return {**GOOD, "line1": "One reviewer wrote: " + " ".join(["ab"] * 95)} \
+                if "previous_draft_too_long" not in user else GOOD
+
+    fake = LongThenShort()
+    llm.set_client_override(fake)
     rep = run(db, [raw("US")])
-    copies = outreach.by_tool("submit_email")
+    copies = fake.by_tool("submit_email")
     assert len(copies) == 2 and "previous_draft_too_long" in copies[1]["messages"][0]["content"]
     d = rep["leads"][0]["email_draft"]
     assert d["status"] == "queued" and d["words"] < 90

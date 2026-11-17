@@ -202,6 +202,106 @@ def import_link(ws_id: uuid.UUID, link: str) -> dict:
     return out
 
 
+# --------------------------------------------------------------------------- picture and price for wishes with a link
+
+ENRICH_EVENT = "privat.wish_enrich"
+ENRICH_BATCH = 25
+
+
+def needs_enrich(item: PrivateTaskItem) -> bool:
+    """A wish that has a link but no picture or no price (added in the chat, or typed with only a link)."""
+    return bool(item.link) and item.archived_at is None and (not item.image_key or item.price_minor is None)
+
+
+def _enrich_key(item_id: uuid.UUID, link: str, retry: str = "") -> str:
+    import hashlib
+
+    return f"{ENRICH_EVENT}:{item_id}:{hashlib.md5(link.encode()).hexdigest()[:12]}{retry}"  # noqa: S324 – not security
+
+
+def queue_enrich(db, items: list[PrivateTaskItem], *, retry: str = "") -> int:
+    """Queue the worker job for the wishes that need it. Once per wish and link (the dedupe key); `retry` (a
+    timestamp) lets the owner ask again from the chat. Returns how many were queued or already waiting."""
+    from app.core.outbox import enqueue
+
+    n = 0
+    for it in items:
+        if needs_enrich(it):
+            enqueue(db, event_type=ENRICH_EVENT, dedupe_key=_enrich_key(it.id, it.link, retry),
+                    workspace_id=it.workspace_id, payload={"item_id": str(it.id)})
+            n += 1
+    return n
+
+
+def queue_missing(db) -> int:
+    """The worker's sweep: every wishlist wish with a link and no picture or price gets ONE attempt per link –
+    whichever way it was added (chat, «Find købslink», a pasted link, lists made before this existed)."""
+    from sqlalchemy import exists, func, or_, select
+
+    from app.models import OutboxEvent, PrivateTask
+
+    key = func.concat(ENRICH_EVENT + ":", func.cast(PrivateTaskItem.id, _text()), ":",
+                      func.substr(func.md5(PrivateTaskItem.link), 1, 12))
+    rows = list(db.scalars(
+        select(PrivateTaskItem).join(PrivateTask, PrivateTask.id == PrivateTaskItem.task_id)
+        .where(PrivateTask.list_type == "wishlist", PrivateTaskItem.link.is_not(None),
+               PrivateTaskItem.archived_at.is_(None),
+               or_(PrivateTaskItem.image_key.is_(None), PrivateTaskItem.price_minor.is_(None)),
+               ~exists().where(OutboxEvent.dedupe_key == key))
+        .order_by(PrivateTaskItem.created_at.desc()).limit(ENRICH_BATCH)))
+    return queue_enrich(db, rows)
+
+
+def _text():
+    from sqlalchemy import Text
+
+    return Text
+
+
+def handle_enrich(db, ev) -> None:
+    """Worker job: read the wish's link like «Indsæt link» does and fill in ONLY what is missing – the picture
+    (stored in our bucket), the price the page declares (marked as the shop's, with the time), shop and product
+    details. The title, the link and anything the owner typed are never changed. A shop that cannot be read (it
+    blocks robots, the page is gone) leaves the wish as it is; the reason is logged, and nothing is retried."""
+    from sqlalchemy import select
+
+    item_id = uuid.UUID(str(ev.payload["item_id"]))
+    it = db.get(PrivateTaskItem, item_id)
+    if it is None or not needs_enrich(it):
+        return
+    link, ws_id = it.link, it.workspace_id
+    try:
+        safe_fetch.check_url(link)
+    except (safe_fetch.FetchBlocked, safe_fetch.FetchFailed):
+        log.info("wishes.enrich_skipped item=%s reason=blocked_url", item_id)
+        return
+    final, facts, why = read_page(link)
+    if not facts or why:
+        log.info("wishes.enrich_skipped item=%s shop=%s reason=%s", item_id, _shop_from(link), why or "no_facts")
+        return
+    stored = _store_image(ws_id, facts.get("image_url")) if not it.image_key else None
+    it = db.scalar(select(PrivateTaskItem).where(PrivateTaskItem.id == item_id).with_for_update())
+    if it is None or it.link != link or it.archived_at is not None:  # changed while we were reading the shop
+        if stored:
+            wish_images.delete(stored["image_key"])
+        return
+    if stored:
+        if it.image_key:
+            wish_images.delete(stored["image_key"])  # the owner added a photo meanwhile: theirs stays
+        else:
+            it.image_key, it.image_origin = stored["image_key"], "shop"
+    price, cur = facts.get("price_minor"), facts.get("currency")
+    if it.price_minor is None and isinstance(price, int) and price >= 0 and (cur is None or CURRENCY.match(str(cur))):
+        it.price_minor, it.currency = price, (cur or it.currency or "DKK")
+        it.price_source, it.price_fetched_at = "shop", rules.now()
+    if not it.shop:
+        it.shop = (facts.get("shop") or _shop_from(final) or "")[:TEXT_FIELDS["shop"]] or None
+    if not it.details:
+        it.details = _clean_details({**facts, "source_url": final})
+    log.info("wishes.enriched item=%s shop=%s image=%s price=%s", item_id, it.shop, bool(it.image_key),
+             it.price_minor is not None)
+
+
 def _shop_from(url: str) -> str | None:
     from urllib.parse import urlsplit
 

@@ -128,6 +128,7 @@ HANDLERS = {
     "privat.call_ask": lambda db, ev: _privat("handle_call_ask", db, ev),
     "privat.calendar_sync": lambda db, ev: _privat_calendar(db, ev),
     "privat.data_export": lambda db, ev: _privat_export(db, ev),
+    "privat.wish_enrich": lambda db, ev: _privat_wish_enrich(db, ev),
     "push.send": lambda db, ev: _push_send(db, ev),
     "booking.event": lambda db, ev: _booking_notify("handle_event", db, ev),  # E07: decide the messages
     "booking.message": lambda db, ev: _booking_notify("handle_message", db, ev),  # E07: one message, one channel
@@ -157,6 +158,12 @@ def _privat_export(db: OrmSession, ev: OutboxEvent) -> None:
     from app.modules.privat.gdpr import handle_export
 
     handle_export(db, ev)
+
+
+def _privat_wish_enrich(db: OrmSession, ev: OutboxEvent) -> None:
+    from app.modules.privat.wishes import handle_enrich
+
+    handle_enrich(db, ev)
 
 
 def _privat_calendar(db: OrmSession, ev: OutboxEvent) -> None:
@@ -473,6 +480,12 @@ def run_schedules() -> None:
             n = sweep_stale(db)
             if n:
                 log.info("privat.calls_released", count=n)
+            from app.modules.privat.wishes import queue_missing
+
+            n = queue_missing(db)  # wishes with a link but no picture or price: one read of the shop per link
+            if n:
+                db.commit()
+                log.info("privat.wishes_queued", count=n)
         except Exception as exc:  # noqa: BLE001
             db.rollback()
             log.warning("privat.sweep_failed", error=f"{type(exc).__name__}: {exc}")

@@ -566,3 +566,92 @@ def test_existing_wishlist_and_invite_still_work(api, pv):
     assert api.post(ole, f"/privat/tasks/{tid}/items/{cykel['id']}/reserve").status_code == 200
     p = api.c.get(f"/api/v1/privat/invites/by-code/{inv['short_code']}").json()
     assert p["item_count"] == 1 and p["group_gift_count"] == 0
+
+
+# --------------------------------------------------------------------------- picture and price fetched for wishes with a link
+
+def _sweep(db) -> int:
+    from app.worker import runner
+
+    n = wishes.queue_missing(db)
+    db.commit()
+    runner.drain()
+    db.expire_all()
+    return n
+
+
+def test_wish_added_in_chat_with_a_link_gets_picture_and_price(api, pv, web, db):
+    pages, calls = web
+    link = "https://shop.example.com/cykel-x?variant=54r"
+    pages[link] = (200, {"content-type": "text/html; charset=utf-8"}, PAGE.encode())
+    mette, _o, _a, tid = _wishlist(api, pv, share=False)
+    pv.say(mette, "!add_items " + json.dumps({"items": [{"text": "Cykel til Nohr", "link": link}, "Drage"]}), about=tid)
+    w = _item(api.get(mette, f"/privat/tasks/{tid}").json(), "Cykel til Nohr")
+    assert w["image"] is None and w["price_minor"] is None  # as it was before: only the link
+
+    assert _sweep(db) == 1  # the wish without a link is left alone
+    t = api.get(mette, f"/privat/tasks/{tid}").json()
+    w = _item(t, "Cykel til Nohr")
+    assert w["text"] == "Cykel til Nohr" and w["link"] == link  # the owner's title and link are never changed
+    assert (w["price_minor"], w["currency"], w["price_source"]) == (349900, "DKK", "shop") and w["price_fetched_at"]
+    assert w["image"]["url"] and w["image_origin"] == "shop" and w["shop"] == "Cykelshoppen"
+    assert w["details"]["brand"] == "Velo"
+    assert _item(t, "Drage")["image"] is None
+
+    before = len(calls)
+    assert _sweep(db) == 0 and len(calls) == before  # nothing left to do: the shop is not read again
+
+
+def test_enrich_keeps_what_the_owner_typed_and_fills_only_the_gap(api, pv, web, db):
+    pages, _ = web
+    link = "https://shop.example.com/cykel-x?variant=54r"
+    pages[link] = (200, {"content-type": "text/html; charset=utf-8"}, PAGE.encode())
+    mette, _o, _a, tid = _wishlist(api, pv, share=False)
+    t = api.post(mette, f"/privat/tasks/{tid}/wishes", {"text": "Cykel", "link": link, "price_minor": 300000,
+                                                         "currency": "DKK", "shop": "Min cykelhandler"}).json()
+    assert _item(t, "Cykel")["price_source"] == "user"
+    assert _sweep(db) == 1  # the picture is missing
+    w = _item(api.get(mette, f"/privat/tasks/{tid}").json(), "Cykel")
+    assert (w["price_minor"], w["price_source"], w["shop"]) == (300000, "user", "Min cykelhandler")
+    assert w["image"]["url"] and w["image_origin"] == "shop"
+
+
+def test_unreadable_shop_is_tried_once_and_the_owner_can_ask_again_from_the_chat(api, pv, web, db):
+    pages, calls = web
+    link = "https://shop.example.com/lukket"
+    pages[link] = (403, {"content-type": "text/html"}, b"<html>Access denied</html>")
+    mette, _o, _a, tid = _wishlist(api, pv, share=False)
+    pv.say(mette, "!add_items " + json.dumps({"items": [{"text": "Stovler", "link": link}]}), about=tid)
+    assert _sweep(db) == 1 and calls.count(link) == 1
+    w = _item(api.get(mette, f"/privat/tasks/{tid}").json(), "Stovler")
+    assert w["image"] is None and w["price_minor"] is None and w["link"] == link  # untouched, nothing guessed
+    assert _sweep(db) == 0 and calls.count(link) == 1  # one attempt per link – never a loop against a shop that says no
+
+    simple = ('<html><head><meta property="og:image" content="https://shop.example.com/img/x.png">'
+              '<script type="application/ld+json">{"@type":"Product","name":"Vinterstovler","offers":{"@type":"Offer",'
+              '"price":"3499.00","priceCurrency":"DKK"}}</script></head><body></body></html>')
+    pages[link] = (200, {"content-type": "text/html; charset=utf-8"}, simple.encode())  # the shop answers now
+    r = pv.say(mette, "!fetch_product_info {}", about=tid)
+    said = next(m["text"] for m in r["messages"] if m["role"] == "assistant" and m["kind"] == "text")
+    assert "Jeg henter billede og pris til 1 ønske " in said
+    from app.worker import runner
+
+    runner.drain()
+    w = _item(api.get(mette, f"/privat/tasks/{tid}").json(), "Stovler")
+    assert w["price_minor"] == 349900 and w["image"]["url"]
+    r = pv.say(mette, "!fetch_product_info {}", about=tid)
+    # nothing with a link is missing anything now; «Bog» has no link, so the next step is offered instead
+    assert "har ikke noget link endnu" in next(m["text"] for m in r["messages"] if m["role"] == "assistant")
+
+
+def test_enrich_only_touches_wishlists_and_refuses_internal_addresses(api, pv, web, db):
+    pages, calls = web
+    mette = pv.account("mette@testmail.dk", "Mette Hansen")
+    out = pv.say(mette, "Lav en indkøbsliste med mælk")
+    shopping = next(m["task_id"] for m in out["messages"] if m["kind"] == "task")
+    pv.say(mette, '!add_items {"items": [{"text": "Kaffe", "link": "https://shop.example.com/kaffe"}]}', about=shopping)
+    out = pv.say(mette, "Lav en ønskeliste med bog")
+    wl = next(m["task_id"] for m in out["messages"] if m["kind"] == "task")
+    pv.say(mette, '!add_items {"items": [{"text": "Intern", "link": "https://evil.example.com/x"}]}', about=wl)
+    assert _sweep(db) == 1  # only the wishlist's wish is queued …
+    assert calls == []  # … and an address that resolves inside our network is never fetched

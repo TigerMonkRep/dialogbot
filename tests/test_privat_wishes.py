@@ -655,3 +655,46 @@ def test_enrich_only_touches_wishlists_and_refuses_internal_addresses(api, pv, w
     pv.say(mette, '!add_items {"items": [{"text": "Intern", "link": "https://evil.example.com/x"}]}', about=wl)
     assert _sweep(db) == 1  # only the wishlist's wish is queued …
     assert calls == []  # … and an address that resolves inside our network is never fetched
+
+
+def test_storage_failure_keeps_the_price_and_retries_the_picture(api, pv, web, db, monkeypatch):
+    from app.models import OutboxEvent
+    from app.worker import runner
+
+    pages, _ = web
+    link = "https://shop.example.com/cykel-x?variant=54r"
+    pages[link] = (200, {"content-type": "text/html; charset=utf-8"}, PAGE.encode())
+    mette, _o, _a, tid = _wishlist(api, pv, share=False)
+    pv.say(mette, "!add_items " + json.dumps({"items": [{"text": "Cykel", "link": link}]}), about=tid)
+    real = wishes.wish_images.store
+
+    def down(*a, **kw):
+        raise OSError("storage down")
+
+    monkeypatch.setattr(wishes.wish_images, "store", down)
+    wishes.queue_missing(db)
+    db.commit()
+    ev = runner.process_once()
+    assert ev.status == "queued" and "billedlageret" in ev.last_error  # retried, not given up
+    w = _item(api.get(mette, f"/privat/tasks/{tid}").json(), "Cykel")
+    assert w["price_minor"] == 349900 and w["image"] is None  # the price is already there
+
+    monkeypatch.setattr(wishes.wish_images, "store", real)  # storage is back
+    ev = db.get(OutboxEvent, ev.id)
+    db.refresh(ev)
+    ev.next_attempt_at = ev.created_at
+    db.commit()
+    runner.drain()
+    w = _item(api.get(mette, f"/privat/tasks/{tid}").json(), "Cykel")
+    assert w["image"]["url"] and w["price_minor"] == 349900
+
+
+def test_supabase_url_without_scheme_gets_https(monkeypatch):
+    from app.config import Settings
+
+    monkeypatch.setenv("SUPABASE_URL", "abcdefgh.supabase.co/")
+    assert Settings(_env_file=None).supabase_url == "https://abcdefgh.supabase.co/"
+    monkeypatch.setenv("SUPABASE_URL", "https://abcdefgh.supabase.co")
+    assert Settings(_env_file=None).supabase_url == "https://abcdefgh.supabase.co"
+    monkeypatch.setenv("SUPABASE_URL", "")
+    assert Settings(_env_file=None).supabase_url is None

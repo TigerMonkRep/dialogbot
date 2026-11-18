@@ -509,6 +509,7 @@ def items_out(db: OrmSession, task: PrivateTask, viewer_id: uuid.UUID, role: str
     rows = list(db.scalars(select(PrivateTaskItem).where(PrivateTaskItem.task_id == task.id)
                            .order_by(PrivateTaskItem.position, PrivateTaskItem.created_at)))
     names = _names(db, {i.added_by_user_id for i in rows} | {i.done_by_user_id for i in rows})
+    wishes.wish_images.prime(i.image_key for i in rows)  # one request for every picture's link, not one each
     is_owner = role == "owner"
     wishlist_owner = task.share_mode == "wishlist" and is_owner
     giver = task.share_mode == "wishlist" and not is_owner

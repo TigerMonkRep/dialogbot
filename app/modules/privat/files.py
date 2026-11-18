@@ -83,6 +83,70 @@ def put(key: str, data: bytes, content_type: str) -> str:
     return key
 
 
+# Signed links are made for SIGN_FOR seconds and reused from this process for CACHE_FOR, so a link handed out always has
+# at least SIGNED_SECONDS left. Before this every response that showed a list asked Supabase once per picture and size
+# on a new connection: saving or deleting one wish took seconds.
+SIGN_FOR = 900
+CACHE_FOR = SIGN_FOR - SIGNED_SECONDS
+_CACHE_MAX = 5000
+_signed: dict[str, tuple[float, str]] = {}
+_client = None
+
+
+def _http():
+    """One client per process: the connection to Supabase is kept open between calls."""
+    global _client
+    if _client is None:
+        import httpx
+
+        _client = httpx.Client(timeout=15.0, limits=httpx.Limits(max_keepalive_connections=4, keepalive_expiry=60.0))
+    return _client
+
+
+def _cached(key: str) -> str | None:
+    hit = _signed.get(key)
+    return hit[1] if hit and hit[0] > time.monotonic() else None
+
+
+def _remember(key: str, link: str) -> None:
+    if len(_signed) >= _CACHE_MAX:
+        now = time.monotonic()
+        for k in [k for k, (until, _) in _signed.items() if until <= now] or list(_signed)[:_CACHE_MAX // 2]:
+            _signed.pop(k, None)
+    _signed[key] = (time.monotonic() + CACHE_FOR, link)
+
+
+def _absolute(rel: str) -> str:
+    return f"{get_settings().supabase_url.rstrip('/')}/storage/v1{rel if rel.startswith('/') else '/' + rel}"
+
+
+def sign_many(keys) -> dict[str, str]:
+    """Short-lived links for several pictures with ONE request to Supabase (none when all are cached).
+    Unknown or malformed keys are simply missing from the result; never raises."""
+    want = [k for k in dict.fromkeys(keys) if k and _KEY.match(k)]
+    s = get_settings()
+    if not _remote():
+        return {k: v for k in want if (v := sign(k))}
+    out = {k: v for k in want if (v := _cached(k))}
+    missing = [k for k in want if k not in out]
+    if not missing:
+        return out
+    import httpx
+
+    url, h = _sb(f"object/sign/{s.privat_files_bucket}")
+    try:
+        r = _http().post(url, json={"expiresIn": SIGN_FOR, "paths": missing}, headers=h)
+        rows = r.json() if r.status_code < 400 else []
+    except (httpx.HTTPError, ValueError):
+        return out
+    for row in rows if isinstance(rows, list) else []:
+        rel = row.get("signedURL") if isinstance(row, dict) else None
+        if rel and row.get("path") in missing:
+            out[row["path"]] = _absolute(rel)
+            _remember(row["path"], out[row["path"]])
+    return out
+
+
 def sign(key: str | None, seconds: int = SIGNED_SECONDS) -> str | None:
     """A short-lived link, or None (never raises: a missing photo must not break the app)."""
     if not key or not _KEY.match(key):
@@ -92,32 +156,29 @@ def sign(key: str | None, seconds: int = SIGNED_SECONDS) -> str | None:
         exp = int(time.time()) + seconds
         sig = hmac.new(s.secret_key.encode(), f"{key}:{exp}".encode(), hashlib.sha256).hexdigest()[:32]
         return f"local://privat-files/{key}?exp={exp}&sig={sig}"
-    import httpx
-
-    url, h = _sb(f"object/sign/{s.privat_files_bucket}/{key}")
-    try:
-        r = httpx.post(url, json={"expiresIn": seconds}, headers=h, timeout=15.0)
-        rel = r.json().get("signedURL") if r.status_code < 400 else None
-    except (httpx.HTTPError, ValueError):
-        return None
-    return f"{s.supabase_url.rstrip('/')}/storage/v1{rel if rel.startswith('/') else '/' + rel}" if rel else None
+    return sign_many([key]).get(key)
 
 
-def delete(key: str | None) -> None:
-    """Best effort: a photo left behind is removed with the workspace prefix later; never blocks the user."""
-    if not key or not _KEY.match(key):
+def delete(*keys: str | None) -> None:
+    """Best effort, one request for all the keys: a photo left behind is removed with the workspace prefix later;
+    never blocks the user."""
+    ok = [k for k in keys if k and _KEY.match(k)]
+    if not ok:
         return
     if not _remote():
-        p = _local(key)
-        if p.exists():
-            p.unlink()
+        for k in ok:
+            p = _local(k)
+            if p.exists():
+                p.unlink()
         return
     import httpx
 
+    for k in ok:
+        _signed.pop(k, None)
     s = get_settings()
     url, h = _sb(f"object/{s.privat_files_bucket}")
     try:
-        httpx.request("DELETE", url, json={"prefixes": [key]}, headers=h, timeout=30.0)
+        _http().request("DELETE", url, json={"prefixes": ok}, headers=h)
     except httpx.HTTPError:
         pass
 

@@ -94,16 +94,24 @@ def small_key(key: str) -> str:
     return head[:-3] + "-sm/" + ident
 
 
+def prime(keys) -> None:
+    """Before a list is written out: fetch the links for all its pictures (both sizes) in one request, so urls()
+    below answers from the cache instead of asking Supabase per picture."""
+    ks = [k for k in keys if k]
+    if ks:
+        files.sign_many([x for k in ks for x in (k, small_key(k))])
+
+
 def urls(key: str | None) -> dict | None:
     if not key:
         return None
-    lg = files.sign(key)
+    got = files.sign_many([key, small_key(key)])
+    lg = got.get(key)
     if lg is None:
         return None
-    return {"url": lg, "url_sm": files.sign(small_key(key)) or lg}
+    return {"url": lg, "url_sm": got.get(small_key(key)) or lg}
 
 
 def delete(key: str | None) -> None:
     if key:
-        files.delete(key)
-        files.delete(small_key(key))
+        files.delete(key, small_key(key))

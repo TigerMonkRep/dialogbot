@@ -74,6 +74,7 @@ from app.models.domain import (  # noqa: F401
     TelephonyJob,
     TelephonySetup,
     TelephonyTest,
+    TrialClaim,
     VoiceProfile,
     VoiceRightsRecord,
     VoiceSession,

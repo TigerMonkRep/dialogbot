@@ -53,9 +53,10 @@ def get_agreement(ctx: WorkspaceContext = Depends(require_capability("agreements
 def choose_agreement(body: AgreementIn, request: Request, ctx: WorkspaceContext = Depends(require_capability("agreements.edit")),
                      db: OrmSession = Depends(get_db)):
     a = agreements.create(db, ctx.workspace.id, body.model, ctx.user_id)
-    from app.modules.billing import grace
+    from app.modules.billing import grace, trial
 
     db.flush()
+    trial.ensure_started(db, ctx.workspace.id)  # a card already on file + this confirmation = the 14-day trial begins
     grace.sync(db, ctx.workspace.id)  # confirmed with a card already on file = paid (the 7 days' grace needs it recorded)
     record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="agreement.created",
                  object_type="reception_agreement", object_id=a.id, after={"version": a.version, "model": a.model},

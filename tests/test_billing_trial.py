@@ -10,8 +10,8 @@ import pytest
 from sqlalchemy import select
 
 from app.core.errors import Conflict
-from app.models import BillingAccount, BusinessProfile, OutboxEvent, ReceptionAgreement
-from app.modules.billing import agreements, grace, prices, statement, trial
+from app.models import BillingAccount, BusinessProfile, OutboxEvent
+from app.modules.billing import agreements, grace, trial
 
 T0 = datetime(2026, 11, 10, 9, 0, tzinfo=UTC)
 

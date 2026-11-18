@@ -14,6 +14,7 @@ from app.models.domain import (  # noqa: F401
     AssistantProposal,
     AssistantRequest,
     BillingAccount,
+    TrialClaim,
     Booking,
     BookingMessage,
     BookingSettings,

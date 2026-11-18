@@ -31586,6 +31586,122 @@
         ]
       }
     },
+    "/api/v1/workspaces/{workspace_id}/billing/trial": {
+      "get": {
+        "description": "The free trial: none (and whether the company may still have one), active, ended or cancelled.",
+        "operationId": "get_trial_api_v1_workspaces__workspace_id__billing_trial_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Trial",
+        "tags": [
+          "billing"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/billing/trial/cancel": {
+      "post": {
+        "description": "Cancel inside the trial: the assistant stops at once and nothing is charged.",
+        "operationId": "cancel_trial_api_v1_workspaces__workspace_id__billing_trial_cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cancel Trial",
+        "tags": [
+          "billing"
+        ]
+      }
+    },
     "/api/v1/workspaces/{workspace_id}/billing/usage": {
       "get": {
         "description": "Every billed call of the month with its minutes, how the package covered it and any complaint about it; for an\ninvoiced month also the invoice's frozen lines.",

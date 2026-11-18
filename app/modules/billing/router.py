@@ -166,6 +166,29 @@ def card_checkout(request: Request, body: CardCheckoutIn | None = None,
     return {"url": url}
 
 
+# --------------------------------------------------------------------------- the 14-day trial
+
+@router.get("/trial")
+def get_trial(ctx: WorkspaceContext = Depends(require_capability("billing.read")), db: OrmSession = Depends(get_db)):
+    """The free trial: none (and whether the company may still have one), active, ended or cancelled."""
+    from app.modules.billing import trial
+
+    return trial.state(db, ctx.workspace.id) | {"can_manage": ctx.can("billing.manage")}
+
+
+@router.post("/trial/cancel")
+def cancel_trial(request: Request, ctx: WorkspaceContext = Depends(require_capability("billing.manage")),
+                 db: OrmSession = Depends(get_db)):
+    """Cancel inside the trial: the assistant stops at once and nothing is charged."""
+    from app.modules.billing import trial
+
+    out = trial.cancel(db, ctx.workspace.id)
+    record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="billing.trial_cancelled",
+                 object_type="billing_account", object_id=ctx.workspace.id, request_id=request.state.request_id)
+    db.commit()
+    return out
+
+
 # --------------------------------------------------------------------------- discount code (operators make them in the admin)
 
 class DiscountIn(BaseModel):

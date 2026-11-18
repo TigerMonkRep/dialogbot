@@ -350,6 +350,11 @@ def run_schedules() -> None:
             n = grace.run_due(db)  # the 7 days' grace after a paid subscription stops being paid, and its mails
             if n:
                 log.info("billing.grace", count=n)
+            from app.modules.billing import trial
+
+            m = trial.run_due(db)  # the mail before the first charge of the 14-day trial
+            if m:
+                log.info("billing.trial_mail", count=m)
         except Exception as exc:  # noqa: BLE001
             db.rollback()
             log.warning("billing.grace_failed", error=f"{type(exc).__name__}: {exc}")

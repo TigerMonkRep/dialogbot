@@ -1313,8 +1313,23 @@ class BillingAccount(Base):
     unpaid_since: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     payment_failed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     grace_mails: Mapped[int] = mapped_column(SmallInteger, nullable=False, server_default="0", default=0)
+    # The 14-day trial (billing/trial.py): starts when the agreement is confirmed AND a card is saved, once per company.
+    trial_started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    trial_ends_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    trial_cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))  # cancelled inside the trial
+    trial_mailed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))  # the «first charge soon» mail
     created_at: Mapped[datetime] = ts_now()
     updated_at: Mapped[datetime] = ts_now()
+
+
+class TrialClaim(Base):
+    """One free trial per company: the key is «cvr:<number>» (or «ws:<id>» for a workspace without a CVR number)."""
+
+    __tablename__ = "trial_claims"
+
+    key: Mapped[str] = mapped_column(String(64), primary_key=True)
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    claimed_at: Mapped[datetime] = ts_now()
 
 
 DISCOUNT_AUDIENCES = ("erhverv", "privat", "begge")

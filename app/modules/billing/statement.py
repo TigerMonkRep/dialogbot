@@ -114,6 +114,9 @@ def statement(db: OrmSession, workspace_id: uuid.UUID, month: date, tz: str) -> 
     else:
         usage = _legacy_usage_lines(db, workspace_id, start, end, agreement, currency)
     lines += usage
+    from app.modules.billing import trial
+
+    trial.adjust_statement(db, workspace_id, month, tz, lines, currency)  # the free trial (14 days), before the discounts
     from app.modules.ambassadors.service import discount_line
 
     discount = discount_line(db, workspace_id, month, lines)

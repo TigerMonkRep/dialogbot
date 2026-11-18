@@ -216,6 +216,11 @@ def start_campaign(campaign_id: uuid.UUID, body: StartIn, request: Request,
     if not _billing_ready(db, c):  # C09: never usage without a way to pay it (same rule as the phone and the chat)
         raise Conflict("Kampagnen kan startes, når abonnementet er bekræftet og der er et betalingskort på kontoen (Konto).",
                        code="subscription_required", extra={"cta": "/app/konto#abonnement"})
+    from app.modules.billing import trial
+
+    if trial.outbound_blocked(db, ctx.workspace.id):
+        raise Conflict("Udgående kampagner er ikke en del af den gratis prøveperiode. De kan startes, når prøveperioden er slut.",
+                       code="trial_outbound_blocked", extra={"cta": "/app/konto#abonnement"})
     build_system_prompt(db, ctx.workspace)  # 409 without approved knowledge: the assistant must know the business
     if problem := service.outbound_problem(db, c):
         raise NotImplementedYet(problem, code="outbound_not_configured", extra={"capability": "telephony.outbound"})

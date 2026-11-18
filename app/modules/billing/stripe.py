@@ -201,6 +201,9 @@ def save_card_from_setup_intent(db: OrmSession, setup_intent_id: str) -> Billing
     from app.modules.billing import grace
 
     db.flush()
+    from app.modules.billing import trial
+
+    trial.ensure_started(db, a.workspace_id)  # confirmed agreement + card = the 14-day trial begins
     grace.sync(db, a.workspace_id)
     return a
 
